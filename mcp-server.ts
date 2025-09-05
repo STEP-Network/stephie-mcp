@@ -306,7 +306,7 @@ const AVAILABLE_TOOLS = [
   },
   {
     name: 'getAllPlacements',
-    description: 'Get all GAM placements/verticals from Monday.com Ad Units board (1558569789). IMPORTANT: Most items are content verticals (Sport, News, etc.) but RON, Gambling, Finance, and RE-AD are NOT verticals - they are special categories for network-wide targeting, approval requirements, or retargeting.',
+    description: 'Get all GAM placements/verticals from Monday.com Ad Units board (1558569789). IMPORTANT: Most items are content verticals (Sport, News, etc.) but RON, Gambling, Finance, and RE-AD are NOT verticals - they are special categories. RON is network-wide targeting, Gambling/Finance require approval, and RE-AD is the Responsible Advertisement program.',
     inputSchema: {
       type: 'object',
       properties: {

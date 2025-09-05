@@ -52,7 +52,7 @@ export async function getAllPlacements(args: {
     lines.push('> - **RON** (Run of Network)');
     lines.push('> - **Gambling** (Special approval category)');
     lines.push('> - **Finance** (Special approval category)');
-    lines.push('> - **RE-AD** (Retargeting product)');
+    lines.push('> - **RE-AD** (Responsible Advertisement - not retargeting)');
     lines.push('');
     
     if (placements.length > 0) {
@@ -100,7 +100,7 @@ export async function getAllPlacements(args: {
           if (placement.name.includes('RON')) type = 'Network-wide';
           else if (placement.name.includes('Gambling')) type = 'Approval Required';
           else if (placement.name.includes('Finance')) type = 'Approval Required';
-          else if (placement.name.includes('RE-AD')) type = 'Retargeting';
+          else if (placement.name.includes('RE-AD')) type = 'Responsible Ads';
           
           const placementId = includeIds && placement.placementId 
             ? `\`${placement.placementId}\`` 
@@ -120,7 +120,7 @@ export async function getAllPlacements(args: {
       lines.push('### For Special Categories:');
       lines.push('- **RON**: Targets all inventory across the network');
       lines.push('- **Gambling/Finance**: Requires publisher approval, not a content vertical');
-      lines.push('- **RE-AD**: Used for retargeting campaigns, not content-based');
+      lines.push('- **RE-AD**: Responsible Advertisement program, not a content vertical');
       
       if (includeIds) {
         // Extract just the IDs for easy copying
