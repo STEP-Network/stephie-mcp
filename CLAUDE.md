@@ -309,6 +309,7 @@ const result = await findPublisherAdUnits({ names: ['jv.dk'] });
 8. **Handle missing data gracefully** with "N/A" or "-"
 9. **Log errors to console.error** for debugging
 10. **Follow TypeScript strict mode** patterns
+11. **CRITICAL: Use console.error for debug output** - MCP protocol requires clean JSON on stdout, all debug output must go to stderr
 
 ## Recent Changes & Context
 

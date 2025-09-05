@@ -297,12 +297,12 @@ export async function getAvailabilityForecast(params: {
 
     // Get access token
     const token = await jwtClient.getAccessToken();
-    console.log('Access Token:', token.token);
+    console.error('[GAM SOAP] Access Token acquired');
 
     // Build SOAP XML payload
     const xmlBody = buildAvailabilityForecastXML(params);
 
-    console.log('SOAP Request Payload:', xmlBody);
+    console.error('[GAM SOAP] Sending SOAP request to GAM API');
 
     // Make the request
     const response = await fetch(
@@ -329,7 +329,7 @@ export async function getAvailabilityForecast(params: {
         faultString =
           parsedResponse['soap:Envelope']['soap:Body'][0]['soap:Fault'][0]
             .faultstring[0];
-        console.log('Parsed Fault String:', faultString);
+        console.error('[GAM SOAP] Parsed Fault String:', faultString);
       } catch (parseError) {
         console.error('Failed to parse SOAP response:', parseError);
       }
@@ -340,7 +340,7 @@ export async function getAvailabilityForecast(params: {
     }
 
     const responseText = await response.text();
-    console.log('SOAP Response:', responseText);
+    console.error('[GAM SOAP] Received SOAP response from GAM API');
     return {
       success: true,
       data: responseText,

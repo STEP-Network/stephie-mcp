@@ -58,7 +58,7 @@ export const availabilityForecast = async (params: {
   } | null;
   targetedPlacementIds?: string[] | null;
 }): Promise<string> => {
-  console.log('[availabilityForecast] START. Tool execution started.');
+  console.error('[availabilityForecast] START. Tool execution started.');
 
   try {
     const {
@@ -76,7 +76,7 @@ export const availabilityForecast = async (params: {
       targetedPlacementIds,
     } = params;
 
-    console.log('[availabilityForecast] Making GAM availability forecast with params:', {
+    console.error('[availabilityForecast] Making GAM availability forecast with params:', {
       startDate,
       endDate,
       goalQuantity,
@@ -218,7 +218,7 @@ export const availabilityForecast = async (params: {
       });
     }
 
-    console.log('[availabilityForecast] Availability Forecast Results:', {
+    console.error('[availabilityForecast] Availability Forecast Results:', {
       availableUnits,
       matchedUnits,
       possibleUnits,
@@ -271,11 +271,11 @@ export const availabilityForecast = async (params: {
           }
         });
 
-        console.log(
+        console.error(
           `[availabilityForecast] Fetched ${Object.keys(adUnitNames).length} ad unit names from Monday.com`,
         );
       } catch (error) {
-        console.warn(
+        console.error(
           '[availabilityForecast] Failed to fetch ad unit names from Monday.com:',
           error,
         );
