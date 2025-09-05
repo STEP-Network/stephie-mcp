@@ -1,0 +1,148 @@
+import { mondayApi, BOARD_IDS } from '../monday/client.js';
+
+export async function getAllPlacements(args: {
+  includeIds?: boolean;
+}) {
+  const { includeIds = true } = args;
+
+  try {
+    // Query for placements from the Ad Units board
+    const query = `{
+      boards(ids: ${BOARD_IDS.AD_UNITS}) {
+        items_page(limit: 500) {
+          items {
+            name
+            column_values(ids: ["text_mkqpdy9d"]) {
+              column {
+                title
+              }
+              ... on TextValue {
+                text
+              }
+            }
+          }
+        }
+      }
+    }`;
+
+    console.error('[getAllPlacements] Fetching placements from Ad Units board');
+    
+    const response = await mondayApi(query);
+    
+    const items = response?.data?.boards?.[0]?.items_page?.items || [];
+    
+    // Process placements
+    const placements = items.map((item: any) => ({
+      name: item.name,
+      placementId: item.column_values?.find(
+        (cv: any) => cv.column?.title === 'Placement ID'
+      )?.text || '',
+    })).filter((p: any) => p.name && p.name !== ''); // Filter out empty entries
+    
+    console.error(`[getAllPlacements] Found ${placements.length} placements`);
+    
+    // Convert to markdown format
+    const lines: string[] = [];
+    
+    lines.push('# GAM Placements / Verticals');
+    lines.push('');
+    lines.push(`**Total Placements:** ${placements.length}`);
+    lines.push('');
+    lines.push('> **Important:** Everything in this list is a vertical (content category) EXCEPT:');
+    lines.push('> - **RON** (Run of Network)');
+    lines.push('> - **Gambling** (Special approval category)');
+    lines.push('> - **Finance** (Special approval category)');
+    lines.push('> - **RE-AD** (Retargeting product)');
+    lines.push('');
+    
+    if (placements.length > 0) {
+      // Categorize placements
+      const specialPlacements = ['RON', 'Gambling', 'Finance', 'RE-AD'];
+      const verticals: any[] = [];
+      const special: any[] = [];
+      
+      placements.forEach((p: any) => {
+        if (specialPlacements.some(sp => p.name.toLowerCase().includes(sp.toLowerCase()))) {
+          special.push(p);
+        } else {
+          verticals.push(p);
+        }
+      });
+      
+      // Show verticals first
+      if (verticals.length > 0) {
+        lines.push('## Content Verticals');
+        lines.push('*Use these for targeting specific content categories*');
+        lines.push('');
+        lines.push('| Vertical | Placement ID |');
+        lines.push('|----------|--------------|');
+        
+        verticals.sort((a, b) => a.name.localeCompare(b.name));
+        verticals.forEach(placement => {
+          const placementId = includeIds && placement.placementId 
+            ? `\`${placement.placementId}\`` 
+            : 'N/A';
+          lines.push(`| **${placement.name}** | ${placementId} |`);
+        });
+        lines.push('');
+      }
+      
+      // Show special placements
+      if (special.length > 0) {
+        lines.push('## Special Categories');
+        lines.push('*These are NOT content verticals*');
+        lines.push('');
+        lines.push('| Category | Type | Placement ID |');
+        lines.push('|----------|------|--------------|');
+        
+        special.forEach(placement => {
+          let type = 'Special';
+          if (placement.name.includes('RON')) type = 'Network-wide';
+          else if (placement.name.includes('Gambling')) type = 'Approval Required';
+          else if (placement.name.includes('Finance')) type = 'Approval Required';
+          else if (placement.name.includes('RE-AD')) type = 'Retargeting';
+          
+          const placementId = includeIds && placement.placementId 
+            ? `\`${placement.placementId}\`` 
+            : 'N/A';
+          lines.push(`| ${placement.name} | *${type}* | ${placementId} |`);
+        });
+        lines.push('');
+      }
+      
+      lines.push('## Usage Guide');
+      lines.push('');
+      lines.push('### For Vertical Targeting:');
+      lines.push('- Choose from the **Content Verticals** section above');
+      lines.push('- Each vertical represents a specific content category (Sport, News, etc.)');
+      lines.push('- Use the Placement ID for GAM targeting configuration');
+      lines.push('');
+      lines.push('### For Special Categories:');
+      lines.push('- **RON**: Targets all inventory across the network');
+      lines.push('- **Gambling/Finance**: Requires publisher approval, not a content vertical');
+      lines.push('- **RE-AD**: Used for retargeting campaigns, not content-based');
+      
+      if (includeIds) {
+        // Extract just the IDs for easy copying
+        const verticalIds = verticals
+          .filter(p => p.placementId)
+          .map(p => p.placementId);
+        
+        if (verticalIds.length > 0) {
+          lines.push('');
+          lines.push('### Vertical Placement IDs for GAM');
+          lines.push('```json');
+          lines.push(JSON.stringify(verticalIds, null, 2));
+          lines.push('```');
+        }
+      }
+    } else {
+      lines.push('*No placements found.*');
+    }
+    
+    return lines.join('\n');
+  } catch (error) {
+    console.error('[getAllPlacements] Error:', error);
+    throw new Error(`Failed to fetch placements: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+}

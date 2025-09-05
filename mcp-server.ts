@@ -22,6 +22,7 @@ import { getAllFormats } from './lib/tools/getAllFormats.js';
 import { getAllSizes } from './lib/tools/getAllSizes.js';
 import { getAllAdPrices } from './lib/tools/getAllAdPrices.js';
 import { findPublisherAdUnits } from './lib/tools/findPublisherAdUnits.js';
+import { getAllPlacements } from './lib/tools/getAllPlacements.js';
 
 // Load environment variables
 dotenv.config({ path: '.env.local' });
@@ -302,6 +303,20 @@ const AVAILABLE_TOOLS = [
         }
       }
     }
+  },
+  {
+    name: 'getAllPlacements',
+    description: 'Get all GAM placements/verticals from Monday.com Ad Units board (1558569789). IMPORTANT: Most items are content verticals (Sport, News, etc.) but RON, Gambling, Finance, and RE-AD are NOT verticals - they are special categories for network-wide targeting, approval requirements, or retargeting.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        includeIds: {
+          type: 'boolean',
+          description: 'Include GAM placement IDs in the response (default: true)',
+          default: true
+        }
+      }
+    }
   }
 ];
 
@@ -367,6 +382,9 @@ async function executeToolHandler(toolName: string, args: any): Promise<any> {
         
       case 'findPublisherAdUnits':
         return await findPublisherAdUnits(args);
+        
+      case 'getAllPlacements':
+        return await getAllPlacements(args);
         
       default:
         throw new Error(`Tool not implemented: ${toolName}`);
