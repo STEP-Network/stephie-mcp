@@ -23,6 +23,8 @@ import { getAllSizes } from './lib/tools/getAllSizes.js';
 import { getAllAdPrices } from './lib/tools/getAllAdPrices.js';
 import { findPublisherAdUnits } from './lib/tools/findPublisherAdUnits.js';
 import { getAllPlacements } from './lib/tools/getAllPlacements.js';
+import { getGeoLocations } from './lib/tools/getGeoLocations.js';
+import { getContextualTargeting } from './lib/tools/getContextualTargeting.js';
 
 // Load environment variables
 dotenv.config({ path: '.env.local' });
@@ -317,6 +319,48 @@ const AVAILABLE_TOOLS = [
         }
       }
     }
+  },
+  {
+    name: 'getGeoLocations',
+    description: 'Find geographic locations for GAM targeting (countries, regions, cities, postal codes). Returns criteria IDs for use in availabilityForecast. Searches Danish locations including Copenhagen, Aarhus, regions, and postal codes.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        search: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'Search terms to find locations by name (e.g., ["København", "Aarhus"], ["2100", "8000"])'
+        },
+        type: {
+          type: 'string',
+          enum: ['region', 'country', 'postal_code', 'city', 'municipality'],
+          description: 'Filter by location type'
+        },
+        limit: {
+          type: 'number',
+          description: 'Maximum number of results to return (default: 20)',
+          default: 20
+        }
+      }
+    }
+  },
+  {
+    name: 'getContextualTargeting',
+    description: 'Fetch Neuwo contextual targeting categories from Google Ad Manager. Searches contextual categories like news, sports, business, entertainment. Requires GAM authentication.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        search: {
+          type: ['string', 'array'],
+          description: 'Search term(s) to filter contextual categories (e.g., "sport", ["news", "business"])'
+        },
+        limit: {
+          type: 'number',
+          description: 'Maximum number of results to return (default: 50)',
+          default: 50
+        }
+      }
+    }
   }
 ];
 
@@ -385,6 +429,12 @@ async function executeToolHandler(toolName: string, args: any): Promise<any> {
         
       case 'getAllPlacements':
         return await getAllPlacements(args);
+        
+      case 'getGeoLocations':
+        return await getGeoLocations(args);
+        
+      case 'getContextualTargeting':
+        return await getContextualTargeting(args);
         
       default:
         throw new Error(`Tool not implemented: ${toolName}`);

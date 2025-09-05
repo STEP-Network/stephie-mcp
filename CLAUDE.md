@@ -59,8 +59,8 @@ BOARD_IDS = {
 ### Ad Unit Hierarchy (Board 1558569789)
 
 The ad unit system has **three levels**:
-1. **Level 1 (Publisher Groups)**: Type index 4, e.g., "JFM", "Berlingske"
-2. **Level 2 (Publishers)**: Type index 3, e.g., "jv.dk", "berlingske.dk"  
+1. **Level 1 (Publisher Groups)**: Type index 4, e.g., "JFM", "PLBold"
+2. **Level 2 (Publishers)**: Type index 3, e.g., "jv.dk", "plbold.dk"  
 3. **Level 3 (Child Ad Units)**: Type index 1-2, e.g., "billboard_1", "mobile_2"
 
 #### Parent-Child Relationships
