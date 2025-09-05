@@ -15,7 +15,11 @@
         "/Users/naref/Documents/Code/stephie-mcp/mcp-server.ts"
       ],
       "env": {
-        "STEPHIE_AUTH_TOKEN": "test-token"
+        "STEPHIE_AUTH_TOKEN": "test-token",
+        "MONDAY_API_KEY": "your-monday-api-key",
+        "GOOGLE_AD_MANAGER_NETWORK_CODE": "21809957681",
+        "GOOGLE_SERVICE_ACCOUNT_EMAIL": "your-service-account@project.iam.gserviceaccount.com",
+        "GOOGLE_PRIVATE_KEY": "-----BEGIN PRIVATE KEY-----\\n...your-key-here...\\n-----END PRIVATE KEY-----\\n"
       }
     }
   }
