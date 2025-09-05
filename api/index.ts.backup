@@ -21,14 +21,9 @@ export default async function handler(
     description: 'Model Context Protocol server for STEPhie tools',
     endpoints: {
       health: '/api/health',
-      mcp_server: '/api/server (MCP JSON-RPC endpoint)',
+      mcp: '/api (POST with MCP JSON-RPC)',
     },
     status: 'running',
-    timestamp: new Date().toISOString(),
-    mcp_info: {
-      protocol: 'Model Context Protocol',
-      handler: 'mcp-handler v1.0.2',
-      tools: ['availabilityForecast', 'echo', 'health']
-    }
+    timestamp: new Date().toISOString()
   });
 }

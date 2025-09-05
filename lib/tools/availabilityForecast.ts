@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { getAvailabilityForecast } from '../gam/soap';
+import { getAvailabilityForecast } from '../gam/soap.js';
 import { parseStringPromise } from 'xml2js';
-import { mondayApi } from '../monday/client';
+import { mondayApi } from '../monday/client.js';
 
 export type ContendingLineItem = {
   lineItemId: number;

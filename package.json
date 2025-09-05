@@ -9,12 +9,13 @@
   },
   "scripts": {
     "dev": "tsx watch server.local.ts",
-    "build": "tsc",
+    "build": "echo 'Build completed - Vercel handles API deployment'",
     "start": "node dist/api/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "test:local": "tsx test.local.ts",
     "mcp:dev": "tsx mcp-server.ts",
-    "mcp:build": "tsc mcp-server.ts --outDir dist"
+    "mcp:build": "tsc mcp-server.ts --outDir dist",
+    "build:ts": "tsc"
   },
   "keywords": [
     "mcp",
@@ -27,12 +28,14 @@
   "license": "MIT",
   "packageManager": "pnpm@10.11.0",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^0.6.0",
+    "@modelcontextprotocol/sdk": "^1.17.5",
     "@stackframe/stack": "^2.6.39",
+    "@vercel/node": "^5.3.21",
     "dotenv": "^16.4.5",
     "google-auth-library": "^10.3.0",
     "graphql": "^16.11.0",
     "graphql-request": "^7.2.0",
+    "mcp-handler": "^1.0.2",
     "xml2js": "^0.6.2",
     "zod": "^3.24.1"
   },

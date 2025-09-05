@@ -30,7 +30,7 @@ export async function mondayApi(query: string, variables?: Record<string, any>) 
     throw new Error(`Monday.com API responded with status: ${response.status}. Details: ${errorBody}`);
   }
 
-  const mondayResponse = await response.json();
+  const mondayResponse = await response.json() as any;
 
   // Check for GraphQL errors
   if (mondayResponse.errors) {

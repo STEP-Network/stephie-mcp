@@ -1,4 +1,4 @@
-import { getGoogleServiceAuth } from './auth';
+import { getGoogleServiceAuth } from './auth.js';
 import { parseStringPromise } from 'xml2js';
 
 /**

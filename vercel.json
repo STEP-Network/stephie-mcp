@@ -3,22 +3,8 @@
     "api/index.ts": {
       "maxDuration": 60
     },
-    "api/sse.ts": {
-      "maxDuration": 60
+    "api/health.ts": {
+      "maxDuration": 30
     }
-  },
-  "rewrites": [
-    {
-      "source": "/api",
-      "destination": "/api/index"
-    },
-    {
-      "source": "/api/sse",
-      "destination": "/api/sse"
-    },
-    {
-      "source": "/health",
-      "destination": "/api/health"
-    }
-  ]
+  }
 }
