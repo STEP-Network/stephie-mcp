@@ -18,10 +18,13 @@ export async function getGoogleServiceAuth(): Promise<JWT> {
     email: serviceEmail,
     key: formattedPrivateKey,
     scopes: [
+      'https://www.googleapis.com/auth/dfp',
       'https://www.googleapis.com/auth/admanager',
-      'https://www.googleapis.com/auth/admanager.readonly',
     ],
   });
+
+  // Authorize the client (important!)
+  await jwtClient.authorize();
 
   return jwtClient;
 }
