@@ -12,9 +12,11 @@ STEPhie MCP Server is a Model Context Protocol (MCP) implementation that provide
 - **TypeScript** with ES modules (`"type": "module"`)
 - **MCP SDK** (`@modelcontextprotocol/sdk`) for protocol implementation
 - **Monday.com GraphQL API** for data access
-- **Google Ad Manager API** (REST v1) for contextual targeting & forecasting
+- **Google Ad Manager SOAP API** (v202502) for availability forecasting
+- **Google Ad Manager REST API** (v1) for contextual targeting
 - **Stack Auth** for authentication (from main STEPhie app)
 - **google-auth-library** for GAM service account authentication
+- **xml2js** for SOAP response parsing
 - **Vercel** for deployment (Edge Functions)
 - **dotenv** for environment configuration
 
@@ -162,6 +164,34 @@ try {
 - `getItems` - Generic item fetcher for debugging
 
 ## Critical Implementation Details
+
+### Google Ad Manager SOAP Implementation
+
+STEPhie MCP now includes a full SOAP client for Google Ad Manager v202502:
+
+#### SOAP Client (`/lib/gam/soap.ts`)
+- **getAvailabilityForecast**: Complete SOAP implementation for forecast requests
+- Supports all GAM targeting options: inventory, geo, custom, audience, placement, frequency capping
+- Handles immediate start ("now") and scheduled campaigns
+- Includes contending line item analysis and targeting criteria breakdown
+- Built-in XML parsing and error handling
+- Uses service account JWT authentication
+
+#### SOAP Request Features
+- **Inventory Targeting**: Ad unit IDs with descendant inclusion/exclusion
+- **Geographic Targeting**: Location-based targeting with inclusion/exclusion lists
+- **Custom Targeting**: Key-value pairs with IS/IS_NOT operators
+- **Audience Segments**: Demographic and behavioral targeting via segment IDs
+- **Placement Targeting**: Content vertical and placement-based targeting
+- **Frequency Capping**: Per-user impression limits with time units (minute to lifetime)
+- **Advanced Options**: Targeting criteria breakdown and contending line item analysis
+
+#### Response Processing
+- Extracts all forecast metrics: available, matched, possible, delivered, reserved units
+- Parses contending line items with priorities and impression conflicts
+- Provides targeting criteria breakdown for optimization insights
+- Fetches human-readable names from Monday.com for better UX
+- Returns comprehensive markdown analysis for LLM consumption
 
 ### findPublisherAdUnits Algorithm
 When searching for a publisher (e.g., "jv.dk"):
@@ -327,10 +357,13 @@ const result = await findPublisherAdUnits({ names: ['jv.dk'] });
 - Returns category IDs for content-based targeting
 
 ### availabilityForecast
-- Currently a placeholder implementation
-- Real GAM API integration planned
-- Will use ad unit IDs from `findPublisherAdUnits`
-- Will support all targeting criteria (geo, contextual, custom)
+- **REAL GAM SOAP API integration** (v202502) - NO LONGER PLACEHOLDER
+- Uses Google Ad Manager SOAP ForecastService for accurate availability data
+- Supports comprehensive targeting: ad units, geo, contextual, custom, audience segments, placement, frequency capping
+- Returns markdown-formatted forecast with detailed analysis including contending line items and targeting breakdowns
+- Fetches ad unit names from Monday.com for readable output
+- Requires GAM service account authentication
+- Parameters: startDate, endDate, sizes (required), plus optional targeting criteria
 
 ## Debugging & Testing
 
@@ -449,10 +482,12 @@ vercel
 - Monitor Monday.com API rate limits
 
 ## Future Enhancements
-- Google Ad Manager REST API integration
+- ✅ ~~Google Ad Manager SOAP API integration~~ **COMPLETED**
 - Real-time forecast caching
 - WebSocket support for streaming
 - Bulk operations for large campaigns
 - Integration with main STEPhie chat interface
 - Automated testing suite
 - Performance monitoring dashboard
+- Line item management via SOAP API (create, update, pause)
+- Automated campaign optimization based on forecast data

@@ -128,44 +128,93 @@ const AVAILABLE_TOOLS = [
   },
   {
     name: 'availabilityForecast',
-    description: 'Get Google Ad Manager (GAM) availability forecast for ad inventory. Checks available impressions for specified date ranges and targeting criteria. Essential for campaign planning and inventory availability checks.',
+    description: 'Get Google Ad Manager (GAM) availability forecast using SOAP API. Returns impression availability for specified ad units, targeting, and date range with detailed analysis.',
     inputSchema: {
       type: 'object',
       properties: {
-        startDate: { 
-          type: 'string', 
-          description: 'Campaign start date in YYYY-MM-DD format (e.g., "2024-12-01")' 
+        startDate: {
+          type: 'string',
+          description: 'Start date in YYYY-MM-DD format or "now" for immediate start',
         },
-        endDate: { 
-          type: 'string', 
-          description: 'Campaign end date in YYYY-MM-DD format (e.g., "2024-12-31")' 
+        endDate: {
+          type: 'string',
+          description: 'End date in YYYY-MM-DD format',
         },
-        adUnitIds: { 
+        goalQuantity: {
+          type: ['number', 'null'],
+          description: 'Target number of impressions. Leave null for maximum available',
+        },
+        targetedAdUnitIds: {
+          type: ['array', 'null'],
+          items: { type: 'number' },
+          description: 'Array of ad unit IDs to target (from findPublisherAdUnits)',
+        },
+        sizes: {
           type: 'array',
-          items: { type: 'string' },
-          description: 'List of Google Ad Manager ad unit IDs to check inventory for'
+          items: {
+            type: 'array',
+            items: { type: 'number' },
+            minItems: 2,
+            maxItems: 2,
+          },
+          description: 'Array of ad sizes as [width, height] pairs, e.g. [[300,250], [728,90]]',
         },
-        targeting: { 
-          type: 'object',
-          description: 'Optional targeting criteria to refine the forecast',
+        excludedAdUnitIds: {
+          type: ['array', 'null'],
+          items: { type: 'number' },
+          description: 'Array of ad unit IDs to exclude from forecast',
+        },
+        audienceSegmentIds: {
+          type: ['array', 'null'],
+          items: { type: 'string' },
+          description: 'Array of audience segment IDs for demographic targeting',
+        },
+        customTargeting: {
+          type: ['array', 'null'],
+          items: {
+            type: 'object',
+            properties: {
+              keyId: { type: 'string' },
+              valueIds: { type: 'array', items: { type: 'string' } },
+              operator: { type: 'string', enum: ['IS', 'IS_NOT'] },
+            },
+            required: ['keyId', 'valueIds'],
+          },
+          description: 'Array of custom targeting key-value pairs',
+        },
+        frequencyCapMaxImpressions: {
+          type: ['number', 'null'],
+          description: 'Maximum impressions per user for frequency capping',
+        },
+        frequencyCapTimeUnit: {
+          type: ['string', 'null'],
+          enum: ['MINUTE', 'HOUR', 'DAY', 'WEEK', 'MONTH', 'LIFETIME'],
+          description: 'Time unit for frequency capping',
+        },
+        geoTargeting: {
+          type: ['object', 'null'],
           properties: {
-            geoTargets: { 
+            targetedLocationIds: {
               type: 'array',
-              description: 'Geographic targeting (country/city codes)'
+              items: { type: 'string' },
+              description: 'Array of location IDs to target',
             },
-            deviceCategories: { 
+            excludedLocationIds: {
               type: 'array',
-              description: 'Device types (DESKTOP, MOBILE, TABLET)'
+              items: { type: 'string' },
+              description: 'Array of location IDs to exclude',
             },
-            keyValues: { 
-              type: 'object',
-              description: 'Custom key-value targeting pairs'
-            }
-          }
-        }
+          },
+          description: 'Geographic targeting configuration',
+        },
+        targetedPlacementIds: {
+          type: ['array', 'null'],
+          items: { type: 'string' },
+          description: 'Array of placement IDs to target',
+        },
       },
-      required: ['startDate', 'endDate']
-    }
+      required: ['startDate', 'endDate', 'sizes'],
+    },
   },
   {
     name: 'getKeyValues',
@@ -472,6 +521,19 @@ async function main() {
     
     try {
       const result = await executeToolHandler(name, args);
+      
+      // For availabilityForecast, the result is already markdown string
+      if (name === 'availabilityForecast' && typeof result === 'string') {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: result
+            }
+          ]
+        };
+      }
+      
       return {
         content: [
           {
