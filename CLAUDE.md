@@ -12,7 +12,9 @@ STEPhie MCP Server is a Model Context Protocol (MCP) implementation that provide
 - **TypeScript** with ES modules (`"type": "module"`)
 - **MCP SDK** (`@modelcontextprotocol/sdk`) for protocol implementation
 - **Monday.com GraphQL API** for data access
+- **Google Ad Manager API** (REST v1) for contextual targeting & forecasting
 - **Stack Auth** for authentication (from main STEPhie app)
+- **google-auth-library** for GAM service account authentication
 - **Vercel** for deployment (Edge Functions)
 - **dotenv** for environment configuration
 
@@ -141,7 +143,9 @@ try {
 ### Targeting Tools
 - `getKeyValues` - Content-based targeting (22k+ values, uses batching)
 - `getAudienceSegments` - Demographic/behavioral targeting
-- `getAllPlacements` - Vertical/placement targeting
+- `getAllPlacements` - GAM placements/verticals (NOTE: RON, Gambling, Finance, RE-AD are NOT verticals)
+- `getGeoLocations` - Geographic targeting with 1700+ Danish locations (cities, regions, postal codes)
+- `getContextualTargeting` - Neuwo contextual categories from GAM API (requires GAM auth)
 
 ### Product & Pricing Tools
 - `getAllProducts` - Product hierarchy
@@ -150,7 +154,7 @@ try {
 - `getAllAdPrices` - Display/video pricing in DKK
 
 ### Forecasting
-- `availabilityForecast` - GAM inventory forecasting (requires ad unit IDs)
+- `availabilityForecast` - GAM inventory forecasting (placeholder, real implementation coming)
 
 ### Debug Tools
 - `listBoards` - List boards from meta board (1698570295)
@@ -187,16 +191,24 @@ When searching for a publisher (e.g., "jv.dk"):
 ### Required Variables
 ```env
 # Authentication
-STEPHIE_AUTH_TOKEN=<from Stack Auth>
+STEPHIE_AUTH_TOKEN=<from Stack Auth or use 'test-token' for local dev>
 
 # Monday.com
 MONDAY_API_KEY=<your API key>
+
+# Google Ad Manager (for contextual targeting & forecasting)
+GOOGLE_AD_MANAGER_NETWORK_CODE=21809957681
+GOOGLE_SERVICE_ACCOUNT_EMAIL=<service-account@project.iam.gserviceaccount.com>
+GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
 
 # Optional - for full Stack Auth integration
 NEXT_PUBLIC_STACK_PROJECT_ID=<project id>
 STACK_SECRET_SERVER_KEY=<server key>
 DATABASE_URL=<Neon PostgreSQL URL>
 ```
+
+### Claude Desktop Configuration
+When configuring for Claude Desktop, ensure the private key has `\n` escaped as `\\n` in the JSON config.
 
 ### Development Commands
 ```bash
@@ -276,6 +288,10 @@ const result = await findPublisherAdUnits({ names: ['jv.dk'] });
 - Fixed parent-child relationship to use GAM IDs instead of item IDs
 - Added Source filtering with Google Ad Manager as default
 - Implemented comprehensive error handling and logging
+- Added `getAllPlacements` tool with vertical clarification
+- Added `getGeoLocations` tool with local Danish location data
+- Added `getContextualTargeting` tool with GAM API integration
+- Implemented Google Ad Manager authentication with JWT
 
 ## Tool-Specific Notes
 
@@ -284,16 +300,37 @@ const result = await findPublisherAdUnits({ names: ['jv.dk'] });
 - Returns 50+ items for publishers like "jv.dk"
 - Critical for `availabilityForecast` tool
 - Always fetches complete hierarchy
+- Uses GAM IDs for parent-child relationships
 
 ### getKeyValues
 - Handles 22,000+ values
 - Two-step process: search keys, then get values
 - Performance limits prevent fetching all values
+- Searches custom targeting from Monday.com board
+
+### getAllPlacements
+- Returns GAM placements/verticals
+- **Important**: RON, Gambling, Finance, and RE-AD are NOT content verticals
+- RE-AD = Responsible Advertisement (not retargeting)
+- Most items are content verticals (Sport, News, etc.)
+
+### getGeoLocations
+- Uses local data file with 1700+ Danish locations
+- Searches cities, regions, postal codes, municipalities
+- Returns GAM criteria IDs for geographic targeting
+- Works offline (no API required)
+
+### getContextualTargeting
+- Fetches Neuwo contextual categories from Google Ad Manager API
+- Requires GAM service account authentication
+- Categories include news, sports, business, entertainment
+- Returns category IDs for content-based targeting
 
 ### availabilityForecast
-- Requires GAM Ad Unit IDs from `findPublisherAdUnits`
-- Integrates with Google Ad Manager API
-- Not implemented in MCP server yet (planned)
+- Currently a placeholder implementation
+- Real GAM API integration planned
+- Will use ad unit IDs from `findPublisherAdUnits`
+- Will support all targeting criteria (geo, contextual, custom)
 
 ## Debugging & Testing
 
