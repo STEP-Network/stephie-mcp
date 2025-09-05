@@ -5,6 +5,12 @@
     },
     "api/health.ts": {
       "maxDuration": 30
+    },
+    "api/server.ts": {
+      "maxDuration": 60
+    },
+    "api/mcp.ts": {
+      "maxDuration": 120
     }
   }
 }
