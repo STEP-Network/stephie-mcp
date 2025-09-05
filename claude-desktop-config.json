@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "stephie-local": {
+      "command": "node",
+      "args": ["/Users/naref/Documents/Code/stephie-mcp/dist/mcp-server.js"],
+      "env": {
+        "STEPHIE_AUTH_TOKEN": "test-token",
+        "NEXT_PUBLIC_STACK_PROJECT_ID": "YOUR_PROJECT_ID",
+        "STACK_SECRET_SERVER_KEY": "YOUR_SECRET_KEY",
+        "MONDAY_API_KEY": "YOUR_MONDAY_KEY"
+      }
+    }
+  }
+}

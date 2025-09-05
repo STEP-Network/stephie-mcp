@@ -1,0 +1,44 @@
+{
+  "name": "@stephie/mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for STEPhie tools - Access publisher data and ad forecasting via Model Context Protocol",
+  "main": "dist/index.js",
+  "type": "module",
+  "bin": {
+    "stephie-mcp": "./dist/mcp-server.js"
+  },
+  "scripts": {
+    "dev": "tsx watch server.local.ts",
+    "build": "tsc",
+    "start": "node dist/api/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:local": "tsx test.local.ts",
+    "mcp:dev": "tsx mcp-server.ts",
+    "mcp:build": "tsc mcp-server.ts --outDir dist"
+  },
+  "keywords": [
+    "mcp",
+    "ai",
+    "tools",
+    "stephie",
+    "ad-tech"
+  ],
+  "author": "STEP Networks",
+  "license": "MIT",
+  "packageManager": "pnpm@10.11.0",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.6.0",
+    "@stackframe/stack": "^2.6.39",
+    "dotenv": "^16.4.5",
+    "graphql": "^16.11.0",
+    "graphql-request": "^7.2.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^22.5.0",
+    "express": "^5.1.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
