@@ -1,11 +1,86 @@
 import { mondayApi } from '../../monday/client.js';
 
+// Column filter type definition
+interface ColumnFilter {
+  columnId: string;
+  value: any;
+  operator?: string; // Optional - will be determined by column type if not provided
+}
+
+// Operator mapping based on Monday.com column types
+const COLUMN_TYPE_OPERATORS: Record<string, Record<string, string>> = {
+  // Text-based columns
+  text: {
+    equals: 'any_of',
+    contains: 'contains_text',
+    notContains: 'not_contains_text',
+    empty: 'is_empty',
+    notEmpty: 'is_not_empty'
+  },
+  long_text: {
+    contains: 'contains_text',
+    notContains: 'not_contains_text',
+    empty: 'is_empty',
+    notEmpty: 'is_not_empty'
+  },
+  // Status column (uses index values)
+  status: {
+    equals: 'any_of',
+    notEquals: 'not_any_of',
+    empty: 'is_empty',
+    notEmpty: 'is_not_empty'
+  },
+  // Dropdown column
+  dropdown: {
+    equals: 'any_of',
+    notEquals: 'not_any_of',
+    empty: 'is_empty',
+    notEmpty: 'is_not_empty'
+  },
+  // Numbers column
+  numbers: {
+    equals: '=',
+    notEquals: '!=',
+    greater: '>',
+    greaterOrEqual: '>=',
+    less: '<',
+    lessOrEqual: '<=',
+    between: 'between',
+    empty: 'is_empty',
+    notEmpty: 'is_not_empty'
+  },
+  // Date column
+  date: {
+    exact: 'exact',
+    greater: 'greater_than',
+    greaterOrEqual: 'greater_than_or_equal',
+    less: 'lower_than',
+    lessOrEqual: 'lower_than_or_equal',
+    between: 'between',
+    empty: 'is_empty',
+    notEmpty: 'is_not_empty'
+  },
+  // Checkbox column
+  checkbox: {
+    checked: '=',
+    unchecked: '!='
+  },
+  // People column
+  people: {
+    contains: 'person_filter_by_me',
+    anyOf: 'contains_terms',
+    empty: 'is_empty',
+    notEmpty: 'is_not_empty'
+  }
+};
+
 export async function getItems(args: {
   boardId: string;
   limit?: number;
   columnIds?: string[];
   itemIds?: string[];
   search?: string;
+  columnFilters?: ColumnFilter[];
   includeColumnMetadata?: boolean;
 }) {
   const { 
@@ -14,6 +89,7 @@ export async function getItems(args: {
     columnIds, 
     itemIds,
     search,
+    columnFilters,
     includeColumnMetadata = false 
   } = args;
 
@@ -22,6 +98,27 @@ export async function getItems(args: {
   }
 
   try {
+    // First, get column metadata if we have filters to determine column types
+    let columnTypes: Record<string, string> = {};
+    if (columnFilters && columnFilters.length > 0) {
+      const metadataQuery = `
+        query {
+          boards(ids: [${boardId}]) {
+            columns {
+              id
+              type
+            }
+          }
+        }
+      `;
+      
+      const metadataResponse = await mondayApi(metadataQuery);
+      const columns = metadataResponse.data?.boards?.[0]?.columns || [];
+      columns.forEach((col: any) => {
+        columnTypes[col.id] = col.type;
+      });
+    }
+    
     // Build the items query part
     let itemsQuery = '';
     
@@ -29,18 +126,70 @@ export async function getItems(args: {
       // Query specific items by ID
       itemsQuery = `items(ids: [${itemIds.join(',')}]) {`;
     } else {
-      // Query items_page with optional search
-      let queryParams = '';
+      // Build filter rules
+      const rules: any[] = [];
       
+      // Add search filter if provided
       if (search) {
-        queryParams = `, query_params: {
-          rules: [
-            {
-              column_id: "name",
-              compare_value: "${search.replace(/"/g, '\\"')}",
-              operator: contains_text
+        rules.push({
+          column_id: "name",
+          compare_value: search.replace(/"/g, '\\"'),
+          operator: "contains_text"
+        });
+      }
+      
+      // Add column filters with intelligent operator selection
+      if (columnFilters) {
+        columnFilters.forEach(filter => {
+          const columnType = columnTypes[filter.columnId] || 'text';
+          let operator = filter.operator;
+          
+          // Determine operator based on column type if not provided
+          if (!operator) {
+            const typeOperators = COLUMN_TYPE_OPERATORS[columnType];
+            if (typeOperators) {
+              // Default operators based on column type
+              if (columnType === 'status' || columnType === 'dropdown') {
+                operator = typeOperators.equals; // 'any_of'
+              } else if (columnType === 'text' || columnType === 'long_text') {
+                operator = typeOperators.contains; // 'contains_text'
+              } else if (columnType === 'numbers') {
+                operator = typeOperators.equals; // '='
+              } else if (columnType === 'checkbox') {
+                operator = filter.value ? typeOperators.checked : typeOperators.unchecked;
+              } else {
+                operator = 'any_of'; // fallback
+              }
             }
-          ]
+          }
+          
+          // Format value based on column type
+          let compareValue = filter.value;
+          
+          // Status columns need index values
+          if (columnType === 'status' && typeof filter.value === 'string') {
+            // Note: In production, you'd need to map status labels to indices
+            console.error(`[getItems] Warning: Status column ${filter.columnId} requires index value, not label`);
+          }
+          
+          // Array values for any_of operator
+          if (operator === 'any_of' && !Array.isArray(compareValue)) {
+            compareValue = [compareValue];
+          }
+          
+          rules.push({
+            column_id: filter.columnId,
+            compare_value: compareValue,
+            operator: operator
+          });
+        });
+      }
+      
+      // Build query params string
+      let queryParams = '';
+      if (rules.length > 0) {
+        queryParams = `, query_params: {
+          rules: ${JSON.stringify(rules).replace(/"/g, '\\"')}
         }`;
       }
       
@@ -157,6 +306,13 @@ export async function getItems(args: {
     if (search) console.error(`[getItems] Search filter: "${search}"`);
     if (itemIds) console.error(`[getItems] Specific item IDs: ${itemIds.join(', ')}`);
     if (columnIds) console.error(`[getItems] Specific column IDs: ${columnIds.join(', ')}`);
+    if (columnFilters) {
+      console.error(`[getItems] Column filters:`, columnFilters.map(f => ({
+        column: f.columnId,
+        operator: f.operator || 'auto',
+        value: f.value
+      })));
+    }
 
     const response = await mondayApi(query);
     

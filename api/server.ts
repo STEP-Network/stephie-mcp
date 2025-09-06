@@ -239,12 +239,20 @@ const handler = createMcpHandler((server) => {
     {
       boardId: z.string(),
       limit: z.number().default(10).optional(),
-      columnIds: z.array(z.string()).optional()
+      columnIds: z.array(z.string()).optional(),
+      itemIds: z.array(z.string()).optional(),
+      search: z.string().optional(),
+      columnFilters: z.array(z.object({
+        columnId: z.string(),
+        value: z.any(),
+        operator: z.string().optional()
+      })).optional(),
+      includeColumnMetadata: z.boolean().optional()
     },
     async (input) => {
       // Ensure boardId is always passed
       const result = await getItems({ boardId: input.boardId, ...input });
-      return { content: [{ type: 'text', text: String(result) }] };
+      return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
     }
   );
 });
