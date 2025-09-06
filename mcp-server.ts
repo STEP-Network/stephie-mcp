@@ -36,7 +36,7 @@ const authValidator = new AuthValidator();
 const AVAILABLE_TOOLS = [
   {
     name: 'getAllPublishers',
-    description: 'Get all Live publishers from Monday.com Publishers board. Returns all 126 Live publishers with basic information: name, website, description, status, vertical, publisher group, and approval status. For format information use getPublisherFormats or getPublishersByFormats.',
+    description: 'Get all Live publishers/sites from Monday.com Publishers board. Returns all 126 Live publishers/sites with basic information: name, website, description, status, vertical, publisher/site group, and approval status. For format information use getPublisherFormats or getPublishersByFormats.',
     inputSchema: {
       type: 'object',
       properties: {}
@@ -44,21 +44,21 @@ const AVAILABLE_TOOLS = [
   },
   {
     name: 'getPublisherFormats',
-    description: 'Get detailed matrix of publishers and their available ad formats grouped by device type. Shows ONLY ACTIVE formats per publisher - if a format is not listed, the publisher does NOT support it. Device abbreviations: M=Mobile, D=Desktop, A=App. Useful for finding which publishers support specific format combinations.',
+    description: 'Get detailed matrix of publishers/sites and their available ad formats grouped by device type. Shows ONLY ACTIVE formats per publisher/site - if a format is not listed, the publisher/site does NOT support it. Device abbreviations: M=Mobile, D=Desktop, A=App. Useful for finding which publishers/sites support specific format combinations.',
     inputSchema: {
       type: 'object',
       properties: {
         publisherName: { 
           type: 'string',
-          description: 'Filter by publisher name (partial match, case-insensitive)'
+          description: 'Filter by publisher/site name (partial match, case-insensitive)'
         },
         publisherGroupName: {
           type: 'string',
-          description: 'Filter by publisher group name (e.g., "JyskFynske", "Berlingske")'
+          description: 'Filter by publisher/site group name (e.g., "JyskFynske", "Berlingske")'
         },
         limit: {
           type: 'number',
-          description: 'Maximum number of publishers to return (1-500, default: 100)',
+          description: 'Maximum number of publishers/sites to return (1-500, default: 100)',
           default: 100
         }
       }
@@ -66,7 +66,7 @@ const AVAILABLE_TOOLS = [
   },
   {
     name: 'getPublishersByFormats',
-    description: 'Find publishers that support specific ad formats on specific devices. Each format has its own available device options based on Monday.com configuration.',
+    description: 'Find publishers/sites that support specific ad formats on specific devices. Each format has its own available device options based on Monday.com configuration.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -389,14 +389,14 @@ const AVAILABLE_TOOLS = [
   },
   {
     name: 'findPublisherAdUnits',
-    description: 'Find Publisher Ad Units with complete hierarchy for GAM forecasting. When searching by publisher name (e.g., "jv.dk"), automatically fetches: 1) The parent group (Level 1, e.g., JFM), 2) The publisher(s) (Level 2), and 3) ALL child ad units (Level 3, e.g., billboard_1, mobile_2). Returns all GAM Ad Unit IDs needed for forecasting. Board: 1558569789. Filters by Source (default: Google Ad Manager).',
+    description: 'Find Publisher/Site Ad Units with complete hierarchy for GAM forecasting. When searching by publisher/site name (e.g., "jv.dk"), automatically fetches: 1) The parent group (Level 1, e.g., JFM), 2) The publisher/site(s) (Level 2), and 3) ALL child ad units (Level 3, e.g., billboard_1, mobile_2). Returns all GAM Ad Unit IDs needed for forecasting. Board: 1558569789. Filters by Source (default: Google Ad Manager).',
     inputSchema: {
       type: 'object',
       properties: {
         names: {
           type: 'array',
           items: { type: 'string' },
-          description: 'Publisher names or domains to search for (without www/https). Example: ["jv.dk", "berlingske"]. Returns parent group, publisher, and child ad units.'
+          description: 'Publisher/site names or domains to search for (without www/https). Example: ["jv.dk", "berlingske"]. Returns parent group, publisher/site, and child ad units.'
         },
         verticals: {
           type: 'array',
