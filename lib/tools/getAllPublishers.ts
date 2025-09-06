@@ -119,10 +119,14 @@ export async function getAllPublishers() {
       return lines.join('\n');
     }
     
-    // Sort publishers by name
-    const sortedPublishers = filteredPublishers.sort((a, b) => 
-      a.name.toLowerCase().localeCompare(b.name.toLowerCase())
-    );
+    // Sort publishers by vertical, then by name
+    const sortedPublishers = filteredPublishers.sort((a, b) => {
+      // First sort by vertical
+      const verticalCompare = a.vertical.toLowerCase().localeCompare(b.vertical.toLowerCase());
+      if (verticalCompare !== 0) return verticalCompare;
+      // Then sort by name within same vertical
+      return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+    });
     
     // Create table with new columns
     lines.push('| Publisher/Site | GAM ID | Vertical | Group | Approval |');
