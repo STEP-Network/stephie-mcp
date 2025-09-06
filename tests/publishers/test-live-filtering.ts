@@ -1,8 +1,8 @@
 import { config } from 'dotenv';
-import { getAllPublishers } from './lib/tools/getAllPublishers.js';
-import { getPublisherFormats } from './lib/tools/getPublisherFormats.js';
+import { getAllPublishers } from '../../lib/tools/getAllPublishers.js';
+import { getPublisherFormats } from '../../lib/tools/getPublisherFormats.js';
 
-config({ path: '.env.local' });
+config({ path: '../../.env.local' });
 
 (async () => {
   console.log('Testing Live filtering in publisher tools...\n');

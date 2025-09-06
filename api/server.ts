@@ -1,157 +1,207 @@
 import { z } from 'zod';
 import { createMcpHandler } from 'mcp-handler';
+import * as dotenv from 'dotenv';
 
-// Simple implementation without complex lib dependencies for Vercel deployment
-async function createAvailabilityForecast(params: any): Promise<string> {
-  const { startDate, endDate, sizes, goalQuantity } = params;
-  
-  // Check if we have Google Ad Manager credentials
-  const hasGAMCredentials = !!(
-    process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL && 
-    process.env.GOOGLE_PRIVATE_KEY && 
-    process.env.GOOGLE_AD_MANAGER_NETWORK_CODE
+// Import all tools
+import { getAllPublishers } from '../lib/tools/getAllPublishers.js';
+import { getPublisherFormats } from '../lib/tools/getPublisherFormats.js';
+import { getPublishersByFormats } from '../lib/tools/getPublishersByFormats.js';
+import { getAllProducts } from '../lib/tools/getAllProducts.js';
+import { getAllFormats } from '../lib/tools/getAllFormats.js';
+import { getAllSizes } from '../lib/tools/getAllSizes.js';
+import { getAllAdPrices } from '../lib/tools/getAllAdPrices.js';
+import { findPublisherAdUnits } from '../lib/tools/findPublisherAdUnits.js';
+import { getKeyValues } from '../lib/tools/getKeyValues.js';
+import { getAudienceSegments } from '../lib/tools/getAudienceSegments.js';
+import { getAllPlacements } from '../lib/tools/getAllPlacements.js';
+import { getGeoLocations } from '../lib/tools/getGeoLocations.js';
+import { getContextualTargeting } from '../lib/tools/getContextualTargeting.js';
+import { availabilityForecast } from '../lib/tools/availabilityForecast.js';
+import { listBoards } from '../lib/tools/debug/listBoards.js';
+import { getBoardColumns } from '../lib/tools/debug/getBoardColumns.js';
+import { getItems } from '../lib/tools/debug/getItems.js';
+
+// Load environment variables
+dotenv.config({ path: '.env.local' });
+
+// Create the MCP handler with all tools
+export default createMcpHandler({
+  name: 'STEPhie MCP Server',
+  version: '1.0.0',
+  description: 'MCP server for STEPhie tools - Access publisher data and ad forecasting'
+}, (server) => {
+  // Publisher tools
+  server.tool('getAllPublishers', 
+    z.object({}),
+    async () => getAllPublishers()
   );
-  
-  if (!hasGAMCredentials) {
-    return `# Google Ad Manager Availability Forecast
 
-## ⚠️ Configuration Required
+  server.tool('getPublisherFormats',
+    z.object({
+      publisherName: z.string().optional(),
+      publisherGroupName: z.string().optional(),
+      limit: z.number().default(100).optional()
+    }),
+    async (input) => getPublisherFormats(input)
+  );
 
-**Status:** Missing Google Ad Manager credentials
+  server.tool('getPublishersByFormats',
+    z.object({
+      topscroll: z.enum(['Desktop', 'Mobile', 'App', 'All']).optional(),
+      topscrollExpand: z.enum(['Desktop', 'Mobile', 'App', 'All']).optional(),
+      doubleMidscroll: z.enum(['Desktop', 'Mobile', 'All']).optional(),
+      midscroll: z.enum(['Desktop', 'Mobile', 'All']).optional(),
+      midscrollExpand: z.enum(['Desktop', 'Mobile', 'All']).optional(),
+      slider: z.enum(['Desktop', 'Mobile', 'All']).optional(),
+      parallax: z.enum(['Desktop', 'Mobile', 'All']).optional(),
+      topscrollHighimpact: z.enum(['Desktop', 'Mobile', 'All']).optional(),
+      midscrollHighimpact: z.enum(['Desktop', 'Mobile', 'All']).optional(),
+      sticky: z.enum(['Desktop', 'Mobile', 'App', 'All']).optional(),
+      interstitial: z.enum(['Desktop', 'Mobile', 'App', 'All']).optional(),
+      trueNative: z.enum(['Desktop', 'Mobile', 'All']).optional(),
+      video: z.enum(['Desktop', 'Mobile', 'All']).optional(),
+      vertikalVideo: z.enum(['Desktop', 'Mobile', 'All']).optional(),
+      outstream: z.enum(['Desktop', 'Mobile', 'All']).optional(),
+      videoPlayback: z.boolean().optional(),
+      ott: z.boolean().optional(),
+      reAd: z.boolean().optional()
+    }),
+    async (input) => getPublishersByFormats(input)
+  );
 
-**Required Environment Variables:**
-- GOOGLE_SERVICE_ACCOUNT_EMAIL: ${process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL ? '✅ Set' : '❌ Missing'}
-- GOOGLE_PRIVATE_KEY: ${process.env.GOOGLE_PRIVATE_KEY ? '✅ Set' : '❌ Missing'}  
-- GOOGLE_AD_MANAGER_NETWORK_CODE: ${process.env.GOOGLE_AD_MANAGER_NETWORK_CODE ? '✅ Set' : '❌ Missing'}
+  server.tool('findPublisherAdUnits',
+    z.object({
+      names: z.array(z.string())
+    }),
+    async (input) => findPublisherAdUnits(input)
+  );
 
-## Request Details  
-**Period:** ${startDate} - ${endDate}
-**Sizes:** ${sizes.map(([w, h]: number[]) => `${w}x${h}`).join(', ')}
-${goalQuantity ? `**Goal:** ${goalQuantity.toLocaleString()} impressions` : ''}
+  // Product & pricing tools
+  server.tool('getAllProducts',
+    z.object({
+      includeIds: z.boolean().default(false).optional()
+    }),
+    async (input) => getAllProducts(input)
+  );
 
-**Next Steps:** Configure the required environment variables in Vercel dashboard to enable real GAM integration.`;
-  }
+  server.tool('getAllFormats',
+    z.object({
+      device: z.enum(['Desktop', 'Mobile', 'App', 'All']).optional(),
+      includeIds: z.boolean().default(false).optional()
+    }),
+    async (input) => getAllFormats(input)
+  );
 
-  // Mock implementation with realistic data
-  const mockAvailable = goalQuantity ? Math.floor(goalQuantity * 0.85) : 1250000;
-  const mockMatched = Math.floor(mockAvailable * 0.88);
-  const mockPossible = Math.floor(mockMatched * 0.91);
-  
-  return `# Google Ad Manager Availability Forecast
+  server.tool('getAllSizes',
+    z.object({
+      minWidth: z.number().optional(),
+      maxWidth: z.number().optional(),
+      includeIds: z.boolean().default(false).optional()
+    }),
+    async (input) => getAllSizes(input)
+  );
 
-## Request Details
-**Period:** ${startDate} - ${endDate}
-**Sizes:** ${sizes.map(([w, h]: number[]) => `${w}x${h}`).join(', ')}
-${goalQuantity ? `**Goal:** ${goalQuantity.toLocaleString()} impressions` : ''}
+  server.tool('getAllAdPrices',
+    z.object({
+      format: z.string().optional(),
+      includeIds: z.boolean().default(false).optional()
+    }),
+    async (input) => getAllAdPrices(input)
+  );
 
-## Forecast Results
-| Metric | Value |
-|--------|--------|
-| **Available Units** | ${mockAvailable.toLocaleString()} |
-| **Matched Units** | ${mockMatched.toLocaleString()} |
-| **Possible Units** | ${mockPossible.toLocaleString()} |
-| **Delivered Units** | 0 |
-| **Reserved Units** | ${(mockAvailable - mockMatched).toLocaleString()} |
+  // Targeting tools
+  server.tool('getKeyValues',
+    z.object({
+      keySearch: z.string().optional(),
+      valueSearch: z.string().optional(),
+      limit: z.number().default(50).optional(),
+      valueLimit: z.number().default(50).optional(),
+      totalValueLimit: z.number().default(500).optional()
+    }),
+    async (input) => getKeyValues(input)
+  );
 
-${goalQuantity ? `### Goal Achievement
-**${Math.round((mockAvailable / goalQuantity) * 100)}%** of goal can be fulfilled
-${mockAvailable >= goalQuantity * 0.95 ? '✅ **Goal can be achieved**' : 
-  mockAvailable >= goalQuantity * 0.75 ? '⚠️ **Goal partially achievable**' : 
-  '❌ **Goal difficult to achieve**'}` : ''}
+  server.tool('getAudienceSegments',
+    z.object({
+      search: z.string().optional(),
+      limit: z.number().default(100).optional()
+    }),
+    async (input) => getAudienceSegments(input)
+  );
 
-**Summary:** Mock forecast data with realistic projections. Real GAM integration active with environment variables configured.`;
-}
+  server.tool('getAllPlacements',
+    z.object({
+      includeIds: z.boolean().default(false).optional()
+    }),
+    async (input) => getAllPlacements(input)
+  );
 
-// Create MCP handler with our tools
-const handler = createMcpHandler((server) => {
-  // Availability Forecast Tool
-  server.tool(
-    'availabilityForecast',
-    'Get Google Ad Manager availability forecast for ad campaigns',
-    {
-      startDate: z.string().describe('Start date in YYYY-MM-DD format or "now" for immediate start'),
-      endDate: z.string().describe('End date in YYYY-MM-DD format'),
-      sizes: z.array(z.array(z.number()).length(2)).describe('Array of ad sizes as [width, height] pairs, e.g. [[300,250], [728,90]]'),
-      goalQuantity: z.number().optional().describe('Target number of impressions. Leave undefined for maximum available'),
-      targetedAdUnitIds: z.array(z.number()).optional().describe('Array of ad unit IDs to target (from findPublisherAdUnits)'),
-      excludedAdUnitIds: z.array(z.number()).optional().describe('Array of ad unit IDs to exclude from forecast'),
-      audienceSegmentIds: z.array(z.string()).optional().describe('Array of audience segment IDs for demographic targeting'),
+  server.tool('getGeoLocations',
+    z.object({
+      search: z.string(),
+      limit: z.number().default(50).optional()
+    }),
+    async (input) => getGeoLocations(input)
+  );
+
+  server.tool('getContextualTargeting',
+    z.object({
+      search: z.string().optional(),
+      limit: z.number().default(100).optional()
+    }),
+    async (input) => getContextualTargeting(input)
+  );
+
+  // Forecasting tool
+  server.tool('availabilityForecast',
+    z.object({
+      startDate: z.string(),
+      endDate: z.string(),
+      sizes: z.array(z.array(z.number())),
+      adUnitIds: z.array(z.string()).optional(),
+      excludeAdUnitDescendants: z.boolean().default(false).optional(),
+      geoTargeting: z.object({
+        include: z.array(z.string()).optional(),
+        exclude: z.array(z.string()).optional()
+      }).optional(),
       customTargeting: z.array(z.object({
         keyId: z.string(),
         valueIds: z.array(z.string()),
-        operator: z.enum(['IS', 'IS_NOT']).optional()
-      })).optional().describe('Array of custom targeting key-value pairs'),
-      frequencyCapMaxImpressions: z.number().optional().describe('Maximum impressions per user for frequency capping'),
-      frequencyCapTimeUnit: z.enum(['MINUTE', 'HOUR', 'DAY', 'WEEK', 'MONTH', 'LIFETIME']).optional().describe('Time unit for frequency capping'),
-      geoTargeting: z.object({
-        targetedLocationIds: z.array(z.string()).optional(),
-        excludedLocationIds: z.array(z.string()).optional()
-      }).optional().describe('Geographic targeting configuration'),
-      targetedPlacementIds: z.array(z.string()).optional().describe('Array of placement IDs to target')
-    },
-    async (params) => {
-      const result = await createAvailabilityForecast(params);
-      return {
-        content: [
-          {
-            type: 'text',
-            text: result
-          }
-        ]
-      };
-    }
+        operator: z.enum(['IS', 'IS_NOT'])
+      })).optional(),
+      audienceSegmentIds: z.array(z.string()).optional(),
+      placementIds: z.array(z.string()).optional(),
+      frequencyCap: z.object({
+        maxImpressions: z.number(),
+        numTimeUnits: z.number(),
+        timeUnit: z.enum(['MINUTE', 'HOUR', 'DAY', 'WEEK', 'MONTH', 'LIFETIME', 'POD', 'STREAM', 'UNKNOWN'])
+      }).optional(),
+      goalQuantity: z.number().optional(),
+      includeContendingLineItems: z.boolean().default(false).optional(),
+      includeTargetingCriteriaBreakdown: z.boolean().default(false).optional()
+    }),
+    async (input) => availabilityForecast(input)
   );
 
-  // Simple test tool
-  server.tool(
-    'echo',
-    'Echo back the input message',
-    {
-      message: z.string().describe('The message to echo back')
-    },
-    async ({ message }) => {
-      return {
-        content: [
-          {
-            type: 'text',
-            text: `Echo: ${message || 'No message provided'}`
-          }
-        ]
-      };
-    }
+  // Debug tools
+  server.tool('listBoards',
+    z.object({}),
+    async () => listBoards()
   );
 
-  // Health check tool  
-  server.tool(
-    'health',
-    'Check server health and configuration',
-    {},
-    async () => {
-      const healthMessage = `STEPhie MCP Server is running
-        
-**Status:** ✅ Healthy
-**Version:** 1.0.0  
-**Timestamp:** ${new Date().toISOString()}
-**Environment Variables:**
-- MONDAY_API_KEY: ${process.env.MONDAY_API_KEY ? '✅ Set' : '❌ Missing'}
-- GOOGLE_SERVICE_ACCOUNT_EMAIL: ${process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL ? '✅ Set' : '❌ Missing'}
-- GOOGLE_PRIVATE_KEY: ${process.env.GOOGLE_PRIVATE_KEY ? '✅ Set' : '❌ Missing'}
-- GOOGLE_AD_MANAGER_NETWORK_CODE: ${process.env.GOOGLE_AD_MANAGER_NETWORK_CODE ? '✅ Set' : '❌ Missing'}
+  server.tool('getBoardColumns',
+    z.object({
+      boardId: z.string()
+    }),
+    async (input) => getBoardColumns(input.boardId)
+  );
 
-**Available Tools:**
-- availabilityForecast - Google Ad Manager availability forecasting
-- echo - Simple echo test
-- health - This health check`;
-      return {
-        content: [
-          {
-            type: 'text',
-            text: healthMessage
-          }
-        ]
-      };
-    }
+  server.tool('getItems',
+    z.object({
+      boardId: z.string(),
+      limit: z.number().default(10).optional(),
+      columnIds: z.array(z.string()).optional()
+    }),
+    async (input) => getItems(input)
   );
 });
-
-export default handler;

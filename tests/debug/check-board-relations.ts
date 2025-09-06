@@ -1,6 +1,6 @@
 import { config } from 'dotenv';
-import { getBoardColumns } from './lib/tools/debug/getBoardColumns.js';
-config({ path: '.env.local' });
+import { getBoardColumns } from '../../lib/tools/debug/getBoardColumns.js';
+config({ path: '../../.env.local' });
 
 (async () => {
   const result = await getBoardColumns('1222800432');

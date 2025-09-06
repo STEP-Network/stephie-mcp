@@ -1,10 +1,10 @@
 #!/usr/bin/env npx tsx
 
 import * as dotenv from 'dotenv';
-import { findPublisherAdUnits } from './lib/tools/findPublisherAdUnits.js';
+import { findPublisherAdUnits } from '../../lib/tools/findPublisherAdUnits.js';
 
 // Load environment variables
-dotenv.config({ path: '.env.local' });
+dotenv.config({ path: '../../.env.local' });
 
 async function test() {
   console.log('Testing findPublisherAdUnits with jv.dk...\n');

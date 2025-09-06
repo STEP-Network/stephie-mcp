@@ -1,8 +1,8 @@
 import { config } from 'dotenv';
-import { getPublishersByFormats } from './lib/tools/getPublishersByFormats.js';
+import { getPublishersByFormats } from '../../lib/tools/getPublishersByFormats.js';
 
 // Load environment variables
-config({ path: '.env.local' });
+config({ path: '../../.env.local' });
 
 (async () => {
   try {

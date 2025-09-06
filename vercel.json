@@ -2,44 +2,18 @@
   "buildCommand": "pnpm build",
   "outputDirectory": ".",
   "functions": {
-    "api/index.ts": {
-      "maxDuration": 60
+    "api/server.ts": {
+      "maxDuration": 120,
+      "memory": 1024
     },
     "api/health.ts": {
       "maxDuration": 30
-    },
-    "api/server.ts": {
-      "maxDuration": 60
-    },
-    "api/mcp.ts": {
-      "maxDuration": 120,
-      "memory": 1024
-    },
-    "api/mcp-sse.ts": {
-      "maxDuration": 120,
-      "memory": 1024
     }
   },
   "rewrites": [
     {
-      "source": "/",
-      "destination": "/api/index"
-    },
-    {
-      "source": "/health",
-      "destination": "/api/health"
-    },
-    {
-      "source": "/mcp",
-      "destination": "/api/mcp"
-    },
-    {
-      "source": "/mcp-sse",
-      "destination": "/api/mcp-sse"
-    },
-    {
-      "source": "/sse",
-      "destination": "/api/mcp-sse"
+      "source": "/(.*)",
+      "destination": "/api/server"
     }
   ],
   "headers": [
@@ -56,7 +30,7 @@
         },
         {
           "key": "Access-Control-Allow-Methods",
-          "value": "GET,OPTIONS,POST"
+          "value": "GET,OPTIONS,POST,DELETE"
         },
         {
           "key": "Access-Control-Allow-Headers",

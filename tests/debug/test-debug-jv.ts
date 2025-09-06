@@ -1,10 +1,10 @@
 #!/usr/bin/env npx tsx
 
 import * as dotenv from 'dotenv';
-import { getItems } from './lib/tools/debug/getItems.js';
+import { getItems } from '../../lib/tools/debug/getItems.js';
 
 // Load environment variables
-dotenv.config({ path: '.env.local' });
+dotenv.config({ path: '../../.env.local' });
 
 async function test() {
   console.log('Getting jv.dk item details...\n');

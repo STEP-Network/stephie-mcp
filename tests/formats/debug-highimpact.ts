@@ -1,7 +1,7 @@
 import { config } from 'dotenv';
-config({ path: '.env.local' });
+config({ path: '../../.env.local' });
 
-import { mondayApi, BOARD_IDS } from './lib/monday/client.js';
+import { mondayApi, BOARD_IDS } from '../../lib/monday/client.js';
 
 (async () => {
   const query = `
