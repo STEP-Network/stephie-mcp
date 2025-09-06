@@ -54,7 +54,7 @@ export async function getAllPublishers() {
     // Check if we got boards
     if (!response.data?.boards || response.data.boards.length === 0) {
       console.error('No boards found in response');
-      return { publishers: [], total: 0, error: 'No boards found' };
+      return '# Error\n\nNo boards found in Monday.com response';
     }
     
     const board = response.data.boards[0];

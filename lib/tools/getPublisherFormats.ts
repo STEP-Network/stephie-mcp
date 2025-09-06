@@ -118,7 +118,7 @@ export async function getPublisherFormats(args: {
     const response = await mondayApi(query);
     
     if (!response.data?.boards || response.data.boards.length === 0) {
-      return { publishers: [], total: 0, error: 'No boards found' };
+      return '# Error\n\nNo boards found in Monday.com response';
     }
     
     const items = response.data.boards[0]?.items_page?.items || [];

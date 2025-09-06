@@ -17,7 +17,7 @@ import { getAllPlacements } from '../lib/tools/getAllPlacements.js';
 import { getGeoLocations } from '../lib/tools/getGeoLocations.js';
 import { getContextualTargeting } from '../lib/tools/getContextualTargeting.js';
 import { availabilityForecast } from '../lib/tools/availabilityForecast.js';
-import { listBoards } from '../lib/tools/debug/listBoards.js';
+import { listAllBoards } from '../lib/tools/debug/listBoards.js';
 import { getBoardColumns } from '../lib/tools/debug/getBoardColumns.js';
 import { getItems } from '../lib/tools/debug/getItems.js';
 
@@ -25,28 +25,31 @@ import { getItems } from '../lib/tools/debug/getItems.js';
 dotenv.config({ path: '.env.local' });
 
 // Create the MCP handler with all tools
-export default createMcpHandler({
-  name: 'STEPhie MCP Server',
-  version: '1.0.0',
-  description: 'MCP server for STEPhie tools - Access publisher data and ad forecasting'
-}, (server) => {
+export default createMcpHandler((server) => {
   // Publisher tools
   server.tool('getAllPublishers', 
-    z.object({}),
-    async () => getAllPublishers()
+    {},
+    async () => {
+      const result = await getAllPublishers();
+      return { content: [{ type: 'text', text: String(result) }] };
+    }
   );
 
   server.tool('getPublisherFormats',
-    z.object({
+    {
       publisherName: z.string().optional(),
       publisherGroupName: z.string().optional(),
       limit: z.number().default(100).optional()
-    }),
-    async (input) => getPublisherFormats(input)
+    },
+    async (input) => {
+      const result = await getPublisherFormats(input);
+      const text = typeof result === 'string' ? result : JSON.stringify(result, null, 2);
+      return { content: [{ type: 'text', text }] };
+    }
   );
 
   server.tool('getPublishersByFormats',
-    z.object({
+    {
       topscroll: z.enum(['Desktop', 'Mobile', 'App', 'All']).optional(),
       topscrollExpand: z.enum(['Desktop', 'Mobile', 'App', 'All']).optional(),
       doubleMidscroll: z.enum(['Desktop', 'Mobile', 'All']).optional(),
@@ -65,143 +68,188 @@ export default createMcpHandler({
       videoPlayback: z.boolean().optional(),
       ott: z.boolean().optional(),
       reAd: z.boolean().optional()
-    }),
-    async (input) => getPublishersByFormats(input)
+    },
+    async (input) => {
+      const result = await getPublishersByFormats(input);
+      const text = typeof result === 'string' ? result : JSON.stringify(result, null, 2);
+      return { content: [{ type: 'text', text }] };
+    }
   );
 
   server.tool('findPublisherAdUnits',
-    z.object({
+    {
       names: z.array(z.string())
-    }),
-    async (input) => findPublisherAdUnits(input)
+    },
+    async (input) => {
+      const result = await findPublisherAdUnits(input);
+      const text = typeof result === 'string' ? result : JSON.stringify(result, null, 2);
+      return { content: [{ type: 'text', text }] };
+    }
   );
 
   // Product & pricing tools
   server.tool('getAllProducts',
-    z.object({
-      includeIds: z.boolean().default(false).optional()
-    }),
-    async (input) => getAllProducts(input)
+    {},
+    async () => {
+      const result = await getAllProducts({});
+      const text = typeof result === 'string' ? result : JSON.stringify(result, null, 2);
+      return { content: [{ type: 'text', text }] };
+    }
   );
 
   server.tool('getAllFormats',
-    z.object({
-      device: z.enum(['Desktop', 'Mobile', 'App', 'All']).optional(),
-      includeIds: z.boolean().default(false).optional()
-    }),
-    async (input) => getAllFormats(input)
+    {},
+    async () => {
+      const result = await getAllFormats({});
+      const text = typeof result === 'string' ? result : JSON.stringify(result, null, 2);
+      return { content: [{ type: 'text', text }] };
+    }
   );
 
   server.tool('getAllSizes',
-    z.object({
-      minWidth: z.number().optional(),
-      maxWidth: z.number().optional(),
-      includeIds: z.boolean().default(false).optional()
-    }),
-    async (input) => getAllSizes(input)
+    {},
+    async () => {
+      const result = await getAllSizes({});
+      const text = typeof result === 'string' ? result : JSON.stringify(result, null, 2);
+      return { content: [{ type: 'text', text }] };
+    }
   );
 
   server.tool('getAllAdPrices',
-    z.object({
-      format: z.string().optional(),
-      includeIds: z.boolean().default(false).optional()
-    }),
-    async (input) => getAllAdPrices(input)
+    {},
+    async () => {
+      const result = await getAllAdPrices({});
+      const text = typeof result === 'string' ? result : JSON.stringify(result, null, 2);
+      return { content: [{ type: 'text', text }] };
+    }
   );
 
   // Targeting tools
   server.tool('getKeyValues',
-    z.object({
+    {
       keySearch: z.string().optional(),
       valueSearch: z.string().optional(),
       limit: z.number().default(50).optional(),
       valueLimit: z.number().default(50).optional(),
       totalValueLimit: z.number().default(500).optional()
-    }),
-    async (input) => getKeyValues(input)
+    },
+    async (input) => {
+      const result = await getKeyValues(input);
+      const text = typeof result === 'string' ? result : JSON.stringify(result, null, 2);
+      return { content: [{ type: 'text', text }] };
+    }
   );
 
   server.tool('getAudienceSegments',
-    z.object({
+    {
       search: z.string().optional(),
       limit: z.number().default(100).optional()
-    }),
-    async (input) => getAudienceSegments(input)
+    },
+    async (input) => {
+      const result = await getAudienceSegments(input);
+      const text = typeof result === 'string' ? result : JSON.stringify(result, null, 2);
+      return { content: [{ type: 'text', text }] };
+    }
   );
 
   server.tool('getAllPlacements',
-    z.object({
-      includeIds: z.boolean().default(false).optional()
-    }),
-    async (input) => getAllPlacements(input)
+    {},
+    async () => {
+      const result = await getAllPlacements({});
+      const text = typeof result === 'string' ? result : JSON.stringify(result, null, 2);
+      return { content: [{ type: 'text', text }] };
+    }
   );
 
   server.tool('getGeoLocations',
-    z.object({
-      search: z.string(),
-      limit: z.number().default(50).optional()
-    }),
-    async (input) => getGeoLocations(input)
+    {
+      search: z.array(z.string()).optional(),
+      type: z.enum(['region', 'country', 'postal_code', 'city', 'municipality']).optional(),
+      limit: z.number().default(20).optional()
+    },
+    async (input) => {
+      const result = await getGeoLocations(input);
+      const text = typeof result === 'string' ? result : JSON.stringify(result, null, 2);
+      return { content: [{ type: 'text', text }] };
+    }
   );
 
   server.tool('getContextualTargeting',
-    z.object({
+    {
       search: z.string().optional(),
       limit: z.number().default(100).optional()
-    }),
-    async (input) => getContextualTargeting(input)
+    },
+    async (input) => {
+      const result = await getContextualTargeting(input);
+      const text = typeof result === 'string' ? result : JSON.stringify(result, null, 2);
+      return { content: [{ type: 'text', text }] };
+    }
   );
 
   // Forecasting tool
   server.tool('availabilityForecast',
-    z.object({
+    {
       startDate: z.string(),
       endDate: z.string(),
       sizes: z.array(z.array(z.number())),
-      adUnitIds: z.array(z.string()).optional(),
-      excludeAdUnitDescendants: z.boolean().default(false).optional(),
-      geoTargeting: z.object({
-        include: z.array(z.string()).optional(),
-        exclude: z.array(z.string()).optional()
-      }).optional(),
+      goalQuantity: z.number().nullable().optional(),
+      targetedAdUnitIds: z.array(z.number()).nullable().optional(),
+      excludedAdUnitIds: z.array(z.number()).nullable().optional(),
+      audienceSegmentIds: z.array(z.string()).nullable().optional(),
       customTargeting: z.array(z.object({
         keyId: z.string(),
         valueIds: z.array(z.string()),
-        operator: z.enum(['IS', 'IS_NOT'])
-      })).optional(),
-      audienceSegmentIds: z.array(z.string()).optional(),
-      placementIds: z.array(z.string()).optional(),
-      frequencyCap: z.object({
-        maxImpressions: z.number(),
-        numTimeUnits: z.number(),
-        timeUnit: z.enum(['MINUTE', 'HOUR', 'DAY', 'WEEK', 'MONTH', 'LIFETIME', 'POD', 'STREAM', 'UNKNOWN'])
-      }).optional(),
-      goalQuantity: z.number().optional(),
-      includeContendingLineItems: z.boolean().default(false).optional(),
-      includeTargetingCriteriaBreakdown: z.boolean().default(false).optional()
-    }),
-    async (input) => availabilityForecast(input)
+        operator: z.enum(['IS', 'IS_NOT']).optional()
+      })).nullable().optional(),
+      frequencyCapMaxImpressions: z.number().nullable().optional(),
+      frequencyCapTimeUnit: z.enum(['MINUTE', 'HOUR', 'DAY', 'WEEK', 'MONTH', 'LIFETIME', 'POD', 'STREAM', 'UNKNOWN']).nullable().optional(),
+      frequencyCapTimeLength: z.number().nullable().optional()
+    },
+    async (input) => {
+      // Ensure required fields are present
+      const params = {
+        startDate: input.startDate,
+        endDate: input.endDate,
+        sizes: input.sizes,
+        ...input
+      };
+      const result = await availabilityForecast(params as any);
+      const text = typeof result === 'string' ? result : JSON.stringify(result, null, 2);
+      return { content: [{ type: 'text', text }] };
+    }
   );
 
   // Debug tools
   server.tool('listBoards',
-    z.object({}),
-    async () => listBoards()
+    {},
+    async () => {
+      const result = await listAllBoards();
+      // Convert object to string if needed
+      const text = typeof result === 'string' ? result : JSON.stringify(result, null, 2);
+      return { content: [{ type: 'text', text }] };
+    }
   );
 
   server.tool('getBoardColumns',
-    z.object({
+    {
       boardId: z.string()
-    }),
-    async (input) => getBoardColumns(input.boardId)
+    },
+    async (input) => {
+      const result = await getBoardColumns(input.boardId);
+      return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+    }
   );
 
   server.tool('getItems',
-    z.object({
+    {
       boardId: z.string(),
       limit: z.number().default(10).optional(),
       columnIds: z.array(z.string()).optional()
-    }),
-    async (input) => getItems(input)
+    },
+    async (input) => {
+      // Ensure boardId is always passed
+      const result = await getItems({ boardId: input.boardId, ...input });
+      return { content: [{ type: 'text', text: String(result) }] };
+    }
   );
 });
