@@ -457,7 +457,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
   },
   {
     name: 'getBoardColumns',
-    description: 'Get column structure for any Monday.com board. Shows column IDs, types, and for status/dropdown columns shows available options with their indices/values. Use this before getItems to understand what values to filter by.',
+    description: 'Get board columns with IDs, types, and status/dropdown index mappings.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -472,85 +472,50 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
   },
   {
     name: 'getItems',
-    description: `Fetch and filter items from any Monday.com board.
-
-⚠️ CRITICAL: STATUS AND DROPDOWN COLUMNS REQUIRE NUMERIC INDICES, NOT TEXT!
-
-REQUIRED WORKFLOW:
-1. First use getBoardColumns(boardId) to see column IDs, types, and index mappings
-2. Then use getItems with NUMERIC indices for status/dropdown columns
-
-EXAMPLES:
-• Status: {columnId: "status_19__1", value: 4}  // ✅ CORRECT: Index 4
-• Status: {columnId: "status_19__1", value: "In Progress"}  // ❌ WRONG: Will fail!
-• Text: {columnId: "text__1", value: "search term", operator: "contains"}
-• People: {columnId: "people__1", value: "me"}  // Special value
-• Date: {columnId: "date__1", value: "2024-01-01", operator: "greater"}
-• Multiple: [{columnId: "status__1", value: 1}, {columnId: "text__1", value: "urgent"}]
-
-Column value formats by type:
-• STATUS: MUST BE NUMERIC INDEX (e.g., 4 not "In Progress") - getBoardColumns shows mapping
-• DROPDOWN: MUST BE NUMERIC INDEX - getBoardColumns shows available options
-• TEXT/LONG_TEXT: Any string value
-• NUMBERS: Numeric values
-• DATE: "YYYY-MM-DD" or relative ("TODAY", "THIS_WEEK", "ONE_MONTH_AGO")
-• PEOPLE: User ID, name, or "me" for current user
-• BOARD_RELATION: Item IDs or item names for connected items
-• CHECKBOX: true/false or "checked"/"unchecked"
-• EMAIL/LINK: String values
-• PHONE: Phone numbers or partial matches
-
-Operator selection (defaults applied if omitted):
-• Status/Dropdown: equals (default), notEquals, empty, notEmpty
-• Text/Email: contains (default), equals, notContains, empty
-• Numbers: equals, greater, less, between, empty
-• Date: exact, greater, less, between, empty
-• People: equals, contains, me (assigned to me), empty
-• Board Relations: equals (by ID), contains (by name), empty
-• Checkbox: checked, unchecked`,
+    description: `Query Monday.com board items. Use getBoardColumns first to get column IDs and types. STATUS/DROPDOWN require numeric indices only.`,
     inputSchema: {
       type: 'object',
       properties: {
         boardId: {
           type: 'string',
-          description: 'Monday.com board ID',
+          description: 'Board ID',
           required: true
         },
         limit: {
           type: 'number',
-          description: 'Maximum items to return (default: 10)',
+          description: 'Max items',
           default: 10
         },
         columnIds: {
           type: 'array',
           items: { type: 'string' },
-          description: 'Specific column IDs to fetch (optional - fetches all if not specified)'
+          description: 'Column IDs to return'
         },
         itemIds: {
           type: 'array',
           items: { type: 'string' },
-          description: 'Specific item IDs to fetch (overrides other filters)'
+          description: 'Item IDs to fetch'
         },
         search: {
           type: 'string',
-          description: 'Search items by name (partial match)'
+          description: 'Name search'
         },
         columnFilters: {
           type: 'array',
-          description: 'Filter items by column values. For status columns, use the label text (e.g., "In Progress", "Done") - NOT "IS" or other operators.',
+          description: 'Column filters. Status/dropdown need numeric indices.',
           items: {
             type: 'object',
             properties: {
               columnId: {
                 type: 'string',
-                description: 'Column ID to filter by (e.g., "status_19__1" for status, "text__1" for text)'
+                description: 'Column ID'
               },
               value: {
-                description: 'Value to filter by. STATUS/DROPDOWN MUST BE NUMERIC (e.g., 4 not "In Progress"). Examples: 4 (status index), "me" (people), "2024-01-01" (date), true (checkbox)'
+                description: 'Filter value. Status/dropdown: numeric index only.'
               },
               operator: {
                 type: 'string',
-                description: 'OPTIONAL - Default operator is applied based on column type if omitted. Common: equals, contains, greater, less, between, empty. Special: "me" for people assigned to current user.',
+                description: 'Filter operator',
                 enum: ['equals', 'notEquals', 'contains', 'notContains', 'greater', 'greaterOrEqual', 'less', 'lessOrEqual', 'between', 'empty', 'notEmpty', 'me', 'checked', 'unchecked']
               }
             },
@@ -559,7 +524,7 @@ Operator selection (defaults applied if omitted):
         },
         includeColumnMetadata: {
           type: 'boolean',
-          description: 'Include column type and settings information in response',
+          description: 'Include column metadata',
           default: false
         }
       },
