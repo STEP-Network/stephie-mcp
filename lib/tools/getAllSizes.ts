@@ -21,21 +21,14 @@ export async function getAllSizes(args: {
         ) {
           items {
             name
-            column_values(ids: [
-              "long_text_mkqsa10e",
-              "link_mkqscdn8", 
-              "numeric_mkqs8wx4",
-              "numeric_mkqspyt0", 
-              "numeric_mkqsqecq",
-              "text_mksgcrz8",
-              "dropdown_mkqszqya",
-              "board_relation_mkqpj8f2",
-              "board_relation_mkqpcw8q"
-            ]) {
+            column_values {
               id
               text
               ... on BoardRelationValue {
                 display_value
+                linked_items {
+                  name
+                }
               }
               ... on NumbersValue {
                 number
@@ -104,11 +97,17 @@ export async function getAllSizes(args: {
           case 'dropdown_mkqszqya':
             columnValues.deviceType = col.text || '';
             break;
-          case 'board_relation_mkqpj8f2':
-            columnValues.adFormats = col.display_value || col.text || '';
+          case 'board_relation_mkrhhdrx':
+            // Extract names from linked items for formats
+            columnValues.adFormats = col.linked_items?.length > 0
+              ? col.linked_items.map((item: any) => item.name).join(', ')
+              : col.display_value || col.text || '';
             break;
-          case 'board_relation_mkqpcw8q':
-            columnValues.adProducts = col.display_value || col.text || '';
+          case 'board_relation_mkrhckxh':
+            // Extract names from linked items for products
+            columnValues.adProducts = col.linked_items?.length > 0
+              ? col.linked_items.map((item: any) => item.name).join(', ')
+              : col.display_value || col.text || '';
             break;
         }
       });
