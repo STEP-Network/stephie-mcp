@@ -36,7 +36,7 @@ const authValidator = new AuthValidator();
 const AVAILABLE_TOOLS = [
   {
     name: 'getAllPublishers',
-    description: 'Get all Live publishers/sites from Monday.com Publishers board. Returns all 126 Live publishers/sites with basic information: name, website, description, status, vertical, publisher/site group, and approval status. For format information use getPublisherFormats or getPublishersByFormats.',
+    description: 'Get all Live publishers/sites from Monday.com Publishers board. Returns all 126 Live publishers/sites with essential information: Publisher/Site name, GAM Ad Unit ID, Vertical, Publisher Group, and Approval status (Gambling/Finance). Results are sorted alphabetically. For format information use getPublisherFormats or getPublishersByFormats.',
     inputSchema: {
       type: 'object',
       properties: {}
