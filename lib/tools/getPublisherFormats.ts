@@ -47,9 +47,8 @@ function parseDevices(value: string | undefined): string[] | null {
 export async function getPublisherFormats(args: {
   publisherName?: string;
   publisherGroupName?: string;
-  limit?: number;
 }) {
-  const { publisherName, publisherGroupName, limit = 500 } = args;
+  const { publisherName, publisherGroupName } = args;
 
   // Build filters for GraphQL query - ALWAYS include Live filter
   const filters: any[] = [
@@ -87,7 +86,7 @@ export async function getPublisherFormats(args: {
   // GraphQL query to fetch publishers with all format columns
   const query = `{
     boards(ids: ${BOARD_IDS.PUBLISHERS}) {
-      items_page(limit: ${limit}${filterString ? `, ${filterString}` : ''}) {
+      items_page(limit: 500${filterString ? `, ${filterString}` : ''}) {
         items {
           id
           name

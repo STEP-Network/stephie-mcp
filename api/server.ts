@@ -34,8 +34,7 @@ const handler = createMcpHandler((server) => {
   server.tool('getPublisherFormats',
     {
       publisherName: z.string().optional(),
-      publisherGroupName: z.string().optional(),
-      limit: z.number().default(100).optional()
+      publisherGroupName: z.string().optional()
     },
     async (input) => {
       const result = await getPublisherFormats(input);
