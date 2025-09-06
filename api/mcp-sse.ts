@@ -270,7 +270,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       jsonrpc: '2.0',
       method: 'connection.ready',
       params: {
-        protocolVersion: '0.1.0',
+        protocolVersion: '2024-11-05',
         capabilities: {
           tools: {},
         },
@@ -310,7 +310,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           jsonrpc: '2.0',
           id,
           result: {
-            protocolVersion: '0.1.0',
+            protocolVersion: '2024-11-05',
             capabilities: {
               tools: {},
             },
