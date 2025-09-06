@@ -16,7 +16,7 @@ export interface ToolDefinition {
 export const TOOL_DEFINITIONS: ToolDefinition[] = [
   {
     name: 'getAllPublishers',
-    description: 'Get all Live publishers/sites from Monday.com Publishers board. Returns all 126 Live publishers/sites with essential information: Publisher/Site name, GAM Ad Unit ID, Vertical, Publisher Group, and Approval status (Gambling/Finance). Results are sorted by Vertical, then alphabetically by name.',
+    description: 'Get all Live publishers/sites from Monday.com Publishers board. Returns all Live publishers/sites with essential information: Publisher/Site name, GAM Ad Unit ID, Vertical, Publisher Group, and Approval status (Gambling/Finance). Results are sorted by Vertical, then alphabetically by name.',
     inputSchema: {
       type: 'object',
       properties: {}
@@ -34,7 +34,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
         },
         publisherGroupName: {
           type: 'string',
-          description: 'Filter by publisher/site group name (e.g., "JyskFynske", "Berlingske")'
+          description: 'Filter by publisher/site group name (e.g., "JFM", "HeyMate")'
         },
         limit: {
           type: 'number',
@@ -472,7 +472,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
   },
   {
     name: 'getItems',
-    description: 'Generic tool to fetch items from any Monday.com board. Returns raw column data for debugging and exploration.',
+    description: 'Advanced tool to fetch and filter items from any Monday.com board. Supports intelligent column filtering with automatic operator selection based on column type. For status columns, use either the label text (will be auto-converted to index) or the index number directly.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -489,7 +489,42 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
         columnIds: {
           type: 'array',
           items: { type: 'string' },
-          description: 'Specific column IDs to fetch'
+          description: 'Specific column IDs to fetch (optional - fetches all if not specified)'
+        },
+        itemIds: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'Specific item IDs to fetch (overrides other filters)'
+        },
+        search: {
+          type: 'string',
+          description: 'Search items by name (partial match)'
+        },
+        columnFilters: {
+          type: 'array',
+          description: 'Filter items by column values. Automatically selects the right operator based on column type.',
+          items: {
+            type: 'object',
+            properties: {
+              columnId: {
+                type: 'string',
+                description: 'Column ID to filter by (e.g., "status_19__1")'
+              },
+              value: {
+                description: 'Value to filter by. For status columns, can use label text (e.g., "In Progress") or index number'
+              },
+              operator: {
+                type: 'string',
+                description: 'Optional operator. If not provided, will be auto-selected based on column type'
+              }
+            },
+            required: ['columnId', 'value']
+          }
+        },
+        includeColumnMetadata: {
+          type: 'boolean',
+          description: 'Include column type and settings information in response',
+          default: false
         }
       },
       required: ['boardId']

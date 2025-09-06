@@ -98,8 +98,10 @@ export async function getItems(args: {
   }
 
   try {
-    // First, get column metadata if we have filters to determine column types
+    // First, get column metadata if we have filters to determine column types and status labels
     let columnTypes: Record<string, string> = {};
+    let statusColumnSettings: Record<string, any> = {};
+    
     if (columnFilters && columnFilters.length > 0) {
       const metadataQuery = `
         query {
@@ -107,6 +109,7 @@ export async function getItems(args: {
             columns {
               id
               type
+              settings_str
             }
           }
         }
@@ -116,6 +119,16 @@ export async function getItems(args: {
       const columns = metadataResponse.data?.boards?.[0]?.columns || [];
       columns.forEach((col: any) => {
         columnTypes[col.id] = col.type;
+        
+        // Parse status column settings to get label-to-index mapping
+        if (col.type === 'color' && col.settings_str) {
+          try {
+            const settings = JSON.parse(col.settings_str);
+            statusColumnSettings[col.id] = settings;
+          } catch (e) {
+            console.error(`[getItems] Failed to parse settings for column ${col.id}`);
+          }
+        }
       });
     }
     
@@ -149,8 +162,8 @@ export async function getItems(args: {
             const typeOperators = COLUMN_TYPE_OPERATORS[columnType];
             if (typeOperators) {
               // Default operators based on column type
-              if (columnType === 'status' || columnType === 'dropdown') {
-                operator = typeOperators.equals; // 'any_of'
+              if (columnType === 'color' || columnType === 'status' || columnType === 'dropdown') {
+                operator = 'any_of'; // Status columns use 'any_of'
               } else if (columnType === 'text' || columnType === 'long_text') {
                 operator = typeOperators.contains; // 'contains_text'
               } else if (columnType === 'numbers') {
@@ -166,10 +179,30 @@ export async function getItems(args: {
           // Format value based on column type
           let compareValue = filter.value;
           
-          // Status columns need index values
-          if (columnType === 'status' && typeof filter.value === 'string') {
-            // Note: In production, you'd need to map status labels to indices
-            console.error(`[getItems] Warning: Status column ${filter.columnId} requires index value, not label`);
+          // Status columns (type 'color') need index values
+          if (columnType === 'color' && typeof filter.value === 'string') {
+            // Try to map label to index
+            const settings = statusColumnSettings[filter.columnId];
+            if (settings && settings.labels) {
+              // Find the index for the given label
+              const labelIndex = Object.entries(settings.labels).find(
+                ([index, label]) => label === filter.value
+              );
+              
+              if (labelIndex) {
+                compareValue = parseInt(labelIndex[0]);
+                console.error(`[getItems] Mapped status label "${filter.value}" to index ${compareValue}`);
+              } else {
+                console.error(`[getItems] Warning: Could not find index for status label "${filter.value}" in column ${filter.columnId}`);
+                console.error(`[getItems] Available labels:`, settings.labels);
+                // Try to use the value as-is, might be an index already
+                if (!isNaN(Number(filter.value))) {
+                  compareValue = Number(filter.value);
+                }
+              }
+            } else {
+              console.error(`[getItems] Warning: No label mapping found for status column ${filter.columnId}`);
+            }
           }
           
           // Array values for any_of operator
