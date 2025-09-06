@@ -69,7 +69,7 @@ export async function getAllPlacements(args: {
         }
       });
       
-      // Show verticals first
+      // Show verticals only
       if (verticals.length > 0) {
         lines.push('## Content Verticals');
         lines.push('*Use these for targeting specific content categories*');
@@ -87,41 +87,6 @@ export async function getAllPlacements(args: {
         lines.push('');
       }
       
-      // Show special placements
-      if (special.length > 0) {
-        lines.push('## Special Categories');
-        lines.push('*These are NOT content verticals*');
-        lines.push('');
-        lines.push('| Category | Type | Placement ID |');
-        lines.push('|----------|------|--------------|');
-        
-        special.forEach(placement => {
-          let type = 'Special';
-          if (placement.name.includes('RON')) type = 'Network-wide';
-          else if (placement.name.includes('Gambling')) type = 'Approval Required';
-          else if (placement.name.includes('Finance')) type = 'Approval Required';
-          else if (placement.name.includes('RE-AD')) type = 'Responsible Ads';
-          
-          const placementId = includeIds && placement.placementId 
-            ? `\`${placement.placementId}\`` 
-            : 'N/A';
-          lines.push(`| ${placement.name} | *${type}* | ${placementId} |`);
-        });
-        lines.push('');
-      }
-      
-      lines.push('## Usage Guide');
-      lines.push('');
-      lines.push('### For Vertical Targeting:');
-      lines.push('- Choose from the **Content Verticals** section above');
-      lines.push('- Each vertical represents a specific content category (Sport, News, etc.)');
-      lines.push('- Use the Placement ID for GAM targeting configuration');
-      lines.push('');
-      lines.push('### For Special Categories:');
-      lines.push('- **RON**: Targets all inventory across the network');
-      lines.push('- **Gambling/Finance**: Requires publisher approval, not a content vertical');
-      lines.push('- **RE-AD**: Responsible Advertisement program, not a content vertical');
-      
       if (includeIds) {
         // Extract just the IDs for easy copying
         const verticalIds = verticals
@@ -129,7 +94,6 @@ export async function getAllPlacements(args: {
           .map(p => p.placementId);
         
         if (verticalIds.length > 0) {
-          lines.push('');
           lines.push('### Vertical Placement IDs for GAM');
           lines.push('```json');
           lines.push(JSON.stringify(verticalIds, null, 2));
