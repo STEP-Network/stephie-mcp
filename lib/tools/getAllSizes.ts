@@ -151,21 +151,28 @@ export async function getAllSizes(args: {
     textLines.push('');
     textLines.push('*Device abbreviations: D=Desktop, M=Mobile, T=Tablet, A=App*');
     textLines.push('');
-    textLines.push('| Size | GAM Names | Devices | Products | Formats | CTR | View% | eAPM |');
-    textLines.push('|------|-----------|---------|----------|---------|-----|-------|------|');
+    textLines.push('| Size | Devices | Products | Formats |');
+    textLines.push('|------|---------|----------|---------|');
     
-    // Sort sizes by name for consistent output
+    // Sort sizes by Product first, then Format, then size
     const sortedSizes = [...sizes].sort((a, b) => {
-      // Sort video sizes (with 'v' suffix) separately
+      // First sort by product
+      const productCompare = (a.adProducts || 'zzz').localeCompare(b.adProducts || 'zzz');
+      if (productCompare !== 0) return productCompare;
+      
+      // Then sort by format
+      const formatCompare = (a.adFormats || 'zzz').localeCompare(b.adFormats || 'zzz');
+      if (formatCompare !== 0) return formatCompare;
+      
+      // Finally sort by size dimensions
       const aIsVideo = a.name.endsWith('v');
       const bIsVideo = b.name.endsWith('v');
       if (aIsVideo !== bIsVideo) return aIsVideo ? 1 : -1;
       
-      // Sort by width first, then height
       const aParts = a.name.replace('v', '').split('x').map(Number);
       const bParts = b.name.replace('v', '').split('x').map(Number);
-      if (aParts[0] !== bParts[0]) return bParts[0] - aParts[0]; // Larger widths first
-      return bParts[1] - aParts[1]; // Larger heights first
+      if (aParts[0] !== bParts[0]) return bParts[0] - aParts[0];
+      return bParts[1] - aParts[1];
     });
     
     for (const size of sortedSizes) {
@@ -186,48 +193,59 @@ export async function getAllSizes(args: {
         })
         .join(',');
       
-      // Format GAM names (limit length)
-      const gamNames = size.gamNames || '-';
-      const shortGamNames = gamNames.length > 20 ? gamNames.substring(0, 17) + '...' : gamNames;
-      
       // Format products column (limit length)
       const products = size.adProducts || '-';
-      const shortProducts = products.length > 25 ? products.substring(0, 22) + '...' : products;
+      const shortProducts = products.length > 35 ? products.substring(0, 32) + '...' : products;
       
       // Format the formats column (limit length) 
       const formats = size.adFormats || '-';
-      const shortFormats = formats.length > 25 ? formats.substring(0, 22) + '...' : formats;
-      
-      // Format benchmarks
-      const ctr = size.averageCTR || '-';
-      const viewability = size.averageViewability || '-';
-      const eapm = size.averageEAPM || '-';
+      const shortFormats = formats.length > 35 ? formats.substring(0, 32) + '...' : formats;
       
       // Add row with bold size
-      textLines.push(`| **${size.name}** | ${shortGamNames} | ${cleanDevices} | ${shortProducts} | ${shortFormats} | ${ctr} | ${viewability} | ${eapm} |`);
+      textLines.push(`| **${size.name}** | ${cleanDevices} | ${shortProducts} | ${shortFormats} |`);
     }
     
     textLines.push('');
     
-    // Add detailed info for sizes with descriptions or specs
-    const sizesWithDetails = sortedSizes.filter(s => s.description || s.specsUrl);
+    // Add detailed info for sizes with benchmarks, descriptions or specs
+    const sizesWithDetails = sortedSizes.filter(s => 
+      s.description || s.specsUrl || s.gamNames || 
+      s.averageCTR || s.averageViewability || s.averageEAPM
+    );
+    
     if (sizesWithDetails.length > 0) {
-      textLines.push('## Size Details');
+      textLines.push('## Size Details & Benchmarks');
       textLines.push('');
       
       for (const size of sizesWithDetails) {
         textLines.push(`### ${size.name}`);
         
         if (size.gamNames) {
-          textLines.push(`**GAM Names:** ${size.gamNames}`);
-        }
-        
-        if (size.description) {
-          textLines.push(`**Description:** ${size.description}`);
+          textLines.push(`**GAM Ad Unit Names:** ${size.gamNames}`);
         }
         
         if (size.adProducts) {
           textLines.push(`**Products:** ${size.adProducts}`);
+        }
+        
+        // Add benchmarks if available
+        const benchmarks = [];
+        if (size.averageCTR && size.averageCTR !== 'null%') {
+          benchmarks.push(`CTR: ${size.averageCTR}`);
+        }
+        if (size.averageViewability && size.averageViewability !== 'null%') {
+          benchmarks.push(`Viewability: ${size.averageViewability}`);
+        }
+        if (size.averageEAPM && size.averageEAPM !== 'null') {
+          benchmarks.push(`eAPM: ${size.averageEAPM}`);
+        }
+        
+        if (benchmarks.length > 0) {
+          textLines.push(`**Benchmarks:** ${benchmarks.join(' | ')}`);
+        }
+        
+        if (size.description) {
+          textLines.push(`**Description:** ${size.description}`);
         }
         
         if (size.specsUrl) {
