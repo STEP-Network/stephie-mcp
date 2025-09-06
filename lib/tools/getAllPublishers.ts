@@ -144,7 +144,7 @@ export async function getAllPublishers(args: {
     lines.push('|-----------|---------|--------|----------|-------|----------|');
     
     for (const [group, pubs] of Object.entries(grouped)) {
-      for (const pub of pubs) {
+      for (const pub of pubs as any) {
         lines.push(`| **${pub.name}** | ${pub.website} | ${pub.active ? '✅ Active' : '❌ Inactive'} | ${pub.vertikal || '-'} | ${group} | ${pub.approval} |`);
       }
     }

@@ -109,13 +109,13 @@ export async function getAudienceSegments(args: {
         item.column_values.map((col: any) => [col.id, col])
       );
 
-      const gamId = columnMap.get(COLUMNS.GAM_ID)?.text || '';
-      const dataProvider = columnMap.get(COLUMNS.DATA_PROVIDER)?.text || '';
-      const description = columnMap.get(COLUMNS.DESCRIPTION)?.text || null;
+      const gamId = (columnMap.get(COLUMNS.GAM_ID) as any)?.text || '';
+      const dataProvider = (columnMap.get(COLUMNS.DATA_PROVIDER) as any)?.text || '';
+      const description = (columnMap.get(COLUMNS.DESCRIPTION) as any)?.text || null;
       
       // Parse type from status column
       let segmentType = 'Unknown';
-      const typeValue = columnMap.get(COLUMNS.TYPE)?.value;
+      const typeValue = (columnMap.get(COLUMNS.TYPE) as any)?.value;
       if (typeValue) {
         try {
           const parsed = JSON.parse(typeValue);
@@ -126,9 +126,9 @@ export async function getAudienceSegments(args: {
       }
 
       // Parse numeric values
-      const size = parseFloat(columnMap.get(COLUMNS.SEGMENT_SIZE)?.text || '0') || null;
-      const recencyDays = parseFloat(columnMap.get(COLUMNS.RECENCY_DAYS)?.text || '0') || null;
-      const membershipDays = parseFloat(columnMap.get(COLUMNS.MEMBERSHIP_EXPIRATION)?.text || '0') || null;
+      const size = parseFloat((columnMap.get(COLUMNS.SEGMENT_SIZE) as any)?.text || '0') || null;
+      const recencyDays = parseFloat((columnMap.get(COLUMNS.RECENCY_DAYS) as any)?.text || '0') || null;
+      const membershipDays = parseFloat((columnMap.get(COLUMNS.MEMBERSHIP_EXPIRATION) as any)?.text || '0') || null;
 
       // Apply type filter
       if (type === 'ALL' || type === segmentType) {

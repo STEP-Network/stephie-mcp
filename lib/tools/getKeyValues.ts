@@ -115,9 +115,9 @@ export async function getKeyValues(args: {
         item.column_values.map((col: any) => [col.id, col])
       );
 
-      const gamId = columnMap.get(COLUMNS.GAM_ID)?.text || '';
-      const code = columnMap.get(COLUMNS.CODE)?.text || '';
-      const typeValue = columnMap.get(COLUMNS.TYPE)?.value;
+      const gamId = (columnMap.get(COLUMNS.GAM_ID) as any)?.text || '';
+      const code = (columnMap.get(COLUMNS.CODE) as any)?.text || '';
+      const typeValue = (columnMap.get(COLUMNS.TYPE) as any)?.value;
       
       // Parse type from status column value
       let keyType: 'PREDEFINED' | 'FREEFORM' = 'FREEFORM';
@@ -191,10 +191,10 @@ export async function getKeyValues(args: {
           item.column_values.map((col: any) => [col.id, col])
         );
         
-        const keyRelation = columnMap.get(COLUMNS.KEY_RELATION);
+        const keyRelation = columnMap.get(COLUMNS.KEY_RELATION) as any;
         const parentKeyId = keyRelation?.linked_item_ids?.[0];
-        const gamId = columnMap.get(COLUMNS.GAM_ID)?.text || '';
-        const code = columnMap.get(COLUMNS.CODE)?.text || '';
+        const gamId = (columnMap.get(COLUMNS.GAM_ID) as any)?.text || '';
+        const code = (columnMap.get(COLUMNS.CODE) as any)?.text || '';
         
         if (parentKeyId) {
           if (!valuesByKey.has(parentKeyId)) {

@@ -90,7 +90,15 @@ const handler = createMcpHandler((server) => {
       targetedPlacementIds: z.array(z.string()).optional().describe('Array of placement IDs to target')
     },
     async (params) => {
-      return await createAvailabilityForecast(params);
+      const result = await createAvailabilityForecast(params);
+      return {
+        content: [
+          {
+            type: 'text',
+            text: result
+          }
+        ]
+      };
     }
   );
 
@@ -102,7 +110,14 @@ const handler = createMcpHandler((server) => {
       message: z.string().describe('The message to echo back')
     },
     async ({ message }) => {
-      return `Echo: ${message}`;
+      return {
+        content: [
+          {
+            type: 'text',
+            text: `Echo: ${message || 'No message provided'}`
+          }
+        ]
+      };
     }
   );
 
@@ -112,7 +127,7 @@ const handler = createMcpHandler((server) => {
     'Check server health and configuration',
     {},
     async () => {
-      return `STEPhie MCP Server is running
+      const healthMessage = `STEPhie MCP Server is running
         
 **Status:** ✅ Healthy
 **Version:** 1.0.0  
@@ -127,6 +142,14 @@ const handler = createMcpHandler((server) => {
 - availabilityForecast - Google Ad Manager availability forecasting
 - echo - Simple echo test
 - health - This health check`;
+      return {
+        content: [
+          {
+            type: 'text',
+            text: healthMessage
+          }
+        ]
+      };
     }
   );
 });

@@ -198,7 +198,7 @@ async function fetchContextualValues(
       throw new Error(`Failed to fetch contextual values: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as any;
 
     if (data.customTargetingValues) {
       for (const value of data.customTargetingValues) {
