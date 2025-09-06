@@ -1,7 +1,7 @@
 import { mondayApi } from '../../monday/client.js';
 
 // Column filter type definition
-interface ColumnFilter {
+export interface ColumnFilter {
   columnId: string;
   value: any;
   operator?: string; // Optional - will be determined by column type if not provided

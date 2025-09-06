@@ -18,7 +18,7 @@ import { getContextualTargeting } from '../lib/tools/getContextualTargeting.js';
 import { availabilityForecast } from '../lib/tools/availabilityForecast.js';
 import { listAllBoards } from '../lib/tools/debug/listBoards.js';
 import { getBoardColumns } from '../lib/tools/debug/getBoardColumns.js';
-import { getItems } from '../lib/tools/debug/getItems.js';
+import { getItems, type ColumnFilter } from '../lib/tools/debug/getItems.js';
 
 // Create the MCP handler with all tools
 const handler = createMcpHandler((server) => {
@@ -250,8 +250,17 @@ const handler = createMcpHandler((server) => {
       includeColumnMetadata: z.boolean().optional()
     },
     async (input) => {
-      // Ensure boardId is always passed
-      const result = await getItems({ boardId: input.boardId, ...input });
+      // Transform input to match expected types
+      const params = {
+        boardId: input.boardId,
+        limit: input.limit,
+        columnIds: input.columnIds,
+        itemIds: input.itemIds,
+        search: input.search,
+        columnFilters: input.columnFilters as ColumnFilter[] | undefined,
+        includeColumnMetadata: input.includeColumnMetadata
+      };
+      const result = await getItems(params);
       return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
     }
   );
