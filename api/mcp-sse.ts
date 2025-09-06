@@ -275,7 +275,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           tools: {},
         },
         serverInfo: {
-          name: 'stephie-mcp',
+          name: 'STEPhie',
           version: '1.0.0',
         },
       }
@@ -315,7 +315,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               tools: {},
             },
             serverInfo: {
-              name: 'stephie-mcp',
+              name: 'STEPhie',
               version: '1.0.0',
             },
           },

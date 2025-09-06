@@ -498,7 +498,7 @@ async function executeToolHandler(toolName: string, args: any): Promise<any> {
 async function main() {
   const server = new Server(
     {
-      name: 'stephie-mcp',
+      name: 'STEPhie',
       version: '1.0.0',
     },
     {
