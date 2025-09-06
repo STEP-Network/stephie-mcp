@@ -1,10 +1,92 @@
 import { mondayApi, BOARD_IDS } from '../monday/client.js';
 
-export async function getPublishersByFormats(args: {
-  formats: string[];
+// Device type options based on actual Monday.com columns
+export type DeviceType = 'Desktop' | 'Mobile' | 'App' | 'All' | null;
+
+export interface FormatFilters {
+  // Adnami formats - Mobile/Desktop only
+  topscroll?: 'Desktop' | 'Mobile' | 'App' | 'All';  // Topscroll - Adnami
+  topscrollExpand?: 'Desktop' | 'Mobile' | 'App' | 'All';  // Topscroll Expand - Adnami
+  doubleMidscroll?: 'Desktop' | 'Mobile' | 'All';  // Double midscroll - Adnami (no App option)
+  midscroll?: 'Desktop' | 'Mobile' | 'All';  // Midscroll - Adnami (no App option)
+  adnamiNative?: 'Desktop' | 'Mobile' | 'All';  // Adnami native (no App option)
+  
+  // High-impact.js formats
+  topscrollHighimpact?: 'Desktop' | 'Mobile' | 'All';  // Topscroll - High-impact.js
+  midscrollHighimpact?: 'Desktop' | 'Mobile' | 'All';  // Midscroll - High-impact.js
+  
+  // Desktop-only format
+  wallpaper?: 'Desktop';  // Skin/Wallpaper - Desktop only
+  
+  // Various device options
+  anchor?: 'Desktop' | 'Mobile' | 'App' | 'All';  // Anchor
+  trueNative?: 'Desktop' | 'Mobile' | 'All';  // True Native (no App option)
+  interstitial?: 'Desktop' | 'Mobile' | 'App' | 'All';  // Google Interstitial
+  
+  // Video formats  
+  video?: 'Desktop' | 'Mobile' | 'All';  // Video (dropdown)
+  vertikalVideo?: 'Desktop' | 'Mobile' | 'All';  // Vertikal video (dropdown)
+  outstream?: 'Desktop' | 'Mobile' | 'All';  // Outstream (display)
+  
+  // Status-based formats (boolean)
+  videoPlayback?: boolean;  // Click To Play / Autoplay funktion (video)
+  ott?: boolean;  // OTT (video)
+  reAd?: boolean;  // RE-AD Status
+  
+  // Options
   includeInactive?: boolean;
-}) {
-  const { formats, includeInactive = false } = args;
+}
+
+export async function getPublishersByFormats(args: FormatFilters) {
+  const { includeInactive = false, ...formatFilters } = args;
+  
+  // Build list of requested formats with their device requirements
+  const requestedFormats: Map<string, string> = new Map();
+  
+  // Device-based format mappings to internal format names and column IDs
+  const deviceFormats: Record<string, { name: string; columnId: string }> = {
+    topscroll: { name: 'topscroll', columnId: 'dropdown_mksd7frz' },
+    topscrollExpand: { name: 'topscroll-expand', columnId: 'dropdown_mksdjeft' },
+    doubleMidscroll: { name: 'double-midscroll', columnId: 'dropdown_mksdbwbf' },
+    midscroll: { name: 'midscroll', columnId: 'dropdown_mksd17vw' },
+    wallpaper: { name: 'wallpaper', columnId: 'dropdown_mksdytf0' },
+    anchor: { name: 'anchor', columnId: 'dropdown_mksdr0q2' },
+    trueNative: { name: 'true-native', columnId: 'dropdown_mksdh745' },
+    adnamiNative: { name: 'adnami-native', columnId: 'dropdown_mksdb150' },
+    interstitial: { name: 'interstitial', columnId: 'dropdown_mksdfx54' },
+    outstream: { name: 'outstream', columnId: 'dropdown_mksd6yy' },
+    topscrollHighimpact: { name: 'topscroll-highimpact', columnId: 'dropdown_mksdcgvj' },
+    midscrollHighimpact: { name: 'midscroll-highimpact', columnId: 'dropdown_mksdjpqx' },
+    video: { name: 'video', columnId: 'dropdown_mksddmgt' },
+    vertikalVideo: { name: 'vertikal-video', columnId: 'dropdown_mksdw0qh' }
+  };
+  
+  // Boolean format mappings
+  const booleanFormats: Record<string, { name: string; columnId: string }> = {
+    videoPlayback: { name: 'video-playback', columnId: 'color_mkr4s6rs' },
+    ott: { name: 'ott', columnId: 'color_mkr4rzd3' },
+    reAd: { name: 're-ad', columnId: 'color_mksdc9rp' }
+  };
+  
+  // Collect device-based format requests
+  for (const [param, formatInfo] of Object.entries(deviceFormats)) {
+    const deviceType = formatFilters[param as keyof typeof deviceFormats];
+    if (deviceType) {
+      requestedFormats.set(formatInfo.name, deviceType as string);
+    }
+  }
+  
+  // Collect boolean format requests (these apply to all devices)
+  for (const [param, formatInfo] of Object.entries(booleanFormats)) {
+    if (formatFilters[param as keyof typeof booleanFormats]) {
+      requestedFormats.set(formatInfo.name, 'All');
+    }
+  }
+  
+  // If no formats specified, return error
+  if (requestedFormats.size === 0) {
+    return '# No Formats Selected\n\nPlease select at least one format to filter by. Set device type for display formats, or true for status formats.';
+  }
 
   const query = `
     query GetPublishers($boardId: ID!, $limit: Int!) {
@@ -27,188 +109,219 @@ export async function getPublishersByFormats(args: {
   `;
 
   const variables = {
-    boardId: BOARD_IDS.PUBLISHERS,
+    boardId: BOARD_IDS.PUBLISHER_FORMATS,
     limit: 500,
   };
 
   try {
     const response = await mondayApi(query, variables);
     
-    // Check if we got boards
     if (!response.data?.boards || response.data.boards.length === 0) {
       console.error('No boards found in response');
-      return { publishers: [], total: 0, error: 'No boards found' };
+      return '# Error\n\nNo publisher formats board found.';
     }
     
     const board = response.data.boards[0];
     const items = board?.items_page?.items || [];
 
-    // Parse publisher data using actual column IDs
-    const publishers = items.map((item: any) => {
-      const columnValues = item.column_values || [];
-      
-      // Helper to find column value by ID
-      const getColumnValue = (id: string) => {
-        return columnValues.find((col: any) => col.id === id);
-      };
-      
-      // Get all column values matching /stephie implementation
-      const statusCol = getColumnValue('status8'); // Publisher status
-      const websiteCol = getColumnValue('link__1'); // Hjemmeside link
-      const contactEmailCol = getColumnValue('email'); // Kontakt email
-      
-      // Get ALL format-related columns from /stephie
-      const formatColumns = {
-        // Status-based formats
-        videoFunction: getColumnValue('color_mkr4s6rs'), // Click To Play / Autoplay funktion
-        ott: getColumnValue('color_mkr4rzd3'), // OTT (video)
-        readStatus: getColumnValue('color_mksdc9rp'), // RE-AD status
-        
-        // Device-based formats with dropdowns
-        topscrollAdnami: getColumnValue('dropdown_mksd7frz'),
-        topscrollExpandAdnami: getColumnValue('dropdown_mksdjeft'),
-        doubleMidscrollAdnami: getColumnValue('dropdown_mksdbwbf'),
-        midscrollAdnami: getColumnValue('dropdown_mksd17vw'),
-        adnamiNative: getColumnValue('dropdown_mksdb150'),
-        
-        topscrollHighImpact: getColumnValue('dropdown_mksdcgvj'),
-        midscrollHighImpact: getColumnValue('dropdown_mksdjpqx'),
-        
-        wallpaper: getColumnValue('dropdown_mksdytf0'),
-        anchor: getColumnValue('dropdown_mksdr0q2'),
-        trueNative: getColumnValue('dropdown_mksdh745'),
-        googleInterstitial: getColumnValue('dropdown_mksdfx54'),
-        outstream: getColumnValue('dropdown_mksd6yy'),
-        video: getColumnValue('dropdown_mksddmgt'),
-        vertikalVideo: getColumnValue('dropdown_mksdw0qh'),
-      };
-      
-      // Helper function to check if format is active
-      const isFormatActive = (value: string | undefined) => {
-        return value && value !== 'Nej' && value !== 'N/A' && value !== '';
-      };
-      
-      // Build formats array with simplified names for matching
-      const publisherFormats = [];
-      
-      // Status-based formats
-      if (formatColumns.videoFunction?.text === 'Live') {
-        publisherFormats.push({ name: 'video-function', devices: 'all' });
-      }
-      if (formatColumns.ott?.text === 'Live') {
-        publisherFormats.push({ name: 'ott', devices: 'all' });
-      }
-      if (formatColumns.readStatus?.text === 'Aktiv') {
-        publisherFormats.push({ name: 're-ad', devices: 'all' });
-      }
-      
-      // Device-based formats
-      if (isFormatActive(formatColumns.topscrollAdnami?.text)) {
-        publisherFormats.push({ name: 'topscroll', devices: formatColumns.topscrollAdnami.text });
-      }
-      if (isFormatActive(formatColumns.topscrollExpandAdnami?.text)) {
-        publisherFormats.push({ name: 'topscroll-expand', devices: formatColumns.topscrollExpandAdnami.text });
-      }
-      if (isFormatActive(formatColumns.doubleMidscrollAdnami?.text)) {
-        publisherFormats.push({ name: 'double-midscroll', devices: formatColumns.doubleMidscrollAdnami.text });
-      }
-      if (isFormatActive(formatColumns.midscrollAdnami?.text)) {
-        publisherFormats.push({ name: 'midscroll', devices: formatColumns.midscrollAdnami.text });
-      }
-      if (isFormatActive(formatColumns.adnamiNative?.text)) {
-        publisherFormats.push({ name: 'adnami-native', devices: formatColumns.adnamiNative.text });
-      }
-      if (isFormatActive(formatColumns.topscrollHighImpact?.text)) {
-        publisherFormats.push({ name: 'topscroll-highimpact', devices: formatColumns.topscrollHighImpact.text });
-      }
-      if (isFormatActive(formatColumns.midscrollHighImpact?.text)) {
-        publisherFormats.push({ name: 'midscroll-highimpact', devices: formatColumns.midscrollHighImpact.text });
-      }
-      if (isFormatActive(formatColumns.wallpaper?.text)) {
-        publisherFormats.push({ name: 'wallpaper', devices: formatColumns.wallpaper.text });
-      }
-      if (isFormatActive(formatColumns.anchor?.text)) {
-        publisherFormats.push({ name: 'anchor', devices: formatColumns.anchor.text });
-      }
-      if (isFormatActive(formatColumns.trueNative?.text)) {
-        publisherFormats.push({ name: 'true-native', devices: formatColumns.trueNative.text });
-      }
-      if (isFormatActive(formatColumns.googleInterstitial?.text)) {
-        publisherFormats.push({ name: 'interstitial', devices: formatColumns.googleInterstitial.text });
-      }
-      if (isFormatActive(formatColumns.outstream?.text)) {
-        publisherFormats.push({ name: 'outstream', devices: formatColumns.outstream.text });
-      }
-      if (isFormatActive(formatColumns.video?.text)) {
-        publisherFormats.push({ name: 'video', devices: formatColumns.video.text });
-      }
-      if (isFormatActive(formatColumns.vertikalVideo?.text)) {
-        publisherFormats.push({ name: 'vertikal-video', devices: formatColumns.vertikalVideo.text });
-      }
-      
-      // Check if publisher is active based on status
-      const isActive = statusCol?.text === 'Done' || statusCol?.text === 'Onboardet' || statusCol?.text === 'Live';
-      
-      // Convert formats to string array for output
-      const formatsForOutput = publisherFormats.map(f => `${f.name} (${f.devices})`);
-      
-      return {
-        id: item.id,
-        name: item.name,
-        website: websiteCol?.text || '',
-        status: statusCol?.text || 'Unknown',
-        active: isActive,
-        formats: formatsForOutput,
-        publisherFormatsDetailed: publisherFormats,
-        contactEmail: contactEmailCol?.text || '',
-      };
-    });
+    // Map column IDs to format names for checking
+    const columnToFormat: Record<string, string> = {};
+    for (const [_, info] of Object.entries(deviceFormats)) {
+      columnToFormat[info.columnId] = info.name;
+    }
+    for (const [_, info] of Object.entries(booleanFormats)) {
+      columnToFormat[info.columnId] = info.name;
+    }
 
-    // Filter publishers based on requested formats
-    const normalizedRequestedFormats = formats.map(f => f.toLowerCase().trim());
+    // Process publishers and their formats
+    const matchingPublishers: any[] = [];
     
-    let filteredPublishers = publishers.filter(publisher => {
-      // Check if publisher has any of the requested formats
-      const hasMatchingFormat = normalizedRequestedFormats.some(requestedFormat => {
-        return publisher.publisherFormatsDetailed.some((pf: any) => {
-          const formatName = pf.name.toLowerCase();
-          // Match format names flexibly
-          return formatName.includes(requestedFormat) || 
-                 requestedFormat.includes(formatName) ||
-                 (requestedFormat === 'topscroll' && formatName.includes('topscroll')) ||
-                 (requestedFormat === 'midscroll' && formatName.includes('midscroll')) ||
-                 (requestedFormat === 'wallpaper' && (formatName.includes('wallpaper') || formatName.includes('skin'))) ||
-                 (requestedFormat === 'video' && formatName.includes('video'));
+    for (const item of items) {
+      const publisherName = item.name;
+      const columnValues = item.column_values || [];
+      const supportedFormats: Map<string, string> = new Map();
+      let matchesFilter = false;
+      
+      // Check each column value
+      for (const col of columnValues) {
+        const formatName = columnToFormat[col.id];
+        if (!formatName) continue;
+        
+        const requestedDevice = requestedFormats.get(formatName);
+        if (!requestedDevice) continue;
+        
+        // Parse the column value
+        if (col.value) {
+          try {
+            const parsed = JSON.parse(col.value);
+            
+            // For dropdown columns, check the labels
+            if (parsed.labels) {
+              // Get selected label IDs
+              const selectedIds = Array.isArray(parsed) ? parsed : (parsed.ids || []);
+              
+              // Map label IDs to device types based on Monday.com structure
+              const deviceMappings: Record<number, string> = {
+                1: 'Mobile',  // Most columns use 1 for Mobile
+                2: 'Desktop', // Some columns use different IDs
+                4: 'Desktop', // Alternative Desktop ID
+                7: 'App',
+                8: 'Desktop', // Another Desktop ID
+                11: 'Mobile', // Alternative Mobile ID
+                15: 'App',
+                16: 'Desktop', // Video column Desktop
+                17: 'Mobile', // Video column Mobile
+                20: 'Mobile', // High-impact Mobile
+                108: 'Desktop' // High-impact Desktop
+              };
+              
+              for (const id of selectedIds) {
+                const deviceType = deviceMappings[id];
+                if (deviceType && isDeviceCompatible(requestedDevice, deviceType)) {
+                  matchesFilter = true;
+                  supportedFormats.set(formatName, deviceType);
+                  break;
+                }
+              }
+            } else if (col.text) {
+              // For text-based columns, parse the text
+              const text = col.text.toLowerCase();
+              let deviceType: string | null = null;
+              
+              if (text.includes('desktop')) {
+                deviceType = 'Desktop';
+              } else if (text.includes('mobil') || text.includes('mobile')) {
+                deviceType = 'Mobile';
+              } else if (text.includes('app')) {
+                deviceType = 'App';
+              } else if (text === 'live' || text === 'aktiv' || text === 'on') {
+                deviceType = 'All devices';
+              }
+              
+              if (deviceType && isDeviceCompatible(requestedDevice, deviceType)) {
+                matchesFilter = true;
+                supportedFormats.set(formatName, deviceType);
+              }
+            }
+          } catch (e) {
+            // Try text-based parsing as fallback
+            if (col.text && col.text !== 'N/A' && col.text !== 'Nej') {
+              const text = col.text.toLowerCase();
+              let deviceType = 'Unknown';
+              
+              if (text.includes('desktop')) deviceType = 'Desktop';
+              else if (text.includes('mobil') || text.includes('mobile')) deviceType = 'Mobile';
+              else if (text.includes('app')) deviceType = 'App';
+              else if (text === 'live' || text === 'on') deviceType = 'All devices';
+              
+              if (deviceType !== 'Unknown' && isDeviceCompatible(requestedDevice, deviceType)) {
+                matchesFilter = true;
+                supportedFormats.set(formatName, deviceType);
+              }
+            }
+          }
+        }
+      }
+      
+      if (matchesFilter) {
+        matchingPublishers.push({
+          name: publisherName,
+          supportedFormats: Array.from(supportedFormats.entries())
         });
-      });
-      
-      // Apply active filter if not including inactive
-      const passesActiveFilter = includeInactive || publisher.active;
-      
-      return hasMatchingFormat && passesActiveFilter;
-    });
-
-    // Sort by number of matching formats (most relevant first)
-    filteredPublishers = filteredPublishers.sort((a, b) => {
-      const aMatchCount = a.formats.filter((f: string) => 
-        normalizedRequestedFormats.some(rf => f.toLowerCase().includes(rf))
-      ).length;
-      const bMatchCount = b.formats.filter((f: string) => 
-        normalizedRequestedFormats.some(rf => f.toLowerCase().includes(rf))
-      ).length;
-      return bMatchCount - aMatchCount;
-    });
-
-    return {
-      publishers: filteredPublishers,
-      total: filteredPublishers.length,
-      requestedFormats: formats,
-      message: filteredPublishers.length > 0 ? 
-        `Found ${filteredPublishers.length} publishers supporting the requested formats` :
-        'No publishers found supporting the requested formats'
+      }
+    }
+    
+    // Sort by number of matching formats
+    matchingPublishers.sort((a, b) => b.supportedFormats.length - a.supportedFormats.length);
+    
+    // Format output
+    const lines: string[] = [];
+    lines.push(`# Publishers Supporting Selected Formats`);
+    lines.push('');
+    lines.push(`**Filters Applied:**`);
+    
+    // Format labels
+    const formatLabels: Record<string, string> = {
+      'video': 'Video',
+      'video-playback': 'Video Playback (Click-To-Play/Autoplay)',
+      'outstream': 'Outstream Video',
+      'vertikal-video': 'Vertical Video',
+      'ott': 'OTT (Over-The-Top)',
+      'topscroll': 'Topscroll (Adnami)',
+      'topscroll-expand': 'Topscroll Expand (Adnami)',
+      'topscroll-highimpact': 'Topscroll High Impact',
+      'midscroll': 'Midscroll (Adnami)',
+      'double-midscroll': 'Double Midscroll (Adnami)',
+      'midscroll-highimpact': 'Midscroll High Impact',
+      'wallpaper': 'Wallpaper/Skin',
+      'anchor': 'Anchor',
+      'interstitial': 'Google Interstitial',
+      'true-native': 'True Native',
+      'adnami-native': 'Adnami Native',
+      're-ad': 'RE-AD (Responsible Ad)'
     };
+    
+    requestedFormats.forEach((device, format) => {
+      const label = formatLabels[format] || format;
+      lines.push(`- ${label}: ${device === 'All' ? 'All devices' : device}`);
+    });
+    
+    lines.push('');
+    lines.push(`**Results:** ${matchingPublishers.length} publishers found`);
+    lines.push('');
+    
+    if (matchingPublishers.length === 0) {
+      lines.push('No publishers found supporting the selected format and device combinations.');
+      return lines.join('\n');
+    }
+    
+    // Group by format count
+    const byFormatCount = new Map<number, any[]>();
+    matchingPublishers.forEach((pub) => {
+      const count = pub.supportedFormats.length;
+      if (!byFormatCount.has(count)) {
+        byFormatCount.set(count, []);
+      }
+      byFormatCount.get(count)?.push(pub);
+    });
+    
+    // Output grouped results
+    const sortedCounts = Array.from(byFormatCount.keys()).sort((a, b) => b - a);
+    
+    for (const count of sortedCounts) {
+      const pubs = byFormatCount.get(count) || [];
+      lines.push(`## Supporting ${count} requested format${count > 1 ? 's' : ''} (${pubs.length} publisher${pubs.length > 1 ? 's' : ''})`);
+      lines.push('');
+      
+      for (const pub of pubs) {
+        lines.push(`### ${pub.name}`);
+        lines.push(`**Matching Formats:**`);
+        
+        for (const [format, device] of pub.supportedFormats) {
+          const label = formatLabels[format] || format;
+          lines.push(`- ${label}: ${device}`);
+        }
+        lines.push('');
+      }
+    }
+    
+    // Add summary
+    lines.push('---');
+    lines.push(`*Total: ${matchingPublishers.length} publishers supporting the requested formats*`);
+    
+    return lines.join('\n');
   } catch (error) {
     console.error('Error fetching publishers by formats:', error);
-    throw new Error(`Failed to fetch publishers by formats: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    throw new Error(`Failed to fetch publishers: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
+}
+
+// Helper function to check device compatibility
+function isDeviceCompatible(requested: string, actual: string): boolean {
+  if (requested === 'All' || actual === 'All devices') return true;
+  if (requested === actual) return true;
+  if (requested === 'Desktop' && actual === 'Desktop') return true;
+  if (requested === 'Mobile' && (actual === 'Mobile' || actual === 'Mobil')) return true;
+  if (requested === 'App' && actual === 'App') return true;
+  return false;
 }

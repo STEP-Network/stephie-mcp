@@ -80,22 +80,107 @@ const AVAILABLE_TOOLS = [
   },
   {
     name: 'getPublishersByFormats',
-    description: 'Find all publishers that support specific ad format combinations. Use this to identify which publishers can run your desired ad formats. Returns publishers grouped by how many of the requested formats they support.',
+    description: 'Find publishers that support specific ad formats on specific devices. Each format has its own available device options based on Monday.com configuration.',
     inputSchema: {
       type: 'object',
       properties: {
-        formats: { 
-          type: 'array',
-          items: { type: 'string' },
-          description: 'List of ad format names to search for (e.g., ["Topscroll", "Billboard", "Mobile"]). Publishers are returned if they support ANY of these formats.'
+        // Adnami formats with full device options
+        topscroll: {
+          type: 'string',
+          enum: ['Desktop', 'Mobile', 'App', 'All'],
+          description: 'Topscroll (Adnami) - Desktop: 970x510, Mobile: 300x220/300x280'
         },
+        topscrollExpand: {
+          type: 'string',
+          enum: ['Desktop', 'Mobile', 'App', 'All'],
+          description: 'Topscroll Expand (Adnami) - Desktop: 970x510, Mobile: 300x280'
+        },
+        // Adnami formats without App option
+        doubleMidscroll: {
+          type: 'string',
+          enum: ['Desktop', 'Mobile', 'All'],
+          description: 'Double Midscroll (Adnami) - Desktop: 970x550, Mobile: 300x210'
+        },
+        midscroll: {
+          type: 'string',
+          enum: ['Desktop', 'Mobile', 'All'],
+          description: 'Midscroll (Adnami) - Desktop: 970x570, Mobile: 300x240'
+        },
+        adnamiNative: {
+          type: 'string',
+          enum: ['Desktop', 'Mobile', 'All'],
+          description: 'Adnami Native format'
+        },
+        // High-impact.js formats (no App option)
+        topscrollHighimpact: {
+          type: 'string',
+          enum: ['Desktop', 'Mobile', 'All'],
+          description: 'Topscroll High Impact - Desktop: 970x510, Mobile: 300x220/300x280'
+        },
+        midscrollHighimpact: {
+          type: 'string',
+          enum: ['Desktop', 'Mobile', 'All'],
+          description: 'Midscroll High Impact - Desktop: 970x570, Mobile: 300x240'
+        },
+        // Desktop-only format
+        wallpaper: {
+          type: 'string',
+          enum: ['Desktop'],
+          description: 'Wallpaper/Skin (site takeover) - Desktop only: 970x170'
+        },
+        // Formats with full device options including App
+        anchor: {
+          type: 'string',
+          enum: ['Desktop', 'Mobile', 'App', 'All'],
+          description: 'Anchor/sticky format'
+        },
+        interstitial: {
+          type: 'string',
+          enum: ['Desktop', 'Mobile', 'App', 'All'],
+          description: 'Google Interstitial (full-screen between pages)'
+        },
+        // Native format without App
+        trueNative: {
+          type: 'string',
+          enum: ['Desktop', 'Mobile', 'All'],
+          description: 'True Native format (matches site content)'
+        },
+        // Video formats without App option
+        video: {
+          type: 'string',
+          enum: ['Desktop', 'Mobile', 'All'],
+          description: 'Standard video format'
+        },
+        vertikalVideo: {
+          type: 'string',
+          enum: ['Desktop', 'Mobile', 'All'],
+          description: 'Vertical/portrait video format'
+        },
+        outstream: {
+          type: 'string',
+          enum: ['Desktop', 'Mobile', 'All'],
+          description: 'Outstream video (plays in content)'
+        },
+        // Status-based formats (boolean)
+        videoPlayback: {
+          type: 'boolean',
+          description: 'Video Click-To-Play (CTP) and Autoplay (AP) support'
+        },
+        ott: {
+          type: 'boolean',
+          description: 'OTT (Over-The-Top) streaming video'
+        },
+        reAd: {
+          type: 'boolean',
+          description: 'RE-AD (Responsible Advertisement) - environmental friendly single ad per page'
+        },
+        // Options
         includeInactive: {
           type: 'boolean',
-          description: 'Include inactive/disabled publishers in results (default: false)',
+          description: 'Include inactive/disabled publishers (default: false)',
           default: false
         }
-      },
-      required: ['formats']
+      }
     }
   },
   {

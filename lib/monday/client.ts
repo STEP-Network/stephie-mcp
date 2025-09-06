@@ -44,6 +44,7 @@ export async function mondayApi(query: string, variables?: Record<string, any>) 
 // Board IDs from STEPhie
 export const BOARD_IDS = {
   PUBLISHERS: '1222800432',  // Updated to correct accessible board ID
+  PUBLISHER_FORMATS: '1222800432',  // Publisher format matrix board
   AD_UNITS: '1558578956',
   KEY_VALUES: '1802371471',
   AUDIENCE_SEGMENTS: '2051827669',

@@ -15,7 +15,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "test:local": "tsx test.local.ts",
     "mcp:dev": "tsx mcp-server.ts",
-    "mcp:build": "tsc mcp-server.ts --outDir dist",
+    "mcp:build": "tsc -p tsconfig.mcp.json",
     "build:ts": "tsc"
   },
   "keywords": [

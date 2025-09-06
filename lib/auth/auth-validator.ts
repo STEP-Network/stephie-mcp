@@ -3,14 +3,18 @@
 import { MockAuthValidator, type AuthValidation, type UserPermissions } from './mock-auth.js';
 
 let StackServerApp: any;
-try {
-  // Try to import Stack - will fail if not available
-  const stackModule = await import('@stackframe/stack');
-  StackServerApp = stackModule.StackServerApp;
-} catch (error) {
-  // Use stderr for logging - stdout must be clean for MCP protocol
-  console.error('Stack Auth not available, using mock auth for local testing');
-}
+
+// Load Stack module asynchronously
+(async () => {
+  try {
+    // Try to import Stack - will fail if not available
+    const stackModule = await import('@stackframe/stack');
+    StackServerApp = stackModule.StackServerApp;
+  } catch (error) {
+    // Use stderr for logging - stdout must be clean for MCP protocol
+    console.error('Stack Auth not available, using mock auth for local testing');
+  }
+})();
 
 export { AuthValidation, UserPermissions };
 

@@ -71,14 +71,32 @@ const TOOL_DEFINITIONS = [
   },
   {
     name: 'getPublishersByFormats',
-    description: 'Find publishers supporting specific ad formats',
+    description: 'Find publishers supporting specific ad formats on specific devices',
     inputSchema: {
       type: 'object',
       properties: {
-        formats: { type: 'array', items: { type: 'string' } },
+        // Display formats - specify device
+        topscroll: { type: 'string', enum: ['Desktop', 'Mobile', 'App', 'All'] },
+        topscrollExpand: { type: 'string', enum: ['Desktop', 'Mobile', 'App', 'All'] },
+        topscrollHighimpact: { type: 'string', enum: ['Desktop', 'Mobile', 'App', 'All'] },
+        midscroll: { type: 'string', enum: ['Desktop', 'Mobile', 'App', 'All'] },
+        doubleMidscroll: { type: 'string', enum: ['Desktop', 'Mobile', 'App', 'All'] },
+        midscrollHighimpact: { type: 'string', enum: ['Desktop', 'Mobile', 'App', 'All'] },
+        wallpaper: { type: 'string', enum: ['Desktop', 'Mobile', 'App', 'All'] },
+        anchor: { type: 'string', enum: ['Desktop', 'Mobile', 'App', 'All'] },
+        interstitial: { type: 'string', enum: ['Desktop', 'Mobile', 'App', 'All'] },
+        trueNative: { type: 'string', enum: ['Desktop', 'Mobile', 'App', 'All'] },
+        adnamiNative: { type: 'string', enum: ['Desktop', 'Mobile', 'App', 'All'] },
+        // Video formats - specify device
+        outstream: { type: 'string', enum: ['Desktop', 'Mobile', 'App', 'All'] },
+        video: { type: 'string', enum: ['Desktop', 'Mobile', 'App', 'All'] },
+        vertikalVideo: { type: 'string', enum: ['Desktop', 'Mobile', 'App', 'All'] },
+        // Status formats - boolean
+        videoPlayback: { type: 'boolean' },
+        ott: { type: 'boolean' },
+        reAd: { type: 'boolean' },
         includeInactive: { type: 'boolean', default: false }
-      },
-      required: ['formats']
+      }
     }
   },
   {
