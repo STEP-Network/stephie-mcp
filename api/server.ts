@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { createMcpHandler } from 'mcp-handler';
-import * as dotenv from 'dotenv';
 
 // Import all tools
 import { getAllPublishers } from '../lib/tools/getAllPublishers.js';
@@ -20,9 +19,6 @@ import { availabilityForecast } from '../lib/tools/availabilityForecast.js';
 import { listAllBoards } from '../lib/tools/debug/listBoards.js';
 import { getBoardColumns } from '../lib/tools/debug/getBoardColumns.js';
 import { getItems } from '../lib/tools/debug/getItems.js';
-
-// Load environment variables
-dotenv.config({ path: '.env.local' });
 
 // Create the MCP handler with all tools
 export default createMcpHandler((server) => {
