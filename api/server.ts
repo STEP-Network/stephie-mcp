@@ -245,7 +245,7 @@ const handler = createMcpHandler((server) => {
       columnFilters: z.array(z.object({
         columnId: z.string(),
         value: z.any(),
-        operator: z.enum(['equals', 'notEquals', 'contains', 'notContains', 'greater', 'greaterOrEqual', 'less', 'lessOrEqual', 'between', 'empty', 'notEmpty']).optional()
+        operator: z.enum(['equals', 'notEquals', 'contains', 'notContains', 'greater', 'greaterOrEqual', 'less', 'lessOrEqual', 'between', 'empty', 'notEmpty', 'me', 'checked', 'unchecked']).optional()
       })).optional(),
       includeColumnMetadata: z.boolean().optional()
     },

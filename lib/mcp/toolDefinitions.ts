@@ -476,19 +476,26 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 
 TIP: Use getBoardColumns first to see column IDs, types, and available values.
 
-Column value formats:
-- STATUS columns: Use label text (e.g., "In Progress") OR index number
-- DROPDOWN columns: Use the text value (e.g., "Desktop", "Mobile")
-- TEXT columns: Any string value
-- NUMBER columns: Numeric values
-- DATE columns: "YYYY-MM-DD" format
-- BOARD_RELATION: Item IDs as strings (filtering not yet supported)
+Column value formats by type:
+• STATUS: Use index number only (e.g., 4 for "In Progress") - check getBoardColumns for mapping
+• DROPDOWN: Use index/label ID only - check getBoardColumns for available options
+• TEXT/LONG_TEXT: Any string value
+• NUMBERS: Numeric values
+• DATE: "YYYY-MM-DD" or relative ("TODAY", "THIS_WEEK", "ONE_MONTH_AGO")
+• PEOPLE: User ID, name, or "me" for current user
+• BOARD_RELATION: Item IDs or item names for connected items
+• CHECKBOX: true/false or "checked"/"unchecked"
+• EMAIL/LINK: String values
+• PHONE: Phone numbers or partial matches
 
-Operator selection (optional - auto-selected if omitted):
-- Status/Dropdown: equals (default), notEquals, empty, notEmpty
-- Text: contains (default), equals, notContains, empty, notEmpty  
-- Numbers: equals (default), greater, less, between, empty, notEmpty
-- Dates: exact, greater, less, between, empty, notEmpty`,
+Operator selection (defaults applied if omitted):
+• Status/Dropdown: equals (default), notEquals, empty, notEmpty
+• Text/Email: contains (default), equals, notContains, empty
+• Numbers: equals, greater, less, between, empty
+• Date: exact, greater, less, between, empty
+• People: equals, contains, me (assigned to me), empty
+• Board Relations: equals (by ID), contains (by name), empty
+• Checkbox: checked, unchecked`,
     inputSchema: {
       type: 'object',
       properties: {
@@ -527,12 +534,12 @@ Operator selection (optional - auto-selected if omitted):
                 description: 'Column ID to filter by (e.g., "status_19__1" for status, "text__1" for text)'
               },
               value: {
-                description: 'Value to filter by. Format depends on column type - check getBoardColumns for available options. For status: use label text or index. For dropdown: use text value. For dates: "YYYY-MM-DD". For between operator: use array [start, end].'
+                description: 'Value to filter by. Examples: "In Progress" (status), "me" (people), ["2024-01-01", "2024-12-31"] (date range), true (checkbox), ["item-123", "item-456"] (board relation IDs)'
               },
               operator: {
                 type: 'string',
-                description: 'OPTIONAL - Only use for specific needs. Auto-selected if omitted. Valid values: equals, notEquals, contains, notContains, greater, greaterOrEqual, less, lessOrEqual, between, empty, notEmpty',
-                enum: ['equals', 'notEquals', 'contains', 'notContains', 'greater', 'greaterOrEqual', 'less', 'lessOrEqual', 'between', 'empty', 'notEmpty']
+                description: 'OPTIONAL - Default operator is applied based on column type if omitted. Common: equals, contains, greater, less, between, empty. Special: "me" for people assigned to current user.',
+                enum: ['equals', 'notEquals', 'contains', 'notContains', 'greater', 'greaterOrEqual', 'less', 'lessOrEqual', 'between', 'empty', 'notEmpty', 'me', 'checked', 'unchecked']
               }
             },
             required: ['columnId', 'value']

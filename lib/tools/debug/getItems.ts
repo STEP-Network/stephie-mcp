@@ -12,7 +12,10 @@ export type FilterOperator =
   | 'lessOrEqual' 
   | 'between' 
   | 'empty' 
-  | 'notEmpty';
+  | 'notEmpty'
+  | 'me'        // Special operator for people column (assigned to current user)
+  | 'checked'   // Special operator for checkbox column
+  | 'unchecked'; // Special operator for checkbox column
 
 // Column filter type definition
 export interface ColumnFilter {
@@ -76,13 +79,46 @@ const COLUMN_TYPE_OPERATORS: Record<string, Record<string, string>> = {
   },
   // Checkbox column
   checkbox: {
-    checked: '=',
-    unchecked: '!='
+    equals: '=',
+    notEquals: '!=',
+    checked: '=',      // Alias for equals true
+    unchecked: '!='    // Alias for equals false
   },
   // People column
   people: {
-    contains: 'person_filter_by_me',
-    anyOf: 'contains_terms',
+    equals: 'any_of',        // Use with person IDs
+    notEquals: 'not_any_of',  // Exclude specific people
+    contains: 'contains_text', // Search by name
+    me: 'person_filter_by_me', // Items assigned to current user
+    empty: 'is_empty',
+    notEmpty: 'is_not_empty'
+  },
+  // Board relation column
+  board_relation: {
+    equals: 'any_of',
+    notEquals: 'not_any_of',
+    empty: 'is_empty',
+    notEmpty: 'is_not_empty'
+  },
+  // Email column
+  email: {
+    equals: 'any_of',
+    contains: 'contains_text',
+    notContains: 'not_contains_text',
+    empty: 'is_empty',
+    notEmpty: 'is_not_empty'
+  },
+  // Link column
+  link: {
+    contains: 'contains_text',
+    empty: 'is_empty',
+    notEmpty: 'is_not_empty'
+  },
+  // Phone column
+  phone: {
+    equals: 'any_of',
+    contains: 'contains_text',
+    notContains: 'not_contains_text',
     empty: 'is_empty',
     notEmpty: 'is_not_empty'
   }
@@ -112,9 +148,8 @@ export async function getItems(args: {
   }
 
   try {
-    // First, get column metadata if we have filters to determine column types and status labels
+    // First, get column metadata if we have filters to determine column types
     let columnTypes: Record<string, string> = {};
-    let statusColumnSettings: Record<string, any> = {};
     
     if (columnFilters && columnFilters.length > 0) {
       const metadataQuery = `
@@ -123,7 +158,6 @@ export async function getItems(args: {
             columns {
               id
               type
-              settings_str
             }
           }
         }
@@ -133,17 +167,6 @@ export async function getItems(args: {
       const columns = metadataResponse.data?.boards?.[0]?.columns || [];
       columns.forEach((col: any) => {
         columnTypes[col.id] = col.type;
-        
-        // Parse status column settings to get label-to-index mapping
-        if ((col.type === 'color' || col.type === 'status') && col.settings_str) {
-          try {
-            const settings = JSON.parse(col.settings_str);
-            statusColumnSettings[col.id] = settings;
-            // console.error(`[getItems] Status column ${col.id} labels:`, settings.labels);
-          } catch (e) {
-            console.error(`[getItems] Failed to parse settings for column ${col.id}`);
-          }
-        }
       });
     }
     
@@ -170,7 +193,7 @@ export async function getItems(args: {
       if (columnFilters) {
         columnFilters.forEach(filter => {
           const columnType = columnTypes[filter.columnId] || 'text';
-          let operator = filter.operator;
+          let operator: string | undefined = filter.operator;
           
           // Map user-friendly operator names to Monday.com operators
           if (operator && typeof operator === 'string') {
@@ -188,21 +211,29 @@ export async function getItems(args: {
             const typeOperators = COLUMN_TYPE_OPERATORS[columnType];
             if (typeOperators) {
               // Default operators based on column type
-              if (columnType === 'color' || columnType === 'status' || columnType === 'dropdown') {
-                operator = 'any_of'; // Status columns use 'any_of'
-                // console.error(`[getItems] Using default operator 'any_of' for ${columnType} column ${filter.columnId}`);
-              } else if (columnType === 'text' || columnType === 'long_text') {
-                operator = typeOperators.contains; // 'contains_text'
-                // console.error(`[getItems] Using default operator 'contains_text' for ${columnType} column ${filter.columnId}`);
+              if (columnType === 'status' || columnType === 'dropdown' || 
+                  columnType === 'board_relation') {
+                operator = 'any_of'; // These columns default to 'any_of'
+              } else if (columnType === 'text' || columnType === 'long_text' || 
+                         columnType === 'email' || columnType === 'link' || columnType === 'phone') {
+                operator = typeOperators.contains || 'contains_text'; // Text-like columns default to contains
               } else if (columnType === 'numbers') {
                 operator = typeOperators.equals; // '='
-                // console.error(`[getItems] Using default operator '=' for ${columnType} column ${filter.columnId}`);
+              } else if (columnType === 'people') {
+                // People column: default to any_of for IDs, contains_text for names
+                if (Array.isArray(filter.value) && filter.value.every(v => !isNaN(Number(v)))) {
+                  operator = 'any_of'; // Numeric IDs
+                } else if (filter.value === 'me') {
+                  operator = 'person_filter_by_me';
+                } else {
+                  operator = 'contains_text'; // Names
+                }
               } else if (columnType === 'checkbox') {
                 operator = filter.value ? typeOperators.checked : typeOperators.unchecked;
-                // console.error(`[getItems] Using operator '${operator}' for checkbox column ${filter.columnId}`);
+              } else if (columnType === 'date') {
+                operator = 'exact'; // Default for dates
               } else {
                 operator = 'any_of'; // fallback
-                // console.error(`[getItems] Using fallback operator 'any_of' for unknown column type ${columnType}`);
               }
             }
           }
@@ -210,34 +241,17 @@ export async function getItems(args: {
           // Format value based on column type
           let compareValue = filter.value;
           
-          // Status columns (type 'color' or 'status') need index values
-          if ((columnType === 'color' || columnType === 'status') && typeof filter.value === 'string') {
-            // Try to map label to index
-            const settings = statusColumnSettings[filter.columnId];
-            if (settings && settings.labels) {
-              // Find the index for the given label
-              const labelIndex = Object.entries(settings.labels).find(
-                ([index, label]) => label === filter.value
-              );
-              
-              if (labelIndex) {
-                compareValue = parseInt(labelIndex[0]);
-                console.error(`[getItems] Mapped status label "${filter.value}" to index ${compareValue}`);
-              } else {
-                console.error(`[getItems] Warning: Could not find index for status label "${filter.value}" in column ${filter.columnId}`);
-                console.error(`[getItems] Available labels:`, settings.labels);
-                // Try to use the value as-is, might be an index already
-                if (!isNaN(Number(filter.value))) {
-                  compareValue = Number(filter.value);
-                }
-              }
-            } else {
-              console.error(`[getItems] Warning: No label mapping found for status column ${filter.columnId}`);
-            }
+          // Handle special value transformations for certain column types
+          if (columnType === 'people' && filter.value === 'me') {
+            // Special case for "assigned to me"
+            compareValue = 'assigned_to_me';
+          } else if (columnType === 'checkbox') {
+            // Ensure boolean for checkbox
+            compareValue = filter.value === true || filter.value === 'true' || filter.value === 'checked';
           }
           
-          // Array values for any_of operator
-          if (operator === 'any_of' && !Array.isArray(compareValue)) {
+          // Array values for any_of/not_any_of operators
+          if ((operator === 'any_of' || operator === 'not_any_of') && !Array.isArray(compareValue)) {
             compareValue = [compareValue];
           }
           
@@ -254,7 +268,7 @@ export async function getItems(args: {
       if (rules.length > 0) {
         // Build the rules array as a GraphQL-compatible string
         const rulesString = rules.map(rule => {
-          let compareValue;
+          let compareValue: string;
           if (Array.isArray(rule.compare_value)) {
             compareValue = `[${rule.compare_value.join(', ')}]`;
           } else if (typeof rule.compare_value === 'string') {
@@ -435,7 +449,7 @@ export async function getItems(args: {
           value = col.email;
         } else if (columnType === 'link' && col.url) {
           value = col.url;
-        } else if (columnType === 'board-relation' && col.linked_item_ids) {
+        } else if (columnType === 'board_relation' && col.linked_item_ids) {
           value = `Linked items: ${col.linked_item_ids.join(', ')}`;
         }
         
