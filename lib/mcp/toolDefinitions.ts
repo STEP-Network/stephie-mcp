@@ -457,7 +457,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
   },
   {
     name: 'getBoardColumns',
-    description: 'Get column structure for any Monday.com board. Shows column IDs, types, and settings. Essential for debugging and understanding board schema.',
+    description: 'Get column structure for any Monday.com board. Shows column IDs, types, and for status/dropdown columns shows available options with their indices/values. Use this before getItems to understand what values to filter by.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -472,19 +472,23 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
   },
   {
     name: 'getItems',
-    description: `Advanced tool to fetch and filter items from any Monday.com board.
+    description: `Fetch and filter items from any Monday.com board.
 
-IMPORTANT: When filtering by status columns:
-- Use the STATUS LABEL TEXT directly (e.g., "In Progress", "Done", "Live")
-- The tool will automatically convert labels to the required index values
-- DO NOT use operator parameter for status columns - it will be auto-selected
+TIP: Use getBoardColumns first to see column IDs, types, and available values.
 
-Examples:
-- Status filter: { columnId: "status_19__1", value: "In Progress" }
-- Text filter: { columnId: "text__1", value: "search text" }
-- Number filter: { columnId: "numbers__1", value: 100, operator: "greater" }
+Column value formats:
+- STATUS columns: Use label text (e.g., "In Progress") OR index number
+- DROPDOWN columns: Use the text value (e.g., "Desktop", "Mobile")
+- TEXT columns: Any string value
+- NUMBER columns: Numeric values
+- DATE columns: "YYYY-MM-DD" format
+- BOARD_RELATION: Item IDs as strings (filtering not yet supported)
 
-The tool automatically selects the best operator based on column type if not specified.`,
+Operator selection (optional - auto-selected if omitted):
+- Status/Dropdown: equals (default), notEquals, empty, notEmpty
+- Text: contains (default), equals, notContains, empty, notEmpty  
+- Numbers: equals (default), greater, less, between, empty, notEmpty
+- Dates: exact, greater, less, between, empty, notEmpty`,
     inputSchema: {
       type: 'object',
       properties: {
@@ -523,7 +527,7 @@ The tool automatically selects the best operator based on column type if not spe
                 description: 'Column ID to filter by (e.g., "status_19__1" for status, "text__1" for text)'
               },
               value: {
-                description: 'Value to filter by. For STATUS columns: use label text like "In Progress", "Done", "Live". For TEXT: any string. For NUMBERS: numeric value.'
+                description: 'Value to filter by. Format depends on column type - check getBoardColumns for available options. For status: use label text or index. For dropdown: use text value. For dates: "YYYY-MM-DD". For between operator: use array [start, end].'
               },
               operator: {
                 type: 'string',
