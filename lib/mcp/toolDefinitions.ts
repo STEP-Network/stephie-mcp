@@ -472,7 +472,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
   },
   {
     name: 'getItems',
-    description: `Query Monday.com board items. Use getBoardColumns first to get column IDs and types. STATUS/DROPDOWN require numeric indices only.`,
+    description: `Query Monday.com board items. Use getBoardColumns first to get column IDs and types. ALWAYS use columnIds parameter to avoid data overload (boards can have 50+ columns).`,
     inputSchema: {
       type: 'object',
       properties: {
@@ -489,7 +489,8 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
         columnIds: {
           type: 'array',
           items: { type: 'string' },
-          description: 'Column IDs to return'
+          description: 'Column IDs to return',
+          required: true
         },
         itemIds: {
           type: 'array',
@@ -502,7 +503,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
         },
         columnFilters: {
           type: 'array',
-          description: 'Column filters. Status/dropdown need numeric indices.',
+          description: 'Column filters.',
           items: {
             type: 'object',
             properties: {
@@ -528,7 +529,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
           default: false
         }
       },
-      required: ['boardId']
+      required: ['boardId', 'columnIds']
     }
   }
 ];
