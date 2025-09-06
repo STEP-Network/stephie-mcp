@@ -516,7 +516,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
               operator: {
                 type: 'string',
                 description: 'Filter operator',
-                enum: ['equals', 'notEquals', 'contains', 'notContains', 'greater', 'greaterOrEqual', 'less', 'lessOrEqual', 'between', 'empty', 'notEmpty', 'me', 'checked', 'unchecked']
+                enum: ['equals', 'notEquals', 'contains', 'notContains', 'greater', 'less', 'between', 'empty', 'notEmpty', 'me', 'checked', 'unchecked']
               }
             },
             required: ['columnId', 'value']

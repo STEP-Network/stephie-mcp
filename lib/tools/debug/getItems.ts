@@ -7,9 +7,7 @@ export type FilterOperator =
   | 'contains' 
   | 'notContains' 
   | 'greater' 
-  | 'greaterOrEqual' 
   | 'less' 
-  | 'lessOrEqual' 
   | 'between' 
   | 'empty' 
   | 'notEmpty'
@@ -59,9 +57,7 @@ const COLUMN_TYPE_OPERATORS: Record<string, Record<string, string>> = {
     equals: '=',
     notEquals: '!=',
     greater: '>',
-    greaterOrEqual: '>=',
     less: '<',
-    lessOrEqual: '<=',
     between: 'between',
     empty: 'is_empty',
     notEmpty: 'is_not_empty'
@@ -70,9 +66,7 @@ const COLUMN_TYPE_OPERATORS: Record<string, Record<string, string>> = {
   date: {
     exact: 'exact',
     greater: 'greater_than',
-    greaterOrEqual: 'greater_than_or_equal',
     less: 'lower_than',
-    lessOrEqual: 'lower_than_or_equal',
     between: 'between',
     empty: 'is_empty',
     notEmpty: 'is_not_empty'
