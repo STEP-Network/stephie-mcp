@@ -27,6 +27,12 @@ export async function getAllPublishers() {
               id
               text
               value
+              ... on BoardRelationValue {
+                linked_items {
+                  id
+                  name
+                }
+              }
             }
           }
         }
@@ -65,17 +71,11 @@ export async function getAllPublishers() {
         return columnValues.find((col: any) => col.id === id);
       };
       
-      // Get basic publisher column values (no format columns)
-      const statusCol = getColumnValue('status8'); // Publisher status
-      const websiteCol = getColumnValue('link__1'); // Hjemmeside link
-      const descriptionCol = getColumnValue('text_mkm6ckz5'); // Publisher beskrivelse
-      const contactEmailCol = getColumnValue('email'); // Kontakt email
+      // Get publisher column values
+      const gamIdCol = getColumnValue('text_mktdhmar'); // GAM Ad Unit ID
       const vertikalCol = getColumnValue('board_relation_mksx8dny'); // Vertikal
-      const publisherGroupCol = getColumnValue('board_relation__1'); // Publisher Group
+      const publisherGroupCol = getColumnValue('board_relation_mkp69z9s'); // Publisher Group
       const approvalStatusCol = getColumnValue('status32'); // Approval Status (Gambling/Finance)
-      
-      // All items are already Live (filtered by query_params)
-      const isActive = true;
       
       // Get approval status
       let approval = '';
@@ -87,17 +87,17 @@ export async function getAllPublishers() {
         }
       }
       
+      // Extract linked item names for board relations
+      const verticalName = vertikalCol?.linked_items?.[0]?.name || '-';
+      const groupName = publisherGroupCol?.linked_items?.[0]?.name || '-';
+      
       const publisher = {
         id: item.id,
         name: item.name,
-        website: websiteCol?.text || '',
-        description: descriptionCol?.text || '',
-        status: statusCol?.text || 'Unknown',
-        active: isActive,
-        contactEmail: contactEmailCol?.text || '',
-        vertikal: vertikalCol?.text || '',
-        publisherGroup: publisherGroupCol?.text || '',
-        approval,
+        gamId: gamIdCol?.text || '-',
+        vertical: verticalName,
+        group: groupName,
+        approval: approval || '-',
       };
 
       return publisher;
@@ -109,10 +109,9 @@ export async function getAllPublishers() {
     // Format as markdown
     const lines: string[] = [];
     
-    lines.push('# Publishers');
+    lines.push('# Publishers/Sites');
     lines.push('');
-    lines.push(`**Total:** ${filteredPublishers.length} Live publishers`);
-    lines.push(`**Status Filter:** Live publishers only`);
+    lines.push(`**Total:** ${filteredPublishers.length} Live publishers/sites`);
     lines.push('');
     
     if (filteredPublishers.length === 0) {
@@ -120,22 +119,17 @@ export async function getAllPublishers() {
       return lines.join('\n');
     }
     
-    // Group by publisher group
-    const grouped = filteredPublishers.reduce((acc, pub) => {
-      const group = pub.publisherGroup || 'Uncategorized';
-      if (!acc[group]) acc[group] = [];
-      acc[group].push(pub);
-      return acc;
-    }, {} as Record<string, typeof filteredPublishers>);
+    // Sort publishers by name
+    const sortedPublishers = filteredPublishers.sort((a, b) => 
+      a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+    );
     
-    // Create table
-    lines.push('| Publisher | Website | Status | Vertical | Group | Approval |');
-    lines.push('|-----------|---------|--------|----------|-------|----------|');
+    // Create table with new columns
+    lines.push('| Publisher/Site | GAM ID | Vertical | Group | Approval |');
+    lines.push('|----------------|--------|----------|-------|----------|');
     
-    for (const [group, pubs] of Object.entries(grouped)) {
-      for (const pub of pubs as any) {
-        lines.push(`| **${pub.name}** | ${pub.website} | ${pub.active ? '✅ Active' : '❌ Inactive'} | ${pub.vertikal || '-'} | ${group} | ${pub.approval} |`);
-      }
+    for (const pub of sortedPublishers as any) {
+      lines.push(`| **${pub.name}** | ${pub.gamId} | ${pub.vertical} | ${pub.group} | ${pub.approval} |`);
     }
     
     return lines.join('\n');
