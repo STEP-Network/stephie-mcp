@@ -44,8 +44,7 @@ export async function getBoardColumns(boardId: string = '1222800432') {
             // Convert labels object to array with indices
             const options = Object.entries(settings.labels).map(([index, label]: [string, any]) => ({
               index: parseInt(index),
-              label: typeof label === 'string' ? label : label.toString(),
-              color: settings.labels_colors?.[index]
+              label: typeof label === 'string' ? label : label.toString()
             })).sort((a, b) => a.index - b.index);
             
             return {
