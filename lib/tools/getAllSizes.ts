@@ -193,16 +193,12 @@ export async function getAllSizes(args: {
         })
         .join(',');
       
-      // Format products column (limit length)
+      // Format products and formats columns (no truncation)
       const products = size.adProducts || '-';
-      const shortProducts = products.length > 35 ? products.substring(0, 32) + '...' : products;
-      
-      // Format the formats column (limit length) 
       const formats = size.adFormats || '-';
-      const shortFormats = formats.length > 35 ? formats.substring(0, 32) + '...' : formats;
       
       // Add row with bold size
-      textLines.push(`| **${size.name}** | ${cleanDevices} | ${shortProducts} | ${shortFormats} |`);
+      textLines.push(`| **${size.name}** | ${cleanDevices} | ${products} | ${formats} |`);
     }
     
     textLines.push('');
