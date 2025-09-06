@@ -28,6 +28,39 @@ export async function getBoardColumns(boardId: string = '1222800432') {
     const board = response.data.boards[0];
     const columns = board.columns || [];
     
+    // Parse settings for status and dropdown columns
+    const parseColumnSettings = (col: any) => {
+      const baseInfo = {
+        id: col.id,
+        title: col.title,
+        type: col.type
+      };
+      
+      // Parse settings_str for status and dropdown columns
+      if ((col.type === 'status' || col.type === 'dropdown' || col.type === 'color') && col.settings_str) {
+        try {
+          const settings = JSON.parse(col.settings_str);
+          if (settings.labels) {
+            // Convert labels object to array with indices
+            const options = Object.entries(settings.labels).map(([index, label]: [string, any]) => ({
+              index: parseInt(index),
+              label: typeof label === 'string' ? label : label.toString(),
+              color: settings.labels_colors?.[index]
+            })).sort((a, b) => a.index - b.index);
+            
+            return {
+              ...baseInfo,
+              options
+            };
+          }
+        } catch (e) {
+          console.error(`Failed to parse settings for column ${col.id}:`, e);
+        }
+      }
+      
+      return baseInfo;
+    };
+    
     // Find format-related columns
     const formatColumns = columns.filter((col: any) => {
       const title = col.title.toLowerCase();
@@ -43,16 +76,8 @@ export async function getBoardColumns(boardId: string = '1222800432') {
     return {
       boardName: board.name,
       totalColumns: columns.length,
-      columns: columns.map((col: any) => ({
-        id: col.id,
-        title: col.title,
-        type: col.type
-      })),
-      formatColumns: formatColumns.map((col: any) => ({
-        id: col.id,
-        title: col.title,
-        type: col.type
-      }))
+      columns: columns.map(parseColumnSettings),
+      formatColumns: formatColumns.map(parseColumnSettings)
     };
   } catch (error) {
     console.error('Error fetching board columns:', error);

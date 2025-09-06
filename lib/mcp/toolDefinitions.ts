@@ -457,7 +457,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
   },
   {
     name: 'getBoardColumns',
-    description: 'Get board columns with IDs, types, and status/dropdown index mappings.',
+    description: 'Get board columns with IDs, types, and status/dropdown options. Shows numeric index to label mappings for status/dropdown columns.',
     inputSchema: {
       type: 'object',
       properties: {
