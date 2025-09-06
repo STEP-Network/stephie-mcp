@@ -105,10 +105,10 @@ export async function getAllSizes(args: {
             columnValues.deviceType = col.text || '';
             break;
           case 'board_relation_mkqpj8f2':
-            columnValues.adFormats = col.display_value || '';
+            columnValues.adFormats = col.display_value || col.text || '';
             break;
           case 'board_relation_mkqpcw8q':
-            columnValues.adProducts = col.display_value || '';
+            columnValues.adProducts = col.display_value || col.text || '';
             break;
         }
       });
@@ -150,8 +150,10 @@ export async function getAllSizes(args: {
     // Main table with essential info
     textLines.push('## Size Overview');
     textLines.push('');
-    textLines.push('| Size | GAM Names | Devices | Formats | CTR | Viewability |');
-    textLines.push('|------|-----------|---------|---------|-----|-------------|');
+    textLines.push('*Device abbreviations: D=Desktop, M=Mobile, T=Tablet, A=App*');
+    textLines.push('');
+    textLines.push('| Size | GAM Names | Devices | Products | Formats | CTR | View% | eAPM |');
+    textLines.push('|------|-----------|---------|----------|---------|-----|-------|------|');
     
     // Sort sizes by name for consistent output
     const sortedSizes = [...sizes].sort((a, b) => {
@@ -187,24 +189,29 @@ export async function getAllSizes(args: {
       
       // Format GAM names (limit length)
       const gamNames = size.gamNames || '-';
-      const shortGamNames = gamNames.length > 25 ? gamNames.substring(0, 22) + '...' : gamNames;
+      const shortGamNames = gamNames.length > 20 ? gamNames.substring(0, 17) + '...' : gamNames;
       
-      // Format the formats column (limit length)
+      // Format products column (limit length)
+      const products = size.adProducts || '-';
+      const shortProducts = products.length > 25 ? products.substring(0, 22) + '...' : products;
+      
+      // Format the formats column (limit length) 
       const formats = size.adFormats || '-';
-      const shortFormats = formats.length > 30 ? formats.substring(0, 27) + '...' : formats;
+      const shortFormats = formats.length > 25 ? formats.substring(0, 22) + '...' : formats;
       
       // Format benchmarks
       const ctr = size.averageCTR || '-';
       const viewability = size.averageViewability || '-';
+      const eapm = size.averageEAPM || '-';
       
       // Add row with bold size
-      textLines.push(`| **${size.name}** | ${shortGamNames} | ${cleanDevices} | ${shortFormats} | ${ctr} | ${viewability} |`);
+      textLines.push(`| **${size.name}** | ${shortGamNames} | ${cleanDevices} | ${shortProducts} | ${shortFormats} | ${ctr} | ${viewability} | ${eapm} |`);
     }
     
     textLines.push('');
     
     // Add detailed info for sizes with descriptions or specs
-    const sizesWithDetails = sortedSizes.filter(s => s.description || s.specsUrl || s.averageEAPM);
+    const sizesWithDetails = sortedSizes.filter(s => s.description || s.specsUrl);
     if (sizesWithDetails.length > 0) {
       textLines.push('## Size Details');
       textLines.push('');
@@ -222,10 +229,6 @@ export async function getAllSizes(args: {
         
         if (size.adProducts) {
           textLines.push(`**Products:** ${size.adProducts}`);
-        }
-        
-        if (size.averageEAPM) {
-          textLines.push(`**eAPM (Adnami):** ${size.averageEAPM}`);
         }
         
         if (size.specsUrl) {
