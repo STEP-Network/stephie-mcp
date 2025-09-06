@@ -21,7 +21,7 @@ import { getBoardColumns } from '../lib/tools/debug/getBoardColumns.js';
 import { getItems } from '../lib/tools/debug/getItems.js';
 
 // Create the MCP handler with all tools
-export default createMcpHandler((server) => {
+const handler = createMcpHandler((server) => {
   // Publisher tools
   server.tool('getAllPublishers', 
     {},
@@ -249,3 +249,6 @@ export default createMcpHandler((server) => {
     }
   );
 });
+
+// Export handler for Vercel Edge Runtime
+export { handler as GET, handler as POST };
