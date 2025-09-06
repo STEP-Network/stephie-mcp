@@ -349,6 +349,10 @@ export async function getItems(args: {
               ... on BoardRelationValue {
                 display_value
                 linked_item_ids
+                linked_items {
+                  id
+                  name
+                }
               }
               ... on NumbersValue {
                 text
@@ -449,8 +453,19 @@ export async function getItems(args: {
           value = col.email;
         } else if (columnType === 'link' && col.url) {
           value = col.url;
-        } else if (columnType === 'board_relation' && col.linked_item_ids) {
-          value = `Linked items: ${col.linked_item_ids.join(', ')}`;
+        } else if (columnType === 'board_relation') {
+          if (col.linked_items && col.linked_items.length > 0) {
+            // Format as "Name (ID), Name (ID)"
+            const linkedInfo = col.linked_items.map((item: any) => 
+              `${item.name} (${item.id})`
+            ).join(', ');
+            value = linkedInfo;
+          } else if (col.linked_item_ids && col.linked_item_ids.length > 0) {
+            // Fallback to just IDs if names not available
+            value = `Linked items: ${col.linked_item_ids.join(', ')}`;
+          } else {
+            value = '';
+          }
         }
         
         columnData[columnTitle] = value;
