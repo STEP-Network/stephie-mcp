@@ -47,19 +47,15 @@ const server = new Server(
 const TOOL_DEFINITIONS = [
   {
     name: 'getAllPublishers',
-    description: 'Get all publishers from Monday.com with details',
+    description: 'Get all Live publishers/sites from Monday.com Publishers board. Returns all 126 Live publishers/sites with essential information: Publisher/Site name, GAM Ad Unit ID, Vertical, Publisher Group, and Approval status (Gambling/Finance). Results are sorted by Vertical, then alphabetically by name.',
     inputSchema: {
       type: 'object',
-      properties: {
-        limit: { type: 'number', default: 100 },
-        searchTerm: { type: 'string' },
-        active: { type: 'boolean' }
-      }
+      properties: {}
     }
   },
   {
     name: 'getPublisherFormats',
-    description: 'Get publishers and their available ad formats',
+    description: 'Get publishers/sites and their available ad formats',
     inputSchema: {
       type: 'object',
       properties: {
@@ -71,7 +67,7 @@ const TOOL_DEFINITIONS = [
   },
   {
     name: 'getPublishersByFormats',
-    description: 'Find publishers supporting specific ad formats on specific devices',
+    description: 'Find publishers/sites supporting specific ad formats on specific devices',
     inputSchema: {
       type: 'object',
       properties: {
