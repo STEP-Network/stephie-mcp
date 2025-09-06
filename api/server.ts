@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { createMcpHandler } from 'mcp-handler';
+import { TOOL_DEFINITIONS } from '../lib/mcp/toolDefinitions.js';
 
 // Import all tools
 import { getAllPublishers } from '../lib/tools/getAllPublishers.js';
@@ -20,10 +21,17 @@ import { listAllBoards } from '../lib/tools/debug/listBoards.js';
 import { getBoardColumns } from '../lib/tools/debug/getBoardColumns.js';
 import { getItems, type ColumnFilter } from '../lib/tools/debug/getItems.js';
 
+// Helper to get tool description
+const getToolDescription = (name: string): string => {
+  const tool = TOOL_DEFINITIONS.find(t => t.name === name);
+  return tool?.description || '';
+};
+
 // Create the MCP handler with all tools
 const handler = createMcpHandler((server) => {
   // Publisher tools
-  server.tool('getAllPublishers', 
+  server.tool('getAllPublishers',
+    getToolDescription('getAllPublishers'),
     {},
     async () => {
       const result = await getAllPublishers();
@@ -32,6 +40,7 @@ const handler = createMcpHandler((server) => {
   );
 
   server.tool('getPublisherFormats',
+    getToolDescription('getPublisherFormats'),
     {
       publisherName: z.string().optional(),
       publisherGroupName: z.string().optional()
@@ -44,6 +53,7 @@ const handler = createMcpHandler((server) => {
   );
 
   server.tool('getPublishersByFormats',
+    getToolDescription('getPublishersByFormats'),
     {
       topscroll: z.enum(['Desktop', 'Mobile', 'App', 'All']).optional(),
       topscrollExpand: z.enum(['Desktop', 'Mobile', 'App', 'All']).optional(),
@@ -72,6 +82,7 @@ const handler = createMcpHandler((server) => {
   );
 
   server.tool('findPublisherAdUnits',
+    getToolDescription('findPublisherAdUnits'),
     {
       names: z.array(z.string())
     },
@@ -84,6 +95,7 @@ const handler = createMcpHandler((server) => {
 
   // Product & pricing tools
   server.tool('getAllProducts',
+    getToolDescription('getAllProducts'),
     {},
     async () => {
       const result = await getAllProducts({});
@@ -93,6 +105,7 @@ const handler = createMcpHandler((server) => {
   );
 
   server.tool('getAllFormats',
+    getToolDescription('getAllFormats'),
     {},
     async () => {
       const result = await getAllFormats({});
@@ -102,6 +115,7 @@ const handler = createMcpHandler((server) => {
   );
 
   server.tool('getAllSizes',
+    getToolDescription('getAllSizes'),
     {},
     async () => {
       const result = await getAllSizes({});
@@ -111,6 +125,7 @@ const handler = createMcpHandler((server) => {
   );
 
   server.tool('getAllAdPrices',
+    getToolDescription('getAllAdPrices'),
     {},
     async () => {
       const result = await getAllAdPrices({});
@@ -121,6 +136,7 @@ const handler = createMcpHandler((server) => {
 
   // Targeting tools
   server.tool('getKeyValues',
+    getToolDescription('getKeyValues'),
     {
       keySearch: z.string().optional(),
       valueSearch: z.string().optional(),
@@ -136,6 +152,7 @@ const handler = createMcpHandler((server) => {
   );
 
   server.tool('getAudienceSegments',
+    getToolDescription('getAudienceSegments'),
     {
       search: z.string().optional(),
       limit: z.number().default(100).optional()
@@ -148,6 +165,7 @@ const handler = createMcpHandler((server) => {
   );
 
   server.tool('getAllPlacements',
+    getToolDescription('getAllPlacements'),
     {},
     async () => {
       const result = await getAllPlacements({});
@@ -157,6 +175,7 @@ const handler = createMcpHandler((server) => {
   );
 
   server.tool('getGeoLocations',
+    getToolDescription('getGeoLocations'),
     {
       search: z.array(z.string()).optional(),
       type: z.enum(['region', 'country', 'postal_code', 'city', 'municipality']).optional(),
@@ -170,6 +189,7 @@ const handler = createMcpHandler((server) => {
   );
 
   server.tool('getContextualTargeting',
+    getToolDescription('getContextualTargeting'),
     {
       search: z.string().optional(),
       limit: z.number().default(100).optional()
@@ -183,6 +203,7 @@ const handler = createMcpHandler((server) => {
 
   // Forecasting tool
   server.tool('availabilityForecast',
+    getToolDescription('availabilityForecast'),
     {
       startDate: z.string(),
       endDate: z.string(),
@@ -216,6 +237,7 @@ const handler = createMcpHandler((server) => {
 
   // Debug tools
   server.tool('listBoards',
+    getToolDescription('listBoards'),
     {},
     async () => {
       const result = await listAllBoards();
@@ -226,6 +248,7 @@ const handler = createMcpHandler((server) => {
   );
 
   server.tool('getBoardColumns',
+    getToolDescription('getBoardColumns'),
     {
       boardId: z.string()
     },
@@ -236,6 +259,7 @@ const handler = createMcpHandler((server) => {
   );
 
   server.tool('getItems',
+    getToolDescription('getItems'),
     {
       boardId: z.string(),
       limit: z.number().default(10).optional(),
