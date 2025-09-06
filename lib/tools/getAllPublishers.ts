@@ -1,11 +1,8 @@
 import { mondayApi, BOARD_IDS } from '../monday/client.js';
 
-export async function getAllPublishers(args: {
-  limit?: number;
-  searchTerm?: string;
-  active?: boolean;
-}) {
-  const { limit = 500, searchTerm, active } = args;
+export async function getAllPublishers() {
+  // Always fetch all Live publishers - no parameters needed
+  const limit = 500;
 
   // Query with proper filtering for Live publishers (status8 index 1)
   const query = `
@@ -106,21 +103,8 @@ export async function getAllPublishers(args: {
       return publisher;
     });
 
-    // Apply filters
-    let filteredPublishers = publishers;
-    
-    if (searchTerm) {
-      const search = searchTerm.toLowerCase();
-      filteredPublishers = filteredPublishers.filter(p => 
-        p.name.toLowerCase().includes(search) ||
-        p.website.toLowerCase().includes(search) ||
-        p.description.toLowerCase().includes(search)
-      );
-    }
-
-    if (active !== undefined) {
-      filteredPublishers = filteredPublishers.filter(p => p.active === active);
-    }
+    // No filtering - always return all Live publishers
+    const filteredPublishers = publishers;
 
     // Format as markdown
     const lines: string[] = [];
@@ -129,12 +113,6 @@ export async function getAllPublishers(args: {
     lines.push('');
     lines.push(`**Total:** ${filteredPublishers.length} Live publishers`);
     lines.push(`**Status Filter:** Live publishers only`);
-    if (searchTerm) {
-      lines.push(`**Search:** "${searchTerm}"`);
-    }
-    if (active !== undefined) {
-      lines.push(`**Filter:** ${active ? 'Active only' : 'Inactive only'}`);
-    }
     lines.push('');
     
     if (filteredPublishers.length === 0) {

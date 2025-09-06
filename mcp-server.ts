@@ -36,24 +36,10 @@ const authValidator = new AuthValidator();
 const AVAILABLE_TOOLS = [
   {
     name: 'getAllPublishers',
-    description: 'Get all publishers from Monday.com Publishers board (1222800432) with basic information: name, website, description, status, vertical, publisher group, and approval status. For format information use getPublisherFormats or getPublishersByFormats.',
+    description: 'Get all Live publishers from Monday.com Publishers board. Returns all 126 Live publishers with basic information: name, website, description, status, vertical, publisher group, and approval status. For format information use getPublisherFormats or getPublishersByFormats.',
     inputSchema: {
       type: 'object',
-      properties: {
-        limit: { 
-          type: 'number', 
-          description: 'Maximum number of publishers to return (default: 100)',
-          default: 100 
-        },
-        searchTerm: { 
-          type: 'string', 
-          description: 'Search term to filter publishers by name (partial match)' 
-        },
-        active: {
-          type: 'boolean',
-          description: 'Filter by active status (true for active only, false for inactive only, omit for all)'
-        }
-      }
+      properties: {}
     }
   },
   {
@@ -511,7 +497,7 @@ async function executeToolHandler(toolName: string, args: any): Promise<any> {
   try {
     switch (toolName) {
       case 'getAllPublishers':
-        return await getAllPublishers(args);
+        return await getAllPublishers();
         
       case 'getPublisherFormats':
         return await getPublisherFormats(args);
