@@ -474,7 +474,16 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     name: 'getItems',
     description: `Fetch and filter items from any Monday.com board.
 
-TIP: Use getBoardColumns first to see column IDs, types, and available values.
+REQUIRED WORKFLOW:
+1. First use getBoardColumns(boardId) to see column IDs, types, and values
+2. Then use getItems with appropriate columnFilters based on column types
+
+EXAMPLES:
+• Status: {columnId: "status_19__1", value: 4}  // Index only
+• Text: {columnId: "text__1", value: "search term", operator: "contains"}
+• People: {columnId: "people__1", value: "me"}  // Special value
+• Date: {columnId: "date__1", value: "2024-01-01", operator: "greater"}
+• Multiple: [{columnId: "status__1", value: 1}, {columnId: "text__1", value: "urgent"}]
 
 Column value formats by type:
 • STATUS: Use index number only (e.g., 4 for "In Progress") - check getBoardColumns for mapping
