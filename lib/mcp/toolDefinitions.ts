@@ -474,20 +474,23 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     name: 'getItems',
     description: `Fetch and filter items from any Monday.com board.
 
+⚠️ CRITICAL: STATUS AND DROPDOWN COLUMNS REQUIRE NUMERIC INDICES, NOT TEXT!
+
 REQUIRED WORKFLOW:
-1. First use getBoardColumns(boardId) to see column IDs, types, and values
-2. Then use getItems with appropriate columnFilters based on column types
+1. First use getBoardColumns(boardId) to see column IDs, types, and index mappings
+2. Then use getItems with NUMERIC indices for status/dropdown columns
 
 EXAMPLES:
-• Status: {columnId: "status_19__1", value: 4}  // Index only
+• Status: {columnId: "status_19__1", value: 4}  // ✅ CORRECT: Index 4
+• Status: {columnId: "status_19__1", value: "In Progress"}  // ❌ WRONG: Will fail!
 • Text: {columnId: "text__1", value: "search term", operator: "contains"}
 • People: {columnId: "people__1", value: "me"}  // Special value
 • Date: {columnId: "date__1", value: "2024-01-01", operator: "greater"}
 • Multiple: [{columnId: "status__1", value: 1}, {columnId: "text__1", value: "urgent"}]
 
 Column value formats by type:
-• STATUS: Use index number only (e.g., 4 for "In Progress") - check getBoardColumns for mapping
-• DROPDOWN: Use index/label ID only - check getBoardColumns for available options
+• STATUS: MUST BE NUMERIC INDEX (e.g., 4 not "In Progress") - getBoardColumns shows mapping
+• DROPDOWN: MUST BE NUMERIC INDEX - getBoardColumns shows available options
 • TEXT/LONG_TEXT: Any string value
 • NUMBERS: Numeric values
 • DATE: "YYYY-MM-DD" or relative ("TODAY", "THIS_WEEK", "ONE_MONTH_AGO")
@@ -543,7 +546,7 @@ Operator selection (defaults applied if omitted):
                 description: 'Column ID to filter by (e.g., "status_19__1" for status, "text__1" for text)'
               },
               value: {
-                description: 'Value to filter by. Examples: "In Progress" (status), "me" (people), ["2024-01-01", "2024-12-31"] (date range), true (checkbox), ["item-123", "item-456"] (board relation IDs)'
+                description: 'Value to filter by. STATUS/DROPDOWN MUST BE NUMERIC (e.g., 4 not "In Progress"). Examples: 4 (status index), "me" (people), "2024-01-01" (date), true (checkbox)'
               },
               operator: {
                 type: 'string',

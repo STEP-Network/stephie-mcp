@@ -195,6 +195,12 @@ export async function getItems(args: {
           const columnType = columnTypes[filter.columnId] || 'text';
           let operator: string | undefined = filter.operator;
           
+          // Validate status/dropdown columns use numeric indices
+          if ((columnType === 'status' || columnType === 'dropdown') && 
+              typeof filter.value === 'string' && isNaN(Number(filter.value))) {
+            throw new Error(`Column ${filter.columnId} is type '${columnType}' and requires a numeric index, not text value "${filter.value}". Use getBoardColumns first to see the index mapping.`);
+          }
+          
           // Map user-friendly operator names to Monday.com operators
           if (operator && typeof operator === 'string') {
             const typeOperators = COLUMN_TYPE_OPERATORS[columnType];
