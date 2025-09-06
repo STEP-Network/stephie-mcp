@@ -2,6 +2,16 @@
 
 MCP Server for STEP Networks' advertising and publisher data via Monday.com and Google Ad Manager.
 
+## Recent Updates (September 2025)
+
+- **Vercel Deployment**: Full cloud deployment with mcp-handler library
+- **SSE Transport**: Server-Sent Events support for Claude Desktop via mcp-remote  
+- **TypeScript Config**: Added DOM types to tsconfig.json for Response API
+- **Handler Export**: Uses named exports (GET, POST) for Vercel Edge Runtime
+- **Routing**: Added `/sse` and `/message` rewrites in vercel.json
+- **Tool Parameters**: All `getAll*` tools now have no parameters (empty schemas)
+- **No dotenv**: Removed dotenv from api/server.ts (Vercel provides env vars directly)
+
 ## Tech Stack
 - TypeScript ES modules
 - MCP SDK for protocol implementation  
@@ -160,12 +170,38 @@ TEST_AUTH_TOKEN=test-token pnpm test:local
 }
 ```
 
+## Deployment
+
+### Vercel Deployment
+```bash
+# Deploy to production
+vercel --prod
+
+# Set environment variables in Vercel dashboard
+# Project Settings → Environment Variables
+```
+
+### Claude Desktop Configuration
+```json
+{
+  "mcpServers": {
+    "stephie-mcp": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://stephie-mcp.vercel.app/sse"]
+    }
+  }
+}
+```
+
 ## Common Issues
 
 - **Missing formats**: Verify column IDs match current board schema
 - **High-impact vs Adnami**: Different dropdown IDs for same devices
 - **Parent-child relationships**: Use GAM IDs not Monday item IDs
-- **CRITICAL: Use console.error for debug output** - MCP protocol requires clean JSON on stdout, all debug output must go to stderr
+- **TypeScript errors**: Ensure DOM types in tsconfig.json for Response API
+- **Vercel 500 errors**: Check no dotenv in api/server.ts, use named exports
+- **404 on /message**: Ensure vercel.json has rewrites for /sse and /message
+- **CRITICAL: Use console.error for debug output** - MCP protocol requires clean JSON on stdout
 
 ## Testing Individual Tools
 

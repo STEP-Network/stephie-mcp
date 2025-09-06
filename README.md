@@ -99,12 +99,9 @@ DATABASE_URL=your_postgres_url
 
 ## Usage
 
-### Claude Desktop (Local)
+### Claude Desktop (Cloud via Vercel)
 
-1. **Build the MCP server:**
-   ```bash
-   pnpm mcp:build
-   ```
+1. **Deploy to Vercel** (see deployment section below)
 
 2. **Configure Claude Desktop:**
    
@@ -114,6 +111,28 @@ DATABASE_URL=your_postgres_url
    {
      "mcpServers": {
        "stephie-mcp": {
+         "command": "npx",
+         "args": ["-y", "mcp-remote", "https://stephie-mcp.vercel.app/sse"]
+       }
+     }
+   }
+   ```
+
+3. **Restart Claude Desktop** to connect to the cloud MCP server
+
+### Claude Desktop (Local Development)
+
+1. **Build the MCP server:**
+   ```bash
+   pnpm mcp:build
+   ```
+
+2. **Configure Claude Desktop for local server:**
+   
+   ```json
+   {
+     "mcpServers": {
+       "stephie-mcp-local": {
          "command": "node",
          "args": ["/path/to/stephie-mcp/dist/mcp-server.js"],
          "env": {
@@ -128,7 +147,7 @@ DATABASE_URL=your_postgres_url
    }
    ```
 
-3. **Restart Claude Desktop** to load the MCP server
+3. **Restart Claude Desktop** to load the local MCP server
 
 ### Vercel Deployment (Cloud)
 
@@ -137,14 +156,20 @@ DATABASE_URL=your_postgres_url
    vercel --prod
    ```
 
-2. **Set environment variables** in Vercel dashboard
+2. **Set environment variables** in Vercel dashboard:
+   - All variables from `.env.local` need to be added
+   - Go to Project Settings → Environment Variables
+   - Add each variable for Production environment
 
-3. **Access via HTTP:**
+3. **Verify deployment:**
    ```bash
-   curl -X POST https://your-deployment.vercel.app \
-     -H "Content-Type: application/json" \
-     -d '{"method": "tools/list"}'
+   # Check SSE endpoint
+   curl -I https://stephie-mcp.vercel.app/sse
+   
+   # Should return HTTP 200 with text/event-stream content-type
    ```
+
+4. **Use with Claude Desktop** via mcp-remote (see Claude Desktop section above)
 
 ## Development
 
@@ -216,7 +241,7 @@ The MCP server exposes tools via the Model Context Protocol. Each tool returns m
 ## Troubleshooting
 
 ### "No items found" errors
-- Verify board IDs in `lib/monday/client.js`
+- Verify board IDs in `lib/monday/client.ts`
 - Check column IDs match current Monday.com schema
 - Use `getBoardColumns` tool to inspect structure
 
@@ -224,6 +249,17 @@ The MCP server exposes tools via the Model Context Protocol. Each tool returns m
 - For local dev: Set `TEST_AUTH_TOKEN=test-token`
 - For production: Ensure valid Stack Auth token
 - Check environment variables are loaded
+
+### Vercel deployment issues
+- Ensure TypeScript compiles: `pnpm build`
+- Check Vercel logs: `vercel logs stephie-mcp.vercel.app`
+- Verify environment variables are set in Vercel dashboard
+- Note: DOM types are required in tsconfig.json for Response API
+
+### MCP connection issues
+- The server uses SSE transport at `/sse` endpoint
+- Requires mcp-remote for Claude Desktop connection
+- Check that rewrites in vercel.json include `/sse` and `/message`
 
 ### Rate limiting
 - Monday.com API has rate limits
