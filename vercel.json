@@ -32,6 +32,14 @@
     {
       "source": "/mcp",
       "destination": "/api/mcp"
+    },
+    {
+      "source": "/mcp-sse",
+      "destination": "/api/mcp-sse"
+    },
+    {
+      "source": "/sse",
+      "destination": "/api/mcp-sse"
     }
   ],
   "headers": [
