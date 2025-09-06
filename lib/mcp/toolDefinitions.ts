@@ -472,7 +472,19 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
   },
   {
     name: 'getItems',
-    description: 'Advanced tool to fetch and filter items from any Monday.com board. Supports intelligent column filtering with automatic operator selection based on column type. For status columns, use either the label text (will be auto-converted to index) or the index number directly.',
+    description: `Advanced tool to fetch and filter items from any Monday.com board.
+
+IMPORTANT: When filtering by status columns:
+- Use the STATUS LABEL TEXT directly (e.g., "In Progress", "Done", "Live")
+- The tool will automatically convert labels to the required index values
+- DO NOT use operator parameter for status columns - it will be auto-selected
+
+Examples:
+- Status filter: { columnId: "status_19__1", value: "In Progress" }
+- Text filter: { columnId: "text__1", value: "search text" }
+- Number filter: { columnId: "numbers__1", value: 100, operator: "greater" }
+
+The tool automatically selects the best operator based on column type if not specified.`,
     inputSchema: {
       type: 'object',
       properties: {
@@ -502,20 +514,21 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
         },
         columnFilters: {
           type: 'array',
-          description: 'Filter items by column values. Automatically selects the right operator based on column type.',
+          description: 'Filter items by column values. For status columns, use the label text (e.g., "In Progress", "Done") - NOT "IS" or other operators.',
           items: {
             type: 'object',
             properties: {
               columnId: {
                 type: 'string',
-                description: 'Column ID to filter by (e.g., "status_19__1")'
+                description: 'Column ID to filter by (e.g., "status_19__1" for status, "text__1" for text)'
               },
               value: {
-                description: 'Value to filter by. For status columns, can use label text (e.g., "In Progress") or index number'
+                description: 'Value to filter by. For STATUS columns: use label text like "In Progress", "Done", "Live". For TEXT: any string. For NUMBERS: numeric value.'
               },
               operator: {
                 type: 'string',
-                description: 'Optional operator. If not provided, will be auto-selected based on column type'
+                description: 'OPTIONAL - Only use for specific needs. Auto-selected if omitted. Valid values: equals, notEquals, contains, notContains, greater, greaterOrEqual, less, lessOrEqual, between, empty, notEmpty',
+                enum: ['equals', 'notEquals', 'contains', 'notContains', 'greater', 'greaterOrEqual', 'less', 'lessOrEqual', 'between', 'empty', 'notEmpty']
               }
             },
             required: ['columnId', 'value']

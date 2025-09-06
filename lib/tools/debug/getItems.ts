@@ -1,10 +1,24 @@
 import { mondayApi } from '../../monday/client.js';
 
+// Supported filter operators
+export type FilterOperator = 
+  | 'equals' 
+  | 'notEquals' 
+  | 'contains' 
+  | 'notContains' 
+  | 'greater' 
+  | 'greaterOrEqual' 
+  | 'less' 
+  | 'lessOrEqual' 
+  | 'between' 
+  | 'empty' 
+  | 'notEmpty';
+
 // Column filter type definition
 export interface ColumnFilter {
   columnId: string;
   value: any;
-  operator?: string; // Optional - will be determined by column type if not provided
+  operator?: FilterOperator; // Optional - will be determined by column type if not provided
 }
 
 // Operator mapping based on Monday.com column types
@@ -121,10 +135,11 @@ export async function getItems(args: {
         columnTypes[col.id] = col.type;
         
         // Parse status column settings to get label-to-index mapping
-        if (col.type === 'color' && col.settings_str) {
+        if ((col.type === 'color' || col.type === 'status') && col.settings_str) {
           try {
             const settings = JSON.parse(col.settings_str);
             statusColumnSettings[col.id] = settings;
+            // console.error(`[getItems] Status column ${col.id} labels:`, settings.labels);
           } catch (e) {
             console.error(`[getItems] Failed to parse settings for column ${col.id}`);
           }
@@ -157,6 +172,17 @@ export async function getItems(args: {
           const columnType = columnTypes[filter.columnId] || 'text';
           let operator = filter.operator;
           
+          // Map user-friendly operator names to Monday.com operators
+          if (operator && typeof operator === 'string') {
+            const typeOperators = COLUMN_TYPE_OPERATORS[columnType];
+            if (typeOperators && typeOperators[operator]) {
+              operator = typeOperators[operator];
+            } else {
+              console.error(`[getItems] Warning: Operator "${operator}" not found for column type "${columnType}", using default`);
+              operator = undefined; // Reset to use default
+            }
+          }
+          
           // Determine operator based on column type if not provided
           if (!operator) {
             const typeOperators = COLUMN_TYPE_OPERATORS[columnType];
@@ -164,14 +190,19 @@ export async function getItems(args: {
               // Default operators based on column type
               if (columnType === 'color' || columnType === 'status' || columnType === 'dropdown') {
                 operator = 'any_of'; // Status columns use 'any_of'
+                // console.error(`[getItems] Using default operator 'any_of' for ${columnType} column ${filter.columnId}`);
               } else if (columnType === 'text' || columnType === 'long_text') {
                 operator = typeOperators.contains; // 'contains_text'
+                // console.error(`[getItems] Using default operator 'contains_text' for ${columnType} column ${filter.columnId}`);
               } else if (columnType === 'numbers') {
                 operator = typeOperators.equals; // '='
+                // console.error(`[getItems] Using default operator '=' for ${columnType} column ${filter.columnId}`);
               } else if (columnType === 'checkbox') {
                 operator = filter.value ? typeOperators.checked : typeOperators.unchecked;
+                // console.error(`[getItems] Using operator '${operator}' for checkbox column ${filter.columnId}`);
               } else {
                 operator = 'any_of'; // fallback
+                // console.error(`[getItems] Using fallback operator 'any_of' for unknown column type ${columnType}`);
               }
             }
           }
@@ -179,8 +210,8 @@ export async function getItems(args: {
           // Format value based on column type
           let compareValue = filter.value;
           
-          // Status columns (type 'color') need index values
-          if (columnType === 'color' && typeof filter.value === 'string') {
+          // Status columns (type 'color' or 'status') need index values
+          if ((columnType === 'color' || columnType === 'status') && typeof filter.value === 'string') {
             // Try to map label to index
             const settings = statusColumnSettings[filter.columnId];
             if (settings && settings.labels) {
@@ -221,9 +252,28 @@ export async function getItems(args: {
       // Build query params string
       let queryParams = '';
       if (rules.length > 0) {
+        // Build the rules array as a GraphQL-compatible string
+        const rulesString = rules.map(rule => {
+          let compareValue;
+          if (Array.isArray(rule.compare_value)) {
+            compareValue = `[${rule.compare_value.join(', ')}]`;
+          } else if (typeof rule.compare_value === 'string') {
+            compareValue = `"${rule.compare_value.replace(/"/g, '\\"')}"`;
+          } else {
+            compareValue = rule.compare_value;
+          }
+          
+          return `{
+            column_id: "${rule.column_id}",
+            compare_value: ${compareValue},
+            operator: ${rule.operator}
+          }`;
+        }).join(', ');
+        
         queryParams = `, query_params: {
-          rules: ${JSON.stringify(rules).replace(/"/g, '\\"')}
+          rules: [${rulesString}]
         }`;
+        // console.error(`[getItems] Query params:`, queryParams);
       }
       
       itemsQuery = `items_page(limit: ${limit}${queryParams}) {
@@ -336,6 +386,7 @@ export async function getItems(args: {
     }
 
     console.error(`[getItems] Querying board ${boardId} with limit ${limit}`);
+    // console.error(`[getItems] GraphQL query (first 500 chars):`, query.substring(0, 500));
     if (search) console.error(`[getItems] Search filter: "${search}"`);
     if (itemIds) console.error(`[getItems] Specific item IDs: ${itemIds.join(', ')}`);
     if (columnIds) console.error(`[getItems] Specific column IDs: ${columnIds.join(', ')}`);
