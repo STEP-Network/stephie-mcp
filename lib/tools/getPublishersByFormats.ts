@@ -32,13 +32,10 @@ export interface FormatFilters {
   videoPlayback?: boolean;  // Click To Play / Autoplay funktion (video)
   ott?: boolean;  // OTT (video)
   reAd?: boolean;  // RE-AD Status
-  
-  // Options
-  includeInactive?: boolean;
 }
 
 export async function getPublishersByFormats(args: FormatFilters) {
-  const { includeInactive = false, ...formatFilters } = args;
+  const formatFilters = args;
   
   // Build list of requested formats with their device requirements
   const requestedFormats: Map<string, string> = new Map();
@@ -139,6 +136,16 @@ export async function getPublishersByFormats(args: FormatFilters) {
     for (const item of items) {
       const publisherName = item.name;
       const columnValues = item.column_values || [];
+      
+      // IMPORTANT: Only include Live publishers (status8 column)
+      const statusCol = columnValues.find((col: any) => col.id === 'status8');
+      const isLive = statusCol?.text === 'Live';
+      
+      // Skip non-Live publishers - ALWAYS filter by Live status
+      if (!isLive) {
+        continue;
+      }
+      
       const supportedFormats: Map<string, string> = new Map();
       let matchesFilter = false;
       
@@ -160,23 +167,36 @@ export async function getPublishersByFormats(args: FormatFilters) {
               // Get selected label IDs
               const selectedIds = Array.isArray(parsed) ? parsed : (parsed.ids || []);
               
-              // Map label IDs to device types based on Monday.com structure
-              const deviceMappings: Record<number, string> = {
-                1: 'Mobile',  // Most columns use 1 for Mobile
-                2: 'Desktop', // Some columns use different IDs
-                4: 'Desktop', // Alternative Desktop ID
-                7: 'App',
-                8: 'Desktop', // Another Desktop ID
-                11: 'Mobile', // Alternative Mobile ID
-                15: 'App',
-                16: 'Desktop', // Video column Desktop
-                17: 'Mobile', // Video column Mobile
-                20: 'Mobile', // High-impact Mobile
-                108: 'Desktop' // High-impact Desktop
+              // Map label IDs to device types - must be column-specific!
+              // Different columns use different IDs for the same device
+              const columnSpecificMappings: Record<string, Record<number, string>> = {
+                // Adnami formats
+                'dropdown_mksd7frz': { 1: 'Mobile', 8: 'Desktop', 15: 'App' },  // Topscroll - Adnami
+                'dropdown_mksdjeft': { 1: 'Mobile', 8: 'Desktop', 15: 'App' },  // Topscroll Expand - Adnami
+                'dropdown_mksdbwbf': { 1: 'Mobile', 8: 'Desktop' },              // Double midscroll - Adnami
+                'dropdown_mksd17vw': { 1: 'Mobile', 4: 'Desktop' },              // Midscroll - Adnami
+                'dropdown_mksdh745': { 1: 'Mobile', 8: 'Desktop' },              // True Native
+                'dropdown_mksdb150': { 1: 'Mobile', 8: 'Desktop' },              // Adnami Native
+                
+                // High-impact.js formats
+                'dropdown_mksdcgvj': { 20: 'Mobile', 108: 'Desktop' },           // Topscroll - High-impact.js
+                'dropdown_mksdjpqx': { 4: 'Mobile', 108: 'Desktop' },            // Midscroll - High-impact.js
+                
+                // Other formats
+                'dropdown_mksdytf0': { 8: 'Desktop' },                           // Wallpaper (Desktop only)
+                'dropdown_mksdr0q2': { 1: 'Mobile', 8: 'Desktop', 15: 'App' },   // Anchor
+                'dropdown_mksdfx54': { 1: 'Mobile', 8: 'Desktop', 15: 'App' },   // Interstitial
+                'dropdown_mksd6yy': { 1: 'Mobile', 8: 'Desktop' },               // Outstream
+                'dropdown_mksddmgt': { 16: 'Desktop', 17: 'Mobile' },            // Video
+                'dropdown_mksdw0qh': { 1: 'Mobile', 8: 'Desktop' }               // Vertical Video
               };
+              
+              // Get the correct mapping for this column
+              const deviceMappings = columnSpecificMappings[col.id] || {};
               
               for (const id of selectedIds) {
                 const deviceType = deviceMappings[id];
+                // Only count if it's a valid device type (not "Nej", "N/A", etc.)
                 if (deviceType && isDeviceCompatible(requestedDevice, deviceType)) {
                   matchesFilter = true;
                   supportedFormats.set(formatName, deviceType);
@@ -240,7 +260,7 @@ export async function getPublishersByFormats(args: FormatFilters) {
     lines.push('');
     lines.push(`**Filters Applied:**`);
     
-    // Format labels
+    // Format labels - explicitly show technology vendor
     const formatLabels: Record<string, string> = {
       'video': 'Video',
       'video-playback': 'Video Playback (Click-To-Play/Autoplay)',
@@ -249,10 +269,10 @@ export async function getPublishersByFormats(args: FormatFilters) {
       'ott': 'OTT (Over-The-Top)',
       'topscroll': 'Topscroll (Adnami)',
       'topscroll-expand': 'Topscroll Expand (Adnami)',
-      'topscroll-highimpact': 'Topscroll High Impact',
+      'topscroll-highimpact': 'Topscroll (High-impact.js)',  // Explicitly High-impact.js
       'midscroll': 'Midscroll (Adnami)',
       'double-midscroll': 'Double Midscroll (Adnami)',
-      'midscroll-highimpact': 'Midscroll High Impact',
+      'midscroll-highimpact': 'Midscroll (High-impact.js)',  // Explicitly High-impact.js
       'wallpaper': 'Wallpaper/Skin',
       'anchor': 'Anchor',
       'interstitial': 'Google Interstitial',
@@ -266,12 +286,14 @@ export async function getPublishersByFormats(args: FormatFilters) {
       lines.push(`- ${label}: ${device === 'All' ? 'All devices' : device}`);
     });
     
+    lines.push(`- **Status Filter:** Live publishers only`);
+    
     lines.push('');
-    lines.push(`**Results:** ${matchingPublishers.length} publishers found`);
+    lines.push(`**Results:** ${matchingPublishers.length} Live publishers found`);
     lines.push('');
     
     if (matchingPublishers.length === 0) {
-      lines.push('No publishers found supporting the selected format and device combinations.');
+      lines.push('No Live publishers found supporting the selected format and device combinations.');
       return lines.join('\n');
     }
     

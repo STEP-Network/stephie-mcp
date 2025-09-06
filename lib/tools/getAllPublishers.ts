@@ -5,14 +5,24 @@ export async function getAllPublishers(args: {
   searchTerm?: string;
   active?: boolean;
 }) {
-  const { limit = 100, searchTerm, active } = args;
+  const { limit = 500, searchTerm, active } = args;
 
+  // Query with proper filtering for Live publishers (status8 index 1)
   const query = `
     query GetPublishers($boardId: ID!, $limit: Int!) {
       boards(ids: [$boardId]) {
         id
         name
-        items_page(limit: $limit) {
+        items_page(
+          limit: $limit,
+          query_params: {
+            rules: [{
+              column_id: "status8",
+              compare_value: [1],
+              operator: any_of
+            }]
+          }
+        ) {
           items {
             id
             name
@@ -67,8 +77,8 @@ export async function getAllPublishers(args: {
       const publisherGroupCol = getColumnValue('board_relation__1'); // Publisher Group
       const approvalStatusCol = getColumnValue('status32'); // Approval Status (Gambling/Finance)
       
-      // Check if publisher is active based on status
-      const isActive = statusCol?.text === 'Done' || statusCol?.text === 'Onboardet' || statusCol?.text === 'Live';
+      // All items are already Live (filtered by query_params)
+      const isActive = true;
       
       // Get approval status
       let approval = '';
@@ -117,7 +127,8 @@ export async function getAllPublishers(args: {
     
     lines.push('# Publishers');
     lines.push('');
-    lines.push(`**Total:** ${filteredPublishers.length} publishers`);
+    lines.push(`**Total:** ${filteredPublishers.length} Live publishers`);
+    lines.push(`**Status Filter:** Live publishers only`);
     if (searchTerm) {
       lines.push(`**Search:** "${searchTerm}"`);
     }

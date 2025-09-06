@@ -49,10 +49,17 @@ export async function getPublisherFormats(args: {
   publisherGroupName?: string;
   limit?: number;
 }) {
-  const { publisherName, publisherGroupName, limit = 100 } = args;
+  const { publisherName, publisherGroupName, limit = 500 } = args;
 
-  // Build filters for GraphQL query
-  const filters: any[] = [];
+  // Build filters for GraphQL query - ALWAYS include Live filter
+  const filters: any[] = [
+    // Always filter for Live publishers (status8 index 1)
+    {
+      column_id: 'status8',
+      compare_value: [1],
+      operator: 'any_of',
+    }
+  ];
 
   if (publisherName) {
     filters.push({
@@ -62,23 +69,20 @@ export async function getPublisherFormats(args: {
     });
   }
 
-  // Build filter string for GraphQL
-  let filterString = '';
-  if (filters.length > 0) {
-    const rulesString = filters
-      .map((f) => {
-        const compareValue = Array.isArray(f.compare_value)
-          ? `[${f.compare_value.join(', ')}]`
-          : `"${f.compare_value}"`;
-        return `{
-          column_id: "${f.column_id}",
-          compare_value: ${compareValue},
-          operator: ${f.operator}
-        }`;
-      })
-      .join(', ');
-    filterString = `query_params: { rules: [${rulesString}] }`;
-  }
+  // Build filter string for GraphQL - always has at least the Live filter
+  const rulesString = filters
+    .map((f) => {
+      const compareValue = Array.isArray(f.compare_value)
+        ? `[${f.compare_value.join(', ')}]`
+        : `"${f.compare_value}"`;
+      return `{
+        column_id: "${f.column_id}",
+        compare_value: ${compareValue},
+        operator: ${f.operator}
+      }`;
+    })
+    .join(', ');
+  const filterString = `query_params: { rules: [${rulesString}] }`;
 
   // GraphQL query to fetch publishers with all format columns
   const query = `{
@@ -119,16 +123,16 @@ export async function getPublisherFormats(args: {
     
     const items = response.data.boards[0]?.items_page?.items || [];
 
-    // Process and format the results
+    // Process and format the results - already filtered for Live publishers
     const publishers = items.map((item: any) => {
-      const columnValues: Record<string, any> = {};
+        const columnValues: Record<string, any> = {};
 
-      item.column_values?.forEach((col: any) => {
-        columnValues[col.id] = {
-          title: col.column?.title,
-          value: col.text || col.display_value || '',
-        };
-      });
+        item.column_values?.forEach((col: any) => {
+          columnValues[col.id] = {
+            title: col.column?.title,
+            value: col.text || col.display_value || '',
+          };
+        });
 
       // Determine available formats and devices
       const formats = {
@@ -227,7 +231,8 @@ export async function getPublisherFormats(args: {
     const textLines: string[] = [];
     textLines.push('# Publisher Formats');
     textLines.push('');
-    textLines.push(`**Total Publishers:** ${filteredPublishers.length}`);
+    textLines.push(`**Total Publishers:** ${filteredPublishers.length} Live publishers`);
+    textLines.push(`**Status Filter:** Live publishers only`);
     if (publisherName) {
       textLines.push(`**Filter:** Publisher name contains "${publisherName}"`);
     }

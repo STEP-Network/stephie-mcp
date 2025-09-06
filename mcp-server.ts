@@ -173,12 +173,6 @@ const AVAILABLE_TOOLS = [
         reAd: {
           type: 'boolean',
           description: 'RE-AD (Responsible Advertisement) - environmental friendly single ad per page'
-        },
-        // Options
-        includeInactive: {
-          type: 'boolean',
-          description: 'Include inactive/disabled publishers (default: false)',
-          default: false
         }
       }
     }
