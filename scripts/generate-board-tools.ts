@@ -39,7 +39,6 @@ const BOARDS_TO_GENERATE = [
   { id: '1938986335', name: 'Features', category: 'development' },
   { id: '1662744941', name: 'InternalAdOpsAdTech', category: 'operations' },
   { id: '1804511059', name: 'InternalAdSales', category: 'sales' },
-  { id: '1631918525', name: 'KeyResults', category: 'okr' },
   { id: '1402911026', name: 'Leads', category: 'crm' },
   { id: '1677240056', name: 'MarketingBudgets', category: 'marketing' },
   { id: '1658073379', name: 'MarketingExpenses', category: 'marketing' },

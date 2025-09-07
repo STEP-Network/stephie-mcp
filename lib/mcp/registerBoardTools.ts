@@ -17,7 +17,6 @@ import { getDealsItems } from '../tools/sales/getDealsItems.js';
 import { getFeaturesItems } from '../tools/development/getFeaturesItems.js';
 import { getInternalAdOpsAdTechItems } from '../tools/operations/getInternalAdOpsAdTechItems.js';
 import { getInternalAdSalesItems } from '../tools/sales/getInternalAdSalesItems.js';
-import { getKeyResultsItems } from '../tools/okr/getKeyResultsItems.js';
 import { getLeadsItems } from '../tools/crm/getLeadsItems.js';
 import { getMarketingBudgetsItems } from '../tools/marketing/getMarketingBudgetsItems.js';
 import { getMarketingExpensesItems } from '../tools/marketing/getMarketingExpensesItems.js';
@@ -53,7 +52,6 @@ const BOARD_TOOL_IMPLEMENTATIONS: Record<string, Function> = {
   getFeaturesItems,
   getInternalAdOpsAdTechItems,
   getInternalAdSalesItems,
-  getKeyResultsItems,
   getLeadsItems,
   getMarketingBudgetsItems,
   getMarketingExpensesItems,

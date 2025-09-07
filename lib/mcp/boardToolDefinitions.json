@@ -270,36 +270,6 @@
     }
   },
   {
-    "name": "getKeyResultsItems",
-    "description": "Get items from Key Results board. 644 total items.",
-    "inputSchema": {
-      "type": "object",
-      "properties": {
-        "limit": {
-          "type": "number",
-          "default": 10,
-          "description": "Maximum items to return"
-        },
-        "search": {
-          "type": "string",
-          "description": "Search in item names"
-        },
-        "person": {
-          "type": "string",
-          "description": "Owner"
-        },
-        "type_Mjj4v4b6": {
-          "type": "number",
-          "description": "Type (numeric index)"
-        },
-        "status_1__1": {
-          "type": "number",
-          "description": "Status (numeric index)"
-        }
-      }
-    }
-  },
-  {
     "name": "getLeadsItems",
     "description": "Get items from Leads board. 78 total items.",
     "inputSchema": {

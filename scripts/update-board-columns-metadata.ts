@@ -34,7 +34,6 @@ const BOARD_ID_MAP: Record<string, string> = {
   'getFeaturesItems': '1938986335',
   'getInternalAdOpsAdTechItems': '1662744941',
   'getInternalAdSalesItems': '1804511059',
-  'getKeyResultsItems': '1631918525',
   'getLeadsItems': '1402911026',
   'getMarketingBudgetsItems': '1677240056',
   'getMarketingExpensesItems': '1658073379',

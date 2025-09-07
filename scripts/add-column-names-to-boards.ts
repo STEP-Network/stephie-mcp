@@ -34,7 +34,6 @@ const BOARD_ITEM_MAP: Record<string, string> = {
   '1938986335': '2130866445', // Features
   '1662744941': '1762493801', // Internal AdOps/AdTech
   '1804511059': '1762493822', // Internal AdSales
-  '1631918525': '1698671336', // Key Results
   '1402911026': '1698685258', // Leads
   '1677240056': '1762487589', // Marketing Budgets
   '1658073379': '1762487653', // Marketing Expenses
@@ -71,7 +70,6 @@ const BOARD_ID_TO_TOOL: Record<string, string> = {
   '1938986335': 'getFeaturesItems',
   '1662744941': 'getInternalAdOpsAdTechItems',
   '1804511059': 'getInternalAdSalesItems',
-  '1631918525': 'getKeyResultsItems',
   '1402911026': 'getLeadsItems',
   '1677240056': 'getMarketingBudgetsItems',
   '1658073379': 'getMarketingExpensesItems',
