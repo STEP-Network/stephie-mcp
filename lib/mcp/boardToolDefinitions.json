@@ -1,0 +1,996 @@
+[
+  {
+    "name": "getAccountsItems",
+    "description": "Get items from Accounts board. 1613 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "people": {
+          "type": "string",
+          "description": "Owner"
+        },
+        "status": {
+          "type": "number",
+          "description": "Account Status (numeric index)"
+        },
+        "status5": {
+          "type": "number",
+          "description": "Type (numeric index)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getBookingsItems",
+    "description": "Get items from Bookings 3.0 board. 1537 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "status0__1": {
+          "type": "number",
+          "description": "Status (numeric index)"
+        },
+        "date": {
+          "type": "string",
+          "description": "Midway date (YYYY-MM-DD)"
+        },
+        "person": {
+          "type": "string",
+          "description": "Owner"
+        },
+        "status_3": {
+          "type": "number",
+          "description": "Campaign status (numeric index)"
+        },
+        "status2": {
+          "type": "number",
+          "description": "Midway reporting (numeric index)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getBugsItems",
+    "description": "Get items from Bugs board. 21 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "color_mkqnwy18": {
+          "type": "number",
+          "description": "Priority (numeric index)"
+        },
+        "color_mkqhya7m": {
+          "type": "number",
+          "description": "Status (numeric index)"
+        },
+        "multiple_person_mkqhq07m": {
+          "type": "string",
+          "description": "Owner"
+        },
+        "date4": {
+          "type": "string",
+          "description": "Date Added (YYYY-MM-DD)"
+        },
+        "date_mkqhdjw7": {
+          "type": "string",
+          "description": "Date Released (YYYY-MM-DD)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getChangelogItems",
+    "description": "Get items from Changelog board. 766 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "date1": {
+          "type": "string",
+          "description": "Date (YYYY-MM-DD)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getContactsItems",
+    "description": "Get items from Contacts board. 4968 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "people": {
+          "type": "string",
+          "description": "Owner"
+        },
+        "status__1": {
+          "type": "number",
+          "description": "Status (numeric index)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getDealsItems",
+    "description": "Get items from Deals board. 1942 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "color_mkqby95j": {
+          "type": "number",
+          "description": "Status (numeric index)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getFeaturesItems",
+    "description": "Get items from Features board. 52 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "color_mkqn9n66": {
+          "type": "number",
+          "description": "Priority (numeric index)"
+        },
+        "color_mkqhya7m": {
+          "type": "number",
+          "description": "Status (numeric index)"
+        },
+        "multiple_person_mkqhq07m": {
+          "type": "string",
+          "description": "Owner"
+        },
+        "date_mkqhdjw7": {
+          "type": "string",
+          "description": "Date Released (YYYY-MM-DD)"
+        },
+        "date4": {
+          "type": "string",
+          "description": "Date Added (YYYY-MM-DD)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getInternalAdOpsAdTechItems",
+    "description": "Get items from Internal AdOps FAQ board. 127 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "status": {
+          "type": "number",
+          "description": "Status (numeric index)"
+        },
+        "date4": {
+          "type": "string",
+          "description": "Created Date (YYYY-MM-DD)"
+        },
+        "date_mkn0mkj1": {
+          "type": "string",
+          "description": "Document Last Updated (YYYY-MM-DD)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getInternalAdSalesItems",
+    "description": "Get items from Internal AdSales board. 39 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "status": {
+          "type": "number",
+          "description": "Status (numeric index)"
+        },
+        "date4": {
+          "type": "string",
+          "description": "Created Date (YYYY-MM-DD)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getKeyResultsItems",
+    "description": "Get items from Key Results board. 644 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "person": {
+          "type": "string",
+          "description": "Owner"
+        },
+        "type_Mjj4v4b6": {
+          "type": "number",
+          "description": "Type (numeric index)"
+        },
+        "status_1__1": {
+          "type": "number",
+          "description": "Status (numeric index)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getLeadsItems",
+    "description": "Get items from Leads board. 78 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "lead_owner": {
+          "type": "string",
+          "description": "Owner"
+        },
+        "lead_status": {
+          "type": "number",
+          "description": "Status (numeric index)"
+        },
+        "status_1__1": {
+          "type": "number",
+          "description": "Type (husk at angiv!) (numeric index)"
+        },
+        "date0__1": {
+          "type": "string",
+          "description": "Created Date (YYYY-MM-DD)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getMarketingBudgetsItems",
+    "description": "Get items from Budgets board. 42 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "date_mkn42vh4": {
+          "type": "string",
+          "description": "Date (YYYY-MM-DD)"
+        },
+        "type_mkn4rg75": {
+          "type": "number",
+          "description": "Type (numeric index)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getMarketingExpensesItems",
+    "description": "Get items from Expenses board. 22 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "date4": {
+          "type": "string",
+          "description": "Registration Date (YYYY-MM-DD)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getOKRItems",
+    "description": "Get items from Objectives & Key Results board. 41 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "color_mkpksp3f": {
+          "type": "number",
+          "description": "Status (numeric index)"
+        },
+        "people__1": {
+          "type": "string",
+          "description": "Owner"
+        }
+      }
+    }
+  },
+  {
+    "name": "getOpportunitiesItems",
+    "description": "Get items from Opportunities board. 690 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "deal_stage": {
+          "type": "number",
+          "description": "Stage (numeric index)"
+        },
+        "date1": {
+          "type": "string",
+          "description": "*Current stage start date (YYYY-MM-DD)"
+        },
+        "deal_creation_date": {
+          "type": "string",
+          "description": "*Deal Creation Date (YYYY-MM-DD)"
+        },
+        "deal_expected_close_date": {
+          "type": "string",
+          "description": "*Expected Close Date (YYYY-MM-DD)"
+        },
+        "deal_close_date": {
+          "type": "string",
+          "description": "*Actual Close Date (YYYY-MM-DD)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getOTTPublishersItems",
+    "description": "Get items from OTT Publishers board. 24 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "status": {
+          "type": "number",
+          "description": "Status (numeric index)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getPartnersItems",
+    "description": "Get items from Partners board. 6 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "person": {
+          "type": "string",
+          "description": "Owner"
+        },
+        "status": {
+          "type": "number",
+          "description": "Status (numeric index)"
+        },
+        "date4": {
+          "type": "string",
+          "description": "Start Date (YYYY-MM-DD)"
+        },
+        "date__1": {
+          "type": "string",
+          "description": "End Date (YYYY-MM-DD)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getPeopleItems",
+    "description": "Get items from People board. 18 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "date__1": {
+          "type": "string",
+          "description": "Start Date (YYYY-MM-DD)"
+        },
+        "status": {
+          "type": "number",
+          "description": "Status (numeric index)"
+        },
+        "date6__1": {
+          "type": "string",
+          "description": "End Date (YYYY-MM-DD)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getPlatformsItems",
+    "description": "Get items from Platforms board. 20 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "people__1": {
+          "type": "string",
+          "description": "Owner"
+        },
+        "status": {
+          "type": "number",
+          "description": "Status (numeric index)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getProcessesItems",
+    "description": "Get items from Processes board. 16 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "people__1": {
+          "type": "string",
+          "description": "Owner"
+        },
+        "status": {
+          "type": "number",
+          "description": "Status (numeric index)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getPublisherFAQItems",
+    "description": "Get items from Publisher FAQ board. 34 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "status": {
+          "type": "number",
+          "description": "Status (numeric index)"
+        },
+        "date4": {
+          "type": "string",
+          "description": "Created Date (YYYY-MM-DD)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getSalesActivitiesItems",
+    "description": "Get items from Sales Activities board. 498 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "activity_owner": {
+          "type": "string",
+          "description": "*Owner"
+        },
+        "activity_status": {
+          "type": "number",
+          "description": "Status (numeric index)"
+        },
+        "activity_type": {
+          "type": "number",
+          "description": "*Activity Type (numeric index)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getStrategiesItems",
+    "description": "Get items from Strategies board. 3 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "color_mkpkghqq": {
+          "type": "number",
+          "description": "Status (numeric index)"
+        },
+        "color_mknycf0d": {
+          "type": "number",
+          "description": "AI Type (numeric index)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getTasksAdOpsItems",
+    "description": "Get items from Tasks - AdOps board. 4505 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "person": {
+          "type": "string",
+          "description": "Owner"
+        },
+        "status_mkkwc3ez": {
+          "type": "number",
+          "description": "Status (numeric index)"
+        },
+        "label_mkkwem4d": {
+          "type": "number",
+          "description": "Type (numeric index)"
+        },
+        "color_mknxxz44": {
+          "type": "number",
+          "description": "Priority (numeric index)"
+        },
+        "date__1": {
+          "type": "string",
+          "description": "Due Date (YYYY-MM-DD)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getTasksAdTechItems",
+    "description": "Get items from Tasks - AdTech board. 248 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "person": {
+          "type": "string",
+          "description": "Owner"
+        },
+        "status_mkkwpmh6": {
+          "type": "number",
+          "description": "Status (numeric index)"
+        },
+        "release_status__1": {
+          "type": "number",
+          "description": "Release status (numeric index)"
+        },
+        "priority__1": {
+          "type": "number",
+          "description": "Priority (numeric index)"
+        },
+        "date8__1": {
+          "type": "string",
+          "description": "Follow up Date (YYYY-MM-DD)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getTasksMarketingItems",
+    "description": "Get items from Tasks - Marketing board. 319 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "person": {
+          "type": "string",
+          "description": "Owner"
+        },
+        "status_1__1": {
+          "type": "number",
+          "description": "Type (numeric index)"
+        },
+        "color_mkpwc7hm": {
+          "type": "number",
+          "description": "Priority (numeric index)"
+        },
+        "status_mkkw7ehb": {
+          "type": "number",
+          "description": "Status (numeric index)"
+        },
+        "publish_date_mkn21n6b": {
+          "type": "string",
+          "description": "Publish Date (YYYY-MM-DD)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getTasksTechIntelligenceItems",
+    "description": "Get items from Tasks - Tech & Intelligence board. 1725 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "person": {
+          "type": "string",
+          "description": "Owner"
+        },
+        "status_19__1": {
+          "type": "number",
+          "description": "Status (numeric index)"
+        },
+        "type_1__1": {
+          "type": "number",
+          "description": "Type (numeric index)"
+        },
+        "priority_1__1": {
+          "type": "number",
+          "description": "Priority (numeric index)"
+        },
+        "date__1": {
+          "type": "string",
+          "description": "Due Date (YYYY-MM-DD)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getTasksVideoItems",
+    "description": "Get items from Tasks - Video board. 647 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "person": {
+          "type": "string",
+          "description": "Owner"
+        },
+        "status_mkkwmefr": {
+          "type": "number",
+          "description": "Status (numeric index)"
+        },
+        "type__1": {
+          "type": "number",
+          "description": "Type (numeric index)"
+        },
+        "date__1": {
+          "type": "string",
+          "description": "Due Date (YYYY-MM-DD)"
+        },
+        "date4": {
+          "type": "string",
+          "description": "Follow up Date (YYYY-MM-DD)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getTasksYieldGrowthItems",
+    "description": "Get items from Tasks - Yield & Growth board. 23 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "person": {
+          "type": "string",
+          "description": "Owner"
+        },
+        "status_mkkwc3ez": {
+          "type": "number",
+          "description": "Status (numeric index)"
+        },
+        "date__1": {
+          "type": "string",
+          "description": "Due Date (YYYY-MM-DD)"
+        },
+        "date4": {
+          "type": "string",
+          "description": "Follow up Date (YYYY-MM-DD)"
+        },
+        "date3__1": {
+          "type": "string",
+          "description": "Started Date (YYYY-MM-DD)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getTeamsItems",
+    "description": "Get items from Teams board. 7 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "status": {
+          "type": "number",
+          "description": "Status (numeric index)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getTestsItems",
+    "description": "Get items from Tests board. 78 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        }
+      }
+    }
+  },
+  {
+    "name": "getTicketsItems",
+    "description": "Get items from Tickets board. 5961 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "status95": {
+          "type": "number",
+          "description": "Status (numeric index)"
+        },
+        "priority": {
+          "type": "number",
+          "description": "Priority (numeric index)"
+        },
+        "request_type": {
+          "type": "number",
+          "description": "Request Type (numeric index)"
+        },
+        "date": {
+          "type": "string",
+          "description": "Creation Date (YYYY-MM-DD)"
+        },
+        "date5": {
+          "type": "string",
+          "description": "Last Customer Response Date (YYYY-MM-DD)"
+        }
+      }
+    }
+  },
+  {
+    "name": "getVertikalerItems",
+    "description": "Get items from Vertikaler board. 7 total items.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum items to return"
+        },
+        "search": {
+          "type": "string",
+          "description": "Search in item names"
+        },
+        "color_mksxpbk5": {
+          "type": "number",
+          "description": "Status (numeric index)"
+        }
+      }
+    }
+  }
+]

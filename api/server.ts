@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { createMcpHandler } from 'mcp-handler';
 import { TOOL_DEFINITIONS } from '../lib/mcp/toolDefinitions.js';
+import { registerBoardTools } from '../lib/mcp/registerBoardTools.js';
 
 // Import all tools
 import { getAllPublishers } from '../lib/tools/getAllPublishers.js';
@@ -288,6 +289,9 @@ const handler = createMcpHandler((server) => {
       return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
     }
   );
+
+  // Register all board-specific tools
+  registerBoardTools(server);
 });
 
 // Export handler for Vercel Edge Runtime
