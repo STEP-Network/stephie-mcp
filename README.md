@@ -6,7 +6,8 @@ Model Context Protocol (MCP) server for STEPhie tools, providing secure access t
 
 - 🔐 **Secure Authentication** via Stack Auth
 - 📊 **Publisher Tools** - Access Monday.com publisher data
-- 📈 **Forecast Tools** - Google Ad Manager availability forecasting  
+- 📈 **Forecast Tools** - Google Ad Manager availability forecasting
+- 🗂️ **32 Board Tools** - Complete Monday.com board access (CRM, Tasks, Operations, etc.)
 - 🚀 **Fast Response** - Optimized Vercel Edge Functions
 - 🎯 **Dual Deployment** - Works with both Claude Desktop (local) and Vercel (cloud)
 
@@ -21,14 +22,21 @@ stephie-mcp/
 │   └── health.ts        # Health check endpoint
 ├── lib/
 │   ├── mcp/
-│   │   └── toolDefinitions.ts  # Shared tool definitions (single source of truth)
-│   ├── tools/           # Tool implementations
-│   │   ├── getAllPublishers.ts
-│   │   ├── getPublisherFormats.ts
-│   │   └── ...
+│   │   ├── toolDefinitions.ts     # Shared tool definitions
+│   │   ├── boardToolDefinitions.json # Auto-generated board tools
+│   │   └── registerBoardTools.ts  # Board tool registration
+│   ├── tools/           # Tool implementations (organized by category)
+│   │   ├── crm/         # getAccounts, getContacts, getLeads
+│   │   ├── sales/       # getDeals, getOpportunities, etc.
+│   │   ├── tasks/       # getTasksAdOps, getTasksMarketing, etc.
+│   │   ├── debug/       # listBoards, getBoardColumns, getItems
+│   │   └── ...          # 50+ tools total
 │   ├── monday/          # Monday.com client
 │   ├── gam/             # Google Ad Manager integration
 │   └── auth/            # Authentication
+├── scripts/             # Development utilities
+│   ├── generate-board-tools.ts    # Auto-generate tools from boards
+│   └── add-column-names-to-boards.ts # Update meta board
 ├── tests/               # Organized test files
 │   ├── publishers/
 │   ├── formats/
@@ -62,10 +70,18 @@ stephie-mcp/
 ### Forecasting
 - `availabilityForecast` - Real GAM SOAP API integration for inventory forecasting
 
+### Board Tools (32 tools)
+- **CRM**: `getAccounts`, `getContacts`, `getLeads`
+- **Sales**: `getDeals`, `getOpportunities`, `getSalesActivities`
+- **Tasks**: `getTasksAdOps`, `getTasksMarketing`, `getTasksTechIntelligence`, etc.
+- **Operations**: `getBookings`, `getProcesses`, `getInternalAdOpsAdTech`
+- **Development**: `getBugs`, `getFeatures`, `getTests`, `getChangelog`
+- And 15+ more covering HR, Support, Marketing, Business, OKR boards
+
 ### Debug Tools
-- `listBoards` - List all Monday.com boards
-- `getBoardColumns` - Inspect board column structure
-- `getItems` - Generic item fetcher
+- `listBoards` - List all Monday.com boards with metadata
+- `getBoardColumns` - Inspect board columns with status/dropdown options
+- `getItems` - Generic item fetcher with advanced filtering
 
 ## Setup
 
@@ -184,7 +200,34 @@ vercel dev
 
 # Run tests
 TEST_AUTH_TOKEN=test-token pnpm test:local
+
+# Build for production
+pnpm mcp:build
 ```
+
+### Adding New Board Tools
+
+1. **Auto-generate from Monday.com boards:**
+   ```bash
+   npx tsx scripts/generate-board-tools.ts
+   ```
+   This creates tools with essential columns and filtering
+
+2. **Update meta board column names:**
+   ```bash
+   npx tsx scripts/add-column-names-to-boards.ts
+   ```
+   Tracks column usage across boards
+
+3. **Register in server.ts** to make available immediately
+
+### Tool Development Guidelines
+
+- **Output Format**: Always return markdown strings, never JSON
+- **Tool Names**: Use concise names without 'Items' suffix (e.g., `getAccounts`)
+- **Descriptions**: Include status index mappings for LLM understanding
+- **Filtering**: Support numeric indices for status/dropdown columns
+- **Error Handling**: Use console.error for debug output
 
 ### Testing Tools
 
@@ -194,8 +237,8 @@ Example test scripts are in the `tests/` directory:
 # Test publisher tools
 TEST_AUTH_TOKEN=test-token npx tsx tests/publishers/test-publishers-output.ts
 
-# Test format tools  
-TEST_AUTH_TOKEN=test-token npx tsx tests/formats/test-highimpact.ts
+# Test board tools
+TEST_AUTH_TOKEN=test-token npx tsx tests/debug/test-board-tools.ts
 
 # Debug tools
 TEST_AUTH_TOKEN=test-token npx tsx tests/debug/test-find-publisher.ts

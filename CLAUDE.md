@@ -2,15 +2,15 @@
 
 MCP Server for STEP Networks' advertising and publisher data via Monday.com and Google Ad Manager.
 
-## Recent Updates (September 2025)
+## Recent Updates (December 2025)
 
+- **32 Board-Specific Tools**: Added tools for all Monday.com boards (CRM, Tasks, Operations, etc.)
+- **Tool Naming**: Simplified naming convention - removed 'Items' suffix (e.g., `getAccounts` instead of `getAccountsItems`)
+- **Meta Board Integration**: Column names tracking in Boards meta board (1698570295)
+- **Tool Descriptions**: Enhanced with status index mappings for better LLM understanding
+- **Board Relations**: Shows linked item names alongside IDs
 - **Vercel Deployment**: Full cloud deployment with mcp-handler library
-- **SSE Transport**: Server-Sent Events support for Claude Desktop via mcp-remote  
-- **TypeScript Config**: Added DOM types to tsconfig.json for Response API
-- **Handler Export**: Uses named exports (GET, POST) for Vercel Edge Runtime
-- **Routing**: Added `/sse` and `/message` rewrites in vercel.json
-- **Tool Parameters**: All `getAll*` tools now have no parameters (empty schemas)
-- **No dotenv**: Removed dotenv from api/server.ts (Vercel provides env vars directly)
+- **SSE Transport**: Server-Sent Events support for Claude Desktop via mcp-remote
 
 ## Tech Stack
 - TypeScript ES modules
@@ -79,10 +79,36 @@ BOARD_IDS = {
 ### Forecasting
 - `availabilityForecast` - GAM SOAP API for inventory forecasting
 
+### Board-Specific Tools (32 tools)
+- **CRM**: `getAccounts`, `getContacts`, `getLeads`
+- **Sales**: `getDeals`, `getOpportunities`, `getSalesActivities`, `getInternalAdSales`
+- **Operations**: `getBookings`, `getProcesses`, `getInternalAdOpsAdTech`
+- **Development**: `getBugs`, `getFeatures`, `getTests`, `getChangelog`
+- **Tasks**: `getTasksAdOps`, `getTasksAdTech`, `getTasksMarketing`, `getTasksTechIntelligence`, `getTasksVideo`, `getTasksYieldGrowth`
+- **Marketing**: `getMarketingBudgets`, `getMarketingExpenses`
+- **Business**: `getPartners`, `getStrategies`, `getVertikaler`
+- **HR**: `getPeople`, `getTeams`
+- **Support**: `getTickets`, `getPublisherFAQ`
+- **OKR**: `getOKR`
+- **Publishers**: `getOTTPublishers`
+
 ### Debug Tools
-- `listBoards` - Available boards
-- `getBoardColumns` - Column structure
-- `getItems` - Generic item fetcher
+- `listBoards` - Available boards with metadata
+- `getBoardColumns` - Column structure with status/dropdown options
+- `getItems` - Generic item fetcher with advanced filtering
+
+## Development Workflow
+
+### Adding New Board Tools
+1. Run `scripts/generate-board-tools.ts` to auto-generate tools from Monday.com boards
+2. Tools are created with essential columns and filtering capabilities
+3. Register tools in `server.ts` for immediate availability
+4. Tool definitions stored in `lib/mcp/boardToolDefinitions.json`
+
+### Meta Board Management
+- Board ID: 1698570295 tracks all boards and their column names
+- Use `scripts/add-column-names-to-boards.ts` to update column tracking
+- Dropdown column `dropdown_mkvj2a8r` stores column names per board
 
 ## Critical Implementation Details
 
