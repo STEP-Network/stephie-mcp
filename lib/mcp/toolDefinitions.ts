@@ -588,14 +588,14 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
   },
   {
     name: 'getOKR',
-    description: 'Get Objectives & Key Results with full hierarchy. Returns objectives with their associated key results. Status: 0=Planned, 1=In Progress, 2=On Hold, 3=Done, 4=Cancelled.',
+    description: 'Get Objectives & Key Results with full hierarchy. Returns objectives with their associated key results. Status: 0=Planned, 1=In Progress, 2=On Hold, 3=Done, 4=Cancelled. For team filtering, use getTeams first to find team IDs.',
     inputSchema: {
       type: 'object',
       properties: {
         limit: { type: 'number', default: 10 },
         search: { type: 'string' },
         status: { type: 'number', description: 'Objective status index' },
-        team: { type: 'string', description: 'Filter by team name' },
+        teamId: { type: 'string', description: 'Team ID (use getTeams to find IDs)' },
         includeKeyResults: { type: 'boolean', default: true },
         onlyActive: { type: 'boolean', default: false }
       }

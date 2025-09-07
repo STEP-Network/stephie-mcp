@@ -4,7 +4,7 @@ export async function getOKR(params: {
   limit?: number;
   search?: string;
   status?: number; // Objective status (0=Planned, 1=In Progress, 2=On Hold, 3=Done, 4=Cancelled)
-  team?: string; // Filter by team name (searches in linked team items)
+  teamId?: string; // Filter by team ID (use getTeams to find team IDs)
   includeKeyResults?: boolean; // Whether to include Key Results (default: true)
   onlyActive?: boolean; // Filter to only active objectives (In Progress)
 } = {}) {
@@ -12,7 +12,7 @@ export async function getOKR(params: {
     limit = 10, 
     search, 
     status,
-    team,
+    teamId,
     includeKeyResults = true,
     onlyActive = false
   } = params;
@@ -99,11 +99,21 @@ export async function getOKR(params: {
     
     let items = board.items_page?.items || [];
     
-    // Filter by team if specified (post-query filtering since board_relation doesn't support query params)
-    if (team) {
+    // Filter by team ID if specified (post-query filtering since board_relation doesn't support query params)
+    if (teamId) {
       items = items.filter((item: any) => {
         const teamCol = item.column_values.find((c: any) => c.id === 'connect_boards__1');
-        return teamCol?.text?.toLowerCase().includes(team.toLowerCase());
+        // Parse the value field which contains linked item IDs
+        if (teamCol?.value) {
+          try {
+            const linkedItems = JSON.parse(teamCol.value);
+            // Check if the teamId is in the linkedItemIds array
+            return linkedItems?.linkedItemIds?.includes(teamId);
+          } catch {
+            return false;
+          }
+        }
+        return false;
       });
     }
     
@@ -116,7 +126,19 @@ export async function getOKR(params: {
       const statusLabels = ['Planned', 'In Progress', 'On Hold', 'Done', 'Cancelled'];
       lines.push(`**Status Filter:** ${statusLabels[status] || `Index ${status}`}`);
     }
-    if (team) lines.push(`**Team Filter:** ${team}`);
+    if (teamId) {
+      // Try to get team name from first matching item
+      let teamName = 'Unknown';
+      const firstWithTeam = items.find((item: any) => {
+        const teamCol = item.column_values.find((c: any) => c.id === 'connect_boards__1');
+        return teamCol?.text;
+      });
+      if (firstWithTeam) {
+        const teamCol = firstWithTeam.column_values.find((c: any) => c.id === 'connect_boards__1');
+        teamName = teamCol?.text || 'Unknown';
+      }
+      lines.push(`**Team Filter:** ${teamName} (ID: ${teamId})`);
+    }
     if (onlyActive) lines.push('**Filter:** Active objectives only');
     lines.push('');
     

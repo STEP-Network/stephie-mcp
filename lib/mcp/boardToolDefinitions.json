@@ -370,9 +370,9 @@
           "type": "number",
           "description": "Objective status (0=Planned, 1=In Progress, 2=On Hold, 3=Done, 4=Cancelled)"
         },
-        "team": {
+        "teamId": {
           "type": "string",
-          "description": "Filter by team name (searches in linked team items)"
+          "description": "Filter by team ID - use getTeams first to find team IDs"
         },
         "includeKeyResults": {
           "type": "boolean",

@@ -115,6 +115,26 @@ BOARD_IDS = {
 
 ## Critical Implementation Details
 
+### Board Relations Filtering Pattern
+When filtering by board relations (connect_boards columns):
+1. **Use Item IDs, not names**: Filter parameters should be `teamId`, `accountId`, etc.
+2. **Two-step process for LLMs**: First call related tool (e.g., `getTeams`) to get IDs, then filter
+3. **Parse linkedItemIds**: Board relation values contain JSON with `linkedItemIds` array
+4. **Show both name and ID**: In output, display "Team Name (ID: 12345)" for clarity
+5. **Document in tool description**: Always mention "use getX first to find IDs"
+
+Example:
+```typescript
+// Filter by team ID from Teams board
+if (teamId) {
+  const relationCol = item.column_values.find(c => c.id === 'connect_boards__1');
+  const linked = JSON.parse(relationCol?.value || '{}');
+  return linked?.linkedItemIds?.includes(teamId);
+}
+```
+
+See `/docs/BOARD_RELATIONS_PATTERN.md` for full implementation guide.
+
 ### Google Ad Manager SOAP Implementation
 
 STEPhie MCP now includes a full SOAP client for Google Ad Manager v202502:
