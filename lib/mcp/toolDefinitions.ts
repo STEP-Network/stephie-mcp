@@ -531,5 +531,118 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
       },
       required: ['boardId', 'columnIds']
     }
+  },
+  // Board-specific tools (auto-generated)
+  {
+    name: 'getAccountsItems',
+    description: 'Get items from Accounts CRM board. Search and filter by status, owner, and type.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        search: { type: 'string' },
+        status: { type: 'number', description: 'Account Status index' },
+        status5: { type: 'number', description: 'Type index' }
+      }
+    }
+  },
+  {
+    name: 'getBookingsItems',
+    description: 'Get items from Bookings board. Filter by status, dates, and campaign status.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        search: { type: 'string' },
+        status0__1: { type: 'number', description: 'Status index' },
+        date: { type: 'string', description: 'Midway date (YYYY-MM-DD)' }
+      }
+    }
+  },
+  {
+    name: 'getBugsItems',
+    description: 'Get items from Bugs board. Filter by priority, status, and owner.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        search: { type: 'string' },
+        color_mkqnwy18: { type: 'number', description: 'Priority index' },
+        color_mkqhya7m: { type: 'number', description: 'Status index' }
+      }
+    }
+  },
+  {
+    name: 'getTasksTechIntelligenceItems',
+    description: 'Get items from Tech & Intelligence Tasks. Filter by status, type, priority, and dates.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        search: { type: 'string' },
+        status_19__1: { type: 'number', description: 'Status index' },
+        type_1__1: { type: 'number', description: 'Type index' },
+        priority_1__1: { type: 'number', description: 'Priority index' }
+      }
+    }
+  },
+  {
+    name: 'getOKRItems',
+    description: 'Get items from OKR board. Track objectives and key results.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        search: { type: 'string' },
+        status0__1: { type: 'number', description: 'Status index' }
+      }
+    }
+  },
+  {
+    name: 'getMarketingBudgetsItems',
+    description: 'Get items from Marketing Budgets board. Track marketing spend and budgets.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        search: { type: 'string' }
+      }
+    }
+  },
+  {
+    name: 'getDealsItems',
+    description: 'Get items from Deals board. Track sales opportunities and deal stages.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        search: { type: 'string' },
+        status: { type: 'number', description: 'Stage index' }
+      }
+    }
+  },
+  {
+    name: 'getTeamsItems',
+    description: 'Get items from Teams board. View team structure and members.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        search: { type: 'string' }
+      }
+    }
+  },
+  {
+    name: 'getTicketsItems',
+    description: 'Get items from Support Tickets board. Track customer issues and resolutions.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        search: { type: 'string' },
+        status: { type: 'number', description: 'Ticket Status index' },
+        priority: { type: 'number', description: 'Priority index' }
+      }
+    }
   }
 ];

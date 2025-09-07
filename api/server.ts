@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import { createMcpHandler } from 'mcp-handler';
 import { TOOL_DEFINITIONS } from '../lib/mcp/toolDefinitions.js';
-import { registerBoardTools } from '../lib/mcp/registerBoardTools.js';
 
 // Import all tools
 import { getAllPublishers } from '../lib/tools/getAllPublishers.js';
@@ -21,6 +20,17 @@ import { availabilityForecast } from '../lib/tools/availabilityForecast.js';
 import { listAllBoards } from '../lib/tools/debug/listBoards.js';
 import { getBoardColumns } from '../lib/tools/debug/getBoardColumns.js';
 import { getItems, type ColumnFilter } from '../lib/tools/debug/getItems.js';
+
+// Import board-specific tools (selected key ones)
+import { getAccountsItems } from '../lib/tools/crm/getAccountsItems.js';
+import { getBookingsItems } from '../lib/tools/operations/getBookingsItems.js';
+import { getBugsItems } from '../lib/tools/development/getBugsItems.js';
+import { getTasksTechIntelligenceItems } from '../lib/tools/tasks/getTasksTechIntelligenceItems.js';
+import { getOKRItems } from '../lib/tools/okr/getOKRItems.js';
+import { getMarketingBudgetsItems } from '../lib/tools/marketing/getMarketingBudgetsItems.js';
+import { getDealsItems } from '../lib/tools/sales/getDealsItems.js';
+import { getTeamsItems } from '../lib/tools/hr/getTeamsItems.js';
+import { getTicketsItems } from '../lib/tools/support/getTicketsItems.js';
 
 // Helper to get tool description
 const getToolDescription = (name: string): string => {
@@ -290,8 +300,127 @@ const handler = createMcpHandler((server) => {
     }
   );
 
-  // Register all board-specific tools
-  registerBoardTools(server);
+  // Board-specific tools
+  server.tool('getAccountsItems',
+    getToolDescription('getAccountsItems'),
+    {
+      limit: z.number().default(10).optional(),
+      search: z.string().optional(),
+      status: z.number().optional(),
+      status5: z.number().optional()
+    },
+    async (input) => {
+      const result = await getAccountsItems(input);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('getBookingsItems',
+    getToolDescription('getBookingsItems'),
+    {
+      limit: z.number().default(10).optional(),
+      search: z.string().optional(),
+      status0__1: z.number().optional(),
+      date: z.string().optional()
+    },
+    async (input) => {
+      const result = await getBookingsItems(input);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('getBugsItems',
+    getToolDescription('getBugsItems'),
+    {
+      limit: z.number().default(10).optional(),
+      search: z.string().optional(),
+      color_mkqnwy18: z.number().optional(),
+      color_mkqhya7m: z.number().optional()
+    },
+    async (input) => {
+      const result = await getBugsItems(input);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('getTasksTechIntelligenceItems',
+    getToolDescription('getTasksTechIntelligenceItems'),
+    {
+      limit: z.number().default(10).optional(),
+      search: z.string().optional(),
+      status_19__1: z.number().optional(),
+      type_1__1: z.number().optional(),
+      priority_1__1: z.number().optional()
+    },
+    async (input) => {
+      const result = await getTasksTechIntelligenceItems(input);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('getOKRItems',
+    getToolDescription('getOKRItems'),
+    {
+      limit: z.number().default(10).optional(),
+      search: z.string().optional(),
+      status0__1: z.number().optional()
+    },
+    async (input) => {
+      const result = await getOKRItems(input);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('getMarketingBudgetsItems',
+    getToolDescription('getMarketingBudgetsItems'),
+    {
+      limit: z.number().default(10).optional(),
+      search: z.string().optional()
+    },
+    async (input) => {
+      const result = await getMarketingBudgetsItems(input);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('getDealsItems',
+    getToolDescription('getDealsItems'),
+    {
+      limit: z.number().default(10).optional(),
+      search: z.string().optional(),
+      status: z.number().optional()
+    },
+    async (input) => {
+      const result = await getDealsItems(input);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('getTeamsItems',
+    getToolDescription('getTeamsItems'),
+    {
+      limit: z.number().default(10).optional(),
+      search: z.string().optional()
+    },
+    async (input) => {
+      const result = await getTeamsItems(input);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('getTicketsItems',
+    getToolDescription('getTicketsItems'),
+    {
+      limit: z.number().default(10).optional(),
+      search: z.string().optional(),
+      status: z.number().optional(),
+      priority: z.number().optional()
+    },
+    async (input) => {
+      const result = await getTicketsItems(input);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
 });
 
 // Export handler for Vercel Edge Runtime
