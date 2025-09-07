@@ -12,8 +12,15 @@
     "build": "tsc --noEmit && echo 'TypeScript validation complete'",
     "vercel-build": "echo 'Vercel build complete'",
     "start": "node dist/api/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "test:local": "tsx test.local.ts",
+    "test:collect-data": "tsx tests/utils/collect-test-data.ts",
+    "test:all": "tsx tests/run-all-tests.ts",
+    "test:all-fresh": "tsx tests/run-all-tests.ts --collect-data",
+    "test:quick": "tsx tests/quick-test.ts",
     "mcp:dev": "tsx mcp-server.ts",
     "mcp:build": "tsc -p tsconfig.mcp.json",
     "build:ts": "tsc"
@@ -44,8 +51,10 @@
     "@types/express": "^5.0.3",
     "@types/node": "^22.5.0",
     "@types/xml2js": "^0.4.14",
+    "@vitest/ui": "^3.2.4",
     "express": "^5.1.0",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vitest": "^3.2.4"
   }
 }
