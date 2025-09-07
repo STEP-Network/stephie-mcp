@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 /**
  * Collects test data from Monday.com boards
- * Fetches 500 items from each board with all columns to ensure comprehensive test coverage
+ * Fetches 500 items from each board with the actual columns used by each tool
  */
 
 import { config } from 'dotenv';
@@ -15,6 +15,12 @@ import { dirname } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+// Load tool columns configuration
+const toolColumnsPath = path.join(__dirname, '../fixtures/tool-columns.json');
+const TOOL_COLUMNS = fs.existsSync(toolColumnsPath) 
+  ? JSON.parse(fs.readFileSync(toolColumnsPath, 'utf-8'))
+  : {};
 
 // All board IDs we test
 const TEST_BOARDS = {
@@ -48,6 +54,7 @@ interface TestData {
     title: string;
     type: string;
   }>;
+  actualColumnIds: string[]; // The actual column IDs used by the tool
   items: any[];
   collectedAt: string;
 }
@@ -55,7 +62,11 @@ interface TestData {
 async function collectBoardData(board: typeof TEST_BOARDS[keyof typeof TEST_BOARDS]): Promise<TestData> {
   console.log(`📊 Collecting data from ${board.name} (${board.id})...`);
   
-  // First get all columns
+  // Get the actual columns used by this tool
+  const toolConfig = TOOL_COLUMNS[board.tool];
+  const actualColumns = toolConfig?.columns || [];
+  
+  // First get all columns metadata
   const columnsQuery = `
     query {
       boards(ids: [${board.id}]) {
@@ -70,10 +81,14 @@ async function collectBoardData(board: typeof TEST_BOARDS[keyof typeof TEST_BOAR
   `;
   
   const columnsResponse = await mondayApi(columnsQuery);
-  const columns = columnsResponse.data?.boards?.[0]?.columns || [];
+  const allColumns = columnsResponse.data?.boards?.[0]?.columns || [];
   
-  // Get column IDs for the query
-  const columnIds = columns.map((c: any) => `"${c.id}"`).join(', ');
+  // Use actual columns from the tool if available, otherwise use all columns
+  const columnIds = actualColumns.length > 0 
+    ? actualColumns.map(id => `"${id}"`).join(', ')
+    : allColumns.map((c: any) => `"${c.id}"`).join(', ');
+  
+  console.log(`  📋 Using ${actualColumns.length > 0 ? 'tool-specific' : 'all'} columns: ${actualColumns.length || allColumns.length} columns`);
   
   // Fetch items with all columns - use pagination for 500 items
   const items: any[] = [];
@@ -136,18 +151,24 @@ async function collectBoardData(board: typeof TEST_BOARDS[keyof typeof TEST_BOAR
     }
   }
   
-  console.log(`  ✅ Collected ${items.length} items with ${columns.length} columns`);
+  console.log(`  ✅ Collected ${items.length} items with ${actualColumns.length || allColumns.length} columns`);
+  
+  // Only include columns that are actually used by the tool
+  const relevantColumns = actualColumns.length > 0
+    ? allColumns.filter((c: any) => actualColumns.includes(c.id))
+    : allColumns;
   
   return {
     boardId: board.id,
     boardName: board.name,
     tool: board.tool,
     itemCount: items.length,
-    columns: columns.map((c: any) => ({
+    columns: relevantColumns.map((c: any) => ({
       id: c.id,
       title: c.title,
       type: c.type
     })),
+    actualColumnIds: actualColumns, // Store the actual column IDs used
     items: items.slice(0, 500), // Ensure max 500
     collectedAt: new Date().toISOString()
   };
