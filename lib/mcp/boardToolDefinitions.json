@@ -1,6 +1,6 @@
 [
   {
-    "name": "getAccountsItems",
+    "name": "getAccounts",
     "description": "Get items from Accounts board. 1613 total items.",
     "inputSchema": {
       "type": "object",
@@ -30,7 +30,7 @@
     }
   },
   {
-    "name": "getBookingsItems",
+    "name": "getBookings",
     "description": "Get items from Bookings 3.0 board. 1537 total items.",
     "inputSchema": {
       "type": "object",
@@ -68,7 +68,7 @@
     }
   },
   {
-    "name": "getBugsItems",
+    "name": "getBugs",
     "description": "Get items from Bugs board. 21 total items.",
     "inputSchema": {
       "type": "object",
@@ -106,7 +106,7 @@
     }
   },
   {
-    "name": "getChangelogItems",
+    "name": "getChangelog",
     "description": "Get items from Changelog board. 766 total items.",
     "inputSchema": {
       "type": "object",
@@ -128,7 +128,7 @@
     }
   },
   {
-    "name": "getContactsItems",
+    "name": "getContacts",
     "description": "Get items from Contacts board. 4968 total items.",
     "inputSchema": {
       "type": "object",
@@ -154,7 +154,7 @@
     }
   },
   {
-    "name": "getDealsItems",
+    "name": "getDeals",
     "description": "Get items from Deals board. 1942 total items.",
     "inputSchema": {
       "type": "object",
@@ -176,7 +176,7 @@
     }
   },
   {
-    "name": "getFeaturesItems",
+    "name": "getFeatures",
     "description": "Get items from Features board. 52 total items.",
     "inputSchema": {
       "type": "object",
@@ -214,7 +214,7 @@
     }
   },
   {
-    "name": "getInternalAdOpsAdTechItems",
+    "name": "getInternalAdOpsAdTech",
     "description": "Get items from Internal AdOps FAQ board. 127 total items.",
     "inputSchema": {
       "type": "object",
@@ -244,7 +244,7 @@
     }
   },
   {
-    "name": "getInternalAdSalesItems",
+    "name": "getInternalAdSales",
     "description": "Get items from Internal AdSales board. 39 total items.",
     "inputSchema": {
       "type": "object",
@@ -270,7 +270,7 @@
     }
   },
   {
-    "name": "getLeadsItems",
+    "name": "getLeads",
     "description": "Get items from Leads board. 78 total items.",
     "inputSchema": {
       "type": "object",
@@ -304,7 +304,7 @@
     }
   },
   {
-    "name": "getMarketingBudgetsItems",
+    "name": "getMarketingBudgets",
     "description": "Get items from Budgets board. 42 total items.",
     "inputSchema": {
       "type": "object",
@@ -330,7 +330,7 @@
     }
   },
   {
-    "name": "getMarketingExpensesItems",
+    "name": "getMarketingExpenses",
     "description": "Get items from Expenses board. 22 total items.",
     "inputSchema": {
       "type": "object",
@@ -352,7 +352,7 @@
     }
   },
   {
-    "name": "getOKRItems",
+    "name": "getOKR",
     "description": "Get items from Objectives & Key Results board. 41 total items.",
     "inputSchema": {
       "type": "object",
@@ -378,7 +378,7 @@
     }
   },
   {
-    "name": "getOpportunitiesItems",
+    "name": "getOpportunities",
     "description": "Get items from Opportunities board. 690 total items.",
     "inputSchema": {
       "type": "object",
@@ -416,7 +416,7 @@
     }
   },
   {
-    "name": "getOTTPublishersItems",
+    "name": "getOTTPublishers",
     "description": "Get items from OTT Publishers board. 24 total items.",
     "inputSchema": {
       "type": "object",
@@ -438,7 +438,7 @@
     }
   },
   {
-    "name": "getPartnersItems",
+    "name": "getPartners",
     "description": "Get items from Partners board. 6 total items.",
     "inputSchema": {
       "type": "object",
@@ -472,7 +472,7 @@
     }
   },
   {
-    "name": "getPeopleItems",
+    "name": "getPeople",
     "description": "Get items from People board. 18 total items.",
     "inputSchema": {
       "type": "object",
@@ -502,7 +502,7 @@
     }
   },
   {
-    "name": "getPlatformsItems",
+    "name": "getPlatforms",
     "description": "Get items from Platforms board. 20 total items.",
     "inputSchema": {
       "type": "object",
@@ -528,7 +528,7 @@
     }
   },
   {
-    "name": "getProcessesItems",
+    "name": "getProcesses",
     "description": "Get items from Processes board. 16 total items.",
     "inputSchema": {
       "type": "object",
@@ -554,7 +554,7 @@
     }
   },
   {
-    "name": "getPublisherFAQItems",
+    "name": "getPublisherFAQ",
     "description": "Get items from Publisher FAQ board. 34 total items.",
     "inputSchema": {
       "type": "object",
@@ -580,7 +580,7 @@
     }
   },
   {
-    "name": "getSalesActivitiesItems",
+    "name": "getSalesActivities",
     "description": "Get items from Sales Activities board. 498 total items.",
     "inputSchema": {
       "type": "object",
@@ -610,7 +610,7 @@
     }
   },
   {
-    "name": "getStrategiesItems",
+    "name": "getStrategies",
     "description": "Get items from Strategies board. 3 total items.",
     "inputSchema": {
       "type": "object",
@@ -636,7 +636,7 @@
     }
   },
   {
-    "name": "getTasksAdOpsItems",
+    "name": "getTasksAdOps",
     "description": "Get items from Tasks - AdOps board. 4505 total items.",
     "inputSchema": {
       "type": "object",
@@ -674,7 +674,7 @@
     }
   },
   {
-    "name": "getTasksAdTechItems",
+    "name": "getTasksAdTech",
     "description": "Get items from Tasks - AdTech board. 248 total items.",
     "inputSchema": {
       "type": "object",
@@ -712,7 +712,7 @@
     }
   },
   {
-    "name": "getTasksMarketingItems",
+    "name": "getTasksMarketing",
     "description": "Get items from Tasks - Marketing board. 319 total items.",
     "inputSchema": {
       "type": "object",
@@ -750,7 +750,7 @@
     }
   },
   {
-    "name": "getTasksTechIntelligenceItems",
+    "name": "getTasksTechIntelligence",
     "description": "Get items from Tasks - Tech & Intelligence board. 1725 total items.",
     "inputSchema": {
       "type": "object",
@@ -788,7 +788,7 @@
     }
   },
   {
-    "name": "getTasksVideoItems",
+    "name": "getTasksVideo",
     "description": "Get items from Tasks - Video board. 647 total items.",
     "inputSchema": {
       "type": "object",
@@ -826,7 +826,7 @@
     }
   },
   {
-    "name": "getTasksYieldGrowthItems",
+    "name": "getTasksYieldGrowth",
     "description": "Get items from Tasks - Yield & Growth board. 23 total items.",
     "inputSchema": {
       "type": "object",
@@ -864,7 +864,7 @@
     }
   },
   {
-    "name": "getTeamsItems",
+    "name": "getTeams",
     "description": "Get items from Teams board. 7 total items.",
     "inputSchema": {
       "type": "object",
@@ -886,7 +886,7 @@
     }
   },
   {
-    "name": "getTestsItems",
+    "name": "getTests",
     "description": "Get items from Tests board. 78 total items.",
     "inputSchema": {
       "type": "object",
@@ -904,7 +904,7 @@
     }
   },
   {
-    "name": "getTicketsItems",
+    "name": "getTickets",
     "description": "Get items from Tickets board. 5961 total items.",
     "inputSchema": {
       "type": "object",
@@ -942,7 +942,7 @@
     }
   },
   {
-    "name": "getVertikalerItems",
+    "name": "getVertikaler",
     "description": "Get items from Vertikaler board. 7 total items.",
     "inputSchema": {
       "type": "object",

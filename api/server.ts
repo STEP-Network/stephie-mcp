@@ -22,15 +22,15 @@ import { getBoardColumns } from '../lib/tools/debug/getBoardColumns.js';
 import { getItems, type ColumnFilter } from '../lib/tools/debug/getItems.js';
 
 // Import board-specific tools (selected key ones)
-import { getAccountsItems } from '../lib/tools/crm/getAccountsItems.js';
-import { getBookingsItems } from '../lib/tools/operations/getBookingsItems.js';
-import { getBugsItems } from '../lib/tools/development/getBugsItems.js';
-import { getTasksTechIntelligenceItems } from '../lib/tools/tasks/getTasksTechIntelligenceItems.js';
-import { getOKRItems } from '../lib/tools/okr/getOKRItems.js';
-import { getMarketingBudgetsItems } from '../lib/tools/marketing/getMarketingBudgetsItems.js';
-import { getDealsItems } from '../lib/tools/sales/getDealsItems.js';
-import { getTeamsItems } from '../lib/tools/hr/getTeamsItems.js';
-import { getTicketsItems } from '../lib/tools/support/getTicketsItems.js';
+import { getAccounts } from '../lib/tools/crm/getAccounts.js';
+import { getBookings } from '../lib/tools/operations/getBookings.js';
+import { getBugs } from '../lib/tools/development/getBugs.js';
+import { getTasksTechIntelligence } from '../lib/tools/tasks/getTasksTechIntelligence.js';
+import { getOKR } from '../lib/tools/okr/getOKR.js';
+import { getMarketingBudgets } from '../lib/tools/marketing/getMarketingBudgets.js';
+import { getDeals } from '../lib/tools/sales/getDeals.js';
+import { getTeams } from '../lib/tools/hr/getTeams.js';
+import { getTickets } from '../lib/tools/support/getTickets.js';
 
 // Helper to get tool description
 const getToolDescription = (name: string): string => {
@@ -301,8 +301,8 @@ const handler = createMcpHandler((server) => {
   );
 
   // Board-specific tools
-  server.tool('getAccountsItems',
-    getToolDescription('getAccountsItems'),
+  server.tool('getAccounts',
+    getToolDescription('getAccounts'),
     {
       limit: z.number().default(10).optional(),
       search: z.string().optional(),
@@ -310,13 +310,13 @@ const handler = createMcpHandler((server) => {
       status5: z.number().optional()
     },
     async (input) => {
-      const result = await getAccountsItems(input);
+      const result = await getAccounts(input);
       return { content: [{ type: 'text', text: result }] };
     }
   );
 
-  server.tool('getBookingsItems',
-    getToolDescription('getBookingsItems'),
+  server.tool('getBookings',
+    getToolDescription('getBookings'),
     {
       limit: z.number().default(10).optional(),
       search: z.string().optional(),
@@ -324,13 +324,13 @@ const handler = createMcpHandler((server) => {
       date: z.string().optional()
     },
     async (input) => {
-      const result = await getBookingsItems(input);
+      const result = await getBookings(input);
       return { content: [{ type: 'text', text: result }] };
     }
   );
 
-  server.tool('getBugsItems',
-    getToolDescription('getBugsItems'),
+  server.tool('getBugs',
+    getToolDescription('getBugs'),
     {
       limit: z.number().default(10).optional(),
       search: z.string().optional(),
@@ -338,13 +338,13 @@ const handler = createMcpHandler((server) => {
       color_mkqhya7m: z.number().optional()
     },
     async (input) => {
-      const result = await getBugsItems(input);
+      const result = await getBugs(input);
       return { content: [{ type: 'text', text: result }] };
     }
   );
 
-  server.tool('getTasksTechIntelligenceItems',
-    getToolDescription('getTasksTechIntelligenceItems'),
+  server.tool('getTasksTechIntelligence',
+    getToolDescription('getTasksTechIntelligence'),
     {
       limit: z.number().default(10).optional(),
       search: z.string().optional(),
@@ -353,63 +353,63 @@ const handler = createMcpHandler((server) => {
       priority_1__1: z.number().optional()
     },
     async (input) => {
-      const result = await getTasksTechIntelligenceItems(input);
+      const result = await getTasksTechIntelligence(input);
       return { content: [{ type: 'text', text: result }] };
     }
   );
 
-  server.tool('getOKRItems',
-    getToolDescription('getOKRItems'),
+  server.tool('getOKR',
+    getToolDescription('getOKR'),
     {
       limit: z.number().default(10).optional(),
       search: z.string().optional(),
       status0__1: z.number().optional()
     },
     async (input) => {
-      const result = await getOKRItems(input);
+      const result = await getOKR(input);
       return { content: [{ type: 'text', text: result }] };
     }
   );
 
-  server.tool('getMarketingBudgetsItems',
-    getToolDescription('getMarketingBudgetsItems'),
+  server.tool('getMarketingBudgets',
+    getToolDescription('getMarketingBudgets'),
     {
       limit: z.number().default(10).optional(),
       search: z.string().optional()
     },
     async (input) => {
-      const result = await getMarketingBudgetsItems(input);
+      const result = await getMarketingBudgets(input);
       return { content: [{ type: 'text', text: result }] };
     }
   );
 
-  server.tool('getDealsItems',
-    getToolDescription('getDealsItems'),
+  server.tool('getDeals',
+    getToolDescription('getDeals'),
     {
       limit: z.number().default(10).optional(),
       search: z.string().optional(),
       status: z.number().optional()
     },
     async (input) => {
-      const result = await getDealsItems(input);
+      const result = await getDeals(input);
       return { content: [{ type: 'text', text: result }] };
     }
   );
 
-  server.tool('getTeamsItems',
-    getToolDescription('getTeamsItems'),
+  server.tool('getTeams',
+    getToolDescription('getTeams'),
     {
       limit: z.number().default(10).optional(),
       search: z.string().optional()
     },
     async (input) => {
-      const result = await getTeamsItems(input);
+      const result = await getTeams(input);
       return { content: [{ type: 'text', text: result }] };
     }
   );
 
-  server.tool('getTicketsItems',
-    getToolDescription('getTicketsItems'),
+  server.tool('getTickets',
+    getToolDescription('getTickets'),
     {
       limit: z.number().default(10).optional(),
       search: z.string().optional(),
@@ -417,7 +417,7 @@ const handler = createMcpHandler((server) => {
       priority: z.number().optional()
     },
     async (input) => {
-      const result = await getTicketsItems(input);
+      const result = await getTickets(input);
       return { content: [{ type: 'text', text: result }] };
     }
   );

@@ -534,7 +534,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
   },
   // Board-specific tools (auto-generated)
   {
-    name: 'getAccountsItems',
+    name: 'getAccounts',
     description: 'Get items from Accounts CRM board. Search and filter by status, owner, and type.',
     inputSchema: {
       type: 'object',
@@ -547,7 +547,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     }
   },
   {
-    name: 'getBookingsItems',
+    name: 'getBookings',
     description: 'Get items from Bookings board. Filter by status, dates, and campaign status.',
     inputSchema: {
       type: 'object',
@@ -560,7 +560,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     }
   },
   {
-    name: 'getBugsItems',
+    name: 'getBugs',
     description: 'Get items from Bugs board. Filter by priority, status, and owner.',
     inputSchema: {
       type: 'object',
@@ -573,7 +573,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     }
   },
   {
-    name: 'getTasksTechIntelligenceItems',
+    name: 'getTasksTechIntelligence',
     description: 'Get items from Tech & Intelligence Tasks board. IMPORTANT: For status filtering use status_19__1 with numeric index (0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold). For "igangværende"/"in progress" use status_19__1=4.',
     inputSchema: {
       type: 'object',
@@ -587,7 +587,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     }
   },
   {
-    name: 'getOKRItems',
+    name: 'getOKR',
     description: 'Get items from OKR board. Track objectives and key results.',
     inputSchema: {
       type: 'object',
@@ -599,7 +599,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     }
   },
   {
-    name: 'getMarketingBudgetsItems',
+    name: 'getMarketingBudgets',
     description: 'Get items from Marketing Budgets board. Track marketing spend and budgets.',
     inputSchema: {
       type: 'object',
@@ -610,7 +610,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     }
   },
   {
-    name: 'getDealsItems',
+    name: 'getDeals',
     description: 'Get items from Deals board. Track sales opportunities and deal stages.',
     inputSchema: {
       type: 'object',
@@ -622,7 +622,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     }
   },
   {
-    name: 'getTeamsItems',
+    name: 'getTeams',
     description: 'Get items from Teams board. View team structure and members.',
     inputSchema: {
       type: 'object',
@@ -633,7 +633,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     }
   },
   {
-    name: 'getTicketsItems',
+    name: 'getTickets',
     description: 'Get items from Support Tickets board. Track customer issues and resolutions.',
     inputSchema: {
       type: 'object',

@@ -8,73 +8,73 @@ const boardToolDefinitions = JSON.parse(
 );
 
 // Import all generated board tools
-import { getAccountsItems } from '../tools/crm/getAccountsItems.js';
-import { getBookingsItems } from '../tools/operations/getBookingsItems.js';
-import { getBugsItems } from '../tools/development/getBugsItems.js';
-import { getChangelogItems } from '../tools/development/getChangelogItems.js';
-import { getContactsItems } from '../tools/crm/getContactsItems.js';
-import { getDealsItems } from '../tools/sales/getDealsItems.js';
-import { getFeaturesItems } from '../tools/development/getFeaturesItems.js';
-import { getInternalAdOpsAdTechItems } from '../tools/operations/getInternalAdOpsAdTechItems.js';
-import { getInternalAdSalesItems } from '../tools/sales/getInternalAdSalesItems.js';
-import { getLeadsItems } from '../tools/crm/getLeadsItems.js';
-import { getMarketingBudgetsItems } from '../tools/marketing/getMarketingBudgetsItems.js';
-import { getMarketingExpensesItems } from '../tools/marketing/getMarketingExpensesItems.js';
-import { getOKRItems } from '../tools/okr/getOKRItems.js';
-import { getOpportunitiesItems } from '../tools/sales/getOpportunitiesItems.js';
-import { getOTTPublishersItems } from '../tools/publishers/getOTTPublishersItems.js';
-import { getPartnersItems } from '../tools/business/getPartnersItems.js';
-import { getPeopleItems } from '../tools/hr/getPeopleItems.js';
-import { getPlatformsItems } from '../tools/tech/getPlatformsItems.js';
-import { getProcessesItems } from '../tools/operations/getProcessesItems.js';
-import { getPublisherFAQItems } from '../tools/support/getPublisherFAQItems.js';
-import { getSalesActivitiesItems } from '../tools/sales/getSalesActivitiesItems.js';
-import { getStrategiesItems } from '../tools/business/getStrategiesItems.js';
-import { getTasksAdOpsItems } from '../tools/tasks/getTasksAdOpsItems.js';
-import { getTasksAdTechItems } from '../tools/tasks/getTasksAdTechItems.js';
-import { getTasksMarketingItems } from '../tools/tasks/getTasksMarketingItems.js';
-import { getTasksTechIntelligenceItems } from '../tools/tasks/getTasksTechIntelligenceItems.js';
-import { getTasksVideoItems } from '../tools/tasks/getTasksVideoItems.js';
-import { getTasksYieldGrowthItems } from '../tools/tasks/getTasksYieldGrowthItems.js';
-import { getTeamsItems } from '../tools/hr/getTeamsItems.js';
-import { getTestsItems } from '../tools/development/getTestsItems.js';
-import { getTicketsItems } from '../tools/support/getTicketsItems.js';
-import { getVertikalerItems } from '../tools/business/getVertikalerItems.js';
+import { getAccounts } from '../tools/crm/getAccounts.js';
+import { getBookings } from '../tools/operations/getBookings.js';
+import { getBugs } from '../tools/development/getBugs.js';
+import { getChangelog } from '../tools/development/getChangelog.js';
+import { getContacts } from '../tools/crm/getContacts.js';
+import { getDeals } from '../tools/sales/getDeals.js';
+import { getFeatures } from '../tools/development/getFeatures.js';
+import { getInternalAdOpsAdTech } from '../tools/operations/getInternalAdOpsAdTech.js';
+import { getInternalAdSales } from '../tools/sales/getInternalAdSales.js';
+import { getLeads } from '../tools/crm/getLeads.js';
+import { getMarketingBudgets } from '../tools/marketing/getMarketingBudgets.js';
+import { getMarketingExpenses } from '../tools/marketing/getMarketingExpenses.js';
+import { getOKR } from '../tools/okr/getOKR.js';
+import { getOpportunities } from '../tools/sales/getOpportunities.js';
+import { getOTTPublishers } from '../tools/publishers/getOTTPublishers.js';
+import { getPartners } from '../tools/business/getPartners.js';
+import { getPeople } from '../tools/hr/getPeople.js';
+import { getPlatforms } from '../tools/tech/getPlatforms.js';
+import { getProcesses } from '../tools/operations/getProcesses.js';
+import { getPublisherFAQ } from '../tools/support/getPublisherFAQ.js';
+import { getSalesActivities } from '../tools/sales/getSalesActivities.js';
+import { getStrategies } from '../tools/business/getStrategies.js';
+import { getTasksAdOps } from '../tools/tasks/getTasksAdOps.js';
+import { getTasksAdTech } from '../tools/tasks/getTasksAdTech.js';
+import { getTasksMarketing } from '../tools/tasks/getTasksMarketing.js';
+import { getTasksTechIntelligence } from '../tools/tasks/getTasksTechIntelligence.js';
+import { getTasksVideo } from '../tools/tasks/getTasksVideo.js';
+import { getTasksYieldGrowth } from '../tools/tasks/getTasksYieldGrowth.js';
+import { getTeams } from '../tools/hr/getTeams.js';
+import { getTests } from '../tools/development/getTests.js';
+import { getTickets } from '../tools/support/getTickets.js';
+import { getVertikaler } from '../tools/business/getVertikaler.js';
 
 // Map tool names to their implementations
 const BOARD_TOOL_IMPLEMENTATIONS: Record<string, Function> = {
-  getAccountsItems,
-  getBookingsItems,
-  getBugsItems,
-  getChangelogItems,
-  getContactsItems,
-  getDealsItems,
-  getFeaturesItems,
-  getInternalAdOpsAdTechItems,
-  getInternalAdSalesItems,
-  getLeadsItems,
-  getMarketingBudgetsItems,
-  getMarketingExpensesItems,
-  getOKRItems,
-  getOpportunitiesItems,
-  getOTTPublishersItems,
-  getPartnersItems,
-  getPeopleItems,
-  getPlatformsItems,
-  getProcessesItems,
-  getPublisherFAQItems,
-  getSalesActivitiesItems,
-  getStrategiesItems,
-  getTasksAdOpsItems,
-  getTasksAdTechItems,
-  getTasksMarketingItems,
-  getTasksTechIntelligenceItems,
-  getTasksVideoItems,
-  getTasksYieldGrowthItems,
-  getTeamsItems,
-  getTestsItems,
-  getTicketsItems,
-  getVertikalerItems,
+  getAccounts,
+  getBookings,
+  getBugs,
+  getChangelog,
+  getContacts,
+  getDeals,
+  getFeatures,
+  getInternalAdOpsAdTech,
+  getInternalAdSales,
+  getLeads,
+  getMarketingBudgets,
+  getMarketingExpenses,
+  getOKR,
+  getOpportunities,
+  getOTTPublishers,
+  getPartners,
+  getPeople,
+  getPlatforms,
+  getProcesses,
+  getPublisherFAQ,
+  getSalesActivities,
+  getStrategies,
+  getTasksAdOps,
+  getTasksAdTech,
+  getTasksMarketing,
+  getTasksTechIntelligence,
+  getTasksVideo,
+  getTasksYieldGrowth,
+  getTeams,
+  getTests,
+  getTickets,
+  getVertikaler,
 };
 
 /**
