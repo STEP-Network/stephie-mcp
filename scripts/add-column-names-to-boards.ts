@@ -73,7 +73,7 @@ const BOARD_ID_TO_TOOL: Record<string, string> = {
   '1402911026': 'getLeads',
   '1677240056': 'getMarketingBudgets',
   '1658073379': 'getMarketingExpenses',
-  '1631918659': 'getOKR',
+  '1631918659': 'getOKR', // Enhanced with hierarchy support
   '1402911049': 'getOpportunities',
   '1741257731': 'getOTTPublishers',
   '1663230263': 'getPartners',

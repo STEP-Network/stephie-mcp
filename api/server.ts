@@ -364,6 +364,7 @@ const handler = createMcpHandler((server) => {
       limit: z.number().default(10).optional(),
       search: z.string().optional(),
       status: z.number().optional(),
+      team: z.string().optional(),
       includeKeyResults: z.boolean().default(true).optional(),
       onlyActive: z.boolean().default(false).optional()
     },

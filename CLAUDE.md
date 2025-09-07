@@ -104,11 +104,14 @@ BOARD_IDS = {
 2. Tools are created with essential columns and filtering capabilities
 3. Register tools in `server.ts` for immediate availability
 4. Tool definitions stored in `lib/mcp/boardToolDefinitions.json`
+5. **IMPORTANT**: Update the Boards meta board (1698570295) with column names after any tool changes
 
 ### Meta Board Management
 - Board ID: 1698570295 tracks all boards and their column names
 - Use `scripts/add-column-names-to-boards.ts` to update column tracking
 - Dropdown column `dropdown_mkvj2a8r` stores column names per board
+- **When modifying board tools**: Always update the meta board to reflect new columns being tracked
+- Use `scripts/update-okr-board-columns.ts` as an example for board-specific updates
 
 ## Critical Implementation Details
 

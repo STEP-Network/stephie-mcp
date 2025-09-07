@@ -4,6 +4,7 @@ export async function getOKR(params: {
   limit?: number;
   search?: string;
   status?: number; // Objective status (0=Planned, 1=In Progress, 2=On Hold, 3=Done, 4=Cancelled)
+  team?: string; // Filter by team name (searches in linked team items)
   includeKeyResults?: boolean; // Whether to include Key Results (default: true)
   onlyActive?: boolean; // Filter to only active objectives (In Progress)
 } = {}) {
@@ -11,6 +12,7 @@ export async function getOKR(params: {
     limit = 10, 
     search, 
     status,
+    team,
     includeKeyResults = true,
     onlyActive = false
   } = params;
@@ -74,7 +76,7 @@ export async function getOKR(params: {
             name
             created_at
             updated_at
-            column_values(ids: ["color_mkpksp3f", "people__1", "lookup_mkpkjxjy", "date4", "description_mkmp3w28"]) {
+            column_values(ids: ["color_mkpksp3f", "people__1", "lookup_mkpkjxjy", "date4", "description_mkmp3w28", "connect_boards__1"]) {
               id
               text
               value
@@ -95,7 +97,15 @@ export async function getOKR(params: {
     const board = response.data?.boards?.[0];
     if (!board) throw new Error('OKR board not found');
     
-    const items = board.items_page?.items || [];
+    let items = board.items_page?.items || [];
+    
+    // Filter by team if specified (post-query filtering since board_relation doesn't support query params)
+    if (team) {
+      items = items.filter((item: any) => {
+        const teamCol = item.column_values.find((c: any) => c.id === 'connect_boards__1');
+        return teamCol?.text?.toLowerCase().includes(team.toLowerCase());
+      });
+    }
     
     // Format response as markdown
     const lines: string[] = [];
@@ -106,6 +116,7 @@ export async function getOKR(params: {
       const statusLabels = ['Planned', 'In Progress', 'On Hold', 'Done', 'Cancelled'];
       lines.push(`**Status Filter:** ${statusLabels[status] || `Index ${status}`}`);
     }
+    if (team) lines.push(`**Team Filter:** ${team}`);
     if (onlyActive) lines.push('**Filter:** Active objectives only');
     lines.push('');
     
@@ -123,6 +134,7 @@ export async function getOKR(params: {
       const progressCol = item.column_values.find((c: any) => c.id === 'lookup_mkpkjxjy');
       const deadlineCol = item.column_values.find((c: any) => c.id === 'date4');
       const descCol = item.column_values.find((c: any) => c.id === 'description_mkmp3w28');
+      const teamCol = item.column_values.find((c: any) => c.id === 'connect_boards__1');
       
       // Update statistics
       const statusText = statusCol?.text || 'No Status';
@@ -136,6 +148,7 @@ export async function getOKR(params: {
       lines.push(`- **ID:** \`${item.id}\``);
       lines.push(`- **Status:** ${statusCol?.text || 'N/A'}`);
       lines.push(`- **Owner:** ${ownerCol?.text || 'N/A'}`);
+      lines.push(`- **Team:** ${teamCol?.text || 'N/A'}`);
       lines.push(`- **Progress:** ${progressCol?.text || 'N/A'}`);
       lines.push(`- **Deadline:** ${deadlineCol?.text || 'N/A'}`);
       

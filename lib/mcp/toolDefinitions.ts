@@ -595,6 +595,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
         limit: { type: 'number', default: 10 },
         search: { type: 'string' },
         status: { type: 'number', description: 'Objective status index' },
+        team: { type: 'string', description: 'Filter by team name' },
         includeKeyResults: { type: 'boolean', default: true },
         onlyActive: { type: 'boolean', default: false }
       }
