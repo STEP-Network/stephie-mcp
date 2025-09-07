@@ -353,26 +353,32 @@
   },
   {
     "name": "getOKR",
-    "description": "Get items from Objectives & Key Results board. 41 total items.",
+    "description": "Get Objectives & Key Results with full hierarchy. Returns objectives with their associated key results.",
     "inputSchema": {
       "type": "object",
       "properties": {
         "limit": {
           "type": "number",
           "default": 10,
-          "description": "Maximum items to return"
+          "description": "Maximum objectives to return"
         },
         "search": {
           "type": "string",
-          "description": "Search in item names"
+          "description": "Search in objective names"
         },
-        "color_mkpksp3f": {
+        "status": {
           "type": "number",
-          "description": "Status (numeric index)"
+          "description": "Objective status (0=Planned, 1=In Progress, 2=On Hold, 3=Done, 4=Cancelled)"
         },
-        "people__1": {
-          "type": "string",
-          "description": "Owner"
+        "includeKeyResults": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include Key Results for each Objective"
+        },
+        "onlyActive": {
+          "type": "boolean",
+          "default": false,
+          "description": "Filter to only active objectives (In Progress)"
         }
       }
     }

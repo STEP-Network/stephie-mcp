@@ -588,13 +588,15 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
   },
   {
     name: 'getOKR',
-    description: 'Get items from OKR board. Track objectives and key results.',
+    description: 'Get Objectives & Key Results with full hierarchy. Returns objectives with their associated key results. Status: 0=Planned, 1=In Progress, 2=On Hold, 3=Done, 4=Cancelled.',
     inputSchema: {
       type: 'object',
       properties: {
         limit: { type: 'number', default: 10 },
         search: { type: 'string' },
-        status0__1: { type: 'number', description: 'Status index' }
+        status: { type: 'number', description: 'Objective status index' },
+        includeKeyResults: { type: 'boolean', default: true },
+        onlyActive: { type: 'boolean', default: false }
       }
     }
   },

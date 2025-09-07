@@ -363,7 +363,9 @@ const handler = createMcpHandler((server) => {
     {
       limit: z.number().default(10).optional(),
       search: z.string().optional(),
-      status0__1: z.number().optional()
+      status: z.number().optional(),
+      includeKeyResults: z.boolean().default(true).optional(),
+      onlyActive: z.boolean().default(false).optional()
     },
     async (input) => {
       const result = await getOKR(input);

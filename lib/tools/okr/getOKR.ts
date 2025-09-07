@@ -3,12 +3,19 @@ import { mondayApi } from '../../monday/client.js';
 export async function getOKR(params: {
   limit?: number;
   search?: string;
-  color_mkpksp3f?: number; // Status (numeric index)
-  people__1?: string; // Owner
+  status?: number; // Objective status (0=Planned, 1=In Progress, 2=On Hold, 3=Done, 4=Cancelled)
+  includeKeyResults?: boolean; // Whether to include Key Results (default: true)
+  onlyActive?: boolean; // Filter to only active objectives (In Progress)
 } = {}) {
-  const { limit = 10, search, color_mkpksp3f, people__1 } = params;
+  const { 
+    limit = 10, 
+    search, 
+    status,
+    includeKeyResults = true,
+    onlyActive = false
+  } = params;
   
-  // Build filters
+  // Build filters for objectives
   const filters: any[] = [];
   if (search) {
     filters.push({
@@ -17,8 +24,21 @@ export async function getOKR(params: {
       operator: 'contains_text'
     });
   }
-  if (color_mkpksp3f !== undefined) filters.push({ column_id: 'color_mkpksp3f', compare_value: [color_mkpksp3f], operator: 'any_of' });
-  if (people__1) filters.push({ column_id: 'people__1', compare_value: people__1, operator: 'contains_text' });
+  
+  if (status !== undefined) {
+    filters.push({
+      column_id: 'color_mkpksp3f',
+      compare_value: [status],
+      operator: 'any_of'
+    });
+  } else if (onlyActive) {
+    // In Progress = index 1
+    filters.push({
+      column_id: 'color_mkpksp3f',
+      compare_value: [1],
+      operator: 'any_of'
+    });
+  }
   
   const queryParams = filters.length > 0 
     ? `, query_params: { rules: [${filters.map(f => `{
@@ -27,6 +47,21 @@ export async function getOKR(params: {
         operator: ${f.operator}
       }`).join(',')}]}`
     : '';
+  
+  // Build the query with optional subitems
+  const subitems = includeKeyResults ? `
+    subitems {
+      id
+      name
+      column_values(ids: ["status0__1", "person", "numbers__1", "date8__1", "text_1__1"]) {
+        id
+        text
+        value
+        column {
+          title
+        }
+      }
+    }` : '';
   
   const query = `
     query {
@@ -39,7 +74,7 @@ export async function getOKR(params: {
             name
             created_at
             updated_at
-            column_values(ids: ["name", "color_mkpksp3f", "people__1", "connect_boards__1"]) {
+            column_values(ids: ["color_mkpksp3f", "people__1", "lookup_mkpkjxjy", "date4", "description_mkmp3w28"]) {
               id
               text
               value
@@ -48,6 +83,7 @@ export async function getOKR(params: {
                 type
               }
             }
+            ${subitems}
           }
         }
       }
@@ -57,26 +93,98 @@ export async function getOKR(params: {
   try {
     const response = await mondayApi(query);
     const board = response.data?.boards?.[0];
-    if (!board) throw new Error('Board not found');
+    if (!board) throw new Error('OKR board not found');
     
     const items = board.items_page?.items || [];
     
     // Format response as markdown
     const lines: string[] = [];
-    lines.push(`# Objectives & Key Results`);
-    lines.push(`**Total Items:** ${items.length}`);
+    lines.push('# Objectives & Key Results');
+    lines.push(`**Total Objectives:** ${items.length}`);
+    if (search) lines.push(`**Search:** "${search}"`);
+    if (status !== undefined) {
+      const statusLabels = ['Planned', 'In Progress', 'On Hold', 'Done', 'Cancelled'];
+      lines.push(`**Status Filter:** ${statusLabels[status] || `Index ${status}`}`);
+    }
+    if (onlyActive) lines.push('**Filter:** Active objectives only');
     lines.push('');
     
+    // Statistics
+    const stats = {
+      totalObjectives: items.length,
+      totalKeyResults: 0,
+      byStatus: {} as Record<string, number>
+    };
+    
     items.forEach((item: any) => {
-      lines.push(`## ${item.name}`);
-      lines.push(`- **ID:** ${item.id}`);
+      // Parse objective data
+      const statusCol = item.column_values.find((c: any) => c.id === 'color_mkpksp3f');
+      const ownerCol = item.column_values.find((c: any) => c.id === 'people__1');
+      const progressCol = item.column_values.find((c: any) => c.id === 'lookup_mkpkjxjy');
+      const deadlineCol = item.column_values.find((c: any) => c.id === 'date4');
+      const descCol = item.column_values.find((c: any) => c.id === 'description_mkmp3w28');
       
-      item.column_values.forEach((col: any) => {
-        if (col.text) {
-          lines.push(`- **${col.column.title}:** ${col.text}`);
-        }
-      });
+      // Update statistics
+      const statusText = statusCol?.text || 'No Status';
+      stats.byStatus[statusText] = (stats.byStatus[statusText] || 0) + 1;
+      if (item.subitems) {
+        stats.totalKeyResults += item.subitems.length;
+      }
+      
+      // Format objective
+      lines.push(`## 🎯 ${item.name}`);
+      lines.push(`- **ID:** \`${item.id}\``);
+      lines.push(`- **Status:** ${statusCol?.text || 'N/A'}`);
+      lines.push(`- **Owner:** ${ownerCol?.text || 'N/A'}`);
+      lines.push(`- **Progress:** ${progressCol?.text || 'N/A'}`);
+      lines.push(`- **Deadline:** ${deadlineCol?.text || 'N/A'}`);
+      
+      if (descCol?.text && descCol.text !== '') {
+        lines.push(`- **Description:** ${descCol.text}`);
+      }
+      
+      // Add Key Results if included
+      if (includeKeyResults && item.subitems && item.subitems.length > 0) {
+        lines.push('');
+        lines.push(`### Key Results (${item.subitems.length})`);
+        
+        item.subitems.forEach((kr: any, idx: number) => {
+          const krStatus = kr.column_values.find((c: any) => c.id === 'status0__1');
+          const krOwner = kr.column_values.find((c: any) => c.id === 'person');
+          const krProgress = kr.column_values.find((c: any) => c.id === 'numbers__1');
+          const krDeadline = kr.column_values.find((c: any) => c.id === 'date8__1');
+          const krDesc = kr.column_values.find((c: any) => c.id === 'text_1__1');
+          
+          lines.push(`${idx + 1}. **${kr.name}** (\`${kr.id}\`)`);
+          lines.push(`   - Status: ${krStatus?.text || 'N/A'}`);
+          lines.push(`   - Owner: ${krOwner?.text || 'N/A'}`);
+          lines.push(`   - Progress: ${krProgress?.text || 'N/A'}`);
+          if (krDeadline?.text) {
+            lines.push(`   - Due: ${krDeadline.text}`);
+          }
+          if (krDesc?.text && krDesc.text !== '') {
+            lines.push(`   - Description: ${krDesc.text}`);
+          }
+        });
+      } else if (!includeKeyResults && item.subitems) {
+        lines.push(`- **Key Results:** ${item.subitems.length} items`);
+      }
+      
       lines.push('');
+    });
+    
+    // Add summary statistics
+    lines.push('---');
+    lines.push('## 📊 Summary');
+    lines.push(`- **Total Objectives:** ${stats.totalObjectives}`);
+    if (includeKeyResults) {
+      lines.push(`- **Total Key Results:** ${stats.totalKeyResults}`);
+      lines.push(`- **Average KRs per Objective:** ${stats.totalObjectives > 0 ? (stats.totalKeyResults / stats.totalObjectives).toFixed(1) : 0}`);
+    }
+    lines.push('');
+    lines.push('**Status Distribution:**');
+    Object.entries(stats.byStatus).forEach(([status, count]) => {
+      lines.push(`- ${status}: ${count}`);
     });
     
     return lines.join('\n');
