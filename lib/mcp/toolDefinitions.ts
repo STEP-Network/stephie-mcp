@@ -574,13 +574,13 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
   },
   {
     name: 'getTasksTechIntelligenceItems',
-    description: 'Get items from Tech & Intelligence Tasks. Filter by status, type, priority, and dates.',
+    description: 'Get items from Tech & Intelligence Tasks board. IMPORTANT: For status filtering use status_19__1 with numeric index (0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold). For "igangværende"/"in progress" use status_19__1=4.',
     inputSchema: {
       type: 'object',
       properties: {
         limit: { type: 'number', default: 10 },
         search: { type: 'string' },
-        status_19__1: { type: 'number', description: 'Status index' },
+        status_19__1: { type: 'number', description: 'Status index (4=In Progress/Igangværende)' },
         type_1__1: { type: 'number', description: 'Type index' },
         priority_1__1: { type: 'number', description: 'Priority index' }
       }
