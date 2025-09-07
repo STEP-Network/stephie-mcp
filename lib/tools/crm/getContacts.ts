@@ -5,8 +5,10 @@ export async function getContacts(params: {
   search?: string;
   people?: string; // Owner
   status__1?: number; // Status (numeric index)
+  accountId?: string; // Filter by linked account (use getAccounts to find IDs)
+  opportunitiesId?: string; // Filter by linked opportunities (use getOpportunities to find IDs)
 } = {}) {
-  const { limit = 10, search, people, status__1 } = params;
+  const { limit = 10, search, people, status__1, accountId, opportunitiesId } = params;
   
   // Build filters
   const filters: any[] = [];
@@ -39,7 +41,7 @@ export async function getContacts(params: {
             name
             created_at
             updated_at
-            column_values(ids: ["name", "text6", "people", "status__1"]) {
+            column_values(ids: ["name", "text6", "people", "status__1", "contact_account", "contact_deal"]) {
               id
               text
               value
@@ -59,12 +61,48 @@ export async function getContacts(params: {
     const board = response.data?.boards?.[0];
     if (!board) throw new Error('Board not found');
     
-    const items = board.items_page?.items || [];
+    let items = board.items_page?.items || [];
+    
+    // Apply board relation filters
+    if (accountId) {
+      items = items.filter((item: any) => {
+        const relationCol = item.column_values.find((c: any) => c.id === 'contact_account');
+        if (relationCol?.value) {
+          try {
+            const linked = JSON.parse(relationCol.value);
+            return linked?.linkedItemIds?.includes(accountId);
+          } catch {
+            return false;
+          }
+        }
+        return false;
+      });
+    }
+    
+    if (opportunitiesId) {
+      items = items.filter((item: any) => {
+        const relationCol = item.column_values.find((c: any) => c.id === 'contact_deal');
+        if (relationCol?.value) {
+          try {
+            const linked = JSON.parse(relationCol.value);
+            return linked?.linkedItemIds?.includes(opportunitiesId);
+          } catch {
+            return false;
+          }
+        }
+        return false;
+      });
+    }
     
     // Format response as markdown
     const lines: string[] = [];
     lines.push(`# Contacts`);
     lines.push(`**Total Items:** ${items.length}`);
+    
+    // Show active filters
+    if (accountId) lines.push(`**Filter:** Related to Account ID ${accountId}`);
+    if (opportunitiesId) lines.push(`**Filter:** Related to Opportunity ID ${opportunitiesId}`);
+    
     lines.push('');
     
     items.forEach((item: any) => {

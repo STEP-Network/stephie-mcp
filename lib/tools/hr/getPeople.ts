@@ -6,8 +6,9 @@ export async function getPeople(params: {
   date__1?: string; // Start Date (YYYY-MM-DD)
   status?: number; // Status (numeric index)
   date6__1?: string; // End Date (YYYY-MM-DD)
+  teamId?: string; // Filter by team (use getTeams to find IDs)
 } = {}) {
-  const { limit = 10, search, date__1, status, date6__1 } = params;
+  const { limit = 10, search, date__1, status, date6__1, teamId } = params;
   
   // Build filters
   const filters: any[] = [];
@@ -61,12 +62,32 @@ export async function getPeople(params: {
     const board = response.data?.boards?.[0];
     if (!board) throw new Error('Board not found');
     
-    const items = board.items_page?.items || [];
+    let items = board.items_page?.items || [];
+    
+    // Apply board relation filters
+    if (teamId) {
+      items = items.filter((item: any) => {
+        const relationCol = item.column_values.find((c: any) => c.id === 'link_to_teams__1');
+        if (relationCol?.value) {
+          try {
+            const linked = JSON.parse(relationCol.value);
+            return linked?.linkedItemIds?.includes(teamId);
+          } catch {
+            return false;
+          }
+        }
+        return false;
+      });
+    }
     
     // Format response as markdown
     const lines: string[] = [];
     lines.push(`# People`);
     lines.push(`**Total Items:** ${items.length}`);
+    
+    // Show active filters
+    if (teamId) lines.push(`**Filter:** In Team ID ${teamId}`);
+    
     lines.push('');
     
     items.forEach((item: any) => {

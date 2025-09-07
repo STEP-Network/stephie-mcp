@@ -7,8 +7,11 @@ export async function getLeads(params: {
   lead_status?: number; // Status (numeric index)
   status_1__1?: number; // Type (husk at angiv!) (numeric index)
   date0__1?: string; // Created Date (YYYY-MM-DD)
+  existingContactId?: string; // Filter by existing contact (use getContacts to find IDs)
+  existingAccountId?: string; // Filter by existing account (use getAccounts to find IDs)
+  opportunityId?: string; // Filter by linked opportunity (use getOpportunities to find IDs)
 } = {}) {
-  const { limit = 10, search, lead_owner, lead_status, status_1__1, date0__1 } = params;
+  const { limit = 10, search, lead_owner, lead_status, status_1__1, date0__1, existingContactId, existingAccountId, opportunityId } = params;
   
   // Build filters
   const filters: any[] = [];
@@ -43,7 +46,7 @@ export async function getLeads(params: {
             name
             created_at
             updated_at
-            column_values(ids: ["name", "lead_owner", "lead_status", "status_1__1", "date0__1"]) {
+            column_values(ids: ["name", "lead_owner", "lead_status", "status_1__1", "date0__1", "link_to_contacts", "link_to_accounts7", "connect_boards70__1"]) {
               id
               text
               value
@@ -63,12 +66,64 @@ export async function getLeads(params: {
     const board = response.data?.boards?.[0];
     if (!board) throw new Error('Board not found');
     
-    const items = board.items_page?.items || [];
+    let items = board.items_page?.items || [];
+    
+    // Apply board relation filters
+    if (existingContactId) {
+      items = items.filter((item: any) => {
+        const relationCol = item.column_values.find((c: any) => c.id === 'link_to_contacts');
+        if (relationCol?.value) {
+          try {
+            const linked = JSON.parse(relationCol.value);
+            return linked?.linkedItemIds?.includes(existingContactId);
+          } catch {
+            return false;
+          }
+        }
+        return false;
+      });
+    }
+    
+    if (existingAccountId) {
+      items = items.filter((item: any) => {
+        const relationCol = item.column_values.find((c: any) => c.id === 'link_to_accounts7');
+        if (relationCol?.value) {
+          try {
+            const linked = JSON.parse(relationCol.value);
+            return linked?.linkedItemIds?.includes(existingAccountId);
+          } catch {
+            return false;
+          }
+        }
+        return false;
+      });
+    }
+    
+    if (opportunityId) {
+      items = items.filter((item: any) => {
+        const relationCol = item.column_values.find((c: any) => c.id === 'connect_boards70__1');
+        if (relationCol?.value) {
+          try {
+            const linked = JSON.parse(relationCol.value);
+            return linked?.linkedItemIds?.includes(opportunityId);
+          } catch {
+            return false;
+          }
+        }
+        return false;
+      });
+    }
     
     // Format response as markdown
     const lines: string[] = [];
     lines.push(`# Leads`);
     lines.push(`**Total Items:** ${items.length}`);
+    
+    // Show active filters
+    if (existingContactId) lines.push(`**Filter:** Has existing Contact ID ${existingContactId}`);
+    if (existingAccountId) lines.push(`**Filter:** Has existing Account ID ${existingAccountId}`);
+    if (opportunityId) lines.push(`**Filter:** Related to Opportunity ID ${opportunityId}`);
+    
     lines.push('');
     
     items.forEach((item: any) => {

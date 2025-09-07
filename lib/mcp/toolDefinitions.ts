@@ -539,7 +539,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     inputSchema: {
       type: 'object',
       properties: {
-        limit: { type: 'number', default: 10 },
+        limit: { type: 'number', default: 10,
+        contactsId: { type: 'string', description: 'Filter by linked contacts (use getContacts to find IDs)' },
+        opportunitiesId: { type: 'string', description: 'Filter by linked opportunities (use getOpportunities to find IDs)' },
+        leadsId: { type: 'string', description: 'Filter by linked leads (use getLeads to find IDs)' }},
         search: { type: 'string' },
         status: { type: 'number', description: 'Account Status index' },
         status5: { type: 'number', description: 'Type index' }
@@ -578,7 +581,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     inputSchema: {
       type: 'object',
       properties: {
-        limit: { type: 'number', default: 10 },
+        limit: { type: 'number', default: 10,
+        keyResultId: { type: 'string', description: 'Filter by linked key result (use OKR subitems to find IDs)' },
+        teamTaskId: { type: 'string', description: 'Filter by linked team tasks' }},
         search: { type: 'string' },
         status_19__1: { type: 'number', description: 'Status index (4=In Progress/Igangværende)' },
         type_1__1: { type: 'number', description: 'Type index' },
@@ -592,7 +597,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     inputSchema: {
       type: 'object',
       properties: {
-        limit: { type: 'number', default: 10 },
+        limit: { type: 'number', default: 10,
+        strategiesId: { type: 'string', description: 'Filter by linked strategies (use getStrategies to find IDs)' },
+        peopleId: { type: 'string', description: 'Filter by linked people (use getPeople to find IDs)' }},
         search: { type: 'string' },
         status: { type: 'number', description: 'Objective status index' },
         teamId: { type: 'string', description: 'Team ID (use getTeams to find IDs)' },
@@ -618,7 +625,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     inputSchema: {
       type: 'object',
       properties: {
-        limit: { type: 'number', default: 10 },
+        limit: { type: 'number', default: 10,
+        agencyId: { type: 'string', description: 'Filter by agency account (use getAccounts to find IDs)' },
+        advertiserId: { type: 'string', description: 'Filter by advertiser account (use getAccounts to find IDs)' },
+        contactsId: { type: 'string', description: 'Filter by linked contacts (use getContacts to find IDs)' }},
         search: { type: 'string' },
         status: { type: 'number', description: 'Stage index' }
       }
@@ -641,7 +651,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     inputSchema: {
       type: 'object',
       properties: {
-        limit: { type: 'number', default: 10 },
+        limit: { type: 'number', default: 10,
+        contactId: { type: 'string', description: 'Filter by linked contact (use getContacts to find IDs)' },
+        assignedId: { type: 'string', description: 'Filter by assigned person (use getPeople to find IDs)' },
+        publisherId: { type: 'string', description: 'Filter by publisher (use getAllPublishers to find IDs)' }},
         search: { type: 'string' },
         status: { type: 'number', description: 'Ticket Status index' },
         priority: { type: 'number', description: 'Priority index' }

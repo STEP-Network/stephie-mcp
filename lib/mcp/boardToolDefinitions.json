@@ -25,6 +25,18 @@
         "status5": {
           "type": "number",
           "description": "Type (numeric index)"
+        },
+        "contactsId": {
+          "type": "string",
+          "description": "Filter by linked contacts (use getContacts to find IDs)"
+        },
+        "opportunitiesId": {
+          "type": "string",
+          "description": "Filter by linked opportunities (use getOpportunities to find IDs)"
+        },
+        "leadsId": {
+          "type": "string",
+          "description": "Filter by linked leads (use getLeads to find IDs)"
         }
       }
     }
@@ -149,6 +161,14 @@
         "status__1": {
           "type": "number",
           "description": "Status (numeric index)"
+        },
+        "accountId": {
+          "type": "string",
+          "description": "Filter by linked account (use getAccounts to find IDs)"
+        },
+        "opportunitiesId": {
+          "type": "string",
+          "description": "Filter by linked opportunities (use getOpportunities to find IDs)"
         }
       }
     }
@@ -171,6 +191,18 @@
         "color_mkqby95j": {
           "type": "number",
           "description": "Status (numeric index)"
+        },
+        "agencyId": {
+          "type": "string",
+          "description": "Filter by agency account (use getAccounts to find IDs)"
+        },
+        "advertiserId": {
+          "type": "string",
+          "description": "Filter by advertiser account (use getAccounts to find IDs)"
+        },
+        "contactsId": {
+          "type": "string",
+          "description": "Filter by linked contacts (use getContacts to find IDs)"
         }
       }
     }
@@ -383,6 +415,14 @@
           "type": "boolean",
           "default": false,
           "description": "Filter to only active objectives (In Progress)"
+        },
+        "strategiesId": {
+          "type": "string",
+          "description": "Filter by linked strategies (use getStrategies to find IDs)"
+        },
+        "peopleId": {
+          "type": "string",
+          "description": "Filter by linked people (use getPeople to find IDs)"
         }
       }
     }
@@ -421,6 +461,18 @@
         "deal_close_date": {
           "type": "string",
           "description": "*Actual Close Date (YYYY-MM-DD)"
+        },
+        "accountId": {
+          "type": "string",
+          "description": "Filter by linked account (use getAccounts to find IDs)"
+        },
+        "contactId": {
+          "type": "string",
+          "description": "Filter by linked contact (use getContacts to find IDs)"
+        },
+        "bookingId": {
+          "type": "string",
+          "description": "Filter by linked booking (use getBookings to find IDs)"
         }
       }
     }
@@ -679,6 +731,14 @@
         "date__1": {
           "type": "string",
           "description": "Due Date (YYYY-MM-DD)"
+        },
+        "keyResultId": {
+          "type": "string",
+          "description": "Filter by linked key result (use OKR subitems to find IDs)"
+        },
+        "publisherId": {
+          "type": "string",
+          "description": "Filter by publisher (use getAllPublishers to find IDs)"
         }
       }
     }
@@ -755,6 +815,14 @@
         "publish_date_mkn21n6b": {
           "type": "string",
           "description": "Publish Date (YYYY-MM-DD)"
+        },
+        "keyResultId": {
+          "type": "string",
+          "description": "Filter by linked key result (use OKR subitems to find IDs)"
+        },
+        "budgetId": {
+          "type": "string",
+          "description": "Filter by linked budget (use getMarketingBudgets to find IDs)"
         }
       }
     }
@@ -793,6 +861,14 @@
         "date__1": {
           "type": "string",
           "description": "Due Date (YYYY-MM-DD)"
+        },
+        "keyResultId": {
+          "type": "string",
+          "description": "Filter by linked key result (use OKR subitems to find IDs)"
+        },
+        "teamTaskId": {
+          "type": "string",
+          "description": "Filter by linked team tasks"
         }
       }
     }
@@ -947,6 +1023,18 @@
         "date5": {
           "type": "string",
           "description": "Last Customer Response Date (YYYY-MM-DD)"
+        },
+        "contactId": {
+          "type": "string",
+          "description": "Filter by linked contact (use getContacts to find IDs)"
+        },
+        "assignedId": {
+          "type": "string",
+          "description": "Filter by assigned person (use getPeople to find IDs)"
+        },
+        "publisherId": {
+          "type": "string",
+          "description": "Filter by publisher (use getAllPublishers to find IDs)"
         }
       }
     }

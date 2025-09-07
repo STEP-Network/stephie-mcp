@@ -4,8 +4,11 @@ export async function getDeals(params: {
   limit?: number;
   search?: string;
   color_mkqby95j?: number; // Status (numeric index)
+  agencyId?: string; // Filter by agency account (use getAccounts to find IDs)
+  advertiserId?: string; // Filter by advertiser account (use getAccounts to find IDs)
+  contactsId?: string; // Filter by linked contacts (use getContacts to find IDs)
 } = {}) {
-  const { limit = 10, search, color_mkqby95j } = params;
+  const { limit = 10, search, color_mkqby95j, agencyId, advertiserId, contactsId } = params;
   
   // Build filters
   const filters: any[] = [];
@@ -37,7 +40,7 @@ export async function getDeals(params: {
             name
             created_at
             updated_at
-            column_values(ids: ["name", "text5__1", "text__1", "deal_names__1", "pricing_type_mkmj9a6x", "color_mkqby95j"]) {
+            column_values(ids: ["name", "text5__1", "text__1", "deal_names__1", "pricing_type_mkmj9a6x", "color_mkqby95j", "connect_boards_mkmjpjjc", "connect_boards_mkmjr3e3", "connect_boards3__1"]) {
               id
               text
               value
@@ -57,12 +60,64 @@ export async function getDeals(params: {
     const board = response.data?.boards?.[0];
     if (!board) throw new Error('Board not found');
     
-    const items = board.items_page?.items || [];
+    let items = board.items_page?.items || [];
+    
+    // Apply board relation filters
+    if (agencyId) {
+      items = items.filter((item: any) => {
+        const relationCol = item.column_values.find((c: any) => c.id === 'connect_boards_mkmjpjjc');
+        if (relationCol?.value) {
+          try {
+            const linked = JSON.parse(relationCol.value);
+            return linked?.linkedItemIds?.includes(agencyId);
+          } catch {
+            return false;
+          }
+        }
+        return false;
+      });
+    }
+    
+    if (advertiserId) {
+      items = items.filter((item: any) => {
+        const relationCol = item.column_values.find((c: any) => c.id === 'connect_boards_mkmjr3e3');
+        if (relationCol?.value) {
+          try {
+            const linked = JSON.parse(relationCol.value);
+            return linked?.linkedItemIds?.includes(advertiserId);
+          } catch {
+            return false;
+          }
+        }
+        return false;
+      });
+    }
+    
+    if (contactsId) {
+      items = items.filter((item: any) => {
+        const relationCol = item.column_values.find((c: any) => c.id === 'connect_boards3__1');
+        if (relationCol?.value) {
+          try {
+            const linked = JSON.parse(relationCol.value);
+            return linked?.linkedItemIds?.includes(contactsId);
+          } catch {
+            return false;
+          }
+        }
+        return false;
+      });
+    }
     
     // Format response as markdown
     const lines: string[] = [];
     lines.push(`# Deals`);
     lines.push(`**Total Items:** ${items.length}`);
+    
+    // Show active filters
+    if (agencyId) lines.push(`**Filter:** Related to Agency ID ${agencyId}`);
+    if (advertiserId) lines.push(`**Filter:** Related to Advertiser ID ${advertiserId}`);
+    if (contactsId) lines.push(`**Filter:** Related to Contact ID ${contactsId}`);
+    
     lines.push('');
     
     items.forEach((item: any) => {

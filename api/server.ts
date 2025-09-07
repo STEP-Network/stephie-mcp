@@ -23,13 +23,20 @@ import { getItems, type ColumnFilter } from '../lib/tools/debug/getItems.js';
 
 // Import board-specific tools (selected key ones)
 import { getAccounts } from '../lib/tools/crm/getAccounts.js';
+import { getContacts } from '../lib/tools/crm/getContacts.js';
+import { getLeads } from '../lib/tools/crm/getLeads.js';
+import { getOpportunities } from '../lib/tools/sales/getOpportunities.js';
+import { getSalesActivities } from '../lib/tools/sales/getSalesActivities.js';
 import { getBookings } from '../lib/tools/operations/getBookings.js';
 import { getBugs } from '../lib/tools/development/getBugs.js';
 import { getTasksTechIntelligence } from '../lib/tools/tasks/getTasksTechIntelligence.js';
+import { getTasksAdOps } from '../lib/tools/tasks/getTasksAdOps.js';
+import { getTasksMarketing } from '../lib/tools/tasks/getTasksMarketing.js';
 import { getOKR } from '../lib/tools/okr/getOKR.js';
 import { getMarketingBudgets } from '../lib/tools/marketing/getMarketingBudgets.js';
 import { getDeals } from '../lib/tools/sales/getDeals.js';
 import { getTeams } from '../lib/tools/hr/getTeams.js';
+import { getPeople } from '../lib/tools/hr/getPeople.js';
 import { getTickets } from '../lib/tools/support/getTickets.js';
 
 // Helper to get tool description
@@ -307,10 +314,72 @@ const handler = createMcpHandler((server) => {
       limit: z.number().default(10).optional(),
       search: z.string().optional(),
       status: z.number().optional(),
-      status5: z.number().optional()
+      status5: z.number().optional(),
+      contactsId: z.string().optional(),
+      opportunitiesId: z.string().optional(),
+      leadsId: z.string().optional()
     },
     async (input) => {
       const result = await getAccounts(input);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('getContacts',
+    getToolDescription('getContacts'),
+    {
+      limit: z.number().default(10).optional(),
+      search: z.string().optional(),
+      accountId: z.string().optional(),
+      opportunitiesId: z.string().optional()
+    },
+    async (input) => {
+      const result = await getContacts(input);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('getLeads',
+    getToolDescription('getLeads'),
+    {
+      limit: z.number().default(10).optional(),
+      search: z.string().optional(),
+      existingContactId: z.string().optional(),
+      existingAccountId: z.string().optional(),
+      opportunityId: z.string().optional()
+    },
+    async (input) => {
+      const result = await getLeads(input);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('getOpportunities',
+    getToolDescription('getOpportunities'),
+    {
+      limit: z.number().default(10).optional(),
+      search: z.string().optional(),
+      accountId: z.string().optional(),
+      contactId: z.string().optional(),
+      bookingId: z.string().optional()
+    },
+    async (input) => {
+      const result = await getOpportunities(input);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('getSalesActivities',
+    getToolDescription('getSalesActivities'),
+    {
+      limit: z.number().default(10).optional(),
+      search: z.string().optional(),
+      accountId: z.string().optional(),
+      contactId: z.string().optional(),
+      opportunityId: z.string().optional()
+    },
+    async (input) => {
+      const result = await getSalesActivities(input);
       return { content: [{ type: 'text', text: result }] };
     }
   );
@@ -321,7 +390,8 @@ const handler = createMcpHandler((server) => {
       limit: z.number().default(10).optional(),
       search: z.string().optional(),
       status0__1: z.number().optional(),
-      date: z.string().optional()
+      date: z.string().optional(),
+      opportunityId: z.string().optional()
     },
     async (input) => {
       const result = await getBookings(input);
@@ -350,10 +420,40 @@ const handler = createMcpHandler((server) => {
       search: z.string().optional(),
       status_19__1: z.number().optional(),
       type_1__1: z.number().optional(),
-      priority_1__1: z.number().optional()
+      priority_1__1: z.number().optional(),
+      keyResultId: z.string().optional(),
+      teamTaskId: z.string().optional()
     },
     async (input) => {
       const result = await getTasksTechIntelligence(input);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('getTasksAdOps',
+    getToolDescription('getTasksAdOps'),
+    {
+      limit: z.number().default(10).optional(),
+      search: z.string().optional(),
+      keyResultId: z.string().optional(),
+      publisherId: z.string().optional()
+    },
+    async (input) => {
+      const result = await getTasksAdOps(input);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('getTasksMarketing',
+    getToolDescription('getTasksMarketing'),
+    {
+      limit: z.number().default(10).optional(),
+      search: z.string().optional(),
+      keyResultId: z.string().optional(),
+      budgetId: z.string().optional()
+    },
+    async (input) => {
+      const result = await getTasksMarketing(input);
       return { content: [{ type: 'text', text: result }] };
     }
   );
@@ -366,7 +466,9 @@ const handler = createMcpHandler((server) => {
       status: z.number().optional(),
       teamId: z.string().optional(),
       includeKeyResults: z.boolean().default(true).optional(),
-      onlyActive: z.boolean().default(false).optional()
+      onlyActive: z.boolean().default(false).optional(),
+      strategiesId: z.string().optional(),
+      peopleId: z.string().optional()
     },
     async (input) => {
       const result = await getOKR(input);
@@ -391,7 +493,10 @@ const handler = createMcpHandler((server) => {
     {
       limit: z.number().default(10).optional(),
       search: z.string().optional(),
-      status: z.number().optional()
+      status: z.number().optional(),
+      agencyId: z.string().optional(),
+      advertiserId: z.string().optional(),
+      contactsId: z.string().optional()
     },
     async (input) => {
       const result = await getDeals(input);
@@ -403,10 +508,25 @@ const handler = createMcpHandler((server) => {
     getToolDescription('getTeams'),
     {
       limit: z.number().default(10).optional(),
-      search: z.string().optional()
+      search: z.string().optional(),
+      peopleId: z.string().optional(),
+      objectiveId: z.string().optional()
     },
     async (input) => {
       const result = await getTeams(input);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('getPeople',
+    getToolDescription('getPeople'),
+    {
+      limit: z.number().default(10).optional(),
+      search: z.string().optional(),
+      teamId: z.string().optional()
+    },
+    async (input) => {
+      const result = await getPeople(input);
       return { content: [{ type: 'text', text: result }] };
     }
   );
@@ -417,7 +537,10 @@ const handler = createMcpHandler((server) => {
       limit: z.number().default(10).optional(),
       search: z.string().optional(),
       status: z.number().optional(),
-      priority: z.number().optional()
+      priority: z.number().optional(),
+      contactId: z.string().optional(),
+      assignedId: z.string().optional(),
+      publisherId: z.string().optional()
     },
     async (input) => {
       const result = await getTickets(input);

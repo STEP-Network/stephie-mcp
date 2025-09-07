@@ -8,8 +8,9 @@ export async function getBookings(params: {
   person?: string; // Owner
   status_3?: number; // Campaign status (numeric index)
   status2?: number; // Midway reporting (numeric index)
+  opportunityId?: string; // Filter by linked opportunity (use getOpportunities to find IDs)
 } = {}) {
-  const { limit = 10, search, status0__1, date, person, status_3, status2 } = params;
+  const { limit = 10, search, status0__1, date, person, status_3, status2, opportunityId } = params;
   
   // Build filters
   const filters: any[] = [];
@@ -45,7 +46,7 @@ export async function getBookings(params: {
             name
             created_at
             updated_at
-            column_values(ids: ["name", "status0__1", "date", "person", "status_3", "status2", "status9", "text0__1", "numbers4__1"]) {
+            column_values(ids: ["name", "status0__1", "date", "person", "status_3", "status2", "status9", "text0__1", "numbers4__1", "link_to_opportunities__1"]) {
               id
               text
               value
@@ -65,12 +66,32 @@ export async function getBookings(params: {
     const board = response.data?.boards?.[0];
     if (!board) throw new Error('Board not found');
     
-    const items = board.items_page?.items || [];
+    let items = board.items_page?.items || [];
+    
+    // Apply board relation filters
+    if (opportunityId) {
+      items = items.filter((item: any) => {
+        const relationCol = item.column_values.find((c: any) => c.id === 'link_to_opportunities__1');
+        if (relationCol?.value) {
+          try {
+            const linked = JSON.parse(relationCol.value);
+            return linked?.linkedItemIds?.includes(opportunityId);
+          } catch {
+            return false;
+          }
+        }
+        return false;
+      });
+    }
     
     // Format response as markdown
     const lines: string[] = [];
     lines.push(`# Bookings 3.0`);
     lines.push(`**Total Items:** ${items.length}`);
+    
+    // Show active filters
+    if (opportunityId) lines.push(`**Filter:** Related to Opportunity ID ${opportunityId}`);
+    
     lines.push('');
     
     items.forEach((item: any) => {

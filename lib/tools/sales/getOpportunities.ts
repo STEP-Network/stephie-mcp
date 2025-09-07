@@ -8,8 +8,11 @@ export async function getOpportunities(params: {
   deal_creation_date?: string; // *Deal Creation Date (YYYY-MM-DD)
   deal_expected_close_date?: string; // *Expected Close Date (YYYY-MM-DD)
   deal_close_date?: string; // *Actual Close Date (YYYY-MM-DD)
+  accountId?: string; // Filter by linked account (use getAccounts to find IDs)
+  contactId?: string; // Filter by linked contact (use getContacts to find IDs)
+  bookingId?: string; // Filter by linked booking (use getBookings to find IDs)
 } = {}) {
-  const { limit = 10, search, deal_stage, date1, deal_creation_date, deal_expected_close_date, deal_close_date } = params;
+  const { limit = 10, search, deal_stage, date1, deal_creation_date, deal_expected_close_date, deal_close_date, accountId, contactId, bookingId } = params;
   
   // Build filters
   const filters: any[] = [];
@@ -45,7 +48,7 @@ export async function getOpportunities(params: {
             name
             created_at
             updated_at
-            column_values(ids: ["name", "connect_boards", "deal_stage", "date1", "deal_creation_date", "deal_expected_close_date", "deal_close_date", "status3__1", "text2__1", "date5__1"]) {
+            column_values(ids: ["name", "connect_boards", "deal_stage", "date1", "deal_creation_date", "deal_expected_close_date", "deal_close_date", "status3__1", "text2__1", "date5__1", "connect_boards31", "deal_contact", "connect_boards8__1"]) {
               id
               text
               value
@@ -65,12 +68,64 @@ export async function getOpportunities(params: {
     const board = response.data?.boards?.[0];
     if (!board) throw new Error('Board not found');
     
-    const items = board.items_page?.items || [];
+    let items = board.items_page?.items || [];
+    
+    // Apply board relation filters
+    if (accountId) {
+      items = items.filter((item: any) => {
+        const relationCol = item.column_values.find((c: any) => c.id === 'connect_boards31');
+        if (relationCol?.value) {
+          try {
+            const linked = JSON.parse(relationCol.value);
+            return linked?.linkedItemIds?.includes(accountId);
+          } catch {
+            return false;
+          }
+        }
+        return false;
+      });
+    }
+    
+    if (contactId) {
+      items = items.filter((item: any) => {
+        const relationCol = item.column_values.find((c: any) => c.id === 'deal_contact');
+        if (relationCol?.value) {
+          try {
+            const linked = JSON.parse(relationCol.value);
+            return linked?.linkedItemIds?.includes(contactId);
+          } catch {
+            return false;
+          }
+        }
+        return false;
+      });
+    }
+    
+    if (bookingId) {
+      items = items.filter((item: any) => {
+        const relationCol = item.column_values.find((c: any) => c.id === 'connect_boards8__1');
+        if (relationCol?.value) {
+          try {
+            const linked = JSON.parse(relationCol.value);
+            return linked?.linkedItemIds?.includes(bookingId);
+          } catch {
+            return false;
+          }
+        }
+        return false;
+      });
+    }
     
     // Format response as markdown
     const lines: string[] = [];
     lines.push(`# Opportunities`);
     lines.push(`**Total Items:** ${items.length}`);
+    
+    // Show active filters
+    if (accountId) lines.push(`**Filter:** Related to Account ID ${accountId}`);
+    if (contactId) lines.push(`**Filter:** Related to Contact ID ${contactId}`);
+    if (bookingId) lines.push(`**Filter:** Related to Booking ID ${bookingId}`);
+    
     lines.push('');
     
     items.forEach((item: any) => {

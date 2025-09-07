@@ -8,8 +8,10 @@ export async function getTasksTechIntelligence(params: {
   type_1__1?: number; // Type (numeric index)
   priority_1__1?: number; // Priority (numeric index)
   date__1?: string; // Due Date (YYYY-MM-DD)
+  keyResultId?: string; // Filter by linked key result (use OKR subitems to find IDs)
+  teamTaskId?: string; // Filter by linked team tasks
 } = {}) {
-  const { limit = 10, search, person, status_19__1, type_1__1, priority_1__1, date__1 } = params;
+  const { limit = 10, search, person, status_19__1, type_1__1, priority_1__1, date__1, keyResultId, teamTaskId } = params;
   
   // Build filters
   const filters: any[] = [];
@@ -45,7 +47,7 @@ export async function getTasksTechIntelligence(params: {
             name
             created_at
             updated_at
-            column_values(ids: ["name", "person", "status_19__1", "type_1__1", "priority_1__1", "date__1", "date4", "date3__1", "date7__1", "date4__1"]) {
+            column_values(ids: ["name", "person", "status_19__1", "type_1__1", "priority_1__1", "date__1", "date4", "date3__1", "date7__1", "date4__1", "board_relation_mkpjqgpv", "connect_boards_Mjj8XLFi"]) {
               id
               text
               value
@@ -65,12 +67,48 @@ export async function getTasksTechIntelligence(params: {
     const board = response.data?.boards?.[0];
     if (!board) throw new Error('Board not found');
     
-    const items = board.items_page?.items || [];
+    let items = board.items_page?.items || [];
+    
+    // Apply board relation filters
+    if (keyResultId) {
+      items = items.filter((item: any) => {
+        const relationCol = item.column_values.find((c: any) => c.id === 'board_relation_mkpjqgpv');
+        if (relationCol?.value) {
+          try {
+            const linked = JSON.parse(relationCol.value);
+            return linked?.linkedItemIds?.includes(keyResultId);
+          } catch {
+            return false;
+          }
+        }
+        return false;
+      });
+    }
+    
+    if (teamTaskId) {
+      items = items.filter((item: any) => {
+        const relationCol = item.column_values.find((c: any) => c.id === 'connect_boards_Mjj8XLFi');
+        if (relationCol?.value) {
+          try {
+            const linked = JSON.parse(relationCol.value);
+            return linked?.linkedItemIds?.includes(teamTaskId);
+          } catch {
+            return false;
+          }
+        }
+        return false;
+      });
+    }
     
     // Format response as markdown
     const lines: string[] = [];
     lines.push(`# Tasks - Tech & Intelligence`);
     lines.push(`**Total Items:** ${items.length}`);
+    
+    // Show active filters
+    if (keyResultId) lines.push(`**Filter:** Related to Key Result ID ${keyResultId}`);
+    if (teamTaskId) lines.push(`**Filter:** Related to Team Task ID ${teamTaskId}`);
+    
     lines.push('');
     
     items.forEach((item: any) => {

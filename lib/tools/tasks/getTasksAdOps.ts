@@ -8,8 +8,10 @@ export async function getTasksAdOps(params: {
   label_mkkwem4d?: number; // Type (numeric index)
   color_mknxxz44?: number; // Priority (numeric index)
   date__1?: string; // Due Date (YYYY-MM-DD)
+  keyResultId?: string; // Filter by linked key result (use OKR subitems to find IDs)
+  publisherId?: string; // Filter by publisher (use getAllPublishers to find IDs)
 } = {}) {
-  const { limit = 10, search, person, status_mkkwc3ez, label_mkkwem4d, color_mknxxz44, date__1 } = params;
+  const { limit = 10, search, person, status_mkkwc3ez, label_mkkwem4d, color_mknxxz44, date__1, keyResultId, publisherId } = params;
   
   // Build filters
   const filters: any[] = [];
@@ -45,7 +47,7 @@ export async function getTasksAdOps(params: {
             name
             created_at
             updated_at
-            column_values(ids: ["name", "person", "status_mkkwc3ez", "label_mkkwem4d", "color_mknxxz44", "date__1", "date4", "date3__1", "date7__1", "date4__1"]) {
+            column_values(ids: ["name", "person", "status_mkkwc3ez", "label_mkkwem4d", "color_mknxxz44", "date__1", "date4", "date3__1", "date7__1", "date4__1", "board_relation_mkpjy03a", "connect_boards_mkkxdfax"]) {
               id
               text
               value
@@ -65,12 +67,48 @@ export async function getTasksAdOps(params: {
     const board = response.data?.boards?.[0];
     if (!board) throw new Error('Board not found');
     
-    const items = board.items_page?.items || [];
+    let items = board.items_page?.items || [];
+    
+    // Apply board relation filters
+    if (keyResultId) {
+      items = items.filter((item: any) => {
+        const relationCol = item.column_values.find((c: any) => c.id === 'board_relation_mkpjy03a');
+        if (relationCol?.value) {
+          try {
+            const linked = JSON.parse(relationCol.value);
+            return linked?.linkedItemIds?.includes(keyResultId);
+          } catch {
+            return false;
+          }
+        }
+        return false;
+      });
+    }
+    
+    if (publisherId) {
+      items = items.filter((item: any) => {
+        const relationCol = item.column_values.find((c: any) => c.id === 'connect_boards_mkkxdfax');
+        if (relationCol?.value) {
+          try {
+            const linked = JSON.parse(relationCol.value);
+            return linked?.linkedItemIds?.includes(publisherId);
+          } catch {
+            return false;
+          }
+        }
+        return false;
+      });
+    }
     
     // Format response as markdown
     const lines: string[] = [];
     lines.push(`# Tasks - AdOps`);
     lines.push(`**Total Items:** ${items.length}`);
+    
+    // Show active filters
+    if (keyResultId) lines.push(`**Filter:** Related to Key Result ID ${keyResultId}`);
+    if (publisherId) lines.push(`**Filter:** Related to Publisher ID ${publisherId}`);
+    
     lines.push('');
     
     items.forEach((item: any) => {

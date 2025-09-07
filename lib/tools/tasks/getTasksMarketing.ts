@@ -8,8 +8,10 @@ export async function getTasksMarketing(params: {
   color_mkpwc7hm?: number; // Priority (numeric index)
   status_mkkw7ehb?: number; // Status (numeric index)
   publish_date_mkn21n6b?: string; // Publish Date (YYYY-MM-DD)
+  keyResultId?: string; // Filter by linked key result (use OKR subitems to find IDs)
+  budgetId?: string; // Filter by linked budget (use getMarketingBudgets to find IDs)
 } = {}) {
-  const { limit = 10, search, person, status_1__1, color_mkpwc7hm, status_mkkw7ehb, publish_date_mkn21n6b } = params;
+  const { limit = 10, search, person, status_1__1, color_mkpwc7hm, status_mkkw7ehb, publish_date_mkn21n6b, keyResultId, budgetId } = params;
   
   // Build filters
   const filters: any[] = [];
@@ -45,7 +47,7 @@ export async function getTasksMarketing(params: {
             name
             created_at
             updated_at
-            column_values(ids: ["name", "person", "status_1__1", "color_mkpwc7hm", "status_mkkw7ehb", "publish_date_mkn21n6b", "budget_mkn22001", "title_mkn256dt", "link_to_teams_Mjj8UZOX", "link_to_teams_Mjj8FZuw"]) {
+            column_values(ids: ["name", "person", "status_1__1", "color_mkpwc7hm", "status_mkkw7ehb", "publish_date_mkn21n6b", "budget_mkn22001", "title_mkn256dt", "link_to_teams_Mjj8UZOX", "link_to_teams_Mjj8FZuw", "board_relation_mkpjg0ky", "budgets_mkn2xpkt"]) {
               id
               text
               value
@@ -65,12 +67,48 @@ export async function getTasksMarketing(params: {
     const board = response.data?.boards?.[0];
     if (!board) throw new Error('Board not found');
     
-    const items = board.items_page?.items || [];
+    let items = board.items_page?.items || [];
+    
+    // Apply board relation filters
+    if (keyResultId) {
+      items = items.filter((item: any) => {
+        const relationCol = item.column_values.find((c: any) => c.id === 'board_relation_mkpjg0ky');
+        if (relationCol?.value) {
+          try {
+            const linked = JSON.parse(relationCol.value);
+            return linked?.linkedItemIds?.includes(keyResultId);
+          } catch {
+            return false;
+          }
+        }
+        return false;
+      });
+    }
+    
+    if (budgetId) {
+      items = items.filter((item: any) => {
+        const relationCol = item.column_values.find((c: any) => c.id === 'budgets_mkn2xpkt');
+        if (relationCol?.value) {
+          try {
+            const linked = JSON.parse(relationCol.value);
+            return linked?.linkedItemIds?.includes(budgetId);
+          } catch {
+            return false;
+          }
+        }
+        return false;
+      });
+    }
     
     // Format response as markdown
     const lines: string[] = [];
     lines.push(`# Tasks - Marketing`);
     lines.push(`**Total Items:** ${items.length}`);
+    
+    // Show active filters
+    if (keyResultId) lines.push(`**Filter:** Related to Key Result ID ${keyResultId}`);
+    if (budgetId) lines.push(`**Filter:** Related to Budget ID ${budgetId}`);
+    
     lines.push('');
     
     items.forEach((item: any) => {

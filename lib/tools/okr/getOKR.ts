@@ -7,6 +7,8 @@ export async function getOKR(params: {
   teamId?: string; // Filter by team ID (use getTeams to find team IDs)
   includeKeyResults?: boolean; // Whether to include Key Results (default: true)
   onlyActive?: boolean; // Filter to only active objectives (In Progress)
+  strategiesId?: string; // Filter by linked strategies (use getStrategies to find IDs)
+  peopleId?: string; // Filter by linked people (use getPeople to find IDs)
 } = {}) {
   const { 
     limit = 10, 
@@ -14,7 +16,9 @@ export async function getOKR(params: {
     status,
     teamId,
     includeKeyResults = true,
-    onlyActive = false
+    onlyActive = false,
+    strategiesId,
+    peopleId
   } = params;
   
   // Build filters for objectives
@@ -76,7 +80,7 @@ export async function getOKR(params: {
             name
             created_at
             updated_at
-            column_values(ids: ["color_mkpksp3f", "people__1", "lookup_mkpkjxjy", "date4", "description_mkmp3w28", "connect_boards__1"]) {
+            column_values(ids: ["color_mkpksp3f", "people__1", "lookup_mkpkjxjy", "date4", "description_mkmp3w28", "connect_boards__1", "link_to_strategies__1", "connect_boards35__1"]) {
               id
               text
               value
@@ -117,6 +121,38 @@ export async function getOKR(params: {
       });
     }
     
+    // Filter by strategies ID if specified
+    if (strategiesId) {
+      items = items.filter((item: any) => {
+        const stratCol = item.column_values.find((c: any) => c.id === 'link_to_strategies__1');
+        if (stratCol?.value) {
+          try {
+            const linked = JSON.parse(stratCol.value);
+            return linked?.linkedItemIds?.includes(strategiesId);
+          } catch {
+            return false;
+          }
+        }
+        return false;
+      });
+    }
+    
+    // Filter by people ID if specified
+    if (peopleId) {
+      items = items.filter((item: any) => {
+        const peopleCol = item.column_values.find((c: any) => c.id === 'connect_boards35__1');
+        if (peopleCol?.value) {
+          try {
+            const linked = JSON.parse(peopleCol.value);
+            return linked?.linkedItemIds?.includes(peopleId);
+          } catch {
+            return false;
+          }
+        }
+        return false;
+      });
+    }
+    
     // Format response as markdown
     const lines: string[] = [];
     lines.push('# Objectives & Key Results');
@@ -139,6 +175,8 @@ export async function getOKR(params: {
       }
       lines.push(`**Team Filter:** ${teamName} (ID: ${teamId})`);
     }
+    if (strategiesId) lines.push(`**Filter:** Related to Strategy ID ${strategiesId}`);
+    if (peopleId) lines.push(`**Filter:** Related to Person ID ${peopleId}`);
     if (onlyActive) lines.push('**Filter:** Active objectives only');
     lines.push('');
     

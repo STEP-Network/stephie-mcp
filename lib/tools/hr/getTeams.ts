@@ -4,8 +4,10 @@ export async function getTeams(params: {
   limit?: number;
   search?: string;
   status?: number; // Status (numeric index)
+  peopleId?: string; // Filter by person (use getPeople to find IDs)
+  objectiveId?: string; // Filter by objective (use getOKR to find IDs)
 } = {}) {
-  const { limit = 10, search, status } = params;
+  const { limit = 10, search, status, peopleId, objectiveId } = params;
   
   // Build filters
   const filters: any[] = [];
@@ -37,7 +39,7 @@ export async function getTeams(params: {
             name
             created_at
             updated_at
-            column_values(ids: ["name", "board_id_mkn336m7", "status"]) {
+            column_values(ids: ["name", "board_id_mkn336m7", "status", "connect_boards__1", "link_to_okrs__1"]) {
               id
               text
               value
@@ -57,12 +59,48 @@ export async function getTeams(params: {
     const board = response.data?.boards?.[0];
     if (!board) throw new Error('Board not found');
     
-    const items = board.items_page?.items || [];
+    let items = board.items_page?.items || [];
+    
+    // Apply board relation filters
+    if (peopleId) {
+      items = items.filter((item: any) => {
+        const relationCol = item.column_values.find((c: any) => c.id === 'connect_boards__1');
+        if (relationCol?.value) {
+          try {
+            const linked = JSON.parse(relationCol.value);
+            return linked?.linkedItemIds?.includes(peopleId);
+          } catch {
+            return false;
+          }
+        }
+        return false;
+      });
+    }
+    
+    if (objectiveId) {
+      items = items.filter((item: any) => {
+        const relationCol = item.column_values.find((c: any) => c.id === 'link_to_okrs__1');
+        if (relationCol?.value) {
+          try {
+            const linked = JSON.parse(relationCol.value);
+            return linked?.linkedItemIds?.includes(objectiveId);
+          } catch {
+            return false;
+          }
+        }
+        return false;
+      });
+    }
     
     // Format response as markdown
     const lines: string[] = [];
     lines.push(`# Teams`);
     lines.push(`**Total Items:** ${items.length}`);
+    
+    // Show active filters
+    if (peopleId) lines.push(`**Filter:** Has Person ID ${peopleId}`);
+    if (objectiveId) lines.push(`**Filter:** Has Objective ID ${objectiveId}`);
+    
     lines.push('');
     
     items.forEach((item: any) => {

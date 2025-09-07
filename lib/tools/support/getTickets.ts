@@ -8,8 +8,11 @@ export async function getTickets(params: {
   request_type?: number; // Request Type (numeric index)
   date?: string; // Creation Date (YYYY-MM-DD)
   date5?: string; // Last Customer Response Date (YYYY-MM-DD)
+  contactId?: string; // Filter by linked contact (use getContacts to find IDs)
+  assignedId?: string; // Filter by assigned person (use getPeople to find IDs)
+  publisherId?: string; // Filter by publisher (use getAllPublishers to find IDs)
 } = {}) {
-  const { limit = 10, search, status95, priority, request_type, date, date5 } = params;
+  const { limit = 10, search, status95, priority, request_type, date, date5, contactId, assignedId, publisherId } = params;
   
   // Build filters
   const filters: any[] = [];
@@ -45,7 +48,7 @@ export async function getTickets(params: {
             name
             created_at
             updated_at
-            column_values(ids: ["name", "status95", "text", "priority", "request_type", "date", "date5", "date__1", "date4__1", "connect_boards2"]) {
+            column_values(ids: ["name", "status95", "text", "priority", "request_type", "date", "date5", "date__1", "date4__1", "connect_boards2", "connect_boards8__1", "connect_boards__1", "connect_boards08__1"]) {
               id
               text
               value
@@ -65,12 +68,64 @@ export async function getTickets(params: {
     const board = response.data?.boards?.[0];
     if (!board) throw new Error('Board not found');
     
-    const items = board.items_page?.items || [];
+    let items = board.items_page?.items || [];
+    
+    // Apply board relation filters
+    if (contactId) {
+      items = items.filter((item: any) => {
+        const relationCol = item.column_values.find((c: any) => c.id === 'connect_boards8__1');
+        if (relationCol?.value) {
+          try {
+            const linked = JSON.parse(relationCol.value);
+            return linked?.linkedItemIds?.includes(contactId);
+          } catch {
+            return false;
+          }
+        }
+        return false;
+      });
+    }
+    
+    if (assignedId) {
+      items = items.filter((item: any) => {
+        const relationCol = item.column_values.find((c: any) => c.id === 'connect_boards__1');
+        if (relationCol?.value) {
+          try {
+            const linked = JSON.parse(relationCol.value);
+            return linked?.linkedItemIds?.includes(assignedId);
+          } catch {
+            return false;
+          }
+        }
+        return false;
+      });
+    }
+    
+    if (publisherId) {
+      items = items.filter((item: any) => {
+        const relationCol = item.column_values.find((c: any) => c.id === 'connect_boards08__1');
+        if (relationCol?.value) {
+          try {
+            const linked = JSON.parse(relationCol.value);
+            return linked?.linkedItemIds?.includes(publisherId);
+          } catch {
+            return false;
+          }
+        }
+        return false;
+      });
+    }
     
     // Format response as markdown
     const lines: string[] = [];
     lines.push(`# Tickets`);
     lines.push(`**Total Items:** ${items.length}`);
+    
+    // Show active filters
+    if (contactId) lines.push(`**Filter:** Related to Contact ID ${contactId}`);
+    if (assignedId) lines.push(`**Filter:** Assigned to Person ID ${assignedId}`);
+    if (publisherId) lines.push(`**Filter:** Related to Publisher ID ${publisherId}`);
+    
     lines.push('');
     
     items.forEach((item: any) => {
