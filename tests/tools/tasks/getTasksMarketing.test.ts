@@ -5,7 +5,7 @@ createToolTestSuite({
   toolName: 'getTasksMarketing',
   toolFunction: getTasksMarketing,
   boardKey: 'tasksMarketing',
-  titleText: '# Marketing Tasks',
+  titleText: '# Tasks - Marketing',
   
   parameters: {
     search: true,

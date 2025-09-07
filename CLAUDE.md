@@ -13,6 +13,7 @@ MCP Server for STEP Networks' advertising and publisher data via Monday.com and 
 - **SSE Transport**: Server-Sent Events support for Claude Desktop via mcp-remote
 
 ## Tech Stack
+
 - TypeScript ES modules
 - MCP SDK for protocol implementation  
 - Monday.com GraphQL API
@@ -20,6 +21,7 @@ MCP Server for STEP Networks' advertising and publisher data via Monday.com and 
 - Stack Auth for authentication
 
 ## Monday.com Board IDs
+
 ```javascript
 BOARD_IDS = {
   PUBLISHERS: '1222800432',        // Publisher information (ALWAYS filter by status8='Live')
@@ -41,15 +43,18 @@ BOARD_IDS = {
 ## Critical Implementation Rules
 
 ### Publisher Filtering
+
 - Publisher formats board uses dropdown columns with device-specific IDs
 
 ### Ad Unit Hierarchy  
+
 - Level 1: Publisher Groups (Type index 4)
 - Level 2: Publishers (Type index 3)
 - Level 3: Child Ad Units (Type index 1-2)
 - Use GAM IDs for relationships: `text__1` (Ad Unit ID), `text2__1` (Parent Ad Unit ID)
 
 ### Tool Output Format
+
 - Return **markdown strings**, never JSON objects
 - Use headers, tables, code blocks for structure
 - Include metadata (counts, filters applied)
@@ -58,12 +63,14 @@ BOARD_IDS = {
 ## Available Tools
 
 ### Publisher Tools
+
 - `getAllPublishers` - Publisher list (Live only)
 - `getPublisherFormats` - Format support by publisher
 - `getPublishersByFormats` - Filter by format support (Adnami vs High-impact.js)
 - `findPublisherAdUnits` - Complete 3-level hierarchy with GAM IDs
 
 ### Targeting Tools
+
 - `getKeyValues` - Content targeting (22k+ values, batched)
 - `getAudienceSegments` - Demographic/behavioral segments
 - `getAllPlacements` - GAM placements (RON/Gambling/Finance/RE-AD are NOT verticals)
@@ -71,15 +78,18 @@ BOARD_IDS = {
 - `getContextualTargeting` - Neuwo categories from GAM
 
 ### Product & Pricing
+
 - `getAllProducts` - Product list and hierarchy
 - `getAllFormats` - Format specs by device
 - `getAllSizes` - Ad unit sizes
 - `getAllAdPrices` - DKK pricing
 
 ### Forecasting
+
 - `availabilityForecast` - GAM SOAP API for inventory forecasting
 
 ### Board-Specific Tools (32 tools)
+
 - **CRM**: `getAccounts`, `getContacts`, `getLeads`
 - **Sales**: `getDeals`, `getOpportunities`, `getSalesActivities`, `getInternalAdSales`
 - **Operations**: `getBookings`, `getProcesses`, `getInternalAdOpsAdTech`
@@ -93,6 +103,7 @@ BOARD_IDS = {
 - **Publishers**: `getOTTPublishers`
 
 ### Debug Tools
+
 - `listBoards` - Available boards with metadata
 - `getBoardColumns` - Column structure with status/dropdown options
 - `getItems` - Generic item fetcher with advanced filtering
@@ -100,6 +111,7 @@ BOARD_IDS = {
 ## Development Workflow
 
 ### Adding New Board Tools
+
 1. Run `scripts/generate-board-tools.ts` to auto-generate tools from Monday.com boards
 2. Tools are created with essential columns and filtering capabilities
 3. Register tools in `server.ts` for immediate availability
@@ -107,6 +119,7 @@ BOARD_IDS = {
 5. **IMPORTANT**: Update the Boards meta board (1698570295) with column names after any tool changes
 
 ### Meta Board Management
+
 - Board ID: 1698570295 tracks all boards and their column names
 - Use `scripts/add-column-names-to-boards.ts` to update column tracking
 - Dropdown column `dropdown_mkvj2a8r` stores column names per board
@@ -116,7 +129,9 @@ BOARD_IDS = {
 ## Critical Implementation Details
 
 ### Board Relations Filtering Pattern
+
 When filtering by board relations (connect_boards columns):
+
 1. **Use Item IDs, not names**: Filter parameters should be `teamId`, `accountId`, etc.
 2. **Two-step process for LLMs**: First call related tool (e.g., `getTeams`) to get IDs, then filter
 3. **Parse linkedItemIds**: Board relation values contain JSON with `linkedItemIds` array
@@ -124,6 +139,7 @@ When filtering by board relations (connect_boards columns):
 5. **Document in tool description**: Always mention "use getX first to find IDs"
 
 Example:
+
 ```typescript
 // Filter by team ID from Teams board
 if (teamId) {
@@ -140,6 +156,7 @@ See `/docs/BOARD_RELATIONS_PATTERN.md` for full implementation guide.
 STEPhie MCP now includes a full SOAP client for Google Ad Manager v202502:
 
 #### SOAP Client (`/lib/gam/soap.ts`)
+
 - **getAvailabilityForecast**: Complete SOAP implementation for forecast requests
 - Supports all GAM targeting options: inventory, geo, custom, audience, placement, frequency capping
 - Handles immediate start ("now") and scheduled campaigns
@@ -148,6 +165,7 @@ STEPhie MCP now includes a full SOAP client for Google Ad Manager v202502:
 - Uses service account JWT authentication
 
 #### SOAP Request Features
+
 - **Inventory Targeting**: Ad unit IDs with descendant inclusion/exclusion
 - **Geographic Targeting**: Location-based targeting with inclusion/exclusion lists
 - **Custom Targeting**: Key-value pairs with IS/IS_NOT operators
@@ -157,7 +175,9 @@ STEPhie MCP now includes a full SOAP client for Google Ad Manager v202502:
 - **Advanced Options**: Targeting criteria breakdown and contending line item analysis
 
 ### findPublisherAdUnits Algorithm
+
 When searching for a publisher (e.g., "jv.dk"):
+
 1. Query for items where name contains search term AND Type is 3 or 4
 2. Extract GAM IDs (`text__1`) and parent IDs (`text2__1`)
 3. Fetch parent groups where their `text__1` matches publisher's `text2__1`
@@ -222,6 +242,7 @@ TEST_AUTH_TOKEN=test-token pnpm test:local
 ## Deployment
 
 ### Vercel Deployment
+
 ```bash
 # Deploy to production
 vercel --prod
@@ -231,6 +252,7 @@ vercel --prod
 ```
 
 ### Claude Desktop Configuration
+
 ```json
 {
   "mcpServers": {

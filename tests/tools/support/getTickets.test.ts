@@ -5,7 +5,7 @@ createToolTestSuite({
   toolName: 'getTickets',
   toolFunction: getTickets,
   boardKey: 'tickets',
-  titleText: '# Support Tickets',
+  titleText: '# Tickets',
   
   parameters: {
     search: true,

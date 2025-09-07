@@ -1,33 +1,34 @@
 #!/usr/bin/env node
 
+// biome-ignore assist/source/organizeImports: Don't know how to organize these imports
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
-import * as dotenv from 'dotenv';
+
 import { AuthValidator } from './lib/auth/auth-validator.js';
 import { TOOL_DEFINITIONS } from './lib/mcp/toolDefinitions.js';
-
-// Import all tool implementations
-import { getAllPublishers } from './lib/tools/getAllPublishers.js';
-import { getPublisherFormats } from './lib/tools/getPublisherFormats.js';
-import { getPublishersByFormats } from './lib/tools/getPublishersByFormats.js';
-import { getAllProducts } from './lib/tools/getAllProducts.js';
-import { getAllFormats } from './lib/tools/getAllFormats.js';
-import { getAllSizes } from './lib/tools/getAllSizes.js';
-import { getAllAdPrices } from './lib/tools/getAllAdPrices.js';
-import { findPublisherAdUnits } from './lib/tools/findPublisherAdUnits.js';
-import { getKeyValues } from './lib/tools/getKeyValues.js';
-import { getAudienceSegments } from './lib/tools/getAudienceSegments.js';
-import { getAllPlacements } from './lib/tools/getAllPlacements.js';
-import { getGeoLocations } from './lib/tools/getGeoLocations.js';
-import { getContextualTargeting } from './lib/tools/getContextualTargeting.js';
 import { availabilityForecast } from './lib/tools/availabilityForecast.js';
-import { listAllBoards } from './lib/tools/debug/listBoards.js';
 import { getBoardColumns } from './lib/tools/debug/getBoardColumns.js';
 import { getItems } from './lib/tools/debug/getItems.js';
+import { listAllBoards } from './lib/tools/debug/listBoards.js';
+import { findPublisherAdUnits } from './lib/tools/findPublisherAdUnits.js';
+import { getAllAdPrices } from './lib/tools/getAllAdPrices.js';
+import { getAllFormats } from './lib/tools/getAllFormats.js';
+import { getAllPlacements } from './lib/tools/getAllPlacements.js';
+import { getAllProducts } from './lib/tools/getAllProducts.js';
+import { getAllPublishers } from './lib/tools/getAllPublishers.js';
+import { getAllSizes } from './lib/tools/getAllSizes.js';
+import { getAudienceSegments } from './lib/tools/getAudienceSegments.js';
+import { getContextualTargeting } from './lib/tools/getContextualTargeting.js';
+import { getGeoLocations } from './lib/tools/getGeoLocations.js';
+import { getKeyValues } from './lib/tools/getKeyValues.js';
+import { getPublisherFormats } from './lib/tools/getPublisherFormats.js';
+import { getPublishersByFormats } from './lib/tools/getPublishersByFormats.js';
+import * as dotenv from 'dotenv';
+import type { ColumnFilter } from './lib/tools/debug/getItems.js';
 
 // Load environment variables
 dotenv.config({ path: '.env.local' });
@@ -49,7 +50,7 @@ const server = new Server(
 );
 
 // Tool implementations map
-const toolImplementations: Record<string, (args: any) => Promise<any>> = {
+const toolImplementations: Record<string, (args: Record<string, unknown>) => Promise<unknown>> = {
   getAllPublishers: () => getAllPublishers(),
   getPublisherFormats: (args) => getPublisherFormats(args),
   getPublishersByFormats: (args) => getPublishersByFormats(args),
@@ -63,10 +64,30 @@ const toolImplementations: Record<string, (args: any) => Promise<any>> = {
   getAllPlacements: (args) => getAllPlacements(args),
   getGeoLocations: (args) => getGeoLocations(args),
   getContextualTargeting: (args) => getContextualTargeting(args),
-  availabilityForecast: (args) => availabilityForecast(args),
+  availabilityForecast: (args) => availabilityForecast({
+    startDate: args.startDate as string,
+    endDate: args.endDate as string,
+    sizes: args.sizes as number[][],
+    goalQuantity: args.goalQuantity as number | null | undefined,
+    targetedAdUnitIds: args.targetedAdUnitIds as number[] | null | undefined,
+    excludedAdUnitIds: args.excludedAdUnitIds as number[] | null | undefined,
+    audienceSegmentIds: args.audienceSegmentIds as string[] | null | undefined,
+    customTargeting: args.customTargeting as { keyId: string; valueIds: string[]; operator?: "IS" | "IS_NOT" | undefined; }[],
+    frequencyCapMaxImpressions: args.frequencyCapMaxImpressions as number | null | undefined,
+    frequencyCapTimeUnit: args.frequencyCapTimeUnit as "MINUTE" | "HOUR" | "DAY" | "WEEK" | "MONTH" | "LIFETIME" | null | undefined,
+    targetedPlacementIds: args.targetedPlacementIds as string[] | null | undefined,
+  }),
   listBoards: () => listAllBoards(),
-  getBoardColumns: (args) => getBoardColumns(args.boardId),
-  getItems: (args) => getItems(args),
+  getBoardColumns: (args) => getBoardColumns(args.boardId as string),
+  getItems: (args) => getItems(args as {
+    boardId: string;
+    limit?: number;
+    columnIds?: string[];
+    itemIds?: string[];
+    search?: string;
+    columnFilters?: ColumnFilter[];
+    includeColumnMetadata?: boolean;
+  }),
 };
 
 // Handle list tools request
@@ -103,7 +124,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       throw new Error(`Unknown tool: ${name}`);
     }
 
-    const result = await implementation(args);
+    const result = await implementation(args || {});
     
     return {
       content: [

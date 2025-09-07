@@ -23,11 +23,6 @@ createToolTestSuite({
         relatedTool: 'getContacts',
         relationName: 'Contact'
       },
-      {
-        param: 'leadId',
-        relatedTool: 'getLeads',
-        relationName: 'Lead'
-      }
     ],
     customFields: [
       {

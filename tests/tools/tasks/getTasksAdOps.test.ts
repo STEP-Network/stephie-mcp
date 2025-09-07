@@ -5,7 +5,7 @@ createToolTestSuite({
   toolName: 'getTasksAdOps',
   toolFunction: getTasksAdOps,
   boardKey: 'tasksAdOps',
-  titleText: '# AdOps Tasks',
+  titleText: '# Tasks - AdOps',
   
   parameters: {
     search: true,

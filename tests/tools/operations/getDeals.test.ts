@@ -1,5 +1,5 @@
 import { createToolTestSuite } from '../../utils/test-factory.js';
-import { getDeals } from '../../../lib/tools/operations/getDeals.js';
+import { getDeals } from '../../../lib/tools/sales/getDeals.js';
 
 createToolTestSuite({
   toolName: 'getDeals',

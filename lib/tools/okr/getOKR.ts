@@ -156,7 +156,7 @@ export async function getOKR(params: {
     // Format response as markdown
     const lines: string[] = [];
     lines.push('# Objectives & Key Results');
-    lines.push(`**Total Objectives:** ${items.length}`);
+    lines.push(`**Total Items:** ${items.length}`);
     if (search) lines.push(`**Search:** "${search}"`);
     if (status !== undefined) {
       const statusLabels = ['Planned', 'In Progress', 'On Hold', 'Done', 'Cancelled'];

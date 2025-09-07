@@ -1,11 +1,11 @@
 import { createToolTestSuite } from '../../utils/test-factory.js';
-import { getMarketingExpenses } from '../../../lib/tools/finance/getMarketingExpenses.js';
+import { getMarketingExpenses } from '../../../lib/tools/marketing/getMarketingExpenses.js';
 
 createToolTestSuite({
   toolName: 'getMarketingExpenses',
   toolFunction: getMarketingExpenses,
   boardKey: 'marketingExpenses',
-  titleText: '# Marketing Expenses',
+  titleText: '# Expenses',
   
   parameters: {
     search: true,

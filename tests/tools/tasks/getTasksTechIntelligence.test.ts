@@ -5,7 +5,7 @@ createToolTestSuite({
   toolName: 'getTasksTechIntelligence',
   toolFunction: getTasksTechIntelligence,
   boardKey: 'tasksTechIntelligence',
-  titleText: '# Tech Intelligence Tasks',
+  titleText: '# Tasks - Tech & Intelligence',
   
   parameters: {
     search: true,

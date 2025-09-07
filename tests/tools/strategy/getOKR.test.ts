@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { getOKR } from '../../../lib/tools/strategy/getOKR.js';
+import { getOKR } from '../../../lib/tools/okr/getOKR.js';
 import {
   validateToolOutput,
   validateOKRStructure,
@@ -26,7 +26,7 @@ describe('getOKR', () => {
     it('should include objectives and key results', async () => {
       const output = await getOKR({ limit: 5 });
       
-      expect(output).toContain('# OKR');
+      expect(output).toContain('# Objectives & Key Results');
       expect(output).toContain('**Total Objectives:**');
       
       // If there are objectives, check for structure

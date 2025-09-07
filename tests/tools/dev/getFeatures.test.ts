@@ -1,5 +1,5 @@
 import { createToolTestSuite } from '../../utils/test-factory.js';
-import { getFeatures } from '../../../lib/tools/dev/getFeatures.js';
+import { getFeatures } from '../../../lib/tools/development/getFeatures.js';
 
 createToolTestSuite({
   toolName: 'getFeatures',

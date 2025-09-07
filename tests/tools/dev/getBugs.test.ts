@@ -1,5 +1,5 @@
 import { createToolTestSuite } from '../../utils/test-factory.js';
-import { getBugs } from '../../../lib/tools/dev/getBugs.js';
+import { getBugs } from '../../../lib/tools/development/getBugs.js';
 
 createToolTestSuite({
   toolName: 'getBugs',
