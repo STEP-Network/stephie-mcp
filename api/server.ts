@@ -535,9 +535,9 @@ const handler = createMcpHandler((server) => {
     {
       limit: z.number().default(10).optional(),
       search: z.string().optional(),
-      status: z.number().optional(),
-      priority: z.number().optional(),
-      releaseStatus: z.number().optional()
+      status: z.number().optional().describe('Status: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold'),
+      priority: z.number().optional().describe('Priority: 0=P2 - Medium, 1=P4 - Minimal, 2=P3 - Low, 3=P0 - Critical ⚠️️, 4=P1 - High, 5=Missing, 6=P5 - Unknown'),
+      releaseStatus: z.number().optional().describe('Release status: 0=Alpha (pre-testing), 1=Production (live), 2=Beta (pre-release), 3=Drift or bugs, 4=Reminder, 107=Research (bubbles)')
     },
     async (input) => {
       const result = await getTasksAdTech(input);
@@ -550,8 +550,8 @@ const handler = createMcpHandler((server) => {
     {
       limit: z.number().default(10).optional(),
       search: z.string().optional(),
-      status: z.number().optional(),
-      type: z.number().optional()
+      status: z.number().optional().describe('Status: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold'),
+      type: z.number().optional().describe('Type: 0=Question, 1=Idea, 2=Opportunity, 3=Bug, 4=Development, 5=Not Labelled, 6=Stuck')
     },
     async (input) => {
       const result = await getTasksVideo(input);
@@ -565,7 +565,7 @@ const handler = createMcpHandler((server) => {
       limit: z.number().default(10).optional(),
       assignedId: z.string().optional(),
       search: z.string().optional(),
-      status: z.number().optional(),
+      status: z.number().optional().describe('Status: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold'),
       priority: z.number().optional()
     },
     async (input) => {
@@ -609,7 +609,7 @@ const handler = createMcpHandler((server) => {
     {
       limit: z.number().default(10).optional(),
       search: z.string().optional(),
-      status: z.number().optional(),
+      status: z.number().optional().describe('Status: 0=Working on it, 1=Done, 2=Stuck, 3=Deal godkendt, 4=Archived, 6=Contacted, 19=Sendt til godkendelse, 107=On hold'),
       agencyId: z.string().optional(),
       advertiserId: z.string().optional(),
       contactsId: z.string().optional()
