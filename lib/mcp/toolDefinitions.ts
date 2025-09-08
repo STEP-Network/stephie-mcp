@@ -668,5 +668,338 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
         priority: { type: 'number', description: 'Priority index' }
       }
     }
+  },
+  
+  // CRM Tools
+  {
+    name: 'getContacts',
+    description: 'Get items from Contacts board. Access contact details, roles, and publisher affiliations.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        accountId: { type: 'string', description: 'Filter by linked account (use getAccounts to find IDs)' },
+        search: { type: 'string' },
+        status: { type: 'number', description: 'Contact Status index' }
+      }
+    }
+  },
+  {
+    name: 'getLeads',
+    description: 'Get items from Leads board. Track potential new publishers and opportunities.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        assignedId: { type: 'string', description: 'Filter by assigned person (use getPeople to find IDs)' },
+        search: { type: 'string' },
+        status: { type: 'number', description: 'Lead Status index' },
+        source: { type: 'number', description: 'Lead Source index' }
+      }
+    }
+  },
+  
+  // HR Tools
+  {
+    name: 'getPeople',
+    description: 'Get items from People board. Access team member details and assignments.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        teamId: { type: 'string', description: 'Filter by team (use getTeams to find IDs)' },
+        search: { type: 'string' },
+        role: { type: 'number', description: 'Role index' }
+      }
+    }
+  },
+  
+  // Sales Tools
+  {
+    name: 'getOpportunities',
+    description: 'Get items from Opportunities board. Track sales pipeline and revenue forecasts.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        accountId: { type: 'string', description: 'Filter by linked account (use getAccounts to find IDs)' },
+        leadId: { type: 'string', description: 'Filter by linked lead (use getLeads to find IDs)' },
+        assignedId: { type: 'string', description: 'Filter by assigned person (use getPeople to find IDs)' },
+        search: { type: 'string' },
+        status: { type: 'number', description: 'Opportunity Status index' },
+        stage: { type: 'number', description: 'Sales Stage index' }
+      }
+    }
+  },
+  {
+    name: 'getSalesActivities',
+    description: 'Get items from Sales Activities board. Monitor outreach, meetings, and deal progress.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        opportunityId: { type: 'string', description: 'Filter by linked opportunity (use getOpportunities to find IDs)' },
+        assignedId: { type: 'string', description: 'Filter by assigned person (use getPeople to find IDs)' },
+        search: { type: 'string' },
+        type: { type: 'number', description: 'Activity Type index' },
+        status: { type: 'number', description: 'Activity Status index' }
+      }
+    }
+  },
+  {
+    name: 'getInternalAdSales',
+    description: 'Get items from Internal - Ad Sales board. Track internal sales processes and targets.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        search: { type: 'string' },
+        status: { type: 'number', description: 'Sales Status index' }
+      }
+    }
+  },
+  
+  // Tasks Tools
+  {
+    name: 'getTasksAdOps',
+    description: 'Get items from Tasks - Ad Ops board. Monitor campaign setup and optimization tasks.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        assignedId: { type: 'string', description: 'Filter by assigned person (use getPeople to find IDs)' },
+        search: { type: 'string' },
+        status: { type: 'number', description: 'Task Status index' },
+        priority: { type: 'number', description: 'Priority index' }
+      }
+    }
+  },
+  {
+    name: 'getTasksMarketing',
+    description: 'Get items from Tasks - Marketing board. Track marketing campaigns and initiatives.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        assignedId: { type: 'string', description: 'Filter by assigned person (use getPeople to find IDs)' },
+        search: { type: 'string' },
+        status: { type: 'number', description: 'Task Status index' },
+        priority: { type: 'number', description: 'Priority index' }
+      }
+    }
+  },
+  {
+    name: 'getTasksAdTech',
+    description: 'Get items from Tasks - Ad Tech board. Monitor technical implementations and integrations.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        assignedId: { type: 'string', description: 'Filter by assigned person (use getPeople to find IDs)' },
+        search: { type: 'string' },
+        status: { type: 'number', description: 'Task Status index' },
+        priority: { type: 'number', description: 'Priority index' }
+      }
+    }
+  },
+  {
+    name: 'getTasksVideo',
+    description: 'Get items from Tasks - Video board. Track video content and production tasks.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        assignedId: { type: 'string', description: 'Filter by assigned person (use getPeople to find IDs)' },
+        search: { type: 'string' },
+        status: { type: 'number', description: 'Task Status index' }
+      }
+    }
+  },
+  {
+    name: 'getTasksYieldGrowth',
+    description: 'Get items from Tasks - Yield/Growth board. Monitor revenue optimization initiatives.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        assignedId: { type: 'string', description: 'Filter by assigned person (use getPeople to find IDs)' },
+        search: { type: 'string' },
+        status: { type: 'number', description: 'Task Status index' },
+        priority: { type: 'number', description: 'Priority index' }
+      }
+    }
+  },
+  
+  // Development Tools
+  {
+    name: 'getChangelog',
+    description: 'Get items from Changelog board. Track system updates and releases.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        search: { type: 'string' },
+        version: { type: 'string', description: 'Filter by version number' },
+        type: { type: 'number', description: 'Change Type index' }
+      }
+    }
+  },
+  {
+    name: 'getFeatures',
+    description: 'Get items from Features board. Monitor feature requests and development.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        assignedId: { type: 'string', description: 'Filter by assigned person (use getPeople to find IDs)' },
+        search: { type: 'string' },
+        status: { type: 'number', description: 'Feature Status index' },
+        priority: { type: 'number', description: 'Priority index' }
+      }
+    }
+  },
+  {
+    name: 'getTests',
+    description: 'Get items from Tests board. Track QA testing and quality assurance.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        featureId: { type: 'string', description: 'Filter by linked feature (use getFeatures to find IDs)' },
+        search: { type: 'string' },
+        status: { type: 'number', description: 'Test Status index' },
+        result: { type: 'number', description: 'Test Result index' }
+      }
+    }
+  },
+  
+  // Business Tools
+  {
+    name: 'getPartners',
+    description: 'Get items from Partners board. Access business partner details and agreements.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        search: { type: 'string' },
+        type: { type: 'number', description: 'Partner Type index' },
+        status: { type: 'number', description: 'Partnership Status index' }
+      }
+    }
+  },
+  {
+    name: 'getStrategies',
+    description: 'Get items from Strategies board. Monitor strategic initiatives and business plans.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        search: { type: 'string' },
+        quarter: { type: 'string', description: 'Filter by quarter (e.g., "Q1 2024")' },
+        status: { type: 'number', description: 'Strategy Status index' }
+      }
+    }
+  },
+  {
+    name: 'getVertikaler',
+    description: 'Get items from Vertikaler board. Access publisher vertical/category information.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        search: { type: 'string' },
+        status: { type: 'number', description: 'Vertical Status index' }
+      }
+    }
+  },
+  
+  // Marketing Tools
+  {
+    name: 'getMarketingExpenses',
+    description: 'Get items from Marketing Expenses board. Track marketing spend and ROI.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        budgetId: { type: 'string', description: 'Filter by linked budget (use getMarketingBudgets to find IDs)' },
+        search: { type: 'string' },
+        category: { type: 'number', description: 'Expense Category index' },
+        status: { type: 'number', description: 'Expense Status index' }
+      }
+    }
+  },
+  
+  // Operations Tools
+  {
+    name: 'getInternalAdOpsAdTech',
+    description: 'Get items from Internal - Ad Ops/AdTech board. Monitor internal operations processes.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        search: { type: 'string' },
+        type: { type: 'number', description: 'Process Type index' },
+        status: { type: 'number', description: 'Process Status index' }
+      }
+    }
+  },
+  {
+    name: 'getProcesses',
+    description: 'Get items from Processes board. Access operational workflows and procedures.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        departmentId: { type: 'string', description: 'Filter by department (use getTeams to find IDs)' },
+        search: { type: 'string' },
+        category: { type: 'number', description: 'Process Category index' },
+        status: { type: 'number', description: 'Process Status index' }
+      }
+    }
+  },
+  
+  // Support Tools
+  {
+    name: 'getPublisherFAQ',
+    description: 'Get items from Publisher FAQ board. Access frequently asked questions and answers.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        search: { type: 'string' },
+        category: { type: 'number', description: 'FAQ Category index' },
+        status: { type: 'number', description: 'FAQ Status index' }
+      }
+    }
+  },
+  
+  // Publishers Tools
+  {
+    name: 'getOTTPublishers',
+    description: 'Get items from OTT Publishers board. Access Over-The-Top streaming publisher details.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        search: { type: 'string' },
+        platform: { type: 'number', description: 'Platform Type index' },
+        status: { type: 'number', description: 'Publisher Status index' }
+      }
+    }
+  },
+  
+  // Tech Tools
+  {
+    name: 'getPlatforms',
+    description: 'Get items from Platforms board. Monitor technology platforms and integrations.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        limit: { type: 'number', default: 10 },
+        search: { type: 'string' },
+        type: { type: 'number', description: 'Platform Type index' },
+        status: { type: 'number', description: 'Platform Status index' }
+      }
+    }
   }
 ];
