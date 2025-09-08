@@ -1,4 +1,5 @@
 import { mondayApi } from '../../monday/client.js';
+import { getDynamicColumns } from '../dynamic-columns.js';
 
 export async function getSalesActivities(params: {
   limit?: number;
@@ -11,6 +12,11 @@ export async function getSalesActivities(params: {
   opportunityId?: string; // Filter by opportunity (use getOpportunities to find IDs)
 } = {}) {
   const { limit = 10, search, activity_owner, activity_status, activity_type, accountId, contactId, opportunityId } = params;
+  
+  // Fetch dynamic columns from Columns board
+  const BOARD_ID = '1402911042';
+  const dynamicColumns = await getDynamicColumns(BOARD_ID);
+  
   
   // Build filters
   const filters: any[] = [];
@@ -44,7 +50,7 @@ export async function getSalesActivities(params: {
             name
             created_at
             updated_at
-            column_values(ids: ["name", "activity_owner", "activity_status", "activity_type", "connect_boards9__1", "link_to_contacts8__1", "link_to_opportunities__1"]) {
+            column_values(ids: [${dynamicColumns.map(id => `"${id}"`).join(", ")}]) {
               id
               text
               value

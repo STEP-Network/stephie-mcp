@@ -1,4 +1,5 @@
 import { mondayApi } from '../../monday/client.js';
+import { getDynamicColumns } from '../dynamic-columns.js';
 
 export async function getPlatforms(params: {
   limit?: number;
@@ -7,6 +8,11 @@ export async function getPlatforms(params: {
   status?: number; // Status (numeric index)
 } = {}) {
   const { limit = 10, search, people__1, status } = params;
+  
+  // Fetch dynamic columns from Columns board
+  const BOARD_ID = '1611329866';
+  const dynamicColumns = await getDynamicColumns(BOARD_ID);
+  
   
   // Build filters
   const filters: any[] = [];
@@ -39,7 +45,7 @@ export async function getPlatforms(params: {
             name
             created_at
             updated_at
-            column_values(ids: ["name", "people__1", "status", "connect_boards__1", "link_to_tasks___video__1"]) {
+            column_values(ids: [${dynamicColumns.map(id => `"${id}"`).join(", ")}]) {
               id
               text
               value

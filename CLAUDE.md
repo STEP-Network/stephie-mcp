@@ -274,6 +274,49 @@ vercel --prod
 - **404 on /message**: Ensure vercel.json has rewrites for /sse and /message
 - **CRITICAL: Use console.error for debug output** - MCP protocol requires clean JSON on stdout
 
+## Dynamic Column System
+
+### Overview
+The codebase includes a **Dynamic Column System** that eliminates hardcoded column arrays in tools. Instead of maintaining column IDs in each tool, columns are centrally managed in a dedicated Monday.com board.
+
+### Architecture Components
+- **Columns Board (ID: 2135717897)**: Contains 333 column configurations, each linked to its parent board via board relations
+- **Meta Board (ID: 1698570295)**: Maps board names to board IDs for lookup
+- **getDynamicColumns() function**: Located in `lib/tools/dynamic-columns.ts`, fetches column IDs from Columns board
+
+### How It Works
+```typescript
+// Old approach (hardcoded columns)
+column_values(ids: ["name", "status", "person", "priority", "date__1", ...])
+
+// New approach (dynamic columns)
+import { getDynamicColumns } from '../dynamic-columns.js';
+const columns = await getDynamicColumns(boardId);
+const columnIds = columns.map(id => `"${id}"`).join(', ');
+column_values(ids: [${columnIds}])
+```
+
+### Implementation Status
+- ✅ **Infrastructure Complete**: Columns board populated with all 333 column configurations
+- ✅ **Function Ready**: `getDynamicColumns()` available for use
+- ✅ **Example Implementation**: `getTasksMarketingDynamic` demonstrates the pattern
+- 🔄 **Migration Pending**: Most tools still use hardcoded columns
+
+### Benefits
+1. **Automatic Adaptation**: Tools automatically use updated columns when Monday.com boards change
+2. **Central Management**: Single source of truth for all column configurations
+3. **Test Resilience**: Tests can discover actual columns instead of hardcoding expectations
+4. **Zero User Impact**: Tool parameters and interfaces remain unchanged
+
+### Migration Guide
+See `DYNAMIC_COLUMNS_MIGRATION_GUIDE.md` for step-by-step instructions on migrating tools.
+
+### Important Notes for Development
+- The dynamic system is for **internal implementation**, not for making tool parameters dynamic
+- Users still call tools with the same parameters as before
+- Column IDs can be shared across boards (e.g., "name" appears on 31 boards)
+- Duplicate detection only prevents duplicates when BOTH column ID AND board relation match
+
 ## Testing Individual Tools
 
 ```bash

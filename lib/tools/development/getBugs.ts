@@ -1,4 +1,5 @@
 import { mondayApi } from '../../monday/client.js';
+import { getDynamicColumns } from '../dynamic-columns.js';
 
 export async function getBugs(params: {
   limit?: number;
@@ -10,6 +11,11 @@ export async function getBugs(params: {
   date_mkqhdjw7?: string; // Date Released (YYYY-MM-DD)
 } = {}) {
   const { limit = 10, search, color_mkqnwy18, color_mkqhya7m, multiple_person_mkqhq07m, date4, date_mkqhdjw7 } = params;
+  
+  // Fetch dynamic columns from Columns board
+  const BOARD_ID = '1939583448';
+  const dynamicColumns = await getDynamicColumns(BOARD_ID);
+  
   
   // Build filters
   const filters: any[] = [];
@@ -45,7 +51,7 @@ export async function getBugs(params: {
             name
             created_at
             updated_at
-            column_values(ids: ["name", "color_mkqnwy18", "color_mkqhya7m", "multiple_person_mkqhq07m", "date4", "date_mkqhdjw7"]) {
+            column_values(ids: [${dynamicColumns.map(id => `"${id}"`).join(", ")}]) {
               id
               text
               value

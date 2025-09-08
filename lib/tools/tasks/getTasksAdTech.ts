@@ -1,4 +1,5 @@
 import { mondayApi } from '../../monday/client.js';
+import { getDynamicColumns } from '../dynamic-columns.js';
 
 export async function getTasksAdTech(params: {
   limit?: number;
@@ -10,6 +11,11 @@ export async function getTasksAdTech(params: {
   date8__1?: string; // Follow up Date (YYYY-MM-DD)
 } = {}) {
   const { limit = 10, search, person, status_mkkwpmh6, release_status__1, priority__1, date8__1 } = params;
+  
+  // Fetch dynamic columns from Columns board
+  const BOARD_ID = '1635251745';
+  const dynamicColumns = await getDynamicColumns(BOARD_ID);
+  
   
   // Build filters
   const filters: any[] = [];
@@ -45,7 +51,7 @@ export async function getTasksAdTech(params: {
             name
             created_at
             updated_at
-            column_values(ids: ["name", "person", "status_mkkwpmh6", "release_status__1", "priority__1", "date8__1", "date__1", "date5__1", "date7__1", "link_to_teams_Mjj8h8H0"]) {
+            column_values(ids: [${dynamicColumns.map(id => `"${id}"`).join(", ")}]) {
               id
               text
               value

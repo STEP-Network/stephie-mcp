@@ -1,4 +1,5 @@
 import { mondayApi } from '../../monday/client.js';
+import { getDynamicColumns } from '../dynamic-columns.js';
 
 export async function getTickets(params: {
   limit?: number;
@@ -13,6 +14,11 @@ export async function getTickets(params: {
   publisherId?: string; // Filter by publisher (use getAllPublishers to find IDs)
 } = {}) {
   const { limit = 10, search, status95, priority, request_type, date, date5, contactId, assignedId, publisherId } = params;
+  
+  // Fetch dynamic columns from Columns board
+  const BOARD_ID = '1647372207';
+  const dynamicColumns = await getDynamicColumns(BOARD_ID);
+  
   
   // Build filters
   const filters: any[] = [];
@@ -48,7 +54,7 @@ export async function getTickets(params: {
             name
             created_at
             updated_at
-            column_values(ids: ["name", "status95", "text", "priority", "request_type", "date", "date5", "date__1", "date4__1", "connect_boards2", "connect_boards8__1", "connect_boards__1", "connect_boards08__1"]) {
+            column_values(ids: [${dynamicColumns.map(id => `"${id}"`).join(", ")}]) {
               id
               text
               value

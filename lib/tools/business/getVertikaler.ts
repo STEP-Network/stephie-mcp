@@ -1,4 +1,5 @@
 import { mondayApi } from '../../monday/client.js';
+import { getDynamicColumns } from '../dynamic-columns.js';
 
 export async function getVertikaler(params: {
   limit?: number;
@@ -6,6 +7,11 @@ export async function getVertikaler(params: {
   color_mksxpbk5?: number; // Status (numeric index)
 } = {}) {
   const { limit = 10, search, color_mksxpbk5 } = params;
+  
+  // Fetch dynamic columns from Columns board
+  const BOARD_ID = '2054670440';
+  const dynamicColumns = await getDynamicColumns(BOARD_ID);
+  
   
   // Build filters
   const filters: any[] = [];
@@ -37,7 +43,7 @@ export async function getVertikaler(params: {
             name
             created_at
             updated_at
-            column_values(ids: ["name", "color_mksxpbk5"]) {
+            column_values(ids: [${dynamicColumns.map(id => `"${id}"`).join(", ")}]) {
               id
               text
               value

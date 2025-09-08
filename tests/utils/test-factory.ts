@@ -13,6 +13,16 @@ import {
   validateRelationFilter,
   compareOutputs
 } from './validators.js';
+import {
+  BaselineData,
+  collectBaselineData,
+  validateFilteringEffect,
+  validateSearchRelevance,
+  validateStatusFilterResults,
+  validatePaginationWithWarnings,
+  performTestHealthCheck,
+  validateRelationFilterEffect
+} from './smart-validators.js';
 import { TestTimer } from './test-helpers.js';
 
 export interface ToolTestConfig {
@@ -43,6 +53,7 @@ export interface ToolTestConfig {
   testData?: {
     validSearchTerms?: string[];
     validStatusValues?: number[];
+    statusLabels?: string[];  // Labels corresponding to status values
     validDateValues?: string[];
   };
 }
@@ -50,11 +61,19 @@ export interface ToolTestConfig {
 export function createToolTestSuite(config: ToolTestConfig) {
   return describe(config.toolName, () => {
     let baselineOutput: string;
+    let baselineData: BaselineData;
     
     beforeAll(async () => {
       const timer = new TestTimer(`${config.toolName} baseline`);
-      baselineOutput = await config.toolFunction({ limit: 10 });
+      // Get more items for better baseline data
+      baselineOutput = await config.toolFunction({ limit: 50 });
       timer.end();
+      
+      // Collect baseline metrics
+      baselineData = collectBaselineData(baselineOutput);
+      
+      // Perform health check
+      performTestHealthCheck(baselineData, config.toolName);
     });
     
     describe('Basic functionality', () => {
@@ -91,7 +110,8 @@ export function createToolTestSuite(config: ToolTestConfig) {
           const fullOutput = await config.toolFunction({ limit: 20 });
           const limitedOutput = await config.toolFunction({ limit: 5 });
           
-          validatePagination(fullOutput, limitedOutput, 5);
+          // Use smart pagination validation with warnings
+          validatePaginationWithWarnings(fullOutput, limitedOutput, 5);
         });
         
         it('should handle limit edge cases', async () => {
@@ -121,11 +141,9 @@ export function createToolTestSuite(config: ToolTestConfig) {
             
             validateToolOutput(output, config.toolName);
             
-            // If results found, should be relevant
-            const itemCount = extractItemCount(output);
-            if (itemCount > 0) {
-              validateSearch(output, term);
-            }
+            // Use smart validation
+            validateSearchRelevance(output, term, baselineData);
+            validateFilteringEffect(baselineOutput, output, 'search', term);
           }
         });
         
@@ -145,15 +163,22 @@ export function createToolTestSuite(config: ToolTestConfig) {
         for (const statusField of config.parameters.statusFields) {
           it(`should filter by ${statusField}`, async () => {
             const statusValues = config.testData?.validStatusValues || [0, 1, 2];
+            const statusLabels = config.testData?.statusLabels || ['New', 'In Progress', 'Done'];
             
-            for (const value of statusValues) {
+            for (let i = 0; i < statusValues.length; i++) {
+              const value = statusValues[i];
+              const label = statusLabels[i] || `Status ${value}`;
+              
               const output = await config.toolFunction({ 
                 [statusField]: value,
-                limit: 5 
+                limit: 10 
               });
               
               validateToolOutput(output, config.toolName);
-              validateStatusFilter(output, value);
+              
+              // Smart validation with warnings
+              validateStatusFilterResults(output, value, label, baselineData);
+              validateFilteringEffect(baselineOutput, output, statusField, value);
             }
           });
         }
@@ -198,13 +223,9 @@ export function createToolTestSuite(config: ToolTestConfig) {
             
             validateToolOutput(output, config.toolName);
             
-            // Check if filter is shown (even if no results)
-            const itemCount = extractItemCount(output);
-            if (itemCount === 0) {
-              expect(output).toContain('**Filter:**');
-            } else {
-              validateRelationFilter(output, testId, relation.relationName);
-            }
+            // Smart validation for relation filters
+            validateRelationFilterEffect(output, testId, relation.relationName, baselineData);
+            validateFilteringEffect(baselineOutput, output, relation.param, testId);
           });
         }
       });

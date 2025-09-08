@@ -29,6 +29,7 @@ createToolTestSuite({
   testData: {
     validSearchTerms: ['content', 'social', 'email'],
     validStatusValues: [0, 1, 2, 3],
+    statusLabels: ['New', 'In Progress', 'Done', 'Stuck'],
     validDateValues: ['2024-05-01', '2024-10-31']
   }
 });

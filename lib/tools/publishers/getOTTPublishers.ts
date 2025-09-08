@@ -1,4 +1,5 @@
 import { mondayApi } from '../../monday/client.js';
+import { getDynamicColumns } from '../dynamic-columns.js';
 
 export async function getOTTPublishers(params: {
   limit?: number;
@@ -6,6 +7,11 @@ export async function getOTTPublishers(params: {
   status?: number; // Status (numeric index)
 } = {}) {
   const { limit = 10, search, status } = params;
+  
+  // Fetch dynamic columns from Columns board
+  const BOARD_ID = '1741257731';
+  const dynamicColumns = await getDynamicColumns(BOARD_ID);
+  
   
   // Build filters
   const filters: any[] = [];
@@ -37,7 +43,7 @@ export async function getOTTPublishers(params: {
             name
             created_at
             updated_at
-            column_values(ids: ["name", "status", "oprettet_i_vs_mkmp1ahn"]) {
+            column_values(ids: [${dynamicColumns.map(id => `"${id}"`).join(", ")}]) {
               id
               text
               value

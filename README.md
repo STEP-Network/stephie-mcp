@@ -187,6 +187,29 @@ DATABASE_URL=your_postgres_url
 
 4. **Use with Claude Desktop** via mcp-remote (see Claude Desktop section above)
 
+## Dynamic Column System
+
+The codebase includes a **Dynamic Column System** that eliminates hardcoded column arrays in tools. This system provides:
+
+- **🔄 Automatic Adaptation**: Tools fetch column configurations from a central Columns board (333 columns tracked)
+- **🎯 Single Source of Truth**: All column IDs managed in Monday.com board ID 2135717897
+- **🧪 Test Resilience**: Tests can discover actual columns instead of hardcoding expectations
+- **✨ Zero Maintenance**: When Monday.com boards change, just update the Columns board
+
+### How It Works
+```typescript
+// Instead of hardcoding columns in each tool:
+const columns = await getDynamicColumns(boardId);
+// Tools automatically use the correct columns for each board
+```
+
+### Migration Status
+- ✅ Infrastructure complete with 333 columns migrated
+- ✅ `getDynamicColumns()` function ready in `lib/tools/dynamic-columns.ts`
+- 🔄 Tools being migrated (see `DYNAMIC_COLUMNS_MIGRATION_GUIDE.md`)
+
+This is an internal implementation improvement - tool interfaces and parameters remain unchanged for users.
+
 ## Development
 
 ### Running Locally

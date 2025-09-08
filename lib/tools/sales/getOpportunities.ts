@@ -1,4 +1,5 @@
 import { mondayApi } from '../../monday/client.js';
+import { getDynamicColumns } from '../dynamic-columns.js';
 
 export async function getOpportunities(params: {
   limit?: number;
@@ -13,6 +14,11 @@ export async function getOpportunities(params: {
   bookingId?: string; // Filter by linked booking (use getBookings to find IDs)
 } = {}) {
   const { limit = 10, search, deal_stage, date1, deal_creation_date, deal_expected_close_date, deal_close_date, accountId, contactId, bookingId } = params;
+  
+  // Fetch dynamic columns from Columns board
+  const BOARD_ID = '1402911049';
+  const dynamicColumns = await getDynamicColumns(BOARD_ID);
+  
   
   // Build filters
   const filters: any[] = [];
@@ -48,7 +54,7 @@ export async function getOpportunities(params: {
             name
             created_at
             updated_at
-            column_values(ids: ["name", "connect_boards", "deal_stage", "date1", "deal_creation_date", "deal_expected_close_date", "deal_close_date", "status3__1", "text2__1", "date5__1", "connect_boards31", "deal_contact", "connect_boards8__1"]) {
+            column_values(ids: [${dynamicColumns.map(id => `"${id}"`).join(", ")}]) {
               id
               text
               value

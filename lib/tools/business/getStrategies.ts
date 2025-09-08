@@ -1,4 +1,5 @@
 import { mondayApi } from '../../monday/client.js';
+import { getDynamicColumns } from '../dynamic-columns.js';
 
 export async function getStrategies(params: {
   limit?: number;
@@ -7,6 +8,11 @@ export async function getStrategies(params: {
   color_mknycf0d?: number; // AI Type (numeric index)
 } = {}) {
   const { limit = 10, search, color_mkpkghqq, color_mknycf0d } = params;
+  
+  // Fetch dynamic columns from Columns board
+  const BOARD_ID = '1637264041';
+  const dynamicColumns = await getDynamicColumns(BOARD_ID);
+  
   
   // Build filters
   const filters: any[] = [];
@@ -39,7 +45,7 @@ export async function getStrategies(params: {
             name
             created_at
             updated_at
-            column_values(ids: ["name", "color_mkpkghqq", "color_mknycf0d"]) {
+            column_values(ids: [${dynamicColumns.map(id => `"${id}"`).join(", ")}]) {
               id
               text
               value

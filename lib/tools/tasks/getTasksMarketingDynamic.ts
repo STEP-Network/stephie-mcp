@@ -1,7 +1,11 @@
 import { mondayApi } from '../../monday/client.js';
 import { getDynamicColumns } from '../dynamic-columns.js';
 
-export async function getTasksMarketing(params: {
+/**
+ * Dynamic version of getTasksMarketing that fetches columns from Columns board
+ * This eliminates hardcoded column arrays and automatically adapts to column changes
+ */
+export async function getTasksMarketingDynamic(params: {
   limit?: number;
   search?: string;
   person?: string; // Owner
@@ -9,15 +13,18 @@ export async function getTasksMarketing(params: {
   color_mkpwc7hm?: number; // Priority (numeric index)
   status_mkkw7ehb?: number; // Status (numeric index)
   publish_date_mkn21n6b?: string; // Publish Date (YYYY-MM-DD)
-  keyResultId?: string; // Filter by linked key result (use OKR subitems to find IDs)
-  budgetId?: string; // Filter by linked budget (use getMarketingBudgets to find IDs)
+  keyResultId?: string; // Filter by linked key result
+  budgetId?: string; // Filter by linked budget
 } = {}) {
   const { limit = 10, search, person, status_1__1, color_mkpwc7hm, status_mkkw7ehb, publish_date_mkn21n6b, keyResultId, budgetId } = params;
   
-  // Fetch dynamic columns from Columns board
   const BOARD_ID = '1693359113';
+  const BOARD_NAME = 'Tasks - Marketing';
+  
+  // Fetch dynamic columns from Columns board
   const dynamicColumns = await getDynamicColumns(BOARD_ID);
   
+  console.error(`Using ${dynamicColumns.length} dynamic columns for ${BOARD_NAME}`);
   
   // Build filters
   const filters: any[] = [];
@@ -42,9 +49,12 @@ export async function getTasksMarketing(params: {
       }`).join(',')}]}`
     : '';
   
+  // Build column IDs string for GraphQL query
+  const columnIds = dynamicColumns.map(id => `"${id}"`).join(', ');
+  
   const query = `
     query {
-      boards(ids: [1693359113]) {
+      boards(ids: [${BOARD_ID}]) {
         id
         name
         items_page(limit: ${limit}${queryParams}) {
@@ -53,7 +63,7 @@ export async function getTasksMarketing(params: {
             name
             created_at
             updated_at
-            column_values(ids: [${dynamicColumns.map(id => `"${id}"`).join(", ")}]) {
+            column_values(ids: [${columnIds}]) {
               id
               text
               value
@@ -75,8 +85,8 @@ export async function getTasksMarketing(params: {
     
     let items = board.items_page?.items || [];
     
-    // Apply board relation filters
-    if (keyResultId) {
+    // Apply board relation filters (if these columns exist in dynamic columns)
+    if (keyResultId && dynamicColumns.includes('board_relation_mkpjg0ky')) {
       items = items.filter((item: any) => {
         const relationCol = item.column_values.find((c: any) => c.id === 'board_relation_mkpjg0ky');
         if (relationCol?.value) {
@@ -91,7 +101,7 @@ export async function getTasksMarketing(params: {
       });
     }
     
-    if (budgetId) {
+    if (budgetId && dynamicColumns.includes('budgets_mkn2xpkt')) {
       items = items.filter((item: any) => {
         const relationCol = item.column_values.find((c: any) => c.id === 'budgets_mkn2xpkt');
         if (relationCol?.value) {
@@ -108,8 +118,9 @@ export async function getTasksMarketing(params: {
     
     // Format response as markdown
     const lines: string[] = [];
-    lines.push(`# Tasks - Marketing`);
+    lines.push(`# ${board.name}`);
     lines.push(`**Total Items:** ${items.length}`);
+    lines.push(`**Dynamic Columns:** ${dynamicColumns.length} columns loaded from Columns board`);
     
     // Show active filters
     if (keyResultId) lines.push(`**Filter:** Related to Key Result ID ${keyResultId}`);
@@ -121,11 +132,42 @@ export async function getTasksMarketing(params: {
       lines.push(`## ${item.name}`);
       lines.push(`- **ID:** ${item.id}`);
       
+      // Group columns by type for better readability
+      const textColumns: any[] = [];
+      const statusColumns: any[] = [];
+      const dateColumns: any[] = [];
+      const relationColumns: any[] = [];
+      const otherColumns: any[] = [];
+      
       item.column_values.forEach((col: any) => {
         if (col.text) {
-          lines.push(`- **${col.column.title}:** ${col.text}`);
+          switch (col.column.type) {
+            case 'text':
+            case 'name':
+              textColumns.push(col);
+              break;
+            case 'status':
+            case 'color':
+              statusColumns.push(col);
+              break;
+            case 'date':
+              dateColumns.push(col);
+              break;
+            case 'board_relation':
+            case 'link_to_board':
+              relationColumns.push(col);
+              break;
+            default:
+              otherColumns.push(col);
+          }
         }
       });
+      
+      // Display grouped columns
+      [...textColumns, ...statusColumns, ...dateColumns, ...relationColumns, ...otherColumns].forEach(col => {
+        lines.push(`- **${col.column.title}:** ${col.text}`);
+      });
+      
       lines.push('');
     });
     

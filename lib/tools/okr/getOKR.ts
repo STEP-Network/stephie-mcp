@@ -1,4 +1,5 @@
 import { mondayApi } from '../../monday/client.js';
+import { getDynamicColumns } from '../dynamic-columns.js';
 
 export async function getOKR(params: {
   limit?: number;
@@ -20,6 +21,11 @@ export async function getOKR(params: {
     strategiesId,
     peopleId
   } = params;
+  
+  // Fetch dynamic columns from Columns board
+  const BOARD_ID = '1631918659';
+  const dynamicColumns = await getDynamicColumns(BOARD_ID);
+  
   
   // Build filters for objectives
   const filters: any[] = [];
@@ -59,7 +65,7 @@ export async function getOKR(params: {
     subitems {
       id
       name
-      column_values(ids: ["status0__1", "person", "numbers__1", "date8__1", "text_1__1"]) {
+      column_values(ids: [${dynamicColumns.map(id => `"${id}"`).join(", ")}]) {
         id
         text
         value

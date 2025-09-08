@@ -1,0 +1,80 @@
+/**
+ * Dynamic, self-adapting test for getTasksMarketing
+ * This test automatically discovers what data exists and tests accordingly
+ */
+
+import { createDynamicTestSuite } from '../../utils/dynamic-test-factory.js';
+import { getTasksMarketing } from '../../../lib/tools/tasks/getTasksMarketing.js';
+import { configureAIValidation } from '../../utils/ai-validator-stub.js';
+
+// Optional: Enable AI validation if API key is available
+configureAIValidation({
+  enabled: !!process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY
+});
+
+// Create dynamic test suite that adapts to actual board content
+createDynamicTestSuite({
+  toolName: 'getTasksMarketing',
+  toolFunction: getTasksMarketing,
+  boardKey: 'tasksMarketing',
+  titleText: '# Tasks - Marketing',
+  
+  // Optional: Specify capabilities (will be auto-discovered if not provided)
+  capabilities: {
+    search: true,
+    pagination: true,
+    statusFilters: true,
+    dateFilters: true,
+    relationFilters: false  // This tool doesn't have relation filters
+  },
+  
+  // Enable AI validation if configured
+  useAI: !!process.env.OPENAI_API_KEY
+});
+
+/**
+ * How this works:
+ * 
+ * 1. DISCOVERY PHASE (beforeAll):
+ *    - Fetches 500 items from the board
+ *    - Analyzes what statuses actually exist
+ *    - Finds real dates in the data
+ *    - Identifies common search terms
+ *    - Tests which filters actually work
+ * 
+ * 2. DYNAMIC TEST GENERATION:
+ *    - Only creates tests for values that exist
+ *    - Every test is guaranteed to return results
+ *    - No more testing status=999 when max is 3
+ * 
+ * 3. SMART VALIDATION:
+ *    - Knows expected counts for each filter
+ *    - Validates filters actually filtered
+ *    - Warns about unexpected behaviors
+ * 
+ * 4. OPTIONAL AI VALIDATION:
+ *    - AI checks if output format is correct
+ *    - Validates data consistency
+ *    - Suggests improvements
+ * 
+ * Example output:
+ * 
+ * 📊 Test Data Discovery Results for getTasksMarketing:
+ *   Total items: 127
+ *   Status fields: 2 (status, priority)
+ *   Date fields: 3 (due_date, created_at, updated_at)
+ *   Search terms: 8 (found common words)
+ * 
+ * ✓ Dynamic Status Filters (guaranteed results)
+ *   ✓ should filter by status=0 ("New") 
+ *     ✅ Filter status=0 correctly returned 45 items
+ *   ✓ should filter by status=1 ("In Progress")
+ *     ✅ Filter status=1 correctly returned 23 items
+ * 
+ * ✓ Dynamic Search (with real content)
+ *   ✓ should find results for "campaign"
+ *     ✅ Found 12 items containing "campaign"
+ *   ✓ should find results for "social"
+ *     ✅ Found 8 items containing "social"
+ */

@@ -23,7 +23,12 @@
     "test:quick": "tsx tests/quick-test.ts",
     "mcp:dev": "tsx mcp-server.ts",
     "mcp:build": "tsc -p tsconfig.mcp.json",
-    "build:ts": "tsc"
+    "build:ts": "tsc",
+    "columns:report": "tsx scripts/maintain-columns-board.ts report",
+    "columns:sync": "tsx scripts/maintain-columns-board.ts sync",
+    "columns:sync-all": "tsx scripts/maintain-columns-board.ts sync-all",
+    "columns:clean": "tsx scripts/maintain-columns-board.ts clean",
+    "columns:check": "tsx scripts/maintain-columns-board.ts check"
   },
   "keywords": [
     "mcp",
