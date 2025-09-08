@@ -34,6 +34,9 @@ import { createTaskTechIntelligence } from '../lib/tools/tasks/createTaskTechInt
 import { updateTaskTechIntelligence } from '../lib/tools/tasks/updateTaskTechIntelligence.js';
 import { getTasksAdOps } from '../lib/tools/tasks/getTasksAdOps.js';
 import { getTasksMarketing } from '../lib/tools/tasks/getTasksMarketing.js';
+import { getTasksAdTech } from '../lib/tools/tasks/getTasksAdTech.js';
+import { getTasksVideo } from '../lib/tools/tasks/getTasksVideo.js';
+import { getTasksYieldGrowth } from '../lib/tools/tasks/getTasksYieldGrowth.js';
 import { getOKR } from '../lib/tools/okr/getOKR.js';
 import { getMarketingBudgets } from '../lib/tools/marketing/getMarketingBudgets.js';
 import { getDeals } from '../lib/tools/sales/getDeals.js';
@@ -510,6 +513,50 @@ const handler = createMcpHandler((server) => {
     },
     async (input) => {
       const result = await getTasksMarketing(input);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('getTasksAdTech',
+    getToolDescription('getTasksAdTech'),
+    {
+      limit: z.number().default(10).optional(),
+      search: z.string().optional(),
+      status: z.number().optional(),
+      priority: z.number().optional(),
+      releaseStatus: z.number().optional()
+    },
+    async (input) => {
+      const result = await getTasksAdTech(input);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('getTasksVideo',
+    getToolDescription('getTasksVideo'),
+    {
+      limit: z.number().default(10).optional(),
+      search: z.string().optional(),
+      status: z.number().optional(),
+      type: z.number().optional()
+    },
+    async (input) => {
+      const result = await getTasksVideo(input);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('getTasksYieldGrowth',
+    getToolDescription('getTasksYieldGrowth'),
+    {
+      limit: z.number().default(10).optional(),
+      assignedId: z.string().optional(),
+      search: z.string().optional(),
+      status: z.number().optional(),
+      priority: z.number().optional()
+    },
+    async (input) => {
+      const result = await getTasksYieldGrowth(input);
       return { content: [{ type: 'text', text: result }] };
     }
   );
