@@ -552,8 +552,8 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
         opportunitiesId: { type: 'string', description: 'Filter by linked opportunities (use getOpportunities to find IDs)' },
         leadsId: { type: 'string', description: 'Filter by linked leads (use getLeads to find IDs)' },
         search: { type: 'string' },
-        status: { type: 'number', description: 'Account Status index' },
-        status5: { type: 'number', description: 'Type index' }
+        status: { type: 'number', description: 'Account Status: 0=On hold, 4=Client, 13=Past Client, 17=New Biz' },
+        status5: { type: 'number', description: 'Type: 0=Agency, 1=Agency Group, 2=Partner, 3=Publisher, 4=Publisher Lead, 107=Advertiser' }
       }
     }
   },
@@ -565,7 +565,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
       properties: {
         limit: { type: 'number', default: 10 },
         search: { type: 'string' },
-        status0__1: { type: 'number', description: 'Status index' },
+        status0__1: { type: 'number', description: 'Status: 0=Not ready, 1=Delivering completed + report sent, 2=Under Booking, 3=Booked, 4=Delivering, 6=Ready for final reporting, 19=New' },
         date: { type: 'string', description: 'Midway date (YYYY-MM-DD)' }
       }
     }
@@ -578,8 +578,8 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
       properties: {
         limit: { type: 'number', default: 10 },
         search: { type: 'string' },
-        color_mkqnwy18: { type: 'number', description: 'Priority index' },
-        color_mkqhya7m: { type: 'number', description: 'Status index' }
+        color_mkqnwy18: { type: 'number', description: 'Priority: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown' },
+        color_mkqhya7m: { type: 'number', description: 'Status: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold' }
       }
     }
   },
@@ -593,15 +593,15 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
         keyResultId: { type: 'string', description: 'Filter by linked key result (use OKR subitems to find IDs)' },
         teamTaskId: { type: 'string', description: 'Filter by linked team tasks' },
         search: { type: 'string' },
-        status_19__1: { type: 'number', description: 'Status index (4=In Progress/Igangværende)' },
-        type_1__1: { type: 'number', description: 'Type index' },
-        priority_1__1: { type: 'number', description: 'Priority index' }
+        status_19__1: { type: 'number', description: 'Status index: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold' },
+        type_1__1: { type: 'number', description: 'Type index: 0=Training, 1=Support, 2=UI Element, 3=Maintenance, 4=Development, 5=Not Labelled, 6=Bug, 7=Documentation, 8=Info, 9=Newsletter, 10=Operations, 11=Spam, 12=Meeting' },
+        priority_1__1: { type: 'number', description: 'Priority index: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown' }
       }
     }
   },
   {
     name: 'getOKR',
-    description: 'Get Objectives & Key Results with full hierarchy. Returns objectives with their associated key results. Status: 0=Planned, 1=In Progress, 2=On Hold, 3=Done, 4=Cancelled. For team filtering, use getTeams first to find team IDs.',
+    description: 'Get Objectives & Key Results with full hierarchy. Returns objectives with their associated key results. For team filtering, use getTeams first to find team IDs.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -609,7 +609,8 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
         strategiesId: { type: 'string', description: 'Filter by linked strategies (use getStrategies to find IDs)' },
         peopleId: { type: 'string', description: 'Filter by linked people (use getPeople to find IDs)' },
         search: { type: 'string' },
-        status: { type: 'number', description: 'Objective status index' },
+        status: { type: 'number', description: 'Status: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold' },
+        health: { type: 'number', description: 'Health: 0=At Risk, 1=On Track, 2=Off Track' },
         teamId: { type: 'string', description: 'Team ID (use getTeams to find IDs)' },
         includeKeyResults: { type: 'boolean', default: true },
         onlyActive: { type: 'boolean', default: false }
@@ -638,7 +639,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
         advertiserId: { type: 'string', description: 'Filter by advertiser account (use getAccounts to find IDs)' },
         contactsId: { type: 'string', description: 'Filter by linked contacts (use getContacts to find IDs)' },
         search: { type: 'string' },
-        status: { type: 'number', description: 'Stage index' }
+        status: { type: 'number', description: 'Status: 0=Working on it, 1=Done, 2=Stuck, 3=Deal godkendt, 4=Archived, 6=Contacted, 19=Sendt til godkendelse, 107=On hold' }
       }
     }
   },
@@ -649,7 +650,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
       type: 'object',
       properties: {
         limit: { type: 'number', default: 10 },
-        search: { type: 'string' }
+        search: { type: 'string' },
+        status: { type: 'number', description: 'Status: 0=Under-Ressourced, 1=Active, 2=Inactive' },
+        peopleId: { type: 'string', description: 'Filter by person ID (use getPeople to find IDs)' },
+        objectiveId: { type: 'string', description: 'Filter by objective ID (use getOKR to find IDs)' }
       }
     }
   },
@@ -664,8 +668,8 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
         assignedId: { type: 'string', description: 'Filter by assigned person (use getPeople to find IDs)' },
         publisherId: { type: 'string', description: 'Filter by publisher (use getAllPublishers to find IDs)' },
         search: { type: 'string' },
-        status: { type: 'number', description: 'Ticket Status index' },
-        priority: { type: 'number', description: 'Priority index' }
+        status: { type: 'number', description: 'Status: 0=New response, 1=Customer responded, 2=On hold, 3=Email Sent, 5=New, 7=Awaiting response, 11=Resolved' },
+        priority: { type: 'number', description: 'Priority: 7=Low, 10=Critical, 109=Medium, 110=High' }
       }
     }
   },
@@ -680,7 +684,8 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
         limit: { type: 'number', default: 10 },
         accountId: { type: 'string', description: 'Filter by linked account (use getAccounts to find IDs)' },
         search: { type: 'string' },
-        status: { type: 'number', description: 'Contact Status index' }
+        status: { type: 'number', description: 'Status: 0=Working on it, 1=Good relation, 2=Stuck, 3=Rejected, 4=Stopped, 19=No contact, 107=Waiting' },
+        tier: { type: 'number', description: 'Tier: 0=D-level, 1=C-level, 2=A-level, 19=P-level, 107=Ambassador' }
       }
     }
   },
@@ -693,8 +698,8 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
         limit: { type: 'number', default: 10 },
         assignedId: { type: 'string', description: 'Filter by assigned person (use getPeople to find IDs)' },
         search: { type: 'string' },
-        status: { type: 'number', description: 'Lead Status index' },
-        source: { type: 'number', description: 'Lead Source index' }
+        status: { type: 'number', description: 'Status: 0=New, 1=Qualified, 2=New Lead, 5=Ikke interesseret, 11=Unqualified, 14=Contacted' },
+        type: { type: 'number', description: 'Type: 1=Publisher, 2=Advertiser' }
       }
     }
   },
@@ -726,8 +731,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
         leadId: { type: 'string', description: 'Filter by linked lead (use getLeads to find IDs)' },
         assignedId: { type: 'string', description: 'Filter by assigned person (use getPeople to find IDs)' },
         search: { type: 'string' },
-        status: { type: 'number', description: 'Opportunity Status index' },
-        stage: { type: 'number', description: 'Sales Stage index' }
+        stage: { type: 'number', description: 'Stage: 0=Contacted, 1=Won (don\'t use), 2=Lost, 3=Offer sent, 4=New, 6=Won PG/PD, 7=Won IO, 8=Won Publisher, 9=In pitch' },
+        bookingStatus: { type: 'number', description: 'Booking Status: 1=Delivering completed + report sent, 2=Deal not ready, 4=Ready for midway report, 6=Ready for final report, 19=New IO\'s, 107=Booked / Delivering' },
+        product: { type: 'number', description: 'Product: 3=Programmatic Guaranteed, 4=Insertion Order, 6=Brand Bridge, 19=Preferred Deal' }
       }
     }
   },
@@ -741,8 +747,8 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
         opportunityId: { type: 'string', description: 'Filter by linked opportunity (use getOpportunities to find IDs)' },
         assignedId: { type: 'string', description: 'Filter by assigned person (use getPeople to find IDs)' },
         search: { type: 'string' },
-        type: { type: 'number', description: 'Activity Type index' },
-        status: { type: 'number', description: 'Activity Status index' }
+        type: { type: 'number', description: 'Activity Type: 0=Call summary, 1=Email, 4=Event, 9=Anniversary (mærkedag), 11=Follow-up, 12=Send offer, 13=Social activity, 14=Meeting, 17=Contact (call/email/sms), 18=Agency presentation, 19=Media meeting' },
+        status: { type: 'number', description: 'Status: 0=To do, 1=Done, 2=Open, 3=Planned, 4=Add Expense, 5=Waiting for progress' }
       }
     }
   },
@@ -769,8 +775,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
         limit: { type: 'number', default: 10 },
         assignedId: { type: 'string', description: 'Filter by assigned person (use getPeople to find IDs)' },
         search: { type: 'string' },
-        status: { type: 'number', description: 'Task Status index' },
-        priority: { type: 'number', description: 'Priority index' }
+        status: { type: 'number', description: 'Status: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold' },
+        priority: { type: 'number', description: 'Priority: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown' },
+        type: { type: 'number', description: 'Type: 0=Hackathon, 1=Publisher, 2=Product, 3=Template, 5=Task' }
       }
     }
   },
@@ -783,8 +790,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
         limit: { type: 'number', default: 10 },
         assignedId: { type: 'string', description: 'Filter by assigned person (use getPeople to find IDs)' },
         search: { type: 'string' },
-        status: { type: 'number', description: 'Task Status index' },
-        priority: { type: 'number', description: 'Priority index' }
+        status: { type: 'number', description: 'Status: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold' },
+        priority: { type: 'number', description: 'Priority: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown' },
+        type: { type: 'number', description: 'Type: 0=Andet, 1=Kommunikationsplan Media Summit 2025, 3=Case, 4=Aktivitet, 19=Content' },
+        channel: { type: 'number', description: 'Channel (dropdown): 0=LinkedIn, 1=Newsletter, 2=PR, 3=Annoncering, 4=Blogindlæg' }
       }
     }
   },
@@ -797,8 +806,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
         limit: { type: 'number', default: 10 },
         assignedId: { type: 'string', description: 'Filter by assigned person (use getPeople to find IDs)' },
         search: { type: 'string' },
-        status: { type: 'number', description: 'Task Status index' },
-        priority: { type: 'number', description: 'Priority index' }
+        status: { type: 'number', description: 'Status: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold' },
+        priority: { type: 'number', description: 'Priority: 0=P2 - Medium, 1=P4 - Minimal, 2=P3 - Low, 3=P0 - Critical ⚠️️, 4=P1 - High, 5=Missing, 6=P5 - Unknown' },
+        releaseStatus: { type: 'number', description: 'Release status: 0=Alpha (pre-testing), 1=Production (live), 2=Beta (pre-release), 3=Drift or bugs, 4=Reminder, 107=Research (bubbles)' }
       }
     }
   },
@@ -811,7 +821,8 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
         limit: { type: 'number', default: 10 },
         assignedId: { type: 'string', description: 'Filter by assigned person (use getPeople to find IDs)' },
         search: { type: 'string' },
-        status: { type: 'number', description: 'Task Status index' }
+        status: { type: 'number', description: 'Status: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold' },
+        type: { type: 'number', description: 'Type: 0=Question, 1=Idea, 2=Opportunity, 3=Bug, 4=Development, 5=Not Labelled, 6=Stuck' }
       }
     }
   },
@@ -824,7 +835,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
         limit: { type: 'number', default: 10 },
         assignedId: { type: 'string', description: 'Filter by assigned person (use getPeople to find IDs)' },
         search: { type: 'string' },
-        status: { type: 'number', description: 'Task Status index' },
+        status: { type: 'number', description: 'Status: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold' },
         priority: { type: 'number', description: 'Priority index' }
       }
     }
@@ -853,8 +864,8 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
         limit: { type: 'number', default: 10 },
         assignedId: { type: 'string', description: 'Filter by assigned person (use getPeople to find IDs)' },
         search: { type: 'string' },
-        status: { type: 'number', description: 'Feature Status index' },
-        priority: { type: 'number', description: 'Priority index' }
+        status: { type: 'number', description: 'Status: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold' },
+        priority: { type: 'number', description: 'Priority: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown' }
       }
     }
   },
@@ -897,18 +908,6 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
         search: { type: 'string' },
         quarter: { type: 'string', description: 'Filter by quarter (e.g., "Q1 2024")' },
         status: { type: 'number', description: 'Strategy Status index' }
-      }
-    }
-  },
-  {
-    name: 'getVertikaler',
-    description: 'Get items from Vertikaler board. Access publisher vertical/category information.',
-    inputSchema: {
-      type: 'object',
-      properties: {
-        limit: { type: 'number', default: 10 },
-        search: { type: 'string' },
-        status: { type: 'number', description: 'Vertical Status index' }
       }
     }
   },
@@ -1012,9 +1011,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
       properties: {
         name: { type: 'string', description: 'Task name (required)' },
         person: { type: 'string', description: 'Person ID to assign' },
-        status_19__1: { type: 'number', description: 'Status index' },
-        type_1__1: { type: 'number', description: 'Type index' },
-        priority_1__1: { type: 'number', description: 'Priority index' },
+        status_19__1: { type: 'number', description: 'Status index: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold' },
+        type_1__1: { type: 'number', description: 'Type index: 0=Training, 1=Support, 2=UI Element, 3=Maintenance, 4=Development, 5=Not Labelled, 6=Bug, 7=Documentation, 8=Info, 9=Newsletter, 10=Operations, 11=Spam, 12=Meeting' },
+        priority_1__1: { type: 'number', description: 'Priority index: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown' },
         date__1: { type: 'string', description: 'Due date (YYYY-MM-DD)' },
         text__1: { type: 'string', description: 'Text field 1' },
         text0__1: { type: 'string', description: 'Text field 2' },
@@ -1044,9 +1043,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
         itemId: { type: 'string', description: 'Item ID to update (required)' },
         name: { type: 'string', description: 'Task name' },
         person: { type: 'string', description: 'Person ID to assign' },
-        status_19__1: { type: 'number', description: 'Status index' },
-        type_1__1: { type: 'number', description: 'Type index' },
-        priority_1__1: { type: 'number', description: 'Priority index' },
+        status_19__1: { type: 'number', description: 'Status index: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold' },
+        type_1__1: { type: 'number', description: 'Type index: 0=Training, 1=Support, 2=UI Element, 3=Maintenance, 4=Development, 5=Not Labelled, 6=Bug, 7=Documentation, 8=Info, 9=Newsletter, 10=Operations, 11=Spam, 12=Meeting' },
+        priority_1__1: { type: 'number', description: 'Priority index: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown' },
         date__1: { type: 'string', description: 'Due date (YYYY-MM-DD)' },
         text__1: { type: 'string', description: 'Text field 1' },
         text0__1: { type: 'string', description: 'Text field 2' },

@@ -420,9 +420,9 @@ const handler = createMcpHandler((server) => {
     {
       limit: z.number().default(10).optional(),
       search: z.string().optional(),
-      status_19__1: z.number().optional(),
-      type_1__1: z.number().optional(),
-      priority_1__1: z.number().optional(),
+      status_19__1: z.number().optional().describe('Status: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold'),
+      type_1__1: z.number().optional().describe('Type: 0=Training, 1=Support, 2=UI Element, 3=Maintenance, 4=Development, 5=Not Labelled, 6=Bug, 7=Documentation, 8=Info, 9=Newsletter, 10=Operations, 11=Spam, 12=Meeting'),
+      priority_1__1: z.number().optional().describe('Priority: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown'),
       keyResultId: z.string().optional(),
       teamTaskId: z.string().optional()
     },
@@ -437,9 +437,9 @@ const handler = createMcpHandler((server) => {
     {
       name: z.string(),
       person: z.string().optional(),
-      status_19__1: z.number().optional(),
-      type_1__1: z.number().optional(),
-      priority_1__1: z.number().optional(),
+      status_19__1: z.number().optional().describe('Status: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold'),
+      type_1__1: z.number().optional().describe('Type: 0=Training, 1=Support, 2=UI Element, 3=Maintenance, 4=Development, 5=Not Labelled, 6=Bug, 7=Documentation, 8=Info, 9=Newsletter, 10=Operations, 11=Spam, 12=Meeting'),
+      priority_1__1: z.number().optional().describe('Priority: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown'),
       date__1: z.string().optional(),
       text__1: z.string().optional(),
       text0__1: z.string().optional(),
@@ -465,9 +465,9 @@ const handler = createMcpHandler((server) => {
       itemId: z.string(),
       name: z.string().optional(),
       person: z.string().optional(),
-      status_19__1: z.number().optional(),
-      type_1__1: z.number().optional(),
-      priority_1__1: z.number().optional(),
+      status_19__1: z.number().optional().describe('Status: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold'),
+      type_1__1: z.number().optional().describe('Type: 0=Training, 1=Support, 2=UI Element, 3=Maintenance, 4=Development, 5=Not Labelled, 6=Bug, 7=Documentation, 8=Info, 9=Newsletter, 10=Operations, 11=Spam, 12=Meeting'),
+      priority_1__1: z.number().optional().describe('Priority: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown'),
       date__1: z.string().optional(),
       text__1: z.string().optional(),
       text0__1: z.string().optional(),
@@ -565,6 +565,7 @@ const handler = createMcpHandler((server) => {
     {
       limit: z.number().default(10).optional(),
       search: z.string().optional(),
+      status: z.number().describe('Status: 0=Under-Ressourced, 1=Active, 2=Inactive').optional(),
       peopleId: z.string().optional(),
       objectiveId: z.string().optional()
     },
