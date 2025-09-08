@@ -50,6 +50,8 @@ import { getTasksAdTech } from './lib/tools/tasks/getTasksAdTech.js';
 import { getTasksVideo } from './lib/tools/tasks/getTasksVideo.js';
 import { getTasksYieldGrowth } from './lib/tools/tasks/getTasksYieldGrowth.js';
 import { getTasksTechIntelligence } from './lib/tools/tasks/getTasksTechIntelligence.js';
+import { createTaskTechIntelligence } from './lib/tools/tasks/createTaskTechIntelligence.js';
+import { updateTaskTechIntelligence } from './lib/tools/tasks/updateTaskTechIntelligence.js';
 
 // Development Tools
 import { getBugs } from './lib/tools/development/getBugs.js';
@@ -168,6 +170,8 @@ const toolImplementations: Record<string, (args: Record<string, unknown>) => Pro
   getTasksVideo: (args) => getTasksVideo(args),
   getTasksYieldGrowth: (args) => getTasksYieldGrowth(args),
   getTasksTechIntelligence: (args) => getTasksTechIntelligence(args),
+  createTaskTechIntelligence: (args) => createTaskTechIntelligence(args as any),
+  updateTaskTechIntelligence: (args) => updateTaskTechIntelligence(args as any),
   
   // Development Tools
   getBugs: (args) => getBugs(args),

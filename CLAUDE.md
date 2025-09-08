@@ -4,7 +4,8 @@ MCP Server for STEP Networks' advertising and publisher data via Monday.com and 
 
 ## Recent Updates (December 2025)
 
-- **32 Board-Specific Tools**: Added tools for all Monday.com boards (CRM, Tasks, Operations, etc.)
+- **34 Board-Specific Tools**: Added tools for all Monday.com boards (CRM, Tasks, Operations, etc.)
+- **Mutation Tools**: Added `createTaskTechIntelligence` and `updateTaskTechIntelligence` for creating/updating tasks
 - **Tool Naming**: Simplified naming convention - removed 'Items' suffix (e.g., `getAccounts` instead of `getAccountsItems`)
 - **Meta Board Integration**: Column names tracking in Boards meta board (1698570295)
 - **Tool Descriptions**: Enhanced with status index mappings for better LLM understanding
@@ -88,13 +89,13 @@ BOARD_IDS = {
 
 - `availabilityForecast` - GAM SOAP API for inventory forecasting
 
-### Board-Specific Tools (32 tools)
+### Board-Specific Tools (34 tools)
 
 - **CRM**: `getAccounts`, `getContacts`, `getLeads`
 - **Sales**: `getDeals`, `getOpportunities`, `getSalesActivities`, `getInternalAdSales`
 - **Operations**: `getBookings`, `getProcesses`, `getInternalAdOpsAdTech`
 - **Development**: `getBugs`, `getFeatures`, `getTests`, `getChangelog`
-- **Tasks**: `getTasksAdOps`, `getTasksAdTech`, `getTasksMarketing`, `getTasksTechIntelligence`, `getTasksVideo`, `getTasksYieldGrowth`
+- **Tasks**: `getTasksAdOps`, `getTasksAdTech`, `getTasksMarketing`, `getTasksTechIntelligence`, `getTasksVideo`, `getTasksYieldGrowth`, `createTaskTechIntelligence`, `updateTaskTechIntelligence`
 - **Marketing**: `getMarketingBudgets`, `getMarketingExpenses`
 - **Business**: `getPartners`, `getStrategies`, `getVertikaler`
 - **HR**: `getPeople`, `getTeams`

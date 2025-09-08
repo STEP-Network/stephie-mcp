@@ -1001,5 +1001,69 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
         status: { type: 'number', description: 'Platform Status index' }
       }
     }
+  },
+  
+  // Tasks - Tech & Intelligence Mutation Tools
+  {
+    name: 'createTaskTechIntelligence',
+    description: 'Create a new task in the Tasks - Tech & Intelligence board.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'Task name (required)' },
+        person: { type: 'string', description: 'Person ID to assign' },
+        status_19__1: { type: 'number', description: 'Status index' },
+        type_1__1: { type: 'number', description: 'Type index' },
+        priority_1__1: { type: 'number', description: 'Priority index' },
+        date__1: { type: 'string', description: 'Due date (YYYY-MM-DD)' },
+        text__1: { type: 'string', description: 'Text field 1' },
+        text0__1: { type: 'string', description: 'Text field 2' },
+        long_text__1: { type: 'string', description: 'Long text description' },
+        link__1: { 
+          type: 'object',
+          properties: {
+            url: { type: 'string' },
+            text: { type: 'string' }
+          },
+          description: 'Link with URL and text'
+        },
+        numbers__1: { type: 'number', description: 'Numbers field' },
+        keyResultId: { type: 'string', description: 'Related key result item ID' },
+        teamTaskId: { type: 'string', description: 'Related team task item ID' },
+        groupId: { type: 'string', description: 'Group ID to add the item to' }
+      },
+      required: ['name']
+    }
+  },
+  {
+    name: 'updateTaskTechIntelligence',
+    description: 'Update an existing task in the Tasks - Tech & Intelligence board.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        itemId: { type: 'string', description: 'Item ID to update (required)' },
+        name: { type: 'string', description: 'Task name' },
+        person: { type: 'string', description: 'Person ID to assign' },
+        status_19__1: { type: 'number', description: 'Status index' },
+        type_1__1: { type: 'number', description: 'Type index' },
+        priority_1__1: { type: 'number', description: 'Priority index' },
+        date__1: { type: 'string', description: 'Due date (YYYY-MM-DD)' },
+        text__1: { type: 'string', description: 'Text field 1' },
+        text0__1: { type: 'string', description: 'Text field 2' },
+        long_text__1: { type: 'string', description: 'Long text description' },
+        link__1: { 
+          type: 'object',
+          properties: {
+            url: { type: 'string' },
+            text: { type: 'string' }
+          },
+          description: 'Link with URL and text'
+        },
+        numbers__1: { type: 'number', description: 'Numbers field' },
+        keyResultId: { type: 'string', description: 'Related key result item ID' },
+        teamTaskId: { type: 'string', description: 'Related team task item ID' }
+      },
+      required: ['itemId']
+    }
   }
 ];
