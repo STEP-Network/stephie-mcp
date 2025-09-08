@@ -318,8 +318,8 @@ const handler = createMcpHandler((server) => {
     {
       limit: z.number().default(10).optional(),
       search: z.string().optional(),
-      status: z.number().optional(),
-      status5: z.number().optional(),
+      status: z.number().optional().describe('Account Status: 0=On hold, 4=Client, 13=Past Client, 17=New Biz'),
+      status5: z.number().optional().describe('Type: 0=Agency, 1=Agency Group, 2=Partner, 3=Publisher, 4=Publisher Lead, 107=Advertiser'),
       contactsId: z.string().optional(),
       opportunitiesId: z.string().optional(),
       leadsId: z.string().optional()
@@ -336,7 +336,8 @@ const handler = createMcpHandler((server) => {
       limit: z.number().default(10).optional(),
       search: z.string().optional(),
       accountId: z.string().optional(),
-      opportunitiesId: z.string().optional()
+      status: z.number().optional().describe('Status: 0=Working on it, 1=Good relation, 2=Stuck, 3=Rejected, 4=Stopped, 19=No contact, 107=Waiting'),
+      tier: z.number().optional().describe('Tier: 0=D-level, 1=C-level, 2=A-level, 19=P-level, 107=Ambassador')
     },
     async (input) => {
       const result = await getContacts(input);
@@ -351,7 +352,9 @@ const handler = createMcpHandler((server) => {
       search: z.string().optional(),
       existingContactId: z.string().optional(),
       existingAccountId: z.string().optional(),
-      opportunityId: z.string().optional()
+      opportunityId: z.string().optional(),
+      status: z.number().optional().describe('Status: 0=New, 1=Qualified, 2=New Lead, 5=Ikke interesseret, 11=Unqualified, 14=Contacted'),
+      type: z.number().optional().describe('Type: 1=Publisher, 2=Advertiser')
     },
     async (input) => {
       const result = await getLeads(input);
@@ -366,7 +369,10 @@ const handler = createMcpHandler((server) => {
       search: z.string().optional(),
       accountId: z.string().optional(),
       contactId: z.string().optional(),
-      bookingId: z.string().optional()
+      bookingId: z.string().optional(),
+      stage: z.number().optional().describe('Stage: 0=Contacted, 1=Won (don\'t use), 2=Lost, 3=Offer sent, 4=New, 6=Won PG/PD, 7=Won IO, 8=Won Publisher, 9=In pitch'),
+      status3__1: z.number().optional().describe('Booking Status: 1=Delivering completed + report sent, 2=Deal not ready, 4=Ready for midway report, 6=Ready for final report, 19=New IO\'s, 107=Booked / Delivering'),
+      status9__1: z.number().optional().describe('Product: 3=Programmatic Guaranteed, 4=Insertion Order, 6=Brand Bridge, 19=Preferred Deal')
     },
     async (input) => {
       const result = await getOpportunities(input);
@@ -381,7 +387,9 @@ const handler = createMcpHandler((server) => {
       search: z.string().optional(),
       accountId: z.string().optional(),
       contactId: z.string().optional(),
-      opportunityId: z.string().optional()
+      opportunityId: z.string().optional(),
+      activity_status: z.number().optional().describe('Status: 0=To do, 1=Done, 2=Open, 3=Planned, 4=Add Expense, 5=Waiting for progress'),
+      activity_type: z.number().optional().describe('Activity Type: 0=Call summary, 1=Email, 4=Event, 9=Anniversary (mærkedag), 11=Follow-up, 12=Send offer, 13=Social activity, 14=Meeting, 17=Contact (call/email/sms), 18=Agency presentation, 19=Media meeting')
     },
     async (input) => {
       const result = await getSalesActivities(input);
@@ -394,7 +402,7 @@ const handler = createMcpHandler((server) => {
     {
       limit: z.number().default(10).optional(),
       search: z.string().optional(),
-      status0__1: z.number().optional(),
+      status0__1: z.number().optional().describe('Status: 0=Not ready, 1=Delivering completed + report sent, 2=Under Booking, 3=Booked, 4=Delivering, 6=Ready for final reporting, 19=New'),
       date: z.string().optional(),
       opportunityId: z.string().optional()
     },
@@ -409,8 +417,8 @@ const handler = createMcpHandler((server) => {
     {
       limit: z.number().default(10).optional(),
       search: z.string().optional(),
-      color_mkqnwy18: z.number().optional(),
-      color_mkqhya7m: z.number().optional()
+      color_mkqnwy18: z.number().optional().describe('Priority: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown'),
+      color_mkqhya7m: z.number().optional().describe('Status: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold')
     },
     async (input) => {
       const result = await getBugs(input);
@@ -494,8 +502,10 @@ const handler = createMcpHandler((server) => {
     {
       limit: z.number().default(10).optional(),
       search: z.string().optional(),
-      keyResultId: z.string().optional(),
-      publisherId: z.string().optional()
+      assignedId: z.string().optional(),
+      status: z.number().optional().describe('Status: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold'),
+      priority: z.number().optional().describe('Priority: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown'),
+      type: z.number().optional().describe('Type: 0=Hackathon, 1=Publisher, 2=Product, 3=Template, 5=Task')
     },
     async (input) => {
       const result = await getTasksAdOps(input);
@@ -508,8 +518,11 @@ const handler = createMcpHandler((server) => {
     {
       limit: z.number().default(10).optional(),
       search: z.string().optional(),
-      keyResultId: z.string().optional(),
-      budgetId: z.string().optional()
+      assignedId: z.string().optional(),
+      status: z.number().optional().describe('Status: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold'),
+      priority: z.number().optional().describe('Priority: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown'),
+      type: z.number().optional().describe('Type: 0=Andet, 1=Kommunikationsplan Media Summit 2025, 3=Case, 4=Aktivitet, 19=Content'),
+      channel: z.number().optional().describe('Channel: 0=LinkedIn, 1=Newsletter, 2=PR, 3=Annoncering, 4=Blogindlæg')
     },
     async (input) => {
       const result = await getTasksMarketing(input);
@@ -566,7 +579,7 @@ const handler = createMcpHandler((server) => {
     {
       limit: z.number().default(10).optional(),
       search: z.string().optional(),
-      status: z.number().optional(),
+      status: z.number().optional().describe('Status: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold'),
       teamId: z.string().optional(),
       includeKeyResults: z.boolean().default(true).optional(),
       onlyActive: z.boolean().default(false).optional(),
@@ -640,8 +653,8 @@ const handler = createMcpHandler((server) => {
     {
       limit: z.number().default(10).optional(),
       search: z.string().optional(),
-      status: z.number().optional(),
-      priority: z.number().optional(),
+      status: z.number().optional().describe('Status: 0=New response, 1=Customer responded, 2=On hold, 3=Email Sent, 5=New, 7=Awaiting response, 11=Resolved'),
+      priority: z.number().optional().describe('Priority: 7=Low, 10=Critical, 109=Medium, 110=High'),
       contactId: z.string().optional(),
       assignedId: z.string().optional(),
       publisherId: z.string().optional()
