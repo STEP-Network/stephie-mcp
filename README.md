@@ -7,7 +7,8 @@ Model Context Protocol (MCP) server for STEPhie tools, providing secure access t
 - 🔐 **Secure Authentication** via Stack Auth
 - 📊 **Publisher Tools** - Access Monday.com publisher data
 - 📈 **Forecast Tools** - Google Ad Manager availability forecasting
-- 🗂️ **32 Board Tools** - Complete Monday.com board access (CRM, Tasks, Operations, etc.)
+- 🗂️ **34 Board Tools** - Complete Monday.com board access (CRM, Tasks, Operations, etc.)
+- ✏️ **Mutation Tools** - Create and update Monday.com items (Tasks - Tech & Intelligence)
 - 🚀 **Fast Response** - Optimized Vercel Edge Functions
 - 🎯 **Dual Deployment** - Works with both Claude Desktop (local) and Vercel (cloud)
 
@@ -70,10 +71,12 @@ stephie-mcp/
 ### Forecasting
 - `availabilityForecast` - Real GAM SOAP API integration for inventory forecasting
 
-### Board Tools (32 tools)
+### Board Tools (34 tools)
 - **CRM**: `getAccounts`, `getContacts`, `getLeads`
 - **Sales**: `getDeals`, `getOpportunities`, `getSalesActivities`
-- **Tasks**: `getTasksAdOps`, `getTasksMarketing`, `getTasksTechIntelligence`, etc.
+- **Tasks**: 
+  - Get: `getTasksAdOps`, `getTasksMarketing`, `getTasksTechIntelligence`, etc.
+  - Create/Update: `createTaskTechIntelligence`, `updateTaskTechIntelligence`
 - **Operations**: `getBookings`, `getProcesses`, `getInternalAdOpsAdTech`
 - **Development**: `getBugs`, `getFeatures`, `getTests`, `getChangelog`
 - And 15+ more covering HR, Support, Marketing, Business, OKR boards

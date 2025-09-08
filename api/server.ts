@@ -30,6 +30,8 @@ import { getSalesActivities } from '../lib/tools/sales/getSalesActivities.js';
 import { getBookings } from '../lib/tools/operations/getBookings.js';
 import { getBugs } from '../lib/tools/development/getBugs.js';
 import { getTasksTechIntelligence } from '../lib/tools/tasks/getTasksTechIntelligence.js';
+import { createTaskTechIntelligence } from '../lib/tools/tasks/createTaskTechIntelligence.js';
+import { updateTaskTechIntelligence } from '../lib/tools/tasks/updateTaskTechIntelligence.js';
 import { getTasksAdOps } from '../lib/tools/tasks/getTasksAdOps.js';
 import { getTasksMarketing } from '../lib/tools/tasks/getTasksMarketing.js';
 import { getOKR } from '../lib/tools/okr/getOKR.js';
@@ -426,6 +428,60 @@ const handler = createMcpHandler((server) => {
     },
     async (input) => {
       const result = await getTasksTechIntelligence(input);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('createTaskTechIntelligence',
+    getToolDescription('createTaskTechIntelligence'),
+    {
+      name: z.string(),
+      person: z.string().optional(),
+      status_19__1: z.number().optional(),
+      type_1__1: z.number().optional(),
+      priority_1__1: z.number().optional(),
+      date__1: z.string().optional(),
+      text__1: z.string().optional(),
+      text0__1: z.string().optional(),
+      long_text__1: z.string().optional(),
+      link__1: z.object({
+        url: z.string(),
+        text: z.string()
+      }).optional(),
+      numbers__1: z.number().optional(),
+      keyResultId: z.string().optional(),
+      teamTaskId: z.string().optional(),
+      groupId: z.string().optional()
+    },
+    async (input) => {
+      const result = await createTaskTechIntelligence(input);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('updateTaskTechIntelligence',
+    getToolDescription('updateTaskTechIntelligence'),
+    {
+      itemId: z.string(),
+      name: z.string().optional(),
+      person: z.string().optional(),
+      status_19__1: z.number().optional(),
+      type_1__1: z.number().optional(),
+      priority_1__1: z.number().optional(),
+      date__1: z.string().optional(),
+      text__1: z.string().optional(),
+      text0__1: z.string().optional(),
+      long_text__1: z.string().optional(),
+      link__1: z.object({
+        url: z.string(),
+        text: z.string()
+      }).optional(),
+      numbers__1: z.number().optional(),
+      keyResultId: z.string().optional(),
+      teamTaskId: z.string().optional()
+    },
+    async (input) => {
+      const result = await updateTaskTechIntelligence(input);
       return { content: [{ type: 'text', text: result }] };
     }
   );
