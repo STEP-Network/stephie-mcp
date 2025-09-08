@@ -38,15 +38,15 @@ class SimpleCache {
       if (fs.existsSync(CACHE_FILE)) {
         const data = fs.readFileSync(CACHE_FILE, 'utf8');
         this.memoryCache = JSON.parse(data);
-        console.error(`✅ Loaded cache from disk (${Object.keys(this.memoryCache?.columns || {}).length} boards)`);
+        console.log(`✅ Loaded cache from disk (${Object.keys(this.memoryCache?.columns || {}).length} boards)`);
         
         // Check if cache is stale
         if (this.isStale()) {
-          console.error('⚠️ Cache is stale, will refresh in background');
+          console.log('⚠️ Cache is stale, will refresh in background');
           this.refreshInBackground();
         }
       } else {
-        console.error('📦 No cache found, will sync on first request');
+        console.log('📦 No cache found, will sync on first request');
       }
     } catch (error) {
       console.error('❌ Failed to initialize cache:', error);
@@ -69,7 +69,7 @@ class SimpleCache {
     }
     
     // Cache miss - sync and retry
-    console.error(`Cache miss for board ${boardId}, syncing...`);
+    console.log(`Cache miss for board ${boardId}, syncing...`);
     await this.sync();
     
     return this.memoryCache?.columns?.[boardId] || ['name', 'status'];
@@ -92,7 +92,7 @@ class SimpleCache {
    * Force sync with Monday.com
    */
   async sync(): Promise<void> {
-    console.error('🔄 Syncing metadata from Monday.com...');
+    console.log('🔄 Syncing metadata from Monday.com...');
     const startTime = Date.now();
     
     try {
@@ -127,7 +127,7 @@ class SimpleCache {
       this.saveToDisk(metadata);
       
       const duration = Date.now() - startTime;
-      console.error(`✅ Sync complete in ${duration}ms (${Object.keys(metadata.columns).length} boards)`);
+      console.log(`✅ Sync complete in ${duration}ms (${Object.keys(metadata.columns).length} boards)`);
     } catch (error) {
       console.error('❌ Sync failed:', error);
       // Keep using existing cache if sync fails
@@ -145,7 +145,7 @@ class SimpleCache {
     const metaBoard = response.data?.boards?.find((b: any) => b.id === '1698570295');
     
     if (!columnsBoard || !metaBoard) {
-      console.error('⚠️ Could not find required boards in response');
+      console.warn('⚠️ Could not find required boards in response');
       return { columns, boards, lastSync: new Date().toISOString(), version: '1.0.0' };
     }
     
@@ -244,4 +244,6 @@ class SimpleCache {
 export const cache = new SimpleCache();
 
 // Initialize on module load
-cache.initialize().catch(console.error);
+cache.initialize().catch(error => {
+  console.error('Failed to initialize cache:', error);
+});

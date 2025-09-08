@@ -33,11 +33,11 @@ export async function getDynamicColumns(boardNameOrId: string): Promise<string[]
     if (cachedColumns && cachedColumns.length > 0) {
       // Store in memory cache for this session
       columnCache.set(boardNameOrId, cachedColumns);
-      console.error(`Loaded ${cachedColumns.length} columns from cache for ${boardNameOrId}`);
+      console.log(`Loaded ${cachedColumns.length} columns from cache for ${boardNameOrId}`);
       return cachedColumns;
     }
   } catch (error) {
-    console.error(`Cache lookup failed for ${boardNameOrId}, falling back to API:`, error);
+    console.warn(`Cache lookup failed for ${boardNameOrId}, falling back to API:`, error);
   }
   
   // Fall back to original API-based approach if cache misses
@@ -150,7 +150,7 @@ export async function getDynamicColumns(boardNameOrId: string): Promise<string[]
     
     // Cache the result
     columnCache.set(boardNameOrId, columns);
-    console.error(`Loaded ${columns.length} dynamic columns for ${boardNameOrId}`);
+    console.log(`Loaded ${columns.length} dynamic columns for ${boardNameOrId}`);
     
     return columns;
   } catch (error) {
