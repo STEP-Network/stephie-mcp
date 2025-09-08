@@ -454,7 +454,7 @@ const handler = createMcpHandler((server) => {
       groupId: z.string().optional()
     },
     async (input) => {
-      const result = await createTaskTechIntelligence(input);
+      const result = await createTaskTechIntelligence(input as any);
       return { content: [{ type: 'text', text: result }] };
     }
   );
@@ -481,7 +481,7 @@ const handler = createMcpHandler((server) => {
       teamTaskId: z.string().optional()
     },
     async (input) => {
-      const result = await updateTaskTechIntelligence(input);
+      const result = await updateTaskTechIntelligence(input as any);
       return { content: [{ type: 'text', text: result }] };
     }
   );
