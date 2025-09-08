@@ -110,7 +110,26 @@ BOARD_IDS = {
 
 ## Development Workflow
 
-### Adding New Board Tools
+### Adding New Tools Manually
+
+**CRITICAL**: When adding a new tool, you MUST update THREE places:
+
+1. **Create the tool implementation** in `/lib/tools/[category]/[toolName].ts`
+2. **Add tool definition** to `/lib/mcp/toolDefinitions.ts`:
+   ```typescript
+   {
+     name: 'yourToolName',
+     description: 'Tool description',
+     inputSchema: { ... }
+   }
+   ```
+3. **Register in MCP server** (`mcp-server.ts`):
+   - Import the tool at the top
+   - Add to `toolImplementations` map
+
+Missing any of these steps will cause the tool to not work properly!
+
+### Adding New Board Tools (Auto-generated)
 
 1. Run `scripts/generate-board-tools.ts` to auto-generate tools from Monday.com boards
 2. Tools are created with essential columns and filtering capabilities

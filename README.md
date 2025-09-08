@@ -228,6 +228,37 @@ TEST_AUTH_TOKEN=test-token pnpm test:local
 pnpm mcp:build
 ```
 
+### Adding New Tools Manually
+
+⚠️ **IMPORTANT**: When adding a new tool, you MUST update THREE places:
+
+1. **Create tool implementation**: `/lib/tools/[category]/[toolName].ts`
+2. **Add to toolDefinitions**: `/lib/mcp/toolDefinitions.ts`
+3. **Register in MCP server**: 
+   - Import in `mcp-server.ts`
+   - Add to `toolImplementations` map
+
+Example:
+```typescript
+// 1. Create: lib/tools/example/getExample.ts
+export async function getExample(params: any) { ... }
+
+// 2. Add to: lib/mcp/toolDefinitions.ts
+{
+  name: 'getExample',
+  description: 'Get example data',
+  inputSchema: { ... }
+}
+
+// 3. Register in: mcp-server.ts
+import { getExample } from './lib/tools/example/getExample.js';
+// ...
+const toolImplementations = {
+  // ...
+  getExample: (args) => getExample(args),
+};
+```
+
 ### Adding New Board Tools
 
 1. **Auto-generate from Monday.com boards:**
