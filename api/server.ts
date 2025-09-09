@@ -77,6 +77,101 @@ const getToolDescription = (name: string): string => {
 	return tool?.description || "";
 };
 
+// Helper to build Zod schema from tool definition
+const buildZodSchema = (name: string): Record<string, any> => {
+	const tool = TOOL_DEFINITIONS.find((t) => t.name === name);
+	if (!tool) return {};
+	
+	const schema: Record<string, any> = {};
+	
+	for (const [key, prop] of Object.entries(tool.inputSchema.properties)) {
+		let zodType: any;
+		
+		// Handle different types
+		if (prop.type === "string") {
+			zodType = z.string();
+			if (prop.enum) {
+				zodType = z.enum(prop.enum as [string, ...string[]]);
+			}
+		} else if (prop.type === "number") {
+			zodType = z.number();
+		} else if (prop.type === "boolean") {
+			zodType = z.boolean();
+		} else if (prop.type === "array") {
+			if (prop.items) {
+				const items = prop.items as any;
+				if (items.type === "string") {
+					zodType = z.array(z.string());
+				} else if (items.type === "number") {
+					zodType = z.array(z.number());
+				} else if (items.type === "array" && items.items) {
+					// Handle nested arrays like sizes [[300,250]]
+					zodType = z.array(z.array(z.number()));
+				} else if (items.type === "object") {
+					// Handle array of objects
+					const objSchema: Record<string, any> = {};
+					if (items.properties) {
+						for (const [objKey, objProp] of Object.entries(items.properties as Record<string, any>)) {
+							if (objProp.type === "string") {
+								objSchema[objKey] = objProp.enum 
+									? z.enum(objProp.enum as [string, ...string[]])
+									: z.string();
+							} else if (objProp.type === "array") {
+								objSchema[objKey] = z.array(z.string());
+							}
+							if (objProp.description) {
+								objSchema[objKey] = objSchema[objKey].describe(objProp.description);
+							}
+						}
+					}
+					zodType = z.array(z.object(objSchema));
+				}
+			}
+		} else if (prop.type === "object") {
+			// Handle nested objects like geoTargeting and link__1
+			const objSchema: Record<string, any> = {};
+			if (prop.properties) {
+				for (const [objKey, objProp] of Object.entries(prop.properties as Record<string, any>)) {
+					if (objProp.type === "string") {
+						objSchema[objKey] = z.string();
+					} else if (objProp.type === "number") {
+						objSchema[objKey] = z.number();
+					} else if (objProp.type === "array") {
+						objSchema[objKey] = z.array(z.string());
+					}
+					// Make nested properties optional by default
+					if (objSchema[objKey]) {
+						objSchema[objKey] = objSchema[objKey].optional();
+						if (objProp.description) {
+							objSchema[objKey] = objSchema[objKey].describe(objProp.description);
+						}
+					}
+				}
+			}
+			zodType = z.object(objSchema);
+		}
+		
+		// Add description if present
+		if (prop.description && zodType) {
+			zodType = zodType.describe(prop.description);
+		}
+		
+		// Handle nullable/optional
+		if (!prop.required && !tool.inputSchema.required?.includes(key)) {
+			zodType = zodType?.nullable?.()?.optional?.() || zodType?.optional?.();
+		}
+		
+		// Add default if present
+		if (prop.default !== undefined && zodType?.default) {
+			zodType = zodType.default(prop.default);
+		}
+		
+		schema[key] = zodType;
+	}
+	
+	return schema;
+};
+
 // Create the MCP handler with all tools
 const handler = createMcpHandler((server) => {
 	// Publisher tools
@@ -295,52 +390,7 @@ const handler = createMcpHandler((server) => {
 	server.tool(
 		"availabilityForecast",
 		getToolDescription("availabilityForecast"),
-		{
-			startDate: z.string().describe('Start date in YYYY-MM-DD format or "now" for immediate start'),
-			endDate: z.string().describe("End date in YYYY-MM-DD format"),
-			sizes: z.array(z.array(z.number())).describe("Array of ad sizes as [width, height] pairs, e.g. [[300,250], [728,90]]"),
-			goalQuantity: z.number().nullable().optional().describe("Target number of impressions. Leave null for maximum available"),
-			targetedAdUnitIds: z.array(z.number()).nullable().optional().describe("Array of ad unit IDs to target (from findPublisherAdUnits). Not necessary if using RON placement."),
-			excludedAdUnitIds: z.array(z.number()).nullable().optional().describe("Array of ad unit IDs to exclude from forecast"),
-			audienceSegmentIds: z.array(z.string()).nullable().optional().describe("Array of audience segment IDs for demographic targeting"),
-			customTargeting: z
-				.array(
-					z.object({
-						keyId: z.string().describe("Custom targeting key ID"),
-						valueIds: z.array(z.string()).describe("Array of value IDs for the key"),
-						operator: z.enum(["IS", "IS_NOT"]).optional().describe("Targeting operator"),
-					}),
-				)
-				.nullable()
-				.optional()
-				.describe("Array of custom targeting key-value pairs"),
-			frequencyCapMaxImpressions: z.number().nullable().optional().describe("Maximum impressions per user for frequency capping"),
-			frequencyCapTimeUnit: z
-				.enum([
-					"MINUTE",
-					"HOUR",
-					"DAY",
-					"WEEK",
-					"MONTH",
-					"LIFETIME",
-				])
-				.nullable()
-				.optional()
-				.describe("Time unit for frequency capping (defaults to WEEK)"),
-			geoTargeting: z
-				.object({
-					targetedLocationIds: z.array(z.string()).optional().describe("Array of location IDs to target"),
-					excludedLocationIds: z.array(z.string()).optional().describe("Array of location IDs to exclude"),
-				})
-				.nullable()
-				.optional()
-				.describe("Geographic targeting configuration"),
-			targetedPlacementIds: z
-				.array(z.string())
-				.nullable()
-				.optional()
-				.describe("Array of placement IDs to target (from getAllPlacements)"),
-		},
+		buildZodSchema("availabilityForecast"),
 		async (input) => {
 			// Helper to parse string-encoded arrays
 			const parseArrayParam = (value: any): any => {
@@ -659,30 +709,7 @@ const handler = createMcpHandler((server) => {
 	server.tool(
 		"getTasksTechIntelligence",
 		getToolDescription("getTasksTechIntelligence"),
-		{
-			limit: z.number().default(10).optional(),
-			search: z.string().optional(),
-			status_19__1: z
-				.number()
-				.optional()
-				.describe(
-					"Status: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold",
-				),
-			type_1__1: z
-				.number()
-				.optional()
-				.describe(
-					"Type: 0=Training, 1=Support, 2=UI Element, 3=Maintenance, 4=Development, 5=Not Labelled, 6=Bug, 7=Documentation, 8=Info, 9=Newsletter, 10=Operations, 11=Spam, 12=Meeting",
-				),
-			priority_1__1: z
-				.number()
-				.optional()
-				.describe(
-					"Priority: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown",
-				),
-			keyResultId: z.string().optional(),
-			teamTaskId: z.string().optional(),
-		},
+		buildZodSchema("getTasksTechIntelligence"),
 		async (input) => {
 			const result = await getTasksTechIntelligence(input);
 			return { content: [{ type: "text", text: result }] };
@@ -692,42 +719,7 @@ const handler = createMcpHandler((server) => {
 	server.tool(
 		"createTaskTechIntelligence",
 		getToolDescription("createTaskTechIntelligence"),
-		{
-			name: z.string(),
-			person: z.string().optional(),
-			status_19__1: z
-				.number()
-				.optional()
-				.describe(
-					"Status: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold",
-				),
-			type_1__1: z
-				.number()
-				.optional()
-				.describe(
-					"Type: 0=Training, 1=Support, 2=UI Element, 3=Maintenance, 4=Development, 5=Not Labelled, 6=Bug, 7=Documentation, 8=Info, 9=Newsletter, 10=Operations, 11=Spam, 12=Meeting",
-				),
-			priority_1__1: z
-				.number()
-				.optional()
-				.describe(
-					"Priority: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown",
-				),
-			date__1: z.string().optional(),
-			text__1: z.string().optional(),
-			text0__1: z.string().optional(),
-			long_text__1: z.string().optional(),
-			link__1: z
-				.object({
-					url: z.string(),
-					text: z.string(),
-				})
-				.optional(),
-			numbers__1: z.number().optional(),
-			keyResultId: z.string().optional(),
-			teamTaskId: z.string().optional(),
-			groupId: z.string().optional(),
-		},
+		buildZodSchema("createTaskTechIntelligence"),
 		async (input) => {
 			const result = await createTaskTechIntelligence(
 				input as Parameters<typeof createTaskTechIntelligence>[0],
@@ -739,42 +731,7 @@ const handler = createMcpHandler((server) => {
 	server.tool(
 		"updateTaskTechIntelligence",
 		getToolDescription("updateTaskTechIntelligence"),
-		{
-			itemId: z.string(),
-			name: z.string().optional(),
-			person: z.string().optional(),
-			status_19__1: z
-				.number()
-				.optional()
-				.describe(
-					"Status: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold",
-				),
-			type_1__1: z
-				.number()
-				.optional()
-				.describe(
-					"Type: 0=Training, 1=Support, 2=UI Element, 3=Maintenance, 4=Development, 5=Not Labelled, 6=Bug, 7=Documentation, 8=Info, 9=Newsletter, 10=Operations, 11=Spam, 12=Meeting",
-				),
-			priority_1__1: z
-				.number()
-				.optional()
-				.describe(
-					"Priority: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown",
-				),
-			date__1: z.string().optional(),
-			text__1: z.string().optional(),
-			text0__1: z.string().optional(),
-			long_text__1: z.string().optional(),
-			link__1: z
-				.object({
-					url: z.string(),
-					text: z.string(),
-				})
-				.optional(),
-			numbers__1: z.number().optional(),
-			keyResultId: z.string().optional(),
-			teamTaskId: z.string().optional(),
-		},
+		buildZodSchema("updateTaskTechIntelligence"),
 		async (input) => {
 			const result = await updateTaskTechIntelligence(
 				input as Parameters<typeof updateTaskTechIntelligence>[0],

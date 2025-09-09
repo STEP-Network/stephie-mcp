@@ -408,12 +408,12 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					type: "array",
 					items: { type: "number" },
 					description:
-						"Array of ad unit IDs to target. Use findPublisherAdUnits tool to get valid IDs. Not necessary if using RON placement.",
+						"Array of ad unit IDs to target. Not necessary if using targetedPlacementIds. Use findPublisherAdUnits tool to get valid IDs. Include only same-level ad units (e.g. level 2 'jv.dk' OR level 3 'billboard_1').",
 				},
 				excludedAdUnitIds: {
 					type: "array",
 					items: { type: "number" },
-					description: "Array of ad unit IDs to exclude from forecast. Use findPublisherAdUnits tool to get valid IDs.",
+					description: "Array of ad unit IDs to exclude from forecast. Use findPublisherAdUnits tool to get valid IDs. Can include any level ad units regardless of targetedAdUnitIds.",
 				},
 				audienceSegmentIds: {
 					type: "array",
@@ -475,7 +475,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 				targetedPlacementIds: {
 					type: "array",
 					items: { type: "string" },
-					description: "Array of placement IDs to target. Use getAllPlacements tool to get valid IDs.",
+					description: "Array of placement IDs to target. Use getAllPlacements tool to get valid IDs. Not necessary if using targetedAdUnitIds.",
 				},
 			},
 			required: ["startDate", "endDate", "sizes"],
@@ -663,7 +663,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 	{
 		name: "getTasksTechIntelligence",
 		description:
-			'Get items from Tech & Intelligence Tasks board. IMPORTANT: For status filtering use status_19__1 with numeric index (0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold). For "igangværende"/"in progress" use status_19__1=4.',
+			'Get items from Tech & Intelligence Tasks board (team members: Nate). Progress on technical and data projects such as STEPhie, make.com and monday.com developments.',
 		inputSchema: {
 			type: "object",
 			properties: {
