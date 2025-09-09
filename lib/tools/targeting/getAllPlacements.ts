@@ -39,10 +39,13 @@ export async function getAllPlacements(args: { includeIds?: boolean }) {
 				name: item.name,
 				placementId:
 					(item as MondayItemResponse).column_values?.find(
-						(cv: any) => cv.column?.title === "Placement ID",
+						(cv: Record<string, unknown>) =>
+							(cv.column as Record<string, unknown>)?.title === "Placement ID",
 					)?.text || "",
 			}))
-			.filter((p: any) => p.name && p.name !== ""); // Filter out empty entries
+			.filter(
+				(p: { name: unknown; placementId: string }) => p.name && p.name !== "",
+			); // Filter out empty entries
 
 		console.error(`[getAllPlacements] Found ${placements.length} placements`);
 
@@ -68,10 +71,10 @@ export async function getAllPlacements(args: { includeIds?: boolean }) {
 			const verticals: Array<Record<string, unknown>> = [];
 			const special: Array<Record<string, unknown>> = [];
 
-			placements.forEach((p: any) => {
+			placements.forEach((p: { name: unknown; placementId: string }) => {
 				if (
 					specialPlacements.some((sp) =>
-						p.name.toLowerCase().includes(sp.toLowerCase()),
+						(p.name as string).toLowerCase().includes(sp.toLowerCase()),
 					)
 				) {
 					special.push(p);
@@ -80,7 +83,7 @@ export async function getAllPlacements(args: { includeIds?: boolean }) {
 				}
 			});
 
-			// Show verticals only
+			// Show verticals
 			if (verticals.length > 0) {
 				lines.push("## Content Verticals");
 				lines.push("*Use these for targeting specific content categories*");
@@ -101,18 +104,25 @@ export async function getAllPlacements(args: { includeIds?: boolean }) {
 				lines.push("");
 			}
 
-			if (includeIds) {
-				// Extract just the IDs for easy copying
-				const verticalIds = verticals
-					.filter((p) => p.placementId)
-					.map((p) => p.placementId);
+			// Show non-verticals (special placements)
+			if (special.length > 0) {
+				lines.push("## Special Categories");
+				lines.push("*Non-vertical placements with special requirements*");
+				lines.push("");
+				lines.push("| Category | Placement ID |");
+				lines.push("|----------|--------------|");
 
-				if (verticalIds.length > 0) {
-					lines.push("### Vertical Placement IDs for GAM");
-					lines.push("```json");
-					lines.push(JSON.stringify(verticalIds, null, 2));
-					lines.push("```");
-				}
+				special.sort((a, b) =>
+					(a.name as string).localeCompare(b.name as string),
+				);
+				special.forEach((placement) => {
+					const placementId =
+						includeIds && placement.placementId
+							? `\`${placement.placementId}\``
+							: "N/A";
+					lines.push(`| **${placement.name}** | ${placementId} |`);
+				});
+				lines.push("");
 			}
 		} else {
 			lines.push("*No placements found.*");
