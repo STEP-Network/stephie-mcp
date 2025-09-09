@@ -1,8 +1,4 @@
-import {
-	type MondayColumnValueResponse,
-	type MondayItemResponse,
-	mondayApi,
-} from "../../monday/client.js";
+import { mondayApi } from "../../monday/client.js";
 
 const GAM_BOARD_ID = "1558569789";
 const VERTICALS_BOARD_ID = "2054670440";
@@ -109,9 +105,9 @@ export async function findPublisherAdUnits(args: {
 
 			// Extract ad unit IDs from the vertical results
 			verticalResponse.data?.boards?.[0]?.items_page?.items?.forEach(
-				(item: Record<string, unknown>) => {
-					const adUnitIdsCol = (item as MondayItemResponse).column_values?.find(
-						(col: Record<string, unknown>) => col.display_value,
+				(item: any) => {
+					const adUnitIdsCol = item.column_values?.find(
+						(col: any) => col.display_value,
 					);
 					if (adUnitIdsCol?.display_value) {
 						const ids = adUnitIdsCol.display_value
@@ -195,7 +191,7 @@ export async function findPublisherAdUnits(args: {
 
 		// Process and simplify the results
 		const publishers = allItems
-			.map((item: Record<string, unknown>) => {
+			.map((item: any) => {
 				const result: {
 					name: string;
 					adUnitId: string | null;
@@ -203,39 +199,37 @@ export async function findPublisherAdUnits(args: {
 					type: string;
 					parentPublisher?: string;
 				} = {
-					name: item.name as string,
+					name: item.name,
 					adUnitId: null,
 					parentAdUnitId: null,
 					type: "Unknown",
 					parentPublisher: undefined,
 				};
 
-				(item as MondayItemResponse).column_values.forEach(
-					(col: Record<string, unknown>) => {
-						const title = (col as MondayColumnValueResponse).column?.title;
-						if (title === "Ad Unit ID") {
-							result.adUnitId = (col.text as string) || null;
-						} else if (title === "Parent Ad Unit ID") {
-							result.parentAdUnitId = (col.text as string) || null;
-						} else if (title === "Type") {
-							// Map type index to readable string
-							if (col.index === 4) {
-								result.type = "Publisher Group";
-							} else if (col.index === 3) {
-								result.type = "Publisher";
-							}
-						} else if (title === "Parent Ad Unit") {
-							// Only use for display name
-							if (col.display_value) {
-								result.parentPublisher = col.display_value as string;
-							}
+				item.column_values.forEach((col: any) => {
+					const title = col.column?.title;
+					if (title === "Ad Unit ID") {
+						result.adUnitId = col.text || null;
+					} else if (title === "Parent Ad Unit ID") {
+						result.parentAdUnitId = col.text || null;
+					} else if (title === "Type") {
+						// Map type index to readable string
+						if (col.index === 4) {
+							result.type = "Publisher Group";
+						} else if (col.index === 3) {
+							result.type = "Publisher";
 						}
-					},
-				);
+					} else if (title === "Parent Ad Unit") {
+						// Only use for display name
+						if (col.display_value) {
+							result.parentPublisher = col.display_value;
+						}
+					}
+				});
 				return result;
 			})
 			// Filter out items that don't have the correct type when using OR logic
-			.filter((item: Record<string, unknown>) => {
+			.filter((item: any) => {
 				if (queryOperator === "or" && names && names.length > 1) {
 					return item.type === "Publisher Group" || item.type === "Publisher";
 				}
@@ -243,7 +237,7 @@ export async function findPublisherAdUnits(args: {
 			});
 
 		// If we found publishers by name, also fetch their parent groups
-		let parentGroups: Array<Record<string, unknown>> = [];
+		let parentGroups: any[] = [];
 		if (names && names.length > 0 && publishers.length > 0) {
 			// Get unique parent GAM IDs from publishers
 			const parentGamIds = [
@@ -293,29 +287,22 @@ export async function findPublisherAdUnits(args: {
 
 				// Filter parent groups to only those matching our GAM IDs
 				parentGroups = allParentItems
-					.map((item: Record<string, unknown>) => {
+					.map((item: any) => {
 						const result: any = {
 							name: item.name,
 							adUnitId: null,
 							type: "Publisher Group",
 						};
 
-						(item as MondayItemResponse).column_values.forEach(
-							(col: Record<string, unknown>) => {
-								if (
-									(col as MondayColumnValueResponse).column?.title ===
-									"Ad Unit ID"
-								) {
-									result.adUnitId = col.text || null;
-								}
-							},
-						);
+						item.column_values.forEach((col: any) => {
+							if (col.column?.title === "Ad Unit ID") {
+								result.adUnitId = col.text || null;
+							}
+						});
 
 						return result;
 					})
-					.filter((group: Record<string, unknown>) =>
-						parentGamIds.includes(group.adUnitId as string),
-					);
+					.filter((group: any) => parentGamIds.includes(group.adUnitId));
 
 				console.error(
 					`[findPublisherAdUnits] Found ${parentGroups.length} parent groups`,
@@ -324,7 +311,7 @@ export async function findPublisherAdUnits(args: {
 		}
 
 		// If we're searching for specific names, fetch child ad units
-		let childAdUnits: Array<Record<string, unknown>> = [];
+		let childAdUnits: any[] = [];
 		if (names && names.length > 0 && publishers.length > 0) {
 			console.error(
 				"[findPublisherAdUnits] Fetching child ad units for found publishers...",
@@ -389,19 +376,17 @@ export async function findPublisherAdUnits(args: {
 			if (allChildItems.length > 0) {
 				console.error(
 					`[findPublisherAdUnits] Sample child items (first 3):`,
-					allChildItems.slice(0, 3).map((item: Record<string, unknown>) => ({
+					allChildItems.slice(0, 3).map((item: any) => ({
 						name: item.name,
-						parentAdUnitId: (item as MondayItemResponse).column_values?.find(
-							(col: Record<string, unknown>) =>
-								(col as MondayColumnValueResponse).column?.title ===
-								"Parent Ad Unit ID",
+						parentAdUnitId: item.column_values?.find(
+							(col: any) => col.column?.title === "Parent Ad Unit ID",
 						)?.text,
 					})),
 				);
 			}
 
 			// Map all child items to extract their data (already filtered by query)
-			childAdUnits = allChildItems.map((item: Record<string, unknown>) => {
+			childAdUnits = allChildItems.map((item: any) => {
 				const result: any = {
 					name: item.name,
 					type: "Child Ad Unit",
@@ -410,30 +395,28 @@ export async function findPublisherAdUnits(args: {
 					parent: null,
 				};
 
-				(item as MondayItemResponse).column_values.forEach(
-					(col: Record<string, unknown>) => {
-						const title = (col as MondayColumnValueResponse).column?.title;
+				item.column_values.forEach((col: any) => {
+					const title = col.column?.title;
 
-						switch (title) {
-							case "Ad Unit ID":
-								result.adUnitId = col.text || null;
-								break;
-							case "Parent Ad Unit ID":
-								result.parentAdUnitId = col.text || null;
-								break;
-							case "Type":
-								// Type might be different for child units
-								if (col.index !== undefined) {
-									result.typeIndex = col.index;
-								}
-								break;
-							case "Parent Ad Unit":
-								// Only for display name
-								result.parent = col.display_value || null;
-								break;
-						}
-					},
-				);
+					switch (title) {
+						case "Ad Unit ID":
+							result.adUnitId = col.text || null;
+							break;
+						case "Parent Ad Unit ID":
+							result.parentAdUnitId = col.text || null;
+							break;
+						case "Type":
+							// Type might be different for child units
+							if (col.index !== undefined) {
+								result.typeIndex = col.index;
+							}
+							break;
+						case "Parent Ad Unit":
+							// Only for display name
+							result.parent = col.display_value || null;
+							break;
+					}
+				});
 
 				return result;
 			});
@@ -455,7 +438,7 @@ export async function findPublisherAdUnits(args: {
 			...publishers.filter((p) => p.type === "Publisher Group"),
 		].filter(
 			(group, index, self) =>
-				index === self.findIndex((g) => (g as any).id === (group as any).id), // unique by id
+				index === self.findIndex((g) => g.id === group.id), // unique by id
 		);
 
 		// Group by type for better organization
@@ -484,9 +467,7 @@ export async function findPublisherAdUnits(args: {
 			searchInfo.push(`Verticals: ${verticals.join(", ")}`);
 		}
 		if (searchInfo.length > 0) {
-			searchInfo.forEach((info) => {
-				textLines.push(`**${info}**`);
-			});
+			searchInfo.forEach((info) => textLines.push(`**${info}**`));
 			textLines.push("");
 		}
 

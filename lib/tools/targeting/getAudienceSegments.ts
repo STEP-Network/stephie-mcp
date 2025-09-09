@@ -1,4 +1,4 @@
-import { mondayApi } from "../../monday/client.js";
+import { type MondayItemResponse, mondayApi } from "../../monday/client.js";
 
 const AUDIENCE_SEGMENTS_BOARD_ID = "2051827669";
 
@@ -110,7 +110,9 @@ export async function getAudienceSegments(args: {
 		// Process segments
 		for (const item of items) {
 			const columnMap = new Map(
-				(item as any).column_values.map((col: Record<string, unknown>) => [col.id, col]),
+				(item as MondayItemResponse).column_values.map(
+					(col: Record<string, unknown>) => [col.id, col],
+				),
 			);
 
 			const gamId = (columnMap.get(COLUMNS.GAM_ID) as any)?.text || "";

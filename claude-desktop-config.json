@@ -1,18 +1,15 @@
 {
-  "mcpServers": {
-    "stephie-local": {
-      "command": "npx",
-      "args": [
-        "tsx",
-        "/Users/naref/Documents/Code/stephie-mcp/mcp-server.ts"
-      ],
-      "env": {
-        "STEPHIE_AUTH_TOKEN": "test-token",
-        "MONDAY_API_KEY": "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjM1OTcyMzUxMiwiYWFpIjoxMSwidWlkIjo0ODMwNzU1MiwiaWFkIjoiMjAyNC0wNS0xNVQwODo0NTowMy4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MTM2NDc2NzQsInJnbiI6ImV1YzEifQ.1ZNgcyGc9WAYWjBznzizLZ9RyHPhBpXhq4pY-n82w4w",
-        "GOOGLE_AD_MANAGER_NETWORK_CODE": "21809957681",
-        "GOOGLE_SERVICE_ACCOUNT_EMAIL": "stephie@admanager-428908.iam.gserviceaccount.com",
-        "GOOGLE_PRIVATE_KEY": "-----BEGIN PRIVATE KEY-----\\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQC7G5mezHtR/23s\\nkiYF2DwOr0imTmO/GbU3lpwfXRavBsEoXZiGxrJznyNlM7YX6hDtqHiVnE5tot0C\\nhSOnhu42qYsBmsmaQqjvBq2leR2JDz/vJiMq5SdR7QKExgR5onwlNikwUbMYKRKZ\\nKlIrvhjmGR7AcEqn+MQikcUazNsJlesjfc2Pd4WUI8uoYenZDrzwOBGJ7vaiEA82\\n56qSvoL7LcW21FQS3dtK9eznEdHF0bnuke093EHT+kp23oeMUKdqlQoefPm35kO/\\nQJwCq0X68fdlkz5eo0EFOVBG5GasyyrPa9UKcT1uPLTcHMMSdb8SmJfIgVW2QlUh\\nV5sw8aCPAgMBAAECggEAW1h3IBKeJgL4rGURUQsnDtg+NIrSoYowcWoC4ED3AQ3g\\nIQ/IlgvNNSs9AXxEatpn107HR+seUuIO2dsb8/6or2EILwldYQUoKkFtZvqBE9ex\\nE9TfmGJ1VsbJ0v5FUwijaRtO8nsAX0w1+zaxFQ/iYftjivmHSQfm4SWfP51BViTY\\nCyd8PaOsISd9PvDX6+Q2iQB68fiPX33Q9zRkga4qQbfB47IvJoSsme9twOzMFGZr\\nSYPibG5W5jLsh/FCCJLsBPLGa6sMzNnmPdJBRUERyNz8hjCBBV6eXFRq52yZPL3B\\ngvfGuA3Q/M9RUMUtbj8Nf9HBuMxExaJod3qOcM+siQKBgQDbo3mNP12AMmHGlkwA\\n+ZlwoJCoW07KsrbMCPs11bC0EZ4cOqzi7TI54F/LfIgFSFi07wQv8DO7tUwUAK+a\\nZizwh9oa17usRx6eDQaK6HaLq39f7PxfFOGV9Y7p77qSXcokQZltZxYyLCawlHDu\\nk0iZnI5adMlWsIaKFidVWSH1fQKBgQDaFW+LecPNKJFotO8vSTe3kPGrv7lrun+4\\nhH6LjraccwvqpsrJ6leyS0sW3BRhYkGpT/0mPLrDnPc11rAlkTBHlNDQrRJBYin7\\nXB0Hj5DKM4yRkp3/6QQrM530uVe8NtD3024zHofVqzQ4bnD6sPz/MS/rzkxHXteQ\\njjNq/3Tb+wKBgQClHlfCJVHwj2/MMK+AyCRfdIZr2wD4B7S+3T2l8jk+lkQMKtxQ\\nWUu6EQFTZBKKDiKKG2pFc8ogoqJII1/grlG4nhkMtwSi9nCBF3/ErBB63foLLolo\\nHbWd3BaNrijP4myWJy7l/WrFW0XW2DGyWc1pljW6sTOv1VO/ufnmAvUxrQKBgQCg\\n42GIV0uRZlVoFtvCWdTGEyOHnokPpeYl3XFySdYEs4deFLDUp5MNESkTc0eB1Lg2\\nTbGn7POn7nwedwU6odMpa+tll9k47U+lhf5QnqSl18PjfXQc4O5XZNwqODY2v4YI\\n3y2UfvidNJHw8+FbwQjUx5ff8jEqEhkcJxxd2pp+0wKBgQCPopn0iq6O04qVG7fn\\n7x9qWj5TjbyFCpYBqgF2iaWVKju/plnVHw/YrZso7eOYu0Tcat7O9CHVEbGmsjJA\\n9/Xun9M2+py+u+geDu7qCzYtg8XFl65UhqYp6JEt1pEbFRRkMdoOlyaH9Oc6lZyS\\nDXuELZHCH+2CN78gkyh4gK5b0A==\\n-----END PRIVATE KEY-----\\n"
-      }
-    }
-  }
+	"mcpServers": {
+		"stephie-local": {
+			"command": "npx",
+			"args": ["tsx", "/Users/naref/Documents/Code/stephie-mcp/mcp-server.ts"],
+			"env": {
+				"STEPHIE_AUTH_TOKEN": "test-token",
+				"MONDAY_API_KEY": "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjM1OTcyMzUxMiwiYWFpIjoxMSwidWlkIjo0ODMwNzU1MiwiaWFkIjoiMjAyNC0wNS0xNVQwODo0NTowMy4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MTM2NDc2NzQsInJnbiI6ImV1YzEifQ.1ZNgcyGc9WAYWjBznzizLZ9RyHPhBpXhq4pY-n82w4w",
+				"GOOGLE_AD_MANAGER_NETWORK_CODE": "21809957681",
+				"GOOGLE_SERVICE_ACCOUNT_EMAIL": "stephie@admanager-428908.iam.gserviceaccount.com",
+				"GOOGLE_PRIVATE_KEY": "-----BEGIN PRIVATE KEY-----\\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQC7G5mezHtR/23s\\nkiYF2DwOr0imTmO/GbU3lpwfXRavBsEoXZiGxrJznyNlM7YX6hDtqHiVnE5tot0C\\nhSOnhu42qYsBmsmaQqjvBq2leR2JDz/vJiMq5SdR7QKExgR5onwlNikwUbMYKRKZ\\nKlIrvhjmGR7AcEqn+MQikcUazNsJlesjfc2Pd4WUI8uoYenZDrzwOBGJ7vaiEA82\\n56qSvoL7LcW21FQS3dtK9eznEdHF0bnuke093EHT+kp23oeMUKdqlQoefPm35kO/\\nQJwCq0X68fdlkz5eo0EFOVBG5GasyyrPa9UKcT1uPLTcHMMSdb8SmJfIgVW2QlUh\\nV5sw8aCPAgMBAAECggEAW1h3IBKeJgL4rGURUQsnDtg+NIrSoYowcWoC4ED3AQ3g\\nIQ/IlgvNNSs9AXxEatpn107HR+seUuIO2dsb8/6or2EILwldYQUoKkFtZvqBE9ex\\nE9TfmGJ1VsbJ0v5FUwijaRtO8nsAX0w1+zaxFQ/iYftjivmHSQfm4SWfP51BViTY\\nCyd8PaOsISd9PvDX6+Q2iQB68fiPX33Q9zRkga4qQbfB47IvJoSsme9twOzMFGZr\\nSYPibG5W5jLsh/FCCJLsBPLGa6sMzNnmPdJBRUERyNz8hjCBBV6eXFRq52yZPL3B\\ngvfGuA3Q/M9RUMUtbj8Nf9HBuMxExaJod3qOcM+siQKBgQDbo3mNP12AMmHGlkwA\\n+ZlwoJCoW07KsrbMCPs11bC0EZ4cOqzi7TI54F/LfIgFSFi07wQv8DO7tUwUAK+a\\nZizwh9oa17usRx6eDQaK6HaLq39f7PxfFOGV9Y7p77qSXcokQZltZxYyLCawlHDu\\nk0iZnI5adMlWsIaKFidVWSH1fQKBgQDaFW+LecPNKJFotO8vSTe3kPGrv7lrun+4\\nhH6LjraccwvqpsrJ6leyS0sW3BRhYkGpT/0mPLrDnPc11rAlkTBHlNDQrRJBYin7\\nXB0Hj5DKM4yRkp3/6QQrM530uVe8NtD3024zHofVqzQ4bnD6sPz/MS/rzkxHXteQ\\njjNq/3Tb+wKBgQClHlfCJVHwj2/MMK+AyCRfdIZr2wD4B7S+3T2l8jk+lkQMKtxQ\\nWUu6EQFTZBKKDiKKG2pFc8ogoqJII1/grlG4nhkMtwSi9nCBF3/ErBB63foLLolo\\nHbWd3BaNrijP4myWJy7l/WrFW0XW2DGyWc1pljW6sTOv1VO/ufnmAvUxrQKBgQCg\\n42GIV0uRZlVoFtvCWdTGEyOHnokPpeYl3XFySdYEs4deFLDUp5MNESkTc0eB1Lg2\\nTbGn7POn7nwedwU6odMpa+tll9k47U+lhf5QnqSl18PjfXQc4O5XZNwqODY2v4YI\\n3y2UfvidNJHw8+FbwQjUx5ff8jEqEhkcJxxd2pp+0wKBgQCPopn0iq6O04qVG7fn\\n7x9qWj5TjbyFCpYBqgF2iaWVKju/plnVHw/YrZso7eOYu0Tcat7O9CHVEbGmsjJA\\n9/Xun9M2+py+u+geDu7qCzYtg8XFl65UhqYp6JEt1pEbFRRkMdoOlyaH9Oc6lZyS\\nDXuELZHCH+2CN78gkyh4gK5b0A==\\n-----END PRIVATE KEY-----\\n"
+			}
+		}
+	}
 }

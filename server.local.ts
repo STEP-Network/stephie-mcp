@@ -1,11 +1,11 @@
-import express from 'express';
-import dotenv from 'dotenv';
-import indexHandler from './api/index.js';
-import sseHandler from './api/sse.js';
-import healthHandler from './api/health.js';
+import dotenv from "dotenv";
+import express from "express";
+import healthHandler from "./api/health.js";
+import indexHandler from "./api/index.js";
+import sseHandler from "./api/sse.js";
 
 // Load environment variables
-dotenv.config({ path: '.env.local' });
+dotenv.config({ path: ".env.local" });
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -15,78 +15,84 @@ app.use(express.json());
 
 // Convert Express req/res to Vercel format
 const wrapHandler = (handler: any) => {
-  return async (req: express.Request, res: express.Response) => {
-    // Create Vercel-like request/response objects
-    const vercelReq: any = {
-      ...req,
-      query: req.query,
-      cookies: req.cookies,
-      body: req.body,
-      headers: req.headers,
-      method: req.method,
-    };
+	return async (req: express.Request, res: express.Response) => {
+		// Create Vercel-like request/response objects
+		const vercelReq: any = {
+			...req,
+			query: req.query,
+			cookies: req.cookies,
+			body: req.body,
+			headers: req.headers,
+			method: req.method,
+		};
 
-    const vercelRes: any = {
-      status: (code: number) => {
-        res.status(code);
-        return vercelRes;
-      },
-      json: (data: any) => {
-        res.json(data);
-        return vercelRes;
-      },
-      setHeader: (key: string, value: string) => {
-        res.setHeader(key, value);
-        return vercelRes;
-      },
-      write: (data: any) => {
-        res.write(data);
-        return vercelRes;
-      },
-      end: (data?: any) => {
-        if (data) {
-          res.end(data);
-        } else {
-          res.end();
-        }
-        return vercelRes;
-      },
-    };
+		const vercelRes: any = {
+			status: (code: number) => {
+				res.status(code);
+				return vercelRes;
+			},
+			json: (data: any) => {
+				res.json(data);
+				return vercelRes;
+			},
+			setHeader: (key: string, value: string) => {
+				res.setHeader(key, value);
+				return vercelRes;
+			},
+			write: (data: any) => {
+				res.write(data);
+				return vercelRes;
+			},
+			end: (data?: any) => {
+				if (data) {
+					res.end(data);
+				} else {
+					res.end();
+				}
+				return vercelRes;
+			},
+		};
 
-    await handler(vercelReq, vercelRes);
-  };
+		await handler(vercelReq, vercelRes);
+	};
 };
 
 // Routes
-app.post('/api', wrapHandler(indexHandler));
-app.post('/api/sse', wrapHandler(sseHandler));
-app.get('/api/health', wrapHandler(healthHandler));
-app.get('/health', wrapHandler(healthHandler));
+app.post("/api", wrapHandler(indexHandler));
+app.post("/api/sse", wrapHandler(sseHandler));
+app.get("/api/health", wrapHandler(healthHandler));
+app.get("/health", wrapHandler(healthHandler));
 
 // Root endpoint
-app.get('/', (req, res) => {
-  res.json({
-    service: 'STEPhie MCP Server',
-    status: 'running',
-    endpoints: {
-      health: '/health',
-      mcp: '/api (POST)',
-      streaming: '/api/sse (POST)'
-    },
-    documentation: 'https://github.com/stepnetwork/stephie-mcp'
-  });
+app.get("/", (_req, res) => {
+	res.json({
+		service: "STEPhie MCP Server",
+		status: "running",
+		endpoints: {
+			health: "/health",
+			mcp: "/api (POST)",
+			streaming: "/api/sse (POST)",
+		},
+		documentation: "https://github.com/stepnetwork/stephie-mcp",
+	});
 });
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`\n🚀 STEPhie MCP Server running at http://localhost:${PORT}`);
-  console.log('\nEndpoints:');
-  console.log(`  Health:    http://localhost:${PORT}/health`);
-  console.log(`  MCP:       http://localhost:${PORT}/api`);
-  console.log(`  Streaming: http://localhost:${PORT}/api/sse`);
-  console.log('\nEnvironment:');
-  console.log(`  Stack Project ID: ${process.env.NEXT_PUBLIC_STACK_PROJECT_ID ? '✓ Set' : '✗ Missing'}`);
-  console.log(`  Stack Secret Key: ${process.env.STACK_SECRET_SERVER_KEY ? '✓ Set' : '✗ Missing'}`);
-  console.log(`  Monday API Key:   ${process.env.MONDAY_API_KEY ? '✓ Set' : '✗ Missing'}`);
-  console.log('\n📝 To test: npm run test:local\n');
+	console.log(`\n🚀 STEPhie MCP Server running at http://localhost:${PORT}`);
+	console.log("\nEndpoints:");
+	console.log(`  Health:    http://localhost:${PORT}/health`);
+	console.log(`  MCP:       http://localhost:${PORT}/api`);
+	console.log(`  Streaming: http://localhost:${PORT}/api/sse`);
+	console.log("\nEnvironment:");
+	console.log(
+		`  Stack Project ID: ${process.env.NEXT_PUBLIC_STACK_PROJECT_ID ? "✓ Set" : "✗ Missing"}`,
+	);
+	console.log(
+		`  Stack Secret Key: ${process.env.STACK_SECRET_SERVER_KEY ? "✓ Set" : "✗ Missing"}`,
+	);
+	console.log(
+		`  Monday API Key:   ${process.env.MONDAY_API_KEY ? "✓ Set" : "✗ Missing"}`,
+	);
+	console.log("\n📝 To test: npm run test:local\n");
 });

@@ -1,1324 +1,1324 @@
 [
-  {
-    "id": "id",
-    "title": "Item ID",
-    "description": "The unique identifier for the item",
-    "type": "numbers"
-  },
-  {
-    "id": "name",
-    "title": "Name",
-    "description": "",
-    "type": "text"
-  },
-  {
-    "id": "text_mkm6ckz5",
-    "title": "Publisher beskrivelse",
-    "description": "Beskrivelsen af websitet/hjemmesiden, publisheren og indholdet af siden.",
-    "type": "text"
-  },
-  {
-    "id": "people__1",
-    "title": "Ansvarlig - Onboarding",
-    "description": "Personen som er ansvarlig for onboardingen af publisheren.",
-    "type": "people"
-  },
-  {
-    "id": "tags__1",
-    "title": "AY workspace (Assertive Yield)",
-    "description": "Hvilket Assertive Yield (AY) workspace, som publisheren hører til.",
-    "type": "tags"
-  },
-  {
-    "id": "text_mktdhmar",
-    "title": "Ad Unit ID",
-    "description": "Ad unit ID'et som er forbundet til Google Ad Manager (GAM). Dette skal altid udfyldes da det bruges til forecasting.",
-    "type": "text"
-  },
-  {
-    "id": "status8",
-    "title": "Publisher status",
-    "description": "\"Arbejder på det\" = Vi arbejder på at onboarde sitet ind i vores netværk.",
-    "type": "status",
-    "options": [
-      {
-        "index": 0,
-        "label": "Arbejder på det"
-      },
-      {
-        "index": 3,
-        "label": "Offboarding"
-      },
-      {
-        "index": 1,
-        "label": "Live"
-      },
-      {
-        "index": 2,
-        "label": "Stuck"
-      },
-      {
-        "index": 5,
-        "label": "N/A"
-      },
-      {
-        "index": 7,
-        "label": "Inaktiv"
-      },
-      {
-        "index": 4,
-        "label": "Kun CMP"
-      },
-      {
-        "index": 6,
-        "label": "Kommende publisher"
-      }
-    ]
-  },
-  {
-    "id": "status_104",
-    "title": "Framework",
-    "description": "Frameworket som hjemmesiden eller App'en kører på.",
-    "type": "status",
-    "options": [
-      {
-        "index": 1,
-        "label": "Legacy web (MPA)"
-      },
-      {
-        "index": 2,
-        "label": "Web App"
-      },
-      {
-        "index": 107,
-        "label": "SPA"
-      },
-      {
-        "index": 19,
-        "label": "Native App"
-      },
-      {
-        "index": 5,
-        "label": "N/A"
-      }
-    ]
-  },
-  {
-    "id": "status71",
-    "title": "Ads.txt version",
-    "description": "Den Ads.txt-version, som hjemmesiden i øjeblikket kører med.\n\nKort forklaring af ads.txt:\n\nAds.txt (Authorized Digital Sellers) er en lille tekstfil, som en hjemmeside udgiver for at fortælle, hvilke firmaer der må sælge annoncer på dens vegne. Den hjælper med at bekæmpe annoncebedrageri ved at sikre, at kun godkendte annoncører kan sælge dens annonceplads.\n\nMan kan normalt finde den på:\nhttps://[domæne]/ads.txt.",
-    "type": "status",
-    "options": [
-      {
-        "index": 19,
-        "label": "Not auto - Needs update"
-      },
-      {
-        "index": 4,
-        "label": "Ads.txt missing"
-      },
-      {
-        "index": 6,
-        "label": "Automatic (old)"
-      },
-      {
-        "index": 7,
-        "label": "Not auto - Up-to-date"
-      },
-      {
-        "index": 8,
-        "label": "Publisher replied - waiting"
-      },
-      {
-        "index": 5,
-        "label": "N/A"
-      },
-      {
-        "index": 0,
-        "label": "Inactive"
-      },
-      {
-        "index": 1,
-        "label": "Manual via Kodus"
-      },
-      {
-        "index": 2,
-        "label": "Split update sent"
-      },
-      {
-        "index": 9,
-        "label": "Automatic"
-      },
-      {
-        "index": 3,
-        "label": "Active (for content providers)"
-      }
-    ]
-  },
-  {
-    "id": "status7",
-    "title": "HBM - Header Bidding Manager",
-    "description": "Den Header Bidding Manager (HBM), som hjemmesiden i øjeblikket har aktiv.",
-    "type": "status",
-    "options": [
-      {
-        "index": 7,
-        "label": "Assertive Yield"
-      },
-      {
-        "index": 1,
-        "label": "QuickWrap"
-      },
-      {
-        "index": 0,
-        "label": "Working on setup (in QW)"
-      },
-      {
-        "index": 16,
-        "label": "Waiting for Publisher"
-      },
-      {
-        "index": 2,
-        "label": "Stuck"
-      },
-      {
-        "index": 3,
-        "label": "Ready to implement"
-      },
-      {
-        "index": 4,
-        "label": "Waiting for STEP"
-      },
-      {
-        "index": 6,
-        "label": "Stage debugging"
-      },
-      {
-        "index": 9,
-        "label": "No display ads"
-      },
-      {
-        "index": 10,
-        "label": "Inactive"
-      },
-      {
-        "index": 11,
-        "label": "Google Ads SDK"
-      },
-      {
-        "index": 5,
-        "label": "N/A"
-      }
-    ]
-  },
-  {
-    "id": "status9",
-    "title": "Dynamic Ad Insertion",
-    "description": "Status for Dynamic Ad Insertion (DAI) på hjemmesiden eller hos udgiveren.",
-    "type": "status",
-    "options": [
-      {
-        "index": 1,
-        "label": "Live"
-      },
-      {
-        "index": 0,
-        "label": "Arbejder på det"
-      },
-      {
-        "index": 7,
-        "label": "Waiting for publisher"
-      },
-      {
-        "index": 13,
-        "label": "Stuck (No room)"
-      },
-      {
-        "index": 4,
-        "label": "Awaiting third party"
-      },
-      {
-        "index": 5,
-        "label": "N/A"
-      },
-      {
-        "index": 3,
-        "label": "OK from publisher"
-      },
-      {
-        "index": 9,
-        "label": "AdOps setup needed"
-      },
-      {
-        "index": 10,
-        "label": "Stuck (technical)"
-      },
-      {
-        "index": 12,
-        "label": "Nej"
-      }
-    ]
-  },
-  {
-    "id": "status_12",
-    "title": "MCM",
-    "description": "Status for Google Ad Manager's MCM godkendelse.",
-    "type": "status",
-    "options": [
-      {
-        "index": 0,
-        "label": "Arbejder på det"
-      },
-      {
-        "index": 1,
-        "label": "Done"
-      },
-      {
-        "index": 2,
-        "label": "Stuck"
-      },
-      {
-        "index": 5,
-        "label": "N/A"
-      },
-      {
-        "index": 7,
-        "label": "Waiting for Google"
-      },
-      {
-        "index": 12,
-        "label": ""
-      },
-      {
-        "index": 152,
-        "label": "Waiting for publisher"
-      },
-      {
-        "index": 103,
-        "label": "Not started"
-      },
-      {
-        "index": 3,
-        "label": "Waiting for implementation"
-      }
-    ]
-  },
-  {
-    "id": "status_1",
-    "title": "Tealium & Data collection",
-    "description": "Status for tealium og audience data indsamling.",
-    "type": "status",
-    "options": [
-      {
-        "index": 1,
-        "label": "Live"
-      },
-      {
-        "index": 2,
-        "label": "Not live"
-      },
-      {
-        "index": 5,
-        "label": "N/A"
-      },
-      {
-        "index": 7,
-        "label": "App - Not tealium"
-      },
-      {
-        "index": 14,
-        "label": "Waiting for Publisher"
-      }
-    ]
-  },
-  {
-    "id": "status_18",
-    "title": "CMP: Consent management platform",
-    "description": "Status for Consent Management Platform (CMP), og hvilken platform der bruges. Didomi og Tealium er vores primære setup.",
-    "type": "status",
-    "options": [
-      {
-        "index": 1,
-        "label": "Didomi inline"
-      },
-      {
-        "index": 15,
-        "label": "Didomi via Tealium"
-      },
-      {
-        "index": 7,
-        "label": "Other CMP"
-      },
-      {
-        "index": 0,
-        "label": "Not live"
-      },
-      {
-        "index": 2,
-        "label": "Stuck/Non-complient"
-      },
-      {
-        "index": 5,
-        "label": "N/A"
-      },
-      {
-        "index": 14,
-        "label": "Didomi SDK"
-      },
-      {
-        "index": 3,
-        "label": "Det må i godt klare!"
-      }
-    ]
-  },
-  {
-    "id": "status_19",
-    "title": "GA: STEP Google Analytics",
-    "description": "Status for vores (STEP) Google Analytics (GA)-sporing på hjemmesiden.",
-    "type": "status",
-    "options": [
-      {
-        "index": 0,
-        "label": "Arbejder på det"
-      },
-      {
-        "index": 1,
-        "label": "Done"
-      },
-      {
-        "index": 2,
-        "label": "Stuck"
-      },
-      {
-        "index": 3,
-        "label": "Working on it"
-      },
-      {
-        "index": 5,
-        "label": "N/A"
-      },
-      {
-        "index": 7,
-        "label": "Missing tealium"
-      }
-    ]
-  },
-  {
-    "id": "status_13",
-    "title": "GA: Publisher Google Analytics",
-    "description": "Status for vores partners Google Analytics (GA)-sporing på hjemmesiden.",
-    "type": "status",
-    "options": [
-      {
-        "index": 0,
-        "label": "Arbejder på det"
-      },
-      {
-        "index": 1,
-        "label": "Done"
-      },
-      {
-        "index": 2,
-        "label": "Stuck"
-      },
-      {
-        "index": 5,
-        "label": "N/A"
-      },
-      {
-        "index": 7,
-        "label": "Asked pub"
-      }
-    ]
-  },
-  {
-    "id": "status_16",
-    "title": "Prebid setup",
-    "description": "Status over om prebid er live på hos publisher.",
-    "type": "status",
-    "options": [
-      {
-        "index": 0,
-        "label": "Arbejder på det"
-      },
-      {
-        "index": 1,
-        "label": "Live"
-      },
-      {
-        "index": 2,
-        "label": "Stuck"
-      },
-      {
-        "index": 5,
-        "label": "N/A"
-      },
-      {
-        "index": 9,
-        "label": "No prebid"
-      }
-    ]
-  },
-  {
-    "id": "status_10",
-    "title": "Refresh",
-    "description": "Status for ad refresh for publisheren.",
-    "type": "status",
-    "options": [
-      {
-        "index": 0,
-        "label": "Arbejder på det"
-      },
-      {
-        "index": 1,
-        "label": "Live"
-      },
-      {
-        "index": 2,
-        "label": "Stuck"
-      },
-      {
-        "index": 5,
-        "label": "N/A"
-      },
-      {
-        "index": 14,
-        "label": "No refresh"
-      },
-      {
-        "index": 9,
-        "label": "No ads"
-      }
-    ]
-  },
-  {
-    "id": "status_14",
-    "title": "CMP opt-in model (Consent Management Platform)",
-    "description": "Hvilken type Consent Management Platform (CMP) de har valgt, f.eks. Ja/Nej-valg, Paywall osv. Specificere også om det er Didomi, eller anden udbyder der er valgt.",
-    "type": "status",
-    "options": [
-      {
-        "index": 1,
-        "label": "Ja/Nej"
-      },
-      {
-        "index": 2,
-        "label": "Stuck"
-      },
-      {
-        "index": 5,
-        "label": "N/A"
-      },
-      {
-        "index": 7,
-        "label": "Anden CMP"
-      },
-      {
-        "index": 3,
-        "label": "Didomi Ja/Nej"
-      },
-      {
-        "index": 9,
-        "label": "Didomi Paywall"
-      }
-    ]
-  },
-  {
-    "id": "status_103",
-    "title": "Legitime interesser",
-    "description": "Status for legitim interesse på hjemmesiden eller hos publisher.",
-    "type": "status",
-    "options": [
-      {
-        "index": 0,
-        "label": "Arbejder på det"
-      },
-      {
-        "index": 1,
-        "label": "On"
-      },
-      {
-        "index": 2,
-        "label": "Stuck"
-      },
-      {
-        "index": 5,
-        "label": "N/A"
-      },
-      {
-        "index": 7,
-        "label": "interreseret"
-      },
-      {
-        "index": 152,
-        "label": "Waiting for Publisher"
-      },
-      {
-        "index": 154,
-        "label": "On - through their CMP"
-      }
-    ]
-  },
-  {
-    "id": "status_1_Mjj2Gm6U",
-    "title": "Gemius",
-    "description": "Om publisheren eller hjemmesiden er en del af Gemius eller ej.",
-    "type": "status",
-    "options": [
-      {
-        "index": 0,
-        "label": "Working on it"
-      },
-      {
-        "index": 1,
-        "label": "Yes"
-      },
-      {
-        "index": 2,
-        "label": "No"
-      },
-      {
-        "index": 5,
-        "label": "N/A"
-      },
-      {
-        "index": 107,
-        "label": "On hold"
-      }
-    ]
-  },
-  {
-    "id": "dropdown_mksddmgt",
-    "title": "Video",
-    "description": "Om publisheren eller hjemmesiden er onboardet på videoproduktet (f.eks. om Video Syndicate er aktiveret), og på hvilken enhed.",
-    "type": "dropdown",
-    "options": [
-      {
-        "index": 1,
-        "label": "Arbejder på det"
-      },
-      {
-        "index": 3,
-        "label": "Gået i stå"
-      },
-      {
-        "index": 4,
-        "label": "Publisher er ikke interesseret"
-      },
-      {
-        "index": 6,
-        "label": "N/A"
-      },
-      {
-        "index": 15,
-        "label": "Venter på publisher"
-      },
-      {
-        "index": 16,
-        "label": "Desktop"
-      },
-      {
-        "index": 17,
-        "label": "Mobil"
-      }
-    ]
-  },
-  {
-    "id": "dropdown_mksdw0qh",
-    "title": "Vertikal video",
-    "description": "",
-    "type": "dropdown",
-    "options": [
-      {
-        "index": 1,
-        "label": "Arbejder på det"
-      },
-      {
-        "index": 3,
-        "label": "Gået i stå"
-      },
-      {
-        "index": 4,
-        "label": "Ikke interesseret"
-      },
-      {
-        "index": 6,
-        "label": "N/A"
-      },
-      {
-        "index": 15,
-        "label": "Venter på tredjepart"
-      },
-      {
-        "index": 16,
-        "label": "Desktop"
-      },
-      {
-        "index": 17,
-        "label": "Mobil"
-      }
-    ]
-  },
-  {
-    "id": "color_mkr4rzd3",
-    "title": "OTT (video)",
-    "description": "Om publisheren eller hjemmesiden er onboardet på videoproduktet OTT (Video univers), og på hvilken enhed.",
-    "type": "status",
-    "options": [
-      {
-        "index": 0,
-        "label": "Arbejder på det"
-      },
-      {
-        "index": 1,
-        "label": "Live"
-      },
-      {
-        "index": 2,
-        "label": "Gået i stå"
-      },
-      {
-        "index": 5,
-        "label": "N/A"
-      },
-      {
-        "index": 107,
-        "label": "Afventer publisher"
-      }
-    ]
-  },
-  {
-    "id": "color_mkr4s6rs",
-    "title": "Click To Play / Autoplay funktion (video)",
-    "description": "Om hvilken afspiller type publisheren eller hjemmesiden bruger. Er det Autoplay eller Click-to-play (og på hvilken enhed).",
-    "type": "status",
-    "options": [
-      {
-        "index": 0,
-        "label": "Arbejder på det"
-      },
-      {
-        "index": 1,
-        "label": "Live"
-      },
-      {
-        "index": 2,
-        "label": "Gået i stå"
-      },
-      {
-        "index": 5,
-        "label": "N/A"
-      },
-      {
-        "index": 107,
-        "label": "Venter på publisher"
-      }
-    ]
-  },
-  {
-    "id": "dropdown1",
-    "title": "Vertikaler",
-    "description": "Vertikaler i STEP Network's publisher netværk",
-    "type": "dropdown",
-    "options": [
-      {
-        "index": 1,
-        "label": "Sport"
-      },
-      {
-        "index": 2,
-        "label": "News"
-      },
-      {
-        "index": 3,
-        "label": "Auto"
-      },
-      {
-        "index": 4,
-        "label": "B2B"
-      },
-      {
-        "index": 6,
-        "label": "Food & Lifestyle"
-      },
-      {
-        "index": 7,
-        "label": "Gaming & Tech"
-      },
-      {
-        "index": 11,
-        "label": "Home & Garden"
-      },
-      {
-        "index": 12,
-        "label": "Pets"
-      },
-      {
-        "index": 14,
-        "label": "DIY"
-      },
-      {
-        "index": 15,
-        "label": "None"
-      }
-    ]
-  },
-  {
-    "id": "status32",
-    "title": "Gambling / finance",
-    "description": "Om publisherens eller hjemmesidens annoncer er godkendt til gambling eller finance baseret ads. Man kan aldrig være begge på samme tid.",
-    "type": "status",
-    "options": [
-      {
-        "index": 5,
-        "label": "Gambling approved"
-      },
-      {
-        "index": 6,
-        "label": "Finance approved"
-      },
-      {
-        "index": 1,
-        "label": "RON"
-      },
-      {
-        "index": 2,
-        "label": "Jeg vil være Finance approved!"
-      }
-    ]
-  },
-  {
-    "id": "dropdown_mkrea39n",
-    "title": "Blockingliste",
-    "description": "Hvilke blockingliste publisheren er en del af i GAM.",
-    "type": "dropdown",
-    "options": [
-      {
-        "index": 4,
-        "label": "1. No blocklist"
-      },
-      {
-        "index": 5,
-        "label": "2. Competition blocking"
-      },
-      {
-        "index": 6,
-        "label": "N/A"
-      },
-      {
-        "index": 7,
-        "label": "Andre online spil sites, da de er konkurrenter"
-      },
-      {
-        "index": 8,
-        "label": "temu.com"
-      },
-      {
-        "index": 9,
-        "label": "krifa, det faglige hus, ase, De Frie Funktionærer, Business Danmark, Frie, Jobtryghed"
-      },
-      {
-        "index": 12,
-        "label": "4. Unclassified blocking"
-      },
-      {
-        "index": 13,
-        "label": "5. Block all non-IO"
-      },
-      {
-        "index": 102,
-        "label": "3. Competition blocking + Unclasified blocking"
-      }
-    ]
-  },
-  {
-    "id": "text3",
-    "title": "Kontakt",
-    "description": "E-mailadressen på den primære kontaktperson for hjemmesiden eller publisheren.",
-    "type": "text"
-  },
-  {
-    "id": "text4",
-    "title": "Tekniske kontaktperson",
-    "description": "E-mailadressen på den tekniske kontaktperson for publisheren eller hjemmesiden.",
-    "type": "text"
-  },
-  {
-    "id": "status",
-    "title": "Adnami status",
-    "description": "Status for Adnami på website eller publisher.",
-    "type": "status",
-    "options": [
-      {
-        "index": 0,
-        "label": "Arbejder på det"
-      },
-      {
-        "index": 1,
-        "label": "Live"
-      },
-      {
-        "index": 2,
-        "label": "Stuck"
-      },
-      {
-        "index": 4,
-        "label": "Adnami arbejder på det"
-      },
-      {
-        "index": 5,
-        "label": "N/A"
-      },
-      {
-        "index": 13,
-        "label": "Nej"
-      },
-      {
-        "index": 3,
-        "label": "Not started"
-      }
-    ]
-  },
-  {
-    "id": "dropdown_mksd7frz",
-    "title": "Topscroll - Adnami",
-    "description": "Status eller valg af enheder for \"Topscroll\" annonceprodukt/-format. \n\nForklaring af mulige statuser i feltet:\n\"Mobil\"\nFormatet vises kun på mobil.\n\n\"Desktop\"\nFormatet vises kun på desktop.\n\nVises da både på mobil og desktop såfremt begge disse er på. \n\n\"Venter på tredjepart\"\nImplementeringen eller godkendelsen af Topscroll er forsinket, fordi der afventes handling eller feedback fra en tredjepartsleverandør (fx annoncenetværk eller teknisk partner).\n\n\"Stuck\"\nProjektet eller opsætningen sidder fast på grund af tekniske problemer, manglende ressourcer eller andre blokeringer.\n\n\"Nej\"\nTopscroll-annoncer er ikke implementeret eller aktivt på nogen enheder. \n\n\nStørrelserne er: \n\nDesktop: 1x2,970x510   \nMobile: 300x220, 300x280",
-    "type": "dropdown",
-    "options": [
-      {
-        "index": 1,
-        "label": "Mobil"
-      },
-      {
-        "index": 3,
-        "label": "Nej"
-      },
-      {
-        "index": 5,
-        "label": "Venter på tredjepart"
-      },
-      {
-        "index": 6,
-        "label": "N/A"
-      },
-      {
-        "index": 8,
-        "label": "Desktop"
-      },
-      {
-        "index": 14,
-        "label": "Stuck"
-      },
-      {
-        "index": 15,
-        "label": "App"
-      }
-    ]
-  },
-  {
-    "id": "dropdown_mksdjeft",
-    "title": "Topscroll Expand - Adnami",
-    "description": "Status eller valg af enheder for \"Topscroll Expand\" annonceprodukt/-format. \n\nForklaring af mulige statuser i feltet (samme som for \"Topscroll\"):\n\n\"Mobil\"\nFormatet vises kun på mobil.\n\n\"Desktop\"\nFormatet vises kun på desktop.\n\nVises da både på mobil og desktop såfremt begge disse er på. \n\n\"Venter på tredjepart\"\nImplementeringen af Topscroll Expand er forsinket, fordi der afventes handling eller godkendelse fra tredjepart.\n\n\"Stuck\"\nOpsætningen eller implementeringen er fastlåst på grund af tekniske eller organisatoriske problemer.\n\n\"Nej\"\nTopscroll Expand er ikke implementeret eller aktiv på nogen enheder. \n\nStørrelserne er: \n\nDesktop: 970x510   \nMobile: 300x280",
-    "type": "dropdown",
-    "options": [
-      {
-        "index": 1,
-        "label": "Mobile"
-      },
-      {
-        "index": 3,
-        "label": "Nej"
-      },
-      {
-        "index": 5,
-        "label": "Venter på tredjepart"
-      },
-      {
-        "index": 6,
-        "label": "N/A"
-      },
-      {
-        "index": 8,
-        "label": "Desktop"
-      },
-      {
-        "index": 14,
-        "label": "Stuck"
-      },
-      {
-        "index": 15,
-        "label": "App"
-      }
-    ]
-  },
-  {
-    "id": "dropdown_mksdbwbf",
-    "title": "Double midscroll - Adnami",
-    "description": "Status eller valg af enheder for \"Double midscroll\" annonceprodukt/-format igennem Adnami. \n\nForklaring af mulige statuser i feltet:\n\n\n\n\"mobil\"\nDouble midscroll vises kun på mobil.\n\n\"Desktop\"\nDouble midscroll vises kun på desktop.\n\nVises da både på mobil og desktop såfremt begge disse er på. \n\n\"Venter på tredjepart\"\nImplementeringen af Double midscroll er forsinket, fordi der afventes handling eller godkendelse fra tredjepart.\n\n\"Stuck\"\nOpsætningen eller implementeringen er fastlåst på grund af tekniske eller organisatoriske problemer.\n\n\"Nej\"\nDouble midscroll er ikke implementeret eller aktiv på nogen enheder. \n\nStørrelserne er: \n\nDesktop: 970x550 \nMobile: 300x210",
-    "type": "dropdown",
-    "options": [
-      {
-        "index": 1,
-        "label": "Mobil"
-      },
-      {
-        "index": 3,
-        "label": "Nej"
-      },
-      {
-        "index": 5,
-        "label": "Venter på tredjepart"
-      },
-      {
-        "index": 6,
-        "label": "N/A"
-      },
-      {
-        "index": 8,
-        "label": "Desktop"
-      },
-      {
-        "index": 14,
-        "label": "Stuck"
-      }
-    ]
-  },
-  {
-    "id": "dropdown_mksdytf0",
-    "title": "Skin",
-    "description": "Status eller valg af enheder for \"Skin / Wallpaper\" annonceprodukt/-format. \n\nForklaring af mulige statuser i feltet:\n\n\"Kun Desktop\"\nSkin/Wallpaper annoncer vises kun på desktop.\n\n\"Venter på tredjepart\"\nImplementeringen af Skin/Wallpaper er forsinket, fordi der afventes handling eller godkendelse fra en tredjepartsleverandør.\n\n\"Stuck\"\nOpsætningen er fastlåst på grund af tekniske problemer eller andre blokeringer.\n\n\"Nej\"\nSkin/Wallpaper annoncer er ikke implementeret eller aktive på nogen enheder. \n\nStørrelserne her: 970x170   på desktop. \n\nDen fås ikke til mobil",
-    "type": "dropdown",
-    "options": [
-      {
-        "index": 2,
-        "label": "Kun desktop"
-      },
-      {
-        "index": 3,
-        "label": "Nej"
-      },
-      {
-        "index": 5,
-        "label": "Venter på tjedjepart"
-      },
-      {
-        "index": 6,
-        "label": "N/A"
-      },
-      {
-        "index": 14,
-        "label": "Stuck"
-      }
-    ]
-  },
-  {
-    "id": "dropdown_mksd17vw",
-    "title": "Midscroll - Adnami",
-    "description": "Status eller valg af enheder for \"Midscroll\" via Adnami. Det kører stadig igennem Step Network, men vi benytter Adnami til at levere formatet i nogle tilfælde. \n\nEr der \"mobil\" eller \"Desktop\" på er formatet altså tilgængeligt hos publisheren. \n\nForklaring af mulige statuser i feltet:\n\n\"Mobil\"\nmidscroll vises kun på mobil.\n\n\"Desktop\"\nmidscroll vises kun på desktop.\n\nVises da både på mobil og desktop såfremt begge disse er på. p.\n\n\"Venter på tredjepart\"\nImplementeringen af Adnami Midscroll afventer handling eller godkendelse fra tredjepart.\n\n\"Stuck\"\nOpsætningen sidder fast pga. tekniske problemer eller andre forhindringer.\n\n\"Nej\"\nAdnami Midscroll er ikke implementeret eller aktiv på nogen enheder.\n\nStørrelserne er 970x570 på desktop og 300x240 på mobil.",
-    "type": "dropdown",
-    "options": [
-      {
-        "index": 1,
-        "label": "Mobil"
-      },
-      {
-        "index": 3,
-        "label": "Nej"
-      },
-      {
-        "index": 4,
-        "label": "Desktop"
-      },
-      {
-        "index": 5,
-        "label": "Venter på tredjepart"
-      },
-      {
-        "index": 6,
-        "label": "N/A"
-      },
-      {
-        "index": 14,
-        "label": "Stuck"
-      }
-    ]
-  },
-  {
-    "id": "dropdown_mksdr0q2",
-    "title": "Anchor",
-    "description": "Status eller valg af enheder for \"Anchor\" annonceprodukt/-format. \n\nForklaring af mulige statuser i feltet:\n\n\"Mobil\"\nFormatet vises kun på mobil.\n\n\"Desktop\"\nFormatet vises kun på desktop.\n\nVises da både på mobil og desktop såfremt begge disse er på. \n\n\"Venter på tredjepart\"\nImplementeringen af Anchor er forsinket, fordi der afventes handling eller godkendelse fra tredjepart.\n\n\"Stuck\"\nOpsætningen sidder fast på grund af tekniske problemer eller andre forhindringer.\n\n\"Nej\"\nAnchor er ikke implementeret eller aktiv på nogen enheder.",
-    "type": "dropdown",
-    "options": [
-      {
-        "index": 1,
-        "label": "Mobile"
-      },
-      {
-        "index": 3,
-        "label": "Nej"
-      },
-      {
-        "index": 6,
-        "label": "N/A"
-      },
-      {
-        "index": 7,
-        "label": "App"
-      },
-      {
-        "index": 8,
-        "label": "Desktop"
-      },
-      {
-        "index": 14,
-        "label": "Gået i stå"
-      },
-      {
-        "index": 15,
-        "label": "Desktop - ikke programmatisk"
-      },
-      {
-        "index": 16,
-        "label": "Mobile - ikke programmatisk"
-      }
-    ]
-  },
-  {
-    "id": "dropdown_mksdh745",
-    "title": "True Native",
-    "description": "Status eller valg af enheder for \"True Native\" annonceprodukt/-format. \n\nForklaring af mulige statuser i feltet:\n\n\"Mobil\"\nFormatet vises kun på mobil.\n\n\"Desktop\"\nFormatet vises kun på desktop.\n\nVises da både på mobil og desktop såfremt begge disse er på. \n\n\"Nej\"\nTrue Native er ikke implementeret eller aktiv på nogen enheder.",
-    "type": "dropdown",
-    "options": [
-      {
-        "index": 3,
-        "label": "Nej"
-      },
-      {
-        "index": 4,
-        "label": "Venter på publisher"
-      },
-      {
-        "index": 6,
-        "label": "N/A"
-      },
-      {
-        "index": 7,
-        "label": "Venter på Contimo"
-      },
-      {
-        "index": 9,
-        "label": "Desktop"
-      },
-      {
-        "index": 10,
-        "label": "Arbejder på det"
-      },
-      {
-        "index": 11,
-        "label": "Mobil"
-      },
-      {
-        "index": 14,
-        "label": "Stuck"
-      }
-    ]
-  },
-  {
-    "id": "dropdown_mksdb150",
-    "title": "Adnami native",
-    "description": "Status eller valg af enheder for \"Adnami Native\" annonceprodukt/-format. \n\nForklaring af mulige statuser i feltet:\n\n\"Mobil\"\nFormatet vises kun på mobil.\n\n\"Desktop\"\nFormatet vises kun på desktop.\n\nVises da både på mobil og desktop såfremt begge disse er på. \n\n\"Venter på tredjepart\"\nImplementeringen af Adnami Native er forsinket, fordi der afventes handling eller godkendelse fra tredjepart.\n\n\"Stuck\"\nOpsætningen sidder fast på grund af tekniske problemer eller andre forhindringer.\n\n\"Nej\"\nAdnami Native er ikke implementeret eller aktiv på nogen enheder.",
-    "type": "dropdown",
-    "options": [
-      {
-        "index": 1,
-        "label": "Mobil"
-      },
-      {
-        "index": 3,
-        "label": "Nej"
-      },
-      {
-        "index": 5,
-        "label": "Venter på tjedjepart"
-      },
-      {
-        "index": 6,
-        "label": "N/A"
-      },
-      {
-        "index": 8,
-        "label": "Desktop"
-      },
-      {
-        "index": 14,
-        "label": "Stuck"
-      }
-    ]
-  },
-  {
-    "id": "dropdown_mksdfx54",
-    "title": "Google Interstitial",
-    "description": "Status eller valg af enheder for \"Google Interstitial\" annonceprodukt/-format. \n\nForklaring af mulige statuser i feltet:\n\n\"Mobil\"\nFormatet vises kun på mobil.\n\n\"Desktop\"\nFormatet vises kun på desktop.\n\nVises da både på mobil og desktop såfremt begge disse er på. \n\n\"Venter på tredjepart\"\nImplementeringen af Google Interstitial er forsinket, fordi der afventes handling eller godkendelse fra tredjepart.\n\n\"Stuck\"\nOpsætningen sidder fast på grund af tekniske problemer eller andre forhindringer.\n\n\"Nej\"\nGoogle Interstitial er ikke implementeret eller aktiv på nogen enheder.",
-    "type": "dropdown",
-    "options": [
-      {
-        "index": 1,
-        "label": "Mobile"
-      },
-      {
-        "index": 3,
-        "label": "Nej"
-      },
-      {
-        "index": 4,
-        "label": "App"
-      },
-      {
-        "index": 6,
-        "label": "N/A"
-      },
-      {
-        "index": 8,
-        "label": "Desktop"
-      },
-      {
-        "index": 14,
-        "label": "Stuck"
-      }
-    ]
-  },
-  {
-    "id": "dropdown_mksd6yy",
-    "title": "Outstream (display)",
-    "description": "Status eller valg af enheder for \"Outstream (display)\" annonceprodukt/-format. \n\nForklaring af mulige statuser i feltet:\n\n\"Mobil\"\nFormatet vises kun på mobil.\n\n\"Desktop\"\nFormatet vises kun på desktop.\n\nVises da både på mobil og desktop såfremt begge disse er på. .\n\nVenter på tredjepart\nImplementeringen af Outstream (display) er forsinket, fordi der afventes handling eller godkendelse fra tredjepart.\n\nStuck\nOpsætningen sidder fast på grund af tekniske problemer eller andre forhindringer.\n\nNej\nOutstream (display) er ikke implementeret eller aktiv på nogen enheder.",
-    "type": "dropdown",
-    "options": [
-      {
-        "index": 1,
-        "label": "Mobil"
-      },
-      {
-        "index": 3,
-        "label": "Nej"
-      },
-      {
-        "index": 6,
-        "label": "N/A"
-      },
-      {
-        "index": 8,
-        "label": "Desktop"
-      },
-      {
-        "index": 14,
-        "label": "Stuck"
-      }
-    ]
-  },
-  {
-    "id": "dropdown_mksdcgvj",
-    "title": "Topscroll - High-impact.js",
-    "description": "Status eller valg af enheder for \"Topscroll High impact.js\" annonceprodukt/-format (anden udbyder end Adnami). \n\nForklaring af mulige statuser i feltet:\n\n\"Mobil\"\nFormatet vises kun på mobil.\n\n\"Desktop\"\nFormatet vises kun på desktop.\n\nVises da både på mobil og desktop såfremt begge disse er på. \n\n\"Venter på tredjepart\"\nImplementeringen af Topscroll High impact.js er forsinket, fordi der afventes handling eller godkendelse fra tredjepart.\n\n\"Stuck\"\nOpsætningen sidder fast på grund af tekniske problemer eller andre forhindringer.\n\n\"Nej\"\nTopscroll High impact.js er ikke implementeret eller aktiv på nogen enheder.\n\nStørrelserne er 1x2 og 970x510 på desktop.\n 300x220 og 300x280 på mobil.",
-    "type": "dropdown",
-    "options": [
-      {
-        "index": 1,
-        "label": "Arbejder på det"
-      },
-      {
-        "index": 3,
-        "label": "Nej"
-      },
-      {
-        "index": 6,
-        "label": "N/A"
-      },
-      {
-        "index": 20,
-        "label": "Mobil"
-      },
-      {
-        "index": 108,
-        "label": "Desktop"
-      }
-    ]
-  },
-  {
-    "id": "dropdown_mksdjpqx",
-    "title": "Midscroll - High-impact.js",
-    "description": "Status eller valg af enheder for \"Midscroll High impact.js\" annonceprodukt/-format (anden udbyder end Adnami). \n\nForklaring af mulige statuser i feltet:\n\n\"Mobil\"\nFormatet vises kun på mobil.\n\n\"Desktop\"\nFormatet vises kun på desktop.\n\nVises da både på mobil og desktop såfremt begge disse er på. \n\n\"Venter på tredjepart\"\nImplementeringen af Midscroll High impact.js er forsinket, fordi der afventes handling eller godkendelse fra tredjepart.\n\n\"Stuck\"\nOpsætningen sidder fast på grund af tekniske problemer eller andre forhindringer.\n\n\"Nej\"\nMidscroll High impact.js er ikke implementeret eller aktiv på nogen enheder.\n\nStørrelserne er 970x570 på desktop og 300x240 på mobil.",
-    "type": "dropdown",
-    "options": [
-      {
-        "index": 1,
-        "label": "Arbejder på det"
-      },
-      {
-        "index": 3,
-        "label": "Nej"
-      },
-      {
-        "index": 4,
-        "label": "Mobil"
-      },
-      {
-        "index": 6,
-        "label": "N/A"
-      },
-      {
-        "index": 108,
-        "label": "Desktop"
-      }
-    ]
-  },
-  {
-    "id": "board_relation_mkp69z9s",
-    "title": "Publisher Group",
-    "description": "Publisher-gruppen som domænet eller appen hører til som overordnet. Der er altid kun én publisher-gruppe tilknyttet et domæne/app, aldrig flere eller færre.",
-    "type": "board_relation"
-  },
-  {
-    "id": "link_to_tasks___adops_mkkx485x",
-    "title": "Tasks - AdOps",
-    "description": "",
-    "type": "board_relation"
-  },
-  {
-    "id": "board_relation0__1",
-    "title": "Onboarding fra Typeform",
-    "description": "",
-    "type": "board_relation"
-  },
-  {
-    "id": "connect_boards_mkmnp6fx",
-    "title": "Opportunities",
-    "description": "",
-    "type": "board_relation"
-  },
-  {
-    "id": "link_to_tickets__1",
-    "title": "Tickets",
-    "description": "",
-    "type": "board_relation"
-  },
-  {
-    "id": "color_mksdc9rp",
-    "title": "RE-AD Status",
-    "description": "RE-AD (Responsible Advertisement) status beskriver hvorvidt en publisher benytter sig af vores RE-AD system og om det er live på sitet.\nRe-Ad er et bæredygtigt og effektivt annonceprodukt, udviklet med fokus på både miljøhensyn og annoncørens værdi. I stedet for at vise flere annoncer samtidig, sikrer Re-Ad, at der kun leveres én annonce per sidevisning. Det reducerer antallet af serverkald og minimerer unødvendige ressourceforbrug.\n\nMiljøvenlig annoncering\nVed kun at vise én annonce ad gangen, reduceres belastningen på både brugerens enhed og serverinfrastrukturen. Det betyder mindre datatrafik og færre ressourcer, hvilket gør Re-Ad til et miljøansvarligt valg i den digitale annoncering.\n\nØget værdi for annoncøren\nNår der kun vises én annonce, får annoncøren fuld eksponering uden støj fra konkurrerende budskaber. Det giver:\n\nHøjere opmærksomhed\n\nBedre engagement\n\nØget brandværdi\n\nRe-Ad sikrer dermed, at annoncørens budskab står klart og tydeligt frem for brugeren, og skaber mere værdi per visning.\n\nUnderstøttede annonceformater\nRe-Ad leveres i følgende formater:\n\n300x240\n\n320x320\n\n300x210\n\n970x170\n\n930x180\n\nFormatvalget er optimeret til både desktop og mobil, og sikrer en god brugeroplevelse uden at gå på kompromis med synlighed eller performance.",
-    "type": "status",
-    "options": [
-      {
-        "index": 0,
-        "label": "Aktiv"
-      },
-      {
-        "index": 1,
-        "label": "Inaktiv"
-      },
-      {
-        "index": 5,
-        "label": "N/A"
-      }
-    ]
-  }
+	{
+		"id": "id",
+		"title": "Item ID",
+		"description": "The unique identifier for the item",
+		"type": "numbers"
+	},
+	{
+		"id": "name",
+		"title": "Name",
+		"description": "",
+		"type": "text"
+	},
+	{
+		"id": "text_mkm6ckz5",
+		"title": "Publisher beskrivelse",
+		"description": "Beskrivelsen af websitet/hjemmesiden, publisheren og indholdet af siden.",
+		"type": "text"
+	},
+	{
+		"id": "people__1",
+		"title": "Ansvarlig - Onboarding",
+		"description": "Personen som er ansvarlig for onboardingen af publisheren.",
+		"type": "people"
+	},
+	{
+		"id": "tags__1",
+		"title": "AY workspace (Assertive Yield)",
+		"description": "Hvilket Assertive Yield (AY) workspace, som publisheren hører til.",
+		"type": "tags"
+	},
+	{
+		"id": "text_mktdhmar",
+		"title": "Ad Unit ID",
+		"description": "Ad unit ID'et som er forbundet til Google Ad Manager (GAM). Dette skal altid udfyldes da det bruges til forecasting.",
+		"type": "text"
+	},
+	{
+		"id": "status8",
+		"title": "Publisher status",
+		"description": "\"Arbejder på det\" = Vi arbejder på at onboarde sitet ind i vores netværk.",
+		"type": "status",
+		"options": [
+			{
+				"index": 0,
+				"label": "Arbejder på det"
+			},
+			{
+				"index": 3,
+				"label": "Offboarding"
+			},
+			{
+				"index": 1,
+				"label": "Live"
+			},
+			{
+				"index": 2,
+				"label": "Stuck"
+			},
+			{
+				"index": 5,
+				"label": "N/A"
+			},
+			{
+				"index": 7,
+				"label": "Inaktiv"
+			},
+			{
+				"index": 4,
+				"label": "Kun CMP"
+			},
+			{
+				"index": 6,
+				"label": "Kommende publisher"
+			}
+		]
+	},
+	{
+		"id": "status_104",
+		"title": "Framework",
+		"description": "Frameworket som hjemmesiden eller App'en kører på.",
+		"type": "status",
+		"options": [
+			{
+				"index": 1,
+				"label": "Legacy web (MPA)"
+			},
+			{
+				"index": 2,
+				"label": "Web App"
+			},
+			{
+				"index": 107,
+				"label": "SPA"
+			},
+			{
+				"index": 19,
+				"label": "Native App"
+			},
+			{
+				"index": 5,
+				"label": "N/A"
+			}
+		]
+	},
+	{
+		"id": "status71",
+		"title": "Ads.txt version",
+		"description": "Den Ads.txt-version, som hjemmesiden i øjeblikket kører med.\n\nKort forklaring af ads.txt:\n\nAds.txt (Authorized Digital Sellers) er en lille tekstfil, som en hjemmeside udgiver for at fortælle, hvilke firmaer der må sælge annoncer på dens vegne. Den hjælper med at bekæmpe annoncebedrageri ved at sikre, at kun godkendte annoncører kan sælge dens annonceplads.\n\nMan kan normalt finde den på:\nhttps://[domæne]/ads.txt.",
+		"type": "status",
+		"options": [
+			{
+				"index": 19,
+				"label": "Not auto - Needs update"
+			},
+			{
+				"index": 4,
+				"label": "Ads.txt missing"
+			},
+			{
+				"index": 6,
+				"label": "Automatic (old)"
+			},
+			{
+				"index": 7,
+				"label": "Not auto - Up-to-date"
+			},
+			{
+				"index": 8,
+				"label": "Publisher replied - waiting"
+			},
+			{
+				"index": 5,
+				"label": "N/A"
+			},
+			{
+				"index": 0,
+				"label": "Inactive"
+			},
+			{
+				"index": 1,
+				"label": "Manual via Kodus"
+			},
+			{
+				"index": 2,
+				"label": "Split update sent"
+			},
+			{
+				"index": 9,
+				"label": "Automatic"
+			},
+			{
+				"index": 3,
+				"label": "Active (for content providers)"
+			}
+		]
+	},
+	{
+		"id": "status7",
+		"title": "HBM - Header Bidding Manager",
+		"description": "Den Header Bidding Manager (HBM), som hjemmesiden i øjeblikket har aktiv.",
+		"type": "status",
+		"options": [
+			{
+				"index": 7,
+				"label": "Assertive Yield"
+			},
+			{
+				"index": 1,
+				"label": "QuickWrap"
+			},
+			{
+				"index": 0,
+				"label": "Working on setup (in QW)"
+			},
+			{
+				"index": 16,
+				"label": "Waiting for Publisher"
+			},
+			{
+				"index": 2,
+				"label": "Stuck"
+			},
+			{
+				"index": 3,
+				"label": "Ready to implement"
+			},
+			{
+				"index": 4,
+				"label": "Waiting for STEP"
+			},
+			{
+				"index": 6,
+				"label": "Stage debugging"
+			},
+			{
+				"index": 9,
+				"label": "No display ads"
+			},
+			{
+				"index": 10,
+				"label": "Inactive"
+			},
+			{
+				"index": 11,
+				"label": "Google Ads SDK"
+			},
+			{
+				"index": 5,
+				"label": "N/A"
+			}
+		]
+	},
+	{
+		"id": "status9",
+		"title": "Dynamic Ad Insertion",
+		"description": "Status for Dynamic Ad Insertion (DAI) på hjemmesiden eller hos udgiveren.",
+		"type": "status",
+		"options": [
+			{
+				"index": 1,
+				"label": "Live"
+			},
+			{
+				"index": 0,
+				"label": "Arbejder på det"
+			},
+			{
+				"index": 7,
+				"label": "Waiting for publisher"
+			},
+			{
+				"index": 13,
+				"label": "Stuck (No room)"
+			},
+			{
+				"index": 4,
+				"label": "Awaiting third party"
+			},
+			{
+				"index": 5,
+				"label": "N/A"
+			},
+			{
+				"index": 3,
+				"label": "OK from publisher"
+			},
+			{
+				"index": 9,
+				"label": "AdOps setup needed"
+			},
+			{
+				"index": 10,
+				"label": "Stuck (technical)"
+			},
+			{
+				"index": 12,
+				"label": "Nej"
+			}
+		]
+	},
+	{
+		"id": "status_12",
+		"title": "MCM",
+		"description": "Status for Google Ad Manager's MCM godkendelse.",
+		"type": "status",
+		"options": [
+			{
+				"index": 0,
+				"label": "Arbejder på det"
+			},
+			{
+				"index": 1,
+				"label": "Done"
+			},
+			{
+				"index": 2,
+				"label": "Stuck"
+			},
+			{
+				"index": 5,
+				"label": "N/A"
+			},
+			{
+				"index": 7,
+				"label": "Waiting for Google"
+			},
+			{
+				"index": 12,
+				"label": ""
+			},
+			{
+				"index": 152,
+				"label": "Waiting for publisher"
+			},
+			{
+				"index": 103,
+				"label": "Not started"
+			},
+			{
+				"index": 3,
+				"label": "Waiting for implementation"
+			}
+		]
+	},
+	{
+		"id": "status_1",
+		"title": "Tealium & Data collection",
+		"description": "Status for tealium og audience data indsamling.",
+		"type": "status",
+		"options": [
+			{
+				"index": 1,
+				"label": "Live"
+			},
+			{
+				"index": 2,
+				"label": "Not live"
+			},
+			{
+				"index": 5,
+				"label": "N/A"
+			},
+			{
+				"index": 7,
+				"label": "App - Not tealium"
+			},
+			{
+				"index": 14,
+				"label": "Waiting for Publisher"
+			}
+		]
+	},
+	{
+		"id": "status_18",
+		"title": "CMP: Consent management platform",
+		"description": "Status for Consent Management Platform (CMP), og hvilken platform der bruges. Didomi og Tealium er vores primære setup.",
+		"type": "status",
+		"options": [
+			{
+				"index": 1,
+				"label": "Didomi inline"
+			},
+			{
+				"index": 15,
+				"label": "Didomi via Tealium"
+			},
+			{
+				"index": 7,
+				"label": "Other CMP"
+			},
+			{
+				"index": 0,
+				"label": "Not live"
+			},
+			{
+				"index": 2,
+				"label": "Stuck/Non-complient"
+			},
+			{
+				"index": 5,
+				"label": "N/A"
+			},
+			{
+				"index": 14,
+				"label": "Didomi SDK"
+			},
+			{
+				"index": 3,
+				"label": "Det må i godt klare!"
+			}
+		]
+	},
+	{
+		"id": "status_19",
+		"title": "GA: STEP Google Analytics",
+		"description": "Status for vores (STEP) Google Analytics (GA)-sporing på hjemmesiden.",
+		"type": "status",
+		"options": [
+			{
+				"index": 0,
+				"label": "Arbejder på det"
+			},
+			{
+				"index": 1,
+				"label": "Done"
+			},
+			{
+				"index": 2,
+				"label": "Stuck"
+			},
+			{
+				"index": 3,
+				"label": "Working on it"
+			},
+			{
+				"index": 5,
+				"label": "N/A"
+			},
+			{
+				"index": 7,
+				"label": "Missing tealium"
+			}
+		]
+	},
+	{
+		"id": "status_13",
+		"title": "GA: Publisher Google Analytics",
+		"description": "Status for vores partners Google Analytics (GA)-sporing på hjemmesiden.",
+		"type": "status",
+		"options": [
+			{
+				"index": 0,
+				"label": "Arbejder på det"
+			},
+			{
+				"index": 1,
+				"label": "Done"
+			},
+			{
+				"index": 2,
+				"label": "Stuck"
+			},
+			{
+				"index": 5,
+				"label": "N/A"
+			},
+			{
+				"index": 7,
+				"label": "Asked pub"
+			}
+		]
+	},
+	{
+		"id": "status_16",
+		"title": "Prebid setup",
+		"description": "Status over om prebid er live på hos publisher.",
+		"type": "status",
+		"options": [
+			{
+				"index": 0,
+				"label": "Arbejder på det"
+			},
+			{
+				"index": 1,
+				"label": "Live"
+			},
+			{
+				"index": 2,
+				"label": "Stuck"
+			},
+			{
+				"index": 5,
+				"label": "N/A"
+			},
+			{
+				"index": 9,
+				"label": "No prebid"
+			}
+		]
+	},
+	{
+		"id": "status_10",
+		"title": "Refresh",
+		"description": "Status for ad refresh for publisheren.",
+		"type": "status",
+		"options": [
+			{
+				"index": 0,
+				"label": "Arbejder på det"
+			},
+			{
+				"index": 1,
+				"label": "Live"
+			},
+			{
+				"index": 2,
+				"label": "Stuck"
+			},
+			{
+				"index": 5,
+				"label": "N/A"
+			},
+			{
+				"index": 14,
+				"label": "No refresh"
+			},
+			{
+				"index": 9,
+				"label": "No ads"
+			}
+		]
+	},
+	{
+		"id": "status_14",
+		"title": "CMP opt-in model (Consent Management Platform)",
+		"description": "Hvilken type Consent Management Platform (CMP) de har valgt, f.eks. Ja/Nej-valg, Paywall osv. Specificere også om det er Didomi, eller anden udbyder der er valgt.",
+		"type": "status",
+		"options": [
+			{
+				"index": 1,
+				"label": "Ja/Nej"
+			},
+			{
+				"index": 2,
+				"label": "Stuck"
+			},
+			{
+				"index": 5,
+				"label": "N/A"
+			},
+			{
+				"index": 7,
+				"label": "Anden CMP"
+			},
+			{
+				"index": 3,
+				"label": "Didomi Ja/Nej"
+			},
+			{
+				"index": 9,
+				"label": "Didomi Paywall"
+			}
+		]
+	},
+	{
+		"id": "status_103",
+		"title": "Legitime interesser",
+		"description": "Status for legitim interesse på hjemmesiden eller hos publisher.",
+		"type": "status",
+		"options": [
+			{
+				"index": 0,
+				"label": "Arbejder på det"
+			},
+			{
+				"index": 1,
+				"label": "On"
+			},
+			{
+				"index": 2,
+				"label": "Stuck"
+			},
+			{
+				"index": 5,
+				"label": "N/A"
+			},
+			{
+				"index": 7,
+				"label": "interreseret"
+			},
+			{
+				"index": 152,
+				"label": "Waiting for Publisher"
+			},
+			{
+				"index": 154,
+				"label": "On - through their CMP"
+			}
+		]
+	},
+	{
+		"id": "status_1_Mjj2Gm6U",
+		"title": "Gemius",
+		"description": "Om publisheren eller hjemmesiden er en del af Gemius eller ej.",
+		"type": "status",
+		"options": [
+			{
+				"index": 0,
+				"label": "Working on it"
+			},
+			{
+				"index": 1,
+				"label": "Yes"
+			},
+			{
+				"index": 2,
+				"label": "No"
+			},
+			{
+				"index": 5,
+				"label": "N/A"
+			},
+			{
+				"index": 107,
+				"label": "On hold"
+			}
+		]
+	},
+	{
+		"id": "dropdown_mksddmgt",
+		"title": "Video",
+		"description": "Om publisheren eller hjemmesiden er onboardet på videoproduktet (f.eks. om Video Syndicate er aktiveret), og på hvilken enhed.",
+		"type": "dropdown",
+		"options": [
+			{
+				"index": 1,
+				"label": "Arbejder på det"
+			},
+			{
+				"index": 3,
+				"label": "Gået i stå"
+			},
+			{
+				"index": 4,
+				"label": "Publisher er ikke interesseret"
+			},
+			{
+				"index": 6,
+				"label": "N/A"
+			},
+			{
+				"index": 15,
+				"label": "Venter på publisher"
+			},
+			{
+				"index": 16,
+				"label": "Desktop"
+			},
+			{
+				"index": 17,
+				"label": "Mobil"
+			}
+		]
+	},
+	{
+		"id": "dropdown_mksdw0qh",
+		"title": "Vertikal video",
+		"description": "",
+		"type": "dropdown",
+		"options": [
+			{
+				"index": 1,
+				"label": "Arbejder på det"
+			},
+			{
+				"index": 3,
+				"label": "Gået i stå"
+			},
+			{
+				"index": 4,
+				"label": "Ikke interesseret"
+			},
+			{
+				"index": 6,
+				"label": "N/A"
+			},
+			{
+				"index": 15,
+				"label": "Venter på tredjepart"
+			},
+			{
+				"index": 16,
+				"label": "Desktop"
+			},
+			{
+				"index": 17,
+				"label": "Mobil"
+			}
+		]
+	},
+	{
+		"id": "color_mkr4rzd3",
+		"title": "OTT (video)",
+		"description": "Om publisheren eller hjemmesiden er onboardet på videoproduktet OTT (Video univers), og på hvilken enhed.",
+		"type": "status",
+		"options": [
+			{
+				"index": 0,
+				"label": "Arbejder på det"
+			},
+			{
+				"index": 1,
+				"label": "Live"
+			},
+			{
+				"index": 2,
+				"label": "Gået i stå"
+			},
+			{
+				"index": 5,
+				"label": "N/A"
+			},
+			{
+				"index": 107,
+				"label": "Afventer publisher"
+			}
+		]
+	},
+	{
+		"id": "color_mkr4s6rs",
+		"title": "Click To Play / Autoplay funktion (video)",
+		"description": "Om hvilken afspiller type publisheren eller hjemmesiden bruger. Er det Autoplay eller Click-to-play (og på hvilken enhed).",
+		"type": "status",
+		"options": [
+			{
+				"index": 0,
+				"label": "Arbejder på det"
+			},
+			{
+				"index": 1,
+				"label": "Live"
+			},
+			{
+				"index": 2,
+				"label": "Gået i stå"
+			},
+			{
+				"index": 5,
+				"label": "N/A"
+			},
+			{
+				"index": 107,
+				"label": "Venter på publisher"
+			}
+		]
+	},
+	{
+		"id": "dropdown1",
+		"title": "Vertikaler",
+		"description": "Vertikaler i STEP Network's publisher netværk",
+		"type": "dropdown",
+		"options": [
+			{
+				"index": 1,
+				"label": "Sport"
+			},
+			{
+				"index": 2,
+				"label": "News"
+			},
+			{
+				"index": 3,
+				"label": "Auto"
+			},
+			{
+				"index": 4,
+				"label": "B2B"
+			},
+			{
+				"index": 6,
+				"label": "Food & Lifestyle"
+			},
+			{
+				"index": 7,
+				"label": "Gaming & Tech"
+			},
+			{
+				"index": 11,
+				"label": "Home & Garden"
+			},
+			{
+				"index": 12,
+				"label": "Pets"
+			},
+			{
+				"index": 14,
+				"label": "DIY"
+			},
+			{
+				"index": 15,
+				"label": "None"
+			}
+		]
+	},
+	{
+		"id": "status32",
+		"title": "Gambling / finance",
+		"description": "Om publisherens eller hjemmesidens annoncer er godkendt til gambling eller finance baseret ads. Man kan aldrig være begge på samme tid.",
+		"type": "status",
+		"options": [
+			{
+				"index": 5,
+				"label": "Gambling approved"
+			},
+			{
+				"index": 6,
+				"label": "Finance approved"
+			},
+			{
+				"index": 1,
+				"label": "RON"
+			},
+			{
+				"index": 2,
+				"label": "Jeg vil være Finance approved!"
+			}
+		]
+	},
+	{
+		"id": "dropdown_mkrea39n",
+		"title": "Blockingliste",
+		"description": "Hvilke blockingliste publisheren er en del af i GAM.",
+		"type": "dropdown",
+		"options": [
+			{
+				"index": 4,
+				"label": "1. No blocklist"
+			},
+			{
+				"index": 5,
+				"label": "2. Competition blocking"
+			},
+			{
+				"index": 6,
+				"label": "N/A"
+			},
+			{
+				"index": 7,
+				"label": "Andre online spil sites, da de er konkurrenter"
+			},
+			{
+				"index": 8,
+				"label": "temu.com"
+			},
+			{
+				"index": 9,
+				"label": "krifa, det faglige hus, ase, De Frie Funktionærer, Business Danmark, Frie, Jobtryghed"
+			},
+			{
+				"index": 12,
+				"label": "4. Unclassified blocking"
+			},
+			{
+				"index": 13,
+				"label": "5. Block all non-IO"
+			},
+			{
+				"index": 102,
+				"label": "3. Competition blocking + Unclasified blocking"
+			}
+		]
+	},
+	{
+		"id": "text3",
+		"title": "Kontakt",
+		"description": "E-mailadressen på den primære kontaktperson for hjemmesiden eller publisheren.",
+		"type": "text"
+	},
+	{
+		"id": "text4",
+		"title": "Tekniske kontaktperson",
+		"description": "E-mailadressen på den tekniske kontaktperson for publisheren eller hjemmesiden.",
+		"type": "text"
+	},
+	{
+		"id": "status",
+		"title": "Adnami status",
+		"description": "Status for Adnami på website eller publisher.",
+		"type": "status",
+		"options": [
+			{
+				"index": 0,
+				"label": "Arbejder på det"
+			},
+			{
+				"index": 1,
+				"label": "Live"
+			},
+			{
+				"index": 2,
+				"label": "Stuck"
+			},
+			{
+				"index": 4,
+				"label": "Adnami arbejder på det"
+			},
+			{
+				"index": 5,
+				"label": "N/A"
+			},
+			{
+				"index": 13,
+				"label": "Nej"
+			},
+			{
+				"index": 3,
+				"label": "Not started"
+			}
+		]
+	},
+	{
+		"id": "dropdown_mksd7frz",
+		"title": "Topscroll - Adnami",
+		"description": "Status eller valg af enheder for \"Topscroll\" annonceprodukt/-format. \n\nForklaring af mulige statuser i feltet:\n\"Mobil\"\nFormatet vises kun på mobil.\n\n\"Desktop\"\nFormatet vises kun på desktop.\n\nVises da både på mobil og desktop såfremt begge disse er på. \n\n\"Venter på tredjepart\"\nImplementeringen eller godkendelsen af Topscroll er forsinket, fordi der afventes handling eller feedback fra en tredjepartsleverandør (fx annoncenetværk eller teknisk partner).\n\n\"Stuck\"\nProjektet eller opsætningen sidder fast på grund af tekniske problemer, manglende ressourcer eller andre blokeringer.\n\n\"Nej\"\nTopscroll-annoncer er ikke implementeret eller aktivt på nogen enheder. \n\n\nStørrelserne er: \n\nDesktop: 1x2,970x510   \nMobile: 300x220, 300x280",
+		"type": "dropdown",
+		"options": [
+			{
+				"index": 1,
+				"label": "Mobil"
+			},
+			{
+				"index": 3,
+				"label": "Nej"
+			},
+			{
+				"index": 5,
+				"label": "Venter på tredjepart"
+			},
+			{
+				"index": 6,
+				"label": "N/A"
+			},
+			{
+				"index": 8,
+				"label": "Desktop"
+			},
+			{
+				"index": 14,
+				"label": "Stuck"
+			},
+			{
+				"index": 15,
+				"label": "App"
+			}
+		]
+	},
+	{
+		"id": "dropdown_mksdjeft",
+		"title": "Topscroll Expand - Adnami",
+		"description": "Status eller valg af enheder for \"Topscroll Expand\" annonceprodukt/-format. \n\nForklaring af mulige statuser i feltet (samme som for \"Topscroll\"):\n\n\"Mobil\"\nFormatet vises kun på mobil.\n\n\"Desktop\"\nFormatet vises kun på desktop.\n\nVises da både på mobil og desktop såfremt begge disse er på. \n\n\"Venter på tredjepart\"\nImplementeringen af Topscroll Expand er forsinket, fordi der afventes handling eller godkendelse fra tredjepart.\n\n\"Stuck\"\nOpsætningen eller implementeringen er fastlåst på grund af tekniske eller organisatoriske problemer.\n\n\"Nej\"\nTopscroll Expand er ikke implementeret eller aktiv på nogen enheder. \n\nStørrelserne er: \n\nDesktop: 970x510   \nMobile: 300x280",
+		"type": "dropdown",
+		"options": [
+			{
+				"index": 1,
+				"label": "Mobile"
+			},
+			{
+				"index": 3,
+				"label": "Nej"
+			},
+			{
+				"index": 5,
+				"label": "Venter på tredjepart"
+			},
+			{
+				"index": 6,
+				"label": "N/A"
+			},
+			{
+				"index": 8,
+				"label": "Desktop"
+			},
+			{
+				"index": 14,
+				"label": "Stuck"
+			},
+			{
+				"index": 15,
+				"label": "App"
+			}
+		]
+	},
+	{
+		"id": "dropdown_mksdbwbf",
+		"title": "Double midscroll - Adnami",
+		"description": "Status eller valg af enheder for \"Double midscroll\" annonceprodukt/-format igennem Adnami. \n\nForklaring af mulige statuser i feltet:\n\n\n\n\"mobil\"\nDouble midscroll vises kun på mobil.\n\n\"Desktop\"\nDouble midscroll vises kun på desktop.\n\nVises da både på mobil og desktop såfremt begge disse er på. \n\n\"Venter på tredjepart\"\nImplementeringen af Double midscroll er forsinket, fordi der afventes handling eller godkendelse fra tredjepart.\n\n\"Stuck\"\nOpsætningen eller implementeringen er fastlåst på grund af tekniske eller organisatoriske problemer.\n\n\"Nej\"\nDouble midscroll er ikke implementeret eller aktiv på nogen enheder. \n\nStørrelserne er: \n\nDesktop: 970x550 \nMobile: 300x210",
+		"type": "dropdown",
+		"options": [
+			{
+				"index": 1,
+				"label": "Mobil"
+			},
+			{
+				"index": 3,
+				"label": "Nej"
+			},
+			{
+				"index": 5,
+				"label": "Venter på tredjepart"
+			},
+			{
+				"index": 6,
+				"label": "N/A"
+			},
+			{
+				"index": 8,
+				"label": "Desktop"
+			},
+			{
+				"index": 14,
+				"label": "Stuck"
+			}
+		]
+	},
+	{
+		"id": "dropdown_mksdytf0",
+		"title": "Skin",
+		"description": "Status eller valg af enheder for \"Skin / Wallpaper\" annonceprodukt/-format. \n\nForklaring af mulige statuser i feltet:\n\n\"Kun Desktop\"\nSkin/Wallpaper annoncer vises kun på desktop.\n\n\"Venter på tredjepart\"\nImplementeringen af Skin/Wallpaper er forsinket, fordi der afventes handling eller godkendelse fra en tredjepartsleverandør.\n\n\"Stuck\"\nOpsætningen er fastlåst på grund af tekniske problemer eller andre blokeringer.\n\n\"Nej\"\nSkin/Wallpaper annoncer er ikke implementeret eller aktive på nogen enheder. \n\nStørrelserne her: 970x170   på desktop. \n\nDen fås ikke til mobil",
+		"type": "dropdown",
+		"options": [
+			{
+				"index": 2,
+				"label": "Kun desktop"
+			},
+			{
+				"index": 3,
+				"label": "Nej"
+			},
+			{
+				"index": 5,
+				"label": "Venter på tjedjepart"
+			},
+			{
+				"index": 6,
+				"label": "N/A"
+			},
+			{
+				"index": 14,
+				"label": "Stuck"
+			}
+		]
+	},
+	{
+		"id": "dropdown_mksd17vw",
+		"title": "Midscroll - Adnami",
+		"description": "Status eller valg af enheder for \"Midscroll\" via Adnami. Det kører stadig igennem Step Network, men vi benytter Adnami til at levere formatet i nogle tilfælde. \n\nEr der \"mobil\" eller \"Desktop\" på er formatet altså tilgængeligt hos publisheren. \n\nForklaring af mulige statuser i feltet:\n\n\"Mobil\"\nmidscroll vises kun på mobil.\n\n\"Desktop\"\nmidscroll vises kun på desktop.\n\nVises da både på mobil og desktop såfremt begge disse er på. p.\n\n\"Venter på tredjepart\"\nImplementeringen af Adnami Midscroll afventer handling eller godkendelse fra tredjepart.\n\n\"Stuck\"\nOpsætningen sidder fast pga. tekniske problemer eller andre forhindringer.\n\n\"Nej\"\nAdnami Midscroll er ikke implementeret eller aktiv på nogen enheder.\n\nStørrelserne er 970x570 på desktop og 300x240 på mobil.",
+		"type": "dropdown",
+		"options": [
+			{
+				"index": 1,
+				"label": "Mobil"
+			},
+			{
+				"index": 3,
+				"label": "Nej"
+			},
+			{
+				"index": 4,
+				"label": "Desktop"
+			},
+			{
+				"index": 5,
+				"label": "Venter på tredjepart"
+			},
+			{
+				"index": 6,
+				"label": "N/A"
+			},
+			{
+				"index": 14,
+				"label": "Stuck"
+			}
+		]
+	},
+	{
+		"id": "dropdown_mksdr0q2",
+		"title": "Anchor",
+		"description": "Status eller valg af enheder for \"Anchor\" annonceprodukt/-format. \n\nForklaring af mulige statuser i feltet:\n\n\"Mobil\"\nFormatet vises kun på mobil.\n\n\"Desktop\"\nFormatet vises kun på desktop.\n\nVises da både på mobil og desktop såfremt begge disse er på. \n\n\"Venter på tredjepart\"\nImplementeringen af Anchor er forsinket, fordi der afventes handling eller godkendelse fra tredjepart.\n\n\"Stuck\"\nOpsætningen sidder fast på grund af tekniske problemer eller andre forhindringer.\n\n\"Nej\"\nAnchor er ikke implementeret eller aktiv på nogen enheder.",
+		"type": "dropdown",
+		"options": [
+			{
+				"index": 1,
+				"label": "Mobile"
+			},
+			{
+				"index": 3,
+				"label": "Nej"
+			},
+			{
+				"index": 6,
+				"label": "N/A"
+			},
+			{
+				"index": 7,
+				"label": "App"
+			},
+			{
+				"index": 8,
+				"label": "Desktop"
+			},
+			{
+				"index": 14,
+				"label": "Gået i stå"
+			},
+			{
+				"index": 15,
+				"label": "Desktop - ikke programmatisk"
+			},
+			{
+				"index": 16,
+				"label": "Mobile - ikke programmatisk"
+			}
+		]
+	},
+	{
+		"id": "dropdown_mksdh745",
+		"title": "True Native",
+		"description": "Status eller valg af enheder for \"True Native\" annonceprodukt/-format. \n\nForklaring af mulige statuser i feltet:\n\n\"Mobil\"\nFormatet vises kun på mobil.\n\n\"Desktop\"\nFormatet vises kun på desktop.\n\nVises da både på mobil og desktop såfremt begge disse er på. \n\n\"Nej\"\nTrue Native er ikke implementeret eller aktiv på nogen enheder.",
+		"type": "dropdown",
+		"options": [
+			{
+				"index": 3,
+				"label": "Nej"
+			},
+			{
+				"index": 4,
+				"label": "Venter på publisher"
+			},
+			{
+				"index": 6,
+				"label": "N/A"
+			},
+			{
+				"index": 7,
+				"label": "Venter på Contimo"
+			},
+			{
+				"index": 9,
+				"label": "Desktop"
+			},
+			{
+				"index": 10,
+				"label": "Arbejder på det"
+			},
+			{
+				"index": 11,
+				"label": "Mobil"
+			},
+			{
+				"index": 14,
+				"label": "Stuck"
+			}
+		]
+	},
+	{
+		"id": "dropdown_mksdb150",
+		"title": "Adnami native",
+		"description": "Status eller valg af enheder for \"Adnami Native\" annonceprodukt/-format. \n\nForklaring af mulige statuser i feltet:\n\n\"Mobil\"\nFormatet vises kun på mobil.\n\n\"Desktop\"\nFormatet vises kun på desktop.\n\nVises da både på mobil og desktop såfremt begge disse er på. \n\n\"Venter på tredjepart\"\nImplementeringen af Adnami Native er forsinket, fordi der afventes handling eller godkendelse fra tredjepart.\n\n\"Stuck\"\nOpsætningen sidder fast på grund af tekniske problemer eller andre forhindringer.\n\n\"Nej\"\nAdnami Native er ikke implementeret eller aktiv på nogen enheder.",
+		"type": "dropdown",
+		"options": [
+			{
+				"index": 1,
+				"label": "Mobil"
+			},
+			{
+				"index": 3,
+				"label": "Nej"
+			},
+			{
+				"index": 5,
+				"label": "Venter på tjedjepart"
+			},
+			{
+				"index": 6,
+				"label": "N/A"
+			},
+			{
+				"index": 8,
+				"label": "Desktop"
+			},
+			{
+				"index": 14,
+				"label": "Stuck"
+			}
+		]
+	},
+	{
+		"id": "dropdown_mksdfx54",
+		"title": "Google Interstitial",
+		"description": "Status eller valg af enheder for \"Google Interstitial\" annonceprodukt/-format. \n\nForklaring af mulige statuser i feltet:\n\n\"Mobil\"\nFormatet vises kun på mobil.\n\n\"Desktop\"\nFormatet vises kun på desktop.\n\nVises da både på mobil og desktop såfremt begge disse er på. \n\n\"Venter på tredjepart\"\nImplementeringen af Google Interstitial er forsinket, fordi der afventes handling eller godkendelse fra tredjepart.\n\n\"Stuck\"\nOpsætningen sidder fast på grund af tekniske problemer eller andre forhindringer.\n\n\"Nej\"\nGoogle Interstitial er ikke implementeret eller aktiv på nogen enheder.",
+		"type": "dropdown",
+		"options": [
+			{
+				"index": 1,
+				"label": "Mobile"
+			},
+			{
+				"index": 3,
+				"label": "Nej"
+			},
+			{
+				"index": 4,
+				"label": "App"
+			},
+			{
+				"index": 6,
+				"label": "N/A"
+			},
+			{
+				"index": 8,
+				"label": "Desktop"
+			},
+			{
+				"index": 14,
+				"label": "Stuck"
+			}
+		]
+	},
+	{
+		"id": "dropdown_mksd6yy",
+		"title": "Outstream (display)",
+		"description": "Status eller valg af enheder for \"Outstream (display)\" annonceprodukt/-format. \n\nForklaring af mulige statuser i feltet:\n\n\"Mobil\"\nFormatet vises kun på mobil.\n\n\"Desktop\"\nFormatet vises kun på desktop.\n\nVises da både på mobil og desktop såfremt begge disse er på. .\n\nVenter på tredjepart\nImplementeringen af Outstream (display) er forsinket, fordi der afventes handling eller godkendelse fra tredjepart.\n\nStuck\nOpsætningen sidder fast på grund af tekniske problemer eller andre forhindringer.\n\nNej\nOutstream (display) er ikke implementeret eller aktiv på nogen enheder.",
+		"type": "dropdown",
+		"options": [
+			{
+				"index": 1,
+				"label": "Mobil"
+			},
+			{
+				"index": 3,
+				"label": "Nej"
+			},
+			{
+				"index": 6,
+				"label": "N/A"
+			},
+			{
+				"index": 8,
+				"label": "Desktop"
+			},
+			{
+				"index": 14,
+				"label": "Stuck"
+			}
+		]
+	},
+	{
+		"id": "dropdown_mksdcgvj",
+		"title": "Topscroll - High-impact.js",
+		"description": "Status eller valg af enheder for \"Topscroll High impact.js\" annonceprodukt/-format (anden udbyder end Adnami). \n\nForklaring af mulige statuser i feltet:\n\n\"Mobil\"\nFormatet vises kun på mobil.\n\n\"Desktop\"\nFormatet vises kun på desktop.\n\nVises da både på mobil og desktop såfremt begge disse er på. \n\n\"Venter på tredjepart\"\nImplementeringen af Topscroll High impact.js er forsinket, fordi der afventes handling eller godkendelse fra tredjepart.\n\n\"Stuck\"\nOpsætningen sidder fast på grund af tekniske problemer eller andre forhindringer.\n\n\"Nej\"\nTopscroll High impact.js er ikke implementeret eller aktiv på nogen enheder.\n\nStørrelserne er 1x2 og 970x510 på desktop.\n 300x220 og 300x280 på mobil.",
+		"type": "dropdown",
+		"options": [
+			{
+				"index": 1,
+				"label": "Arbejder på det"
+			},
+			{
+				"index": 3,
+				"label": "Nej"
+			},
+			{
+				"index": 6,
+				"label": "N/A"
+			},
+			{
+				"index": 20,
+				"label": "Mobil"
+			},
+			{
+				"index": 108,
+				"label": "Desktop"
+			}
+		]
+	},
+	{
+		"id": "dropdown_mksdjpqx",
+		"title": "Midscroll - High-impact.js",
+		"description": "Status eller valg af enheder for \"Midscroll High impact.js\" annonceprodukt/-format (anden udbyder end Adnami). \n\nForklaring af mulige statuser i feltet:\n\n\"Mobil\"\nFormatet vises kun på mobil.\n\n\"Desktop\"\nFormatet vises kun på desktop.\n\nVises da både på mobil og desktop såfremt begge disse er på. \n\n\"Venter på tredjepart\"\nImplementeringen af Midscroll High impact.js er forsinket, fordi der afventes handling eller godkendelse fra tredjepart.\n\n\"Stuck\"\nOpsætningen sidder fast på grund af tekniske problemer eller andre forhindringer.\n\n\"Nej\"\nMidscroll High impact.js er ikke implementeret eller aktiv på nogen enheder.\n\nStørrelserne er 970x570 på desktop og 300x240 på mobil.",
+		"type": "dropdown",
+		"options": [
+			{
+				"index": 1,
+				"label": "Arbejder på det"
+			},
+			{
+				"index": 3,
+				"label": "Nej"
+			},
+			{
+				"index": 4,
+				"label": "Mobil"
+			},
+			{
+				"index": 6,
+				"label": "N/A"
+			},
+			{
+				"index": 108,
+				"label": "Desktop"
+			}
+		]
+	},
+	{
+		"id": "board_relation_mkp69z9s",
+		"title": "Publisher Group",
+		"description": "Publisher-gruppen som domænet eller appen hører til som overordnet. Der er altid kun én publisher-gruppe tilknyttet et domæne/app, aldrig flere eller færre.",
+		"type": "board_relation"
+	},
+	{
+		"id": "link_to_tasks___adops_mkkx485x",
+		"title": "Tasks - AdOps",
+		"description": "",
+		"type": "board_relation"
+	},
+	{
+		"id": "board_relation0__1",
+		"title": "Onboarding fra Typeform",
+		"description": "",
+		"type": "board_relation"
+	},
+	{
+		"id": "connect_boards_mkmnp6fx",
+		"title": "Opportunities",
+		"description": "",
+		"type": "board_relation"
+	},
+	{
+		"id": "link_to_tickets__1",
+		"title": "Tickets",
+		"description": "",
+		"type": "board_relation"
+	},
+	{
+		"id": "color_mksdc9rp",
+		"title": "RE-AD Status",
+		"description": "RE-AD (Responsible Advertisement) status beskriver hvorvidt en publisher benytter sig af vores RE-AD system og om det er live på sitet.\nRe-Ad er et bæredygtigt og effektivt annonceprodukt, udviklet med fokus på både miljøhensyn og annoncørens værdi. I stedet for at vise flere annoncer samtidig, sikrer Re-Ad, at der kun leveres én annonce per sidevisning. Det reducerer antallet af serverkald og minimerer unødvendige ressourceforbrug.\n\nMiljøvenlig annoncering\nVed kun at vise én annonce ad gangen, reduceres belastningen på både brugerens enhed og serverinfrastrukturen. Det betyder mindre datatrafik og færre ressourcer, hvilket gør Re-Ad til et miljøansvarligt valg i den digitale annoncering.\n\nØget værdi for annoncøren\nNår der kun vises én annonce, får annoncøren fuld eksponering uden støj fra konkurrerende budskaber. Det giver:\n\nHøjere opmærksomhed\n\nBedre engagement\n\nØget brandværdi\n\nRe-Ad sikrer dermed, at annoncørens budskab står klart og tydeligt frem for brugeren, og skaber mere værdi per visning.\n\nUnderstøttede annonceformater\nRe-Ad leveres i følgende formater:\n\n300x240\n\n320x320\n\n300x210\n\n970x170\n\n930x180\n\nFormatvalget er optimeret til både desktop og mobil, og sikrer en god brugeroplevelse uden at gå på kompromis med synlighed eller performance.",
+		"type": "status",
+		"options": [
+			{
+				"index": 0,
+				"label": "Aktiv"
+			},
+			{
+				"index": 1,
+				"label": "Inaktiv"
+			},
+			{
+				"index": 5,
+				"label": "N/A"
+			}
+		]
+	}
 ]

@@ -83,7 +83,7 @@ stephie-mcp/
 - **Tasks**: 
   - Get: `getTasksAdOps`, `getTasksMarketing`, `getTasksTechIntelligence`, etc.
   - Create/Update: `createTaskTechIntelligence`, `updateTaskTechIntelligence`
-- **Operations**: `getBookings`, `getProcesses`, `getInternalAdOpsAdTech`
+- **Operations**: `getBookings`, `getInternalAdOpsAdTech`
 - **Development**: `getBugs`, `getFeatures`, `getTests`, `getChangelog`
 - And 15+ more covering HR, Support, Marketing, Business, OKR boards
 

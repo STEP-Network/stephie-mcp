@@ -1,1740 +1,1333 @@
 {
-  "timestamp": "2025-09-07T11:03:23.185Z",
-  "boards": [
-    {
-      "boardId": "1402911026",
-      "boardName": "Leads",
-      "toolName": "getLeads",
-      "relations": [
-        {
-          "columnId": "connect_boards8",
-          "columnTitle": "*Duplicated Lead Detector",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911026
-          ]
-        },
-        {
-          "columnId": "link_to_contacts",
-          "columnTitle": "*Existing Contact Detector",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911034
-          ]
-        },
-        {
-          "columnId": "link_to_accounts7",
-          "columnTitle": "*Existing Account Detector",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911027
-          ]
-        },
-        {
-          "columnId": "link_to___activities_board",
-          "columnTitle": "Activities",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911042
-          ]
-        },
-        {
-          "columnId": "connect_boards__1",
-          "columnTitle": "Advertiser/Publisher",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911027
-          ]
-        },
-        {
-          "columnId": "connect_boards70__1",
-          "columnTitle": "Opportunities",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911049
-          ]
-        }
-      ]
-    },
-    {
-      "boardId": "1402911027",
-      "boardName": "Accounts",
-      "toolName": "getAccounts",
-      "relations": [
-        {
-          "columnId": "connect_boards",
-          "columnTitle": "Agency (Group)",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911027
-          ]
-        },
-        {
-          "columnId": "connect_boards0__1",
-          "columnTitle": "Additional Accounts",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911027
-          ]
-        },
-        {
-          "columnId": "account_contact",
-          "columnTitle": "*Contacts",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911034
-          ]
-        },
-        {
-          "columnId": "account_deal",
-          "columnTitle": "*Opportunities",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911049
-          ]
-        },
-        {
-          "columnId": "connect_boards9",
-          "columnTitle": "Leads",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911026
-          ]
-        },
-        {
-          "columnId": "connect_boards7",
-          "columnTitle": "Bureau Contact (old)",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911034
-          ]
-        },
-        {
-          "columnId": "link_to_contacts__1",
-          "columnTitle": "Agency Contact",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911034
-          ]
-        },
-        {
-          "columnId": "link_to_customers_projects",
-          "columnTitle": "Client Projects",
-          "columnType": "board_relation",
-          "targetBoardIds": []
-        },
-        {
-          "columnId": "link_to_accounts_management",
-          "columnTitle": "Client Onboarding / Account Managers",
-          "columnType": "board_relation",
-          "targetBoardIds": []
-        },
-        {
-          "columnId": "link_to_invoices_and_collections",
-          "columnTitle": "Invoices and Collections",
-          "columnType": "board_relation",
-          "targetBoardIds": []
-        },
-        {
-          "columnId": "board_relation8__1",
-          "columnTitle": "Sales Activities",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911042
-          ]
-        },
-        {
-          "columnId": "board_relation_mks2y6p",
-          "columnTitle": "*Sales Activities",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911042
-          ]
-        },
-        {
-          "columnId": "link_to_opportunities__1",
-          "columnTitle": "link to Opportunities",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911049
-          ]
-        },
-        {
-          "columnId": "link_to_leads__1",
-          "columnTitle": "link to Leads",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911026
-          ]
-        },
-        {
-          "columnId": "board_relation6__1",
-          "columnTitle": "link to Subitems of Projects",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1637006077
-          ]
-        },
-        {
-          "columnId": "link_to_tickets__1",
-          "columnTitle": "Tickets",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1647372207,
-            1734103411,
-            1868329933
-          ]
-        },
-        {
-          "columnId": "link_to_projects_3_0__1",
-          "columnTitle": "link to Projects 3.0",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631918525
-          ]
-        },
-        {
-          "columnId": "link_to_deals_mkmjwqv",
-          "columnTitle": "link to Deals",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1623368485
-          ]
-        },
-        {
-          "columnId": "link_to_deals_mkmj2xjg",
-          "columnTitle": "link to Deals",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1623368485
-          ]
-        },
-        {
-          "columnId": "board_relation_mkpjs94e",
-          "columnTitle": "link to Subitems of OKR",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1635166158
-          ]
-        },
-        {
-          "columnId": "board_relation_mkse2pp9",
-          "columnTitle": "link to STEP x JFM Business: Native samarbejde",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            2028159787
-          ]
-        }
-      ]
-    },
-    {
-      "boardId": "1402911034",
-      "boardName": "Contacts",
-      "toolName": "getContacts",
-      "relations": [
-        {
-          "columnId": "contact_account",
-          "columnTitle": "* Account",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911027
-          ]
-        },
-        {
-          "columnId": "connect_boards__1",
-          "columnTitle": "Customer",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911027
-          ]
-        },
-        {
-          "columnId": "connect_boards7",
-          "columnTitle": "*Leads",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911026
-          ]
-        },
-        {
-          "columnId": "contact_deal",
-          "columnTitle": "*Opportunities",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911049
-          ]
-        },
-        {
-          "columnId": "board_relation__1",
-          "columnTitle": "Latest Sales Activity",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911042
-          ]
-        },
-        {
-          "columnId": "connect_boards67__1",
-          "columnTitle": "Sales Activities",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911042
-          ]
-        },
-        {
-          "columnId": "link_to_opportunities__1",
-          "columnTitle": "Campaign Contact",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911049
-          ]
-        },
-        {
-          "columnId": "link_to_opportunities0__1",
-          "columnTitle": "Advertiser/Publisher Opportunities",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911049
-          ]
-        },
-        {
-          "columnId": "link_to_tickets__1",
-          "columnTitle": "Tickets",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1647372207,
-            1734103411,
-            1868329933
-          ]
-        },
-        {
-          "columnId": "board_relation_mkse567w",
-          "columnTitle": "link to STEP x JFM Business: Native samarbejde",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            2028159787
-          ]
-        },
-        {
-          "columnId": "board_relation_mksww2dj",
-          "columnTitle": "link to *Publisher total overview",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1222800432
-          ]
-        }
-      ]
-    },
-    {
-      "boardId": "1402911042",
-      "boardName": "Sales Activities",
-      "toolName": "getSalesActivities",
-      "relations": [
-        {
-          "columnId": "activity_item",
-          "columnTitle": "*Source item",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911026,
-            1402911034,
-            1402911027,
-            1402911042,
-            1402911049
-          ]
-        },
-        {
-          "columnId": "connect_boards9__1",
-          "columnTitle": "Advertiser",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911027
-          ]
-        },
-        {
-          "columnId": "link_to_contacts8__1",
-          "columnTitle": "Contact",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911034
-          ]
-        },
-        {
-          "columnId": "link_to_opportunities__1",
-          "columnTitle": "Opportunities",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911049
-          ]
-        },
-        {
-          "columnId": "board_relation__1",
-          "columnTitle": "Agency Strategy",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1637006077
-          ]
-        },
-        {
-          "columnId": "link_to_expenses__1",
-          "columnTitle": "Expenses",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1658073379
-          ]
-        },
-        {
-          "columnId": "link_to_key_results_Mjj8Pa33",
-          "columnTitle": "link to Key Results",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631918525
-          ]
-        },
-        {
-          "columnId": "board_relation_mkpjdq8x",
-          "columnTitle": "link to Subitems of OKR",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1635166158
-          ]
-        },
-        {
-          "columnId": "board_relation_mks2th6j",
-          "columnTitle": "Accounts",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911027
-          ]
-        }
-      ]
-    },
-    {
-      "boardId": "1402911049",
-      "boardName": "Opportunities",
-      "toolName": "getOpportunities",
-      "relations": [
-        {
-          "columnId": "link_to_leads__1",
-          "columnTitle": "Leads",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911026
-          ]
-        },
-        {
-          "columnId": "connect_boards",
-          "columnTitle": "*Rep Name",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402910987
-          ]
-        },
-        {
-          "columnId": "connect_boards31",
-          "columnTitle": "🏢 Advertiser/Publisher",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911027
-          ]
-        },
-        {
-          "columnId": "connect_boards96__1",
-          "columnTitle": "Advertiser/Publisher Contact",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911034
-          ]
-        },
-        {
-          "columnId": "deal_contact",
-          "columnTitle": "Agency Contact",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911034
-          ]
-        },
-        {
-          "columnId": "connect_boards6__1",
-          "columnTitle": "Campaign Contact",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911034
-          ]
-        },
-        {
-          "columnId": "link_to___activities_board4",
-          "columnTitle": "Activities Connected",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911042
-          ]
-        },
-        {
-          "columnId": "link_to_accounts_management",
-          "columnTitle": "Client Onboarding / Account Managers",
-          "columnType": "board_relation",
-          "targetBoardIds": []
-        },
-        {
-          "columnId": "connect_boards8__1",
-          "columnTitle": "Booking",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1549621337
-          ]
-        },
-        {
-          "columnId": "connect_boards04__1",
-          "columnTitle": "Sales Activities",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911042
-          ]
-        },
-        {
-          "columnId": "link_to_projects__1",
-          "columnTitle": "Projects",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631918525
-          ]
-        },
-        {
-          "columnId": "board_relation__1",
-          "columnTitle": "link to Subitems of Projects 3.0",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1637006077
-          ]
-        },
-        {
-          "columnId": "link_to_key_results_Mjj8D3RA",
-          "columnTitle": "link to Key Results",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631918525
-          ]
-        },
-        {
-          "columnId": "board_relation_mkmntftm",
-          "columnTitle": "Publisher",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1222800432
-          ]
-        },
-        {
-          "columnId": "board_relation_mkpjq8tc",
-          "columnTitle": "link to Subitems of OKR",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1635166158
-          ]
-        },
-        {
-          "columnId": "connect_boards41",
-          "columnTitle": "Legal Request",
-          "columnType": "board_relation",
-          "targetBoardIds": []
-        },
-        {
-          "columnId": "connect_boards4",
-          "columnTitle": "Invoices and Collections",
-          "columnType": "board_relation",
-          "targetBoardIds": []
-        },
-        {
-          "columnId": "board_relation_mkpb11mt",
-          "columnTitle": "Publisher Group",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1875849929
-          ]
-        },
-        {
-          "columnId": "board_relation_mkse54z5",
-          "columnTitle": "link to STEP x JFM Business: Native samarbejde",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            2028159787
-          ]
-        }
-      ]
-    },
-    {
-      "boardId": "1549621337",
-      "boardName": "Bookings 3.0",
-      "toolName": "getBookings",
-      "relations": [
-        {
-          "columnId": "link_to_opportunities__1",
-          "columnTitle": "Opportunities",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911049
-          ]
-        }
-      ]
-    },
-    {
-      "boardId": "1611329866",
-      "boardName": "Platforms",
-      "toolName": "getPlatforms",
-      "relations": [
-        {
-          "columnId": "connect_boards__1",
-          "columnTitle": "Owner",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1612664689
-          ]
-        },
-        {
-          "columnId": "link_to_tasks___video__1",
-          "columnTitle": "Tasks - Video",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1635510115
-          ]
-        },
-        {
-          "columnId": "link_to_tickets__1",
-          "columnTitle": "Tickets",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1647372207,
-            1734103411,
-            1868329933
-          ]
-        }
-      ]
-    },
-    {
-      "boardId": "1611396339",
-      "boardName": "Processes",
-      "toolName": "getProcesses",
-      "relations": [
-        {
-          "columnId": "connect_boards__1",
-          "columnTitle": "Owner",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1612664689
-          ]
-        }
-      ]
-    },
-    {
-      "boardId": "1612664689",
-      "boardName": "People",
-      "toolName": "getPeople",
-      "relations": [
-        {
-          "columnId": "board_relation_mkqncjd",
-          "columnTitle": "Task Board",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1698570295
-          ]
-        },
-        {
-          "columnId": "link_to_platforms__1",
-          "columnTitle": "Platforms",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1611329866
-          ]
-        },
-        {
-          "columnId": "link_to_processes__1",
-          "columnTitle": "Processes",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1611396339
-          ]
-        },
-        {
-          "columnId": "link_to_products__1",
-          "columnTitle": "Products",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1611223368,
-            2051827669
-          ]
-        },
-        {
-          "columnId": "link_to_products8__1",
-          "columnTitle": "link to Products",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1611223368,
-            2051827669
-          ]
-        },
-        {
-          "columnId": "link_to_products9__1",
-          "columnTitle": "link to Products",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1611223368,
-            2051827669
-          ]
-        },
-        {
-          "columnId": "link_to_teams__1",
-          "columnTitle": "Teams",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631927696
-          ]
-        },
-        {
-          "columnId": "link_to_tickets__1",
-          "columnTitle": "link to Tickets",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1647372207,
-            1734103411,
-            1868329933
-          ]
-        },
-        {
-          "columnId": "link_to_tickets1__1",
-          "columnTitle": "link to Tickets",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1647372207,
-            1734103411,
-            1868329933
-          ]
-        },
-        {
-          "columnId": "link_to_key_results__1",
-          "columnTitle": "link to Key Results",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631918525
-          ]
-        },
-        {
-          "columnId": "link_to_objectives__1",
-          "columnTitle": "link to Objectives",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631918659
-          ]
-        }
-      ]
-    },
-    {
-      "boardId": "1623368485",
-      "boardName": "Deals",
-      "toolName": "getDeals",
-      "relations": [
-        {
-          "columnId": "connect_boards_mkmjpjjc",
-          "columnTitle": "Agency",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911027
-          ]
-        },
-        {
-          "columnId": "connect_boards_mkmjr3e3",
-          "columnTitle": "Advertiser",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911027
-          ]
-        },
-        {
-          "columnId": "connect_boards3__1",
-          "columnTitle": "Contacts",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911034
-          ]
-        }
-      ]
-    },
-    {
-      "boardId": "1631907569",
-      "boardName": "Tasks - Tech & Intelligence",
-      "toolName": "getTasksTechIntelligence",
-      "relations": [
-        {
-          "columnId": "board_relation_mkpjqgpv",
-          "columnTitle": "Key Result",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1635166158
-          ]
-        },
-        {
-          "columnId": "board_relation7__1",
-          "columnTitle": "Key Result Subitem",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1637006077
-          ]
-        },
-        {
-          "columnId": "link_to_teams_Mjj8g28X",
-          "columnTitle": "My Team",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631927696
-          ]
-        },
-        {
-          "columnId": "link_to_teams_Mjj8wIFJ",
-          "columnTitle": "Send To Team",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631927696
-          ]
-        },
-        {
-          "columnId": "connect_boards_Mjj8zwYL",
-          "columnTitle": "Task From Team",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631927696
-          ]
-        },
-        {
-          "columnId": "connect_boards_Mjj8XLFi",
-          "columnTitle": "Team Task",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1717613454,
-            1635251745,
-            1635510115,
-            1693359113,
-            1762038452,
-            1631907569
-          ]
-        },
-        {
-          "columnId": "connect_boards_mkn596j9",
-          "columnTitle": "Related To",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631907569
-          ]
-        },
-        {
-          "columnId": "board_relation_mkqhkyb7",
-          "columnTitle": "link to STEPhie",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1938986335,
-            1939583448
-          ]
-        }
-      ]
-    },
-    {
-      "boardId": "1631918659",
-      "boardName": "Objectives & Key Results",
-      "toolName": "getOKR",
-      "relations": [
-        {
-          "columnId": "connect_boards__1",
-          "columnTitle": "Team",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631927696
-          ]
-        },
-        {
-          "columnId": "connect_boards1__1",
-          "columnTitle": "Key Results",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631918525
-          ]
-        },
-        {
-          "columnId": "link_to_strategies__1",
-          "columnTitle": "Strategies",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1637264041
-          ]
-        },
-        {
-          "columnId": "connect_boards3__1",
-          "columnTitle": "Products",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1611223368,
-            2051827669
-          ]
-        },
-        {
-          "columnId": "connect_boards35__1",
-          "columnTitle": "People",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1612664689
-          ]
-        }
-      ]
-    },
-    {
-      "boardId": "1631927696",
-      "boardName": "Teams",
-      "toolName": "getTeams",
-      "relations": [
-        {
-          "columnId": "connect_boards__1",
-          "columnTitle": "People",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1612664689
-          ]
-        },
-        {
-          "columnId": "link_to_okrs__1",
-          "columnTitle": "Objectives",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631918659
-          ]
-        },
-        {
-          "columnId": "link_to_projects__1",
-          "columnTitle": "Key Results",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631918525
-          ]
-        },
-        {
-          "columnId": "link_to_key_results__1",
-          "columnTitle": "Key Result Dependencies",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631918525
-          ]
-        },
-        {
-          "columnId": "link_to_boards__1",
-          "columnTitle": "Boards",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1698570295
-          ]
-        },
-        {
-          "columnId": "board_relation_mks6a11q",
-          "columnTitle": "link to Subitems of Feature Requests",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1939243899
-          ]
-        }
-      ]
-    },
-    {
-      "boardId": "1635251745",
-      "boardName": "Tasks - AdTech",
-      "toolName": "getTasksAdTech",
-      "relations": [
-        {
-          "columnId": "board_relation_mkpj798k",
-          "columnTitle": "Key Result",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1635166158
-          ]
-        },
-        {
-          "columnId": "active_task__1",
-          "columnTitle": "Active task",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1284396911,
-            1272801602,
-            1270170411,
-            1384026363
-          ]
-        },
-        {
-          "columnId": "board_relation4__1",
-          "columnTitle": "Key Result Subitems",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1637006077
-          ]
-        },
-        {
-          "columnId": "link_to_teams_Mjj8h8H0",
-          "columnTitle": "My Team",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631927696
-          ]
-        },
-        {
-          "columnId": "link_to_teams_Mjj8tJFz",
-          "columnTitle": "Send To Team",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631927696
-          ]
-        },
-        {
-          "columnId": "connect_boards_Mjj8I0gY",
-          "columnTitle": "Task From Team",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631927696
-          ]
-        },
-        {
-          "columnId": "connect_boards_Mjj8E7qA",
-          "columnTitle": "Team Task",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1717613454,
-            1693359113,
-            1635510115,
-            1631907569,
-            1762038452,
-            1635251745
-          ]
-        }
-      ]
-    },
-    {
-      "boardId": "1635510115",
-      "boardName": "Tasks - Video",
-      "toolName": "getTasksVideo",
-      "relations": [
-        {
-          "columnId": "board_relation_mkpj1ppt",
-          "columnTitle": "Key Result",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1635166158
-          ]
-        },
-        {
-          "columnId": "connect_boards7__1",
-          "columnTitle": "Products",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1611223368,
-            2051827669
-          ]
-        },
-        {
-          "columnId": "connect_boards3__1",
-          "columnTitle": "Platforms",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1611329866
-          ]
-        },
-        {
-          "columnId": "board_relation__1",
-          "columnTitle": "Key Result Subitems",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1637006077
-          ]
-        },
-        {
-          "columnId": "link_to_teams_Mjj8IyXZ",
-          "columnTitle": "My Team",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631927696
-          ]
-        },
-        {
-          "columnId": "connect_boards_Mjj87GdS",
-          "columnTitle": "Team Task",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1635251745,
-            1717613454,
-            1693359113,
-            1631907569,
-            1762038452,
-            1635510115
-          ]
-        },
-        {
-          "columnId": "connect_boards_Mjj8UnYS",
-          "columnTitle": "Task From Team",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631927696
-          ]
-        }
-      ]
-    },
-    {
-      "boardId": "1637264041",
-      "boardName": "Strategies",
-      "toolName": "getStrategies",
-      "relations": [
-        {
-          "columnId": "connect_boards__1",
-          "columnTitle": "Objectives",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631918659
-          ]
-        }
-      ]
-    },
-    {
-      "boardId": "1647372207",
-      "boardName": "Tickets",
-      "toolName": "getTickets",
-      "relations": [
-        {
-          "columnId": "connect_boards8__1",
-          "columnTitle": "Contacts",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911034
-          ]
-        },
-        {
-          "columnId": "connect_boards_Mjj4yp1J",
-          "columnTitle": "Sub-Tickets",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1647372207
-          ]
-        },
-        {
-          "columnId": "connect_boards2",
-          "columnTitle": "Incidents",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1647372209
-          ]
-        },
-        {
-          "columnId": "connect_boards__1",
-          "columnTitle": "Assigned",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1612664689
-          ]
-        },
-        {
-          "columnId": "connect_boards9__1",
-          "columnTitle": "Initiator",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1612664689
-          ]
-        },
-        {
-          "columnId": "connect_boards08__1",
-          "columnTitle": "Publisher total overview",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1222800432
-          ]
-        },
-        {
-          "columnId": "connect_boards5__1",
-          "columnTitle": "Publisher Group",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911027
-          ]
-        },
-        {
-          "columnId": "connect_boards81__1",
-          "columnTitle": "Platforms",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1611329866
-          ]
-        },
-        {
-          "columnId": "connect_boards0__1",
-          "columnTitle": "Products",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1611223368,
-            2051827669
-          ]
-        },
-        {
-          "columnId": "connect_boards82__1",
-          "columnTitle": "SLAs",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1671781875
-          ]
-        },
-        {
-          "columnId": "connect_boards98__1",
-          "columnTitle": "Publisher IO bookings",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1222800531
-          ]
-        },
-        {
-          "columnId": "board_relation__1",
-          "columnTitle": "link to Tasks - Tech & Intelligence",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631907569
-          ]
-        }
-      ]
-    },
-    {
-      "boardId": "1658073379",
-      "boardName": "Expenses",
-      "toolName": "getMarketingExpenses",
-      "relations": [
-        {
-          "columnId": "connect_boards1__1",
-          "columnTitle": "Sales Activities",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1402911042
-          ]
-        },
-        {
-          "columnId": "link_to_budgets__1",
-          "columnTitle": "Budgets",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1677240056
-          ]
-        },
-        {
-          "columnId": "board_relation_mkn2b33z",
-          "columnTitle": "Tasks",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1693359113
-          ]
-        },
-        {
-          "columnId": "board_relation_mkn27hzj",
-          "columnTitle": "Task Subitem",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1743738324
-          ]
-        },
-        {
-          "columnId": "board_relation_mkncvqsy",
-          "columnTitle": "link to Tasks - Marketing",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1693359113
-          ]
-        },
-        {
-          "columnId": "connect_boards_mkncv02e",
-          "columnTitle": "Key Results",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631918525
-          ]
-        }
-      ]
-    },
-    {
-      "boardId": "1677240056",
-      "boardName": "Budgets",
-      "toolName": "getMarketingBudgets",
-      "relations": [
-        {
-          "columnId": "connect_boards8__1",
-          "columnTitle": "Expenses",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1658073379
-          ]
-        },
-        {
-          "columnId": "board_relation_mkn28mrh",
-          "columnTitle": "Tasks",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1693359113
-          ]
-        }
-      ]
-    },
-    {
-      "boardId": "1693359113",
-      "boardName": "Tasks - Marketing",
-      "toolName": "getTasksMarketing",
-      "relations": [
-        {
-          "columnId": "board_relation_mkpjg0ky",
-          "columnTitle": "Key Result",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1635166158
-          ]
-        },
-        {
-          "columnId": "connect_boards__1",
-          "columnTitle": "Target Audience",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1683469417
-          ]
-        },
-        {
-          "columnId": "connect_boards1__1",
-          "columnTitle": "Segments",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1691598905
-          ]
-        },
-        {
-          "columnId": "link_to_teams_Mjj8UZOX",
-          "columnTitle": "My Team",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631927696
-          ]
-        },
-        {
-          "columnId": "link_to_teams_Mjj8FZuw",
-          "columnTitle": "Send To Team",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631927696
-          ]
-        },
-        {
-          "columnId": "connect_boards_Mjj8nYoW",
-          "columnTitle": "Team Task",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1635251745,
-            1635510115,
-            1717613454,
-            1631907569,
-            1762038452,
-            1693359113
-          ]
-        },
-        {
-          "columnId": "connect_boards_Mjj8u5eG",
-          "columnTitle": "Task From Team",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631927696
-          ]
-        },
-        {
-          "columnId": "budgets_mkn2xpkt",
-          "columnTitle": "Budget",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1677240056
-          ]
-        },
-        {
-          "columnId": "board_relation_mknce448",
-          "columnTitle": "Subitems",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1743738324
-          ]
-        }
-      ]
-    },
-    {
-      "boardId": "1717613454",
-      "boardName": "Tasks - AdOps",
-      "toolName": "getTasksAdOps",
-      "relations": [
-        {
-          "columnId": "board_relation_mkpjy03a",
-          "columnTitle": "Key Result",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1635166158
-          ]
-        },
-        {
-          "columnId": "board_relation7__1",
-          "columnTitle": "Key Result Subitem",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1637006077
-          ]
-        },
-        {
-          "columnId": "link_to_teams_Mjj8SqY6",
-          "columnTitle": "My Team",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631927696
-          ]
-        },
-        {
-          "columnId": "link_to_teams_Mjj8r8Eo",
-          "columnTitle": "Send To Team",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631927696
-          ]
-        },
-        {
-          "columnId": "connect_boards_Mjj8MNws",
-          "columnTitle": "Team Task",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631907569,
-            1635251745,
-            1635510115,
-            1693359113,
-            1762038452,
-            1717613454
-          ]
-        },
-        {
-          "columnId": "connect_boards_Mjj8hhFM",
-          "columnTitle": "Task From Team",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631927696
-          ]
-        },
-        {
-          "columnId": "connect_boards_mkkxdfax",
-          "columnTitle": "Publisher",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1222800432,
-            1875849929
-          ]
-        }
-      ]
-    },
-    {
-      "boardId": "1762038452",
-      "boardName": "Tasks - Yield & Growth",
-      "toolName": "getTasksYieldGrowth",
-      "relations": [
-        {
-          "columnId": "board_relation_mkpj5fav",
-          "columnTitle": "Key Result",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1635166158
-          ]
-        },
-        {
-          "columnId": "board_relation7__1",
-          "columnTitle": "Key Result Subitem",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1637006077
-          ]
-        },
-        {
-          "columnId": "link_to_teams_Mjj8SqY6",
-          "columnTitle": "My Team",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631927696
-          ]
-        },
-        {
-          "columnId": "link_to_teams_Mjj8r8Eo",
-          "columnTitle": "Send To Team",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631927696
-          ]
-        },
-        {
-          "columnId": "connect_boards_Mjj8MNws",
-          "columnTitle": "Team Task",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631907569,
-            1635251745,
-            1635510115,
-            1693359113,
-            1762038452,
-            1717613454
-          ]
-        },
-        {
-          "columnId": "connect_boards_Mjj8hhFM",
-          "columnTitle": "Task From Team",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631927696
-          ]
-        }
-      ]
-    },
-    {
-      "boardId": "1938986335",
-      "boardName": "Features",
-      "toolName": "getFeatures",
-      "relations": [
-        {
-          "columnId": "board_relation_mkqqn0wt",
-          "columnTitle": "Versions",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1942604978
-          ]
-        },
-        {
-          "columnId": "board_relation_mkqhpaq1",
-          "columnTitle": "Tasks - Tech & Intelligence",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631907569,
-            1939166037
-          ]
-        },
-        {
-          "columnId": "dependency_mkqhzez9",
-          "columnTitle": "Dependent On",
-          "columnType": "dependency",
-          "targetBoardIds": [
-            1938986335
-          ]
-        },
-        {
-          "columnId": "board_relation_mkqh5gc1",
-          "columnTitle": "link to Roadmap",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1939249804
-          ]
-        }
-      ]
-    },
-    {
-      "boardId": "1939583448",
-      "boardName": "Bugs",
-      "toolName": "getBugs",
-      "relations": [
-        {
-          "columnId": "board_relation_mkqshkt4",
-          "columnTitle": "Versions",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1942604978
-          ]
-        },
-        {
-          "columnId": "board_relation_mkqhpaq1",
-          "columnTitle": "Tasks - Tech & Intelligence",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1631907569,
-            1939166037
-          ]
-        },
-        {
-          "columnId": "dependency_mkqhzez9",
-          "columnTitle": "Dependent On",
-          "columnType": "dependency",
-          "targetBoardIds": [
-            1939583448
-          ]
-        },
-        {
-          "columnId": "board_relation_mkqh84s9",
-          "columnTitle": "link to STEPhie",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1939249804
-          ]
-        }
-      ]
-    },
-    {
-      "boardId": "2054670440",
-      "boardName": "Vertikaler",
-      "toolName": "getVertikaler",
-      "relations": [
-        {
-          "columnId": "board_relation_mksxr042",
-          "columnTitle": "Publishers",
-          "columnType": "board_relation",
-          "targetBoardIds": [
-            1222800432
-          ]
-        }
-      ]
-    }
-  ],
-  "recommendations": [
-    "getLeads: Add duplicated_lead_detectorId parameter for \"*Duplicated Lead Detector\" (connect_boards8)",
-    "getLeads: Add existing_contact_detectorId parameter for \"*Existing Contact Detector\" (link_to_contacts)",
-    "getLeads: Add existing_account_detectorId parameter for \"*Existing Account Detector\" (link_to_accounts7)",
-    "getLeads: Add activitiesId parameter for \"Activities\" (link_to___activities_board)",
-    "getLeads: Add advertiser_publisherId parameter for \"Advertiser/Publisher\" (connect_boards__1)",
-    "getLeads: Add opportunitiesId parameter for \"Opportunities\" (connect_boards70__1)",
-    "getAccounts: Add agency_groupId parameter for \"Agency (Group)\" (connect_boards)",
-    "getAccounts: Add additional_accountsId parameter for \"Additional Accounts\" (connect_boards0__1)",
-    "getAccounts: Add bureau_contact_oldId parameter for \"Bureau Contact (old)\" (connect_boards7)",
-    "getAccounts: Add agency_contactId parameter for \"Agency Contact\" (link_to_contacts__1)",
-    "getAccounts: Add client_projectsId parameter for \"Client Projects\" (link_to_customers_projects)",
-    "getAccounts: Add client_onboarding_account_managersId parameter for \"Client Onboarding / Account Managers\" (link_to_accounts_management)",
-    "getAccounts: Add invoices_and_collectionsId parameter for \"Invoices and Collections\" (link_to_invoices_and_collections)",
-    "getAccounts: Add sales_activitiesId parameter for \"Sales Activities\" (board_relation8__1)",
-    "getAccounts: Add sales_activitiesId parameter for \"*Sales Activities\" (board_relation_mks2y6p)",
-    "getAccounts: Add link_to_opportunitiesId parameter for \"link to Opportunities\" (link_to_opportunities__1)",
-    "getAccounts: Add link_to_leadsId parameter for \"link to Leads\" (link_to_leads__1)",
-    "getAccounts: Add link_to_subitems_of_projectsId parameter for \"link to Subitems of Projects\" (board_relation6__1)",
-    "getAccounts: Add ticketsId parameter for \"Tickets\" (link_to_tickets__1)",
-    "getAccounts: Add link_to_projects_3_0Id parameter for \"link to Projects 3.0\" (link_to_projects_3_0__1)",
-    "getAccounts: Add link_to_dealsId parameter for \"link to Deals\" (link_to_deals_mkmjwqv)",
-    "getAccounts: Add link_to_dealsId parameter for \"link to Deals\" (link_to_deals_mkmj2xjg)",
-    "getAccounts: Add link_to_subitems_of_okrId parameter for \"link to Subitems of OKR\" (board_relation_mkpjs94e)",
-    "getAccounts: Add link_to_step_x_jfm_business_native_samarbejdeId parameter for \"link to STEP x JFM Business: Native samarbejde\" (board_relation_mkse2pp9)",
-    "getContacts: Add customerId parameter for \"Customer\" (connect_boards__1)",
-    "getContacts: Add leadsId parameter for \"*Leads\" (connect_boards7)",
-    "getContacts: Add latest_sales_activityId parameter for \"Latest Sales Activity\" (board_relation__1)",
-    "getContacts: Add sales_activitiesId parameter for \"Sales Activities\" (connect_boards67__1)",
-    "getContacts: Add campaign_contactId parameter for \"Campaign Contact\" (link_to_opportunities__1)",
-    "getContacts: Add advertiser_publisher_opportunitiesId parameter for \"Advertiser/Publisher Opportunities\" (link_to_opportunities0__1)",
-    "getContacts: Add ticketsId parameter for \"Tickets\" (link_to_tickets__1)",
-    "getContacts: Add link_to_step_x_jfm_business_native_samarbejdeId parameter for \"link to STEP x JFM Business: Native samarbejde\" (board_relation_mkse567w)",
-    "getContacts: Add link_to_publisher_total_overviewId parameter for \"link to *Publisher total overview\" (board_relation_mksww2dj)",
-    "getSalesActivities: Add source_itemId parameter for \"*Source item\" (activity_item)",
-    "getSalesActivities: Add advertiserId parameter for \"Advertiser\" (connect_boards9__1)",
-    "getSalesActivities: Add opportunitiesId parameter for \"Opportunities\" (link_to_opportunities__1)",
-    "getSalesActivities: Add agency_strategyId parameter for \"Agency Strategy\" (board_relation__1)",
-    "getSalesActivities: Add expensesId parameter for \"Expenses\" (link_to_expenses__1)",
-    "getSalesActivities: Add link_to_key_resultsId parameter for \"link to Key Results\" (link_to_key_results_Mjj8Pa33)",
-    "getSalesActivities: Add link_to_subitems_of_okrId parameter for \"link to Subitems of OKR\" (board_relation_mkpjdq8x)",
-    "getSalesActivities: Add accountsId parameter for \"Accounts\" (board_relation_mks2th6j)",
-    "getOpportunities: Add leadsId parameter for \"Leads\" (link_to_leads__1)",
-    "getOpportunities: Add rep_nameId parameter for \"*Rep Name\" (connect_boards)",
-    "getOpportunities: Add advertiser_publisherId parameter for \"🏢 Advertiser/Publisher\" (connect_boards31)",
-    "getOpportunities: Add advertiser_publisher_contactId parameter for \"Advertiser/Publisher Contact\" (connect_boards96__1)",
-    "getOpportunities: Add agency_contactId parameter for \"Agency Contact\" (deal_contact)",
-    "getOpportunities: Add campaign_contactId parameter for \"Campaign Contact\" (connect_boards6__1)",
-    "getOpportunities: Add activities_connectedId parameter for \"Activities Connected\" (link_to___activities_board4)",
-    "getOpportunities: Add client_onboarding_account_managersId parameter for \"Client Onboarding / Account Managers\" (link_to_accounts_management)",
-    "getOpportunities: Add sales_activitiesId parameter for \"Sales Activities\" (connect_boards04__1)",
-    "getOpportunities: Add projectsId parameter for \"Projects\" (link_to_projects__1)",
-    "getOpportunities: Add link_to_subitems_of_projects_3_0Id parameter for \"link to Subitems of Projects 3.0\" (board_relation__1)",
-    "getOpportunities: Add link_to_key_resultsId parameter for \"link to Key Results\" (link_to_key_results_Mjj8D3RA)",
-    "getOpportunities: Add publisherId parameter for \"Publisher\" (board_relation_mkmntftm)",
-    "getOpportunities: Add link_to_subitems_of_okrId parameter for \"link to Subitems of OKR\" (board_relation_mkpjq8tc)",
-    "getOpportunities: Add legal_requestId parameter for \"Legal Request\" (connect_boards41)",
-    "getOpportunities: Add invoices_and_collectionsId parameter for \"Invoices and Collections\" (connect_boards4)",
-    "getOpportunities: Add publisher_groupId parameter for \"Publisher Group\" (board_relation_mkpb11mt)",
-    "getOpportunities: Add link_to_step_x_jfm_business_native_samarbejdeId parameter for \"link to STEP x JFM Business: Native samarbejde\" (board_relation_mkse54z5)",
-    "getBookings: Add opportunitiesId parameter for \"Opportunities\" (link_to_opportunities__1)",
-    "getPlatforms: Add ownerId parameter for \"Owner\" (connect_boards__1)",
-    "getPlatforms: Add tasks_videoId parameter for \"Tasks - Video\" (link_to_tasks___video__1)",
-    "getPlatforms: Add ticketsId parameter for \"Tickets\" (link_to_tickets__1)",
-    "getProcesses: Add ownerId parameter for \"Owner\" (connect_boards__1)",
-    "getPeople: Add task_boardId parameter for \"Task Board\" (board_relation_mkqncjd)",
-    "getPeople: Add platformsId parameter for \"Platforms\" (link_to_platforms__1)",
-    "getPeople: Add processesId parameter for \"Processes\" (link_to_processes__1)",
-    "getPeople: Add productsId parameter for \"Products\" (link_to_products__1)",
-    "getPeople: Add link_to_productsId parameter for \"link to Products\" (link_to_products8__1)",
-    "getPeople: Add link_to_productsId parameter for \"link to Products\" (link_to_products9__1)",
-    "getPeople: Add teamsId parameter for \"Teams\" (link_to_teams__1)",
-    "getPeople: Add link_to_ticketsId parameter for \"link to Tickets\" (link_to_tickets__1)",
-    "getPeople: Add link_to_ticketsId parameter for \"link to Tickets\" (link_to_tickets1__1)",
-    "getPeople: Add link_to_key_resultsId parameter for \"link to Key Results\" (link_to_key_results__1)",
-    "getPeople: Add link_to_objectivesId parameter for \"link to Objectives\" (link_to_objectives__1)",
-    "getTasksTechIntelligence: Add key_resultId parameter for \"Key Result\" (board_relation_mkpjqgpv)",
-    "getTasksTechIntelligence: Add key_result_subitemId parameter for \"Key Result Subitem\" (board_relation7__1)",
-    "getTasksTechIntelligence: Add my_teamId parameter for \"My Team\" (link_to_teams_Mjj8g28X)",
-    "getTasksTechIntelligence: Add send_to_teamId parameter for \"Send To Team\" (link_to_teams_Mjj8wIFJ)",
-    "getTasksTechIntelligence: Add task_from_teamId parameter for \"Task From Team\" (connect_boards_Mjj8zwYL)",
-    "getTasksTechIntelligence: Add team_taskId parameter for \"Team Task\" (connect_boards_Mjj8XLFi)",
-    "getTasksTechIntelligence: Add related_toId parameter for \"Related To\" (connect_boards_mkn596j9)",
-    "getTasksTechIntelligence: Add link_to_stephieId parameter for \"link to STEPhie\" (board_relation_mkqhkyb7)",
-    "getOKR: Add key_resultsId parameter for \"Key Results\" (connect_boards1__1)",
-    "getOKR: Add productsId parameter for \"Products\" (connect_boards3__1)",
-    "getTeams: Add objectivesId parameter for \"Objectives\" (link_to_okrs__1)",
-    "getTeams: Add key_resultsId parameter for \"Key Results\" (link_to_projects__1)",
-    "getTeams: Add key_result_dependenciesId parameter for \"Key Result Dependencies\" (link_to_key_results__1)",
-    "getTeams: Add boardsId parameter for \"Boards\" (link_to_boards__1)",
-    "getTeams: Add link_to_subitems_of_feature_requestsId parameter for \"link to Subitems of Feature Requests\" (board_relation_mks6a11q)",
-    "getTasksAdTech: Add key_resultId parameter for \"Key Result\" (board_relation_mkpj798k)",
-    "getTasksAdTech: Add active_taskId parameter for \"Active task\" (active_task__1)",
-    "getTasksAdTech: Add key_result_subitemsId parameter for \"Key Result Subitems\" (board_relation4__1)",
-    "getTasksAdTech: Add my_teamId parameter for \"My Team\" (link_to_teams_Mjj8h8H0)",
-    "getTasksAdTech: Add send_to_teamId parameter for \"Send To Team\" (link_to_teams_Mjj8tJFz)",
-    "getTasksAdTech: Add task_from_teamId parameter for \"Task From Team\" (connect_boards_Mjj8I0gY)",
-    "getTasksAdTech: Add team_taskId parameter for \"Team Task\" (connect_boards_Mjj8E7qA)",
-    "getTasksVideo: Add key_resultId parameter for \"Key Result\" (board_relation_mkpj1ppt)",
-    "getTasksVideo: Add productsId parameter for \"Products\" (connect_boards7__1)",
-    "getTasksVideo: Add platformsId parameter for \"Platforms\" (connect_boards3__1)",
-    "getTasksVideo: Add key_result_subitemsId parameter for \"Key Result Subitems\" (board_relation__1)",
-    "getTasksVideo: Add my_teamId parameter for \"My Team\" (link_to_teams_Mjj8IyXZ)",
-    "getTasksVideo: Add team_taskId parameter for \"Team Task\" (connect_boards_Mjj87GdS)",
-    "getTasksVideo: Add task_from_teamId parameter for \"Task From Team\" (connect_boards_Mjj8UnYS)",
-    "getStrategies: Add objectivesId parameter for \"Objectives\" (connect_boards__1)",
-    "getTickets: Add contactsId parameter for \"Contacts\" (connect_boards8__1)",
-    "getTickets: Add sub_ticketsId parameter for \"Sub-Tickets\" (connect_boards_Mjj4yp1J)",
-    "getTickets: Add incidentsId parameter for \"Incidents\" (connect_boards2)",
-    "getTickets: Add initiatorId parameter for \"Initiator\" (connect_boards9__1)",
-    "getTickets: Add publisher_total_overviewId parameter for \"Publisher total overview\" (connect_boards08__1)",
-    "getTickets: Add publisher_groupId parameter for \"Publisher Group\" (connect_boards5__1)",
-    "getTickets: Add platformsId parameter for \"Platforms\" (connect_boards81__1)",
-    "getTickets: Add productsId parameter for \"Products\" (connect_boards0__1)",
-    "getTickets: Add slasId parameter for \"SLAs\" (connect_boards82__1)",
-    "getTickets: Add publisher_io_bookingsId parameter for \"Publisher IO bookings\" (connect_boards98__1)",
-    "getTickets: Add link_to_tasks_tech_intelligenceId parameter for \"link to Tasks - Tech & Intelligence\" (board_relation__1)",
-    "getMarketingExpenses: Add sales_activitiesId parameter for \"Sales Activities\" (connect_boards1__1)",
-    "getMarketingExpenses: Add budgetsId parameter for \"Budgets\" (link_to_budgets__1)",
-    "getMarketingExpenses: Add tasksId parameter for \"Tasks\" (board_relation_mkn2b33z)",
-    "getMarketingExpenses: Add task_subitemId parameter for \"Task Subitem\" (board_relation_mkn27hzj)",
-    "getMarketingExpenses: Add link_to_tasks_marketingId parameter for \"link to Tasks - Marketing\" (board_relation_mkncvqsy)",
-    "getMarketingExpenses: Add key_resultsId parameter for \"Key Results\" (connect_boards_mkncv02e)",
-    "getMarketingBudgets: Add expensesId parameter for \"Expenses\" (connect_boards8__1)",
-    "getMarketingBudgets: Add tasksId parameter for \"Tasks\" (board_relation_mkn28mrh)",
-    "getTasksMarketing: Add key_resultId parameter for \"Key Result\" (board_relation_mkpjg0ky)",
-    "getTasksMarketing: Add target_audienceId parameter for \"Target Audience\" (connect_boards__1)",
-    "getTasksMarketing: Add segmentsId parameter for \"Segments\" (connect_boards1__1)",
-    "getTasksMarketing: Add my_teamId parameter for \"My Team\" (link_to_teams_Mjj8UZOX)",
-    "getTasksMarketing: Add send_to_teamId parameter for \"Send To Team\" (link_to_teams_Mjj8FZuw)",
-    "getTasksMarketing: Add team_taskId parameter for \"Team Task\" (connect_boards_Mjj8nYoW)",
-    "getTasksMarketing: Add task_from_teamId parameter for \"Task From Team\" (connect_boards_Mjj8u5eG)",
-    "getTasksMarketing: Add subitemsId parameter for \"Subitems\" (board_relation_mknce448)",
-    "getTasksAdOps: Add key_resultId parameter for \"Key Result\" (board_relation_mkpjy03a)",
-    "getTasksAdOps: Add key_result_subitemId parameter for \"Key Result Subitem\" (board_relation7__1)",
-    "getTasksAdOps: Add my_teamId parameter for \"My Team\" (link_to_teams_Mjj8SqY6)",
-    "getTasksAdOps: Add send_to_teamId parameter for \"Send To Team\" (link_to_teams_Mjj8r8Eo)",
-    "getTasksAdOps: Add team_taskId parameter for \"Team Task\" (connect_boards_Mjj8MNws)",
-    "getTasksAdOps: Add task_from_teamId parameter for \"Task From Team\" (connect_boards_Mjj8hhFM)",
-    "getTasksYieldGrowth: Add key_resultId parameter for \"Key Result\" (board_relation_mkpj5fav)",
-    "getTasksYieldGrowth: Add key_result_subitemId parameter for \"Key Result Subitem\" (board_relation7__1)",
-    "getTasksYieldGrowth: Add my_teamId parameter for \"My Team\" (link_to_teams_Mjj8SqY6)",
-    "getTasksYieldGrowth: Add send_to_teamId parameter for \"Send To Team\" (link_to_teams_Mjj8r8Eo)",
-    "getTasksYieldGrowth: Add team_taskId parameter for \"Team Task\" (connect_boards_Mjj8MNws)",
-    "getTasksYieldGrowth: Add task_from_teamId parameter for \"Task From Team\" (connect_boards_Mjj8hhFM)",
-    "getFeatures: Add versionsId parameter for \"Versions\" (board_relation_mkqqn0wt)",
-    "getFeatures: Add tasks_tech_intelligenceId parameter for \"Tasks - Tech & Intelligence\" (board_relation_mkqhpaq1)",
-    "getFeatures: Add dependent_onId parameter for \"Dependent On\" (dependency_mkqhzez9)",
-    "getFeatures: Add link_to_roadmapId parameter for \"link to Roadmap\" (board_relation_mkqh5gc1)",
-    "getBugs: Add versionsId parameter for \"Versions\" (board_relation_mkqshkt4)",
-    "getBugs: Add tasks_tech_intelligenceId parameter for \"Tasks - Tech & Intelligence\" (board_relation_mkqhpaq1)",
-    "getBugs: Add dependent_onId parameter for \"Dependent On\" (dependency_mkqhzez9)",
-    "getBugs: Add link_to_stephieId parameter for \"link to STEPhie\" (board_relation_mkqh84s9)",
-    "getVertikaler: Add publishersId parameter for \"Publishers\" (board_relation_mksxr042)"
-  ]
+	"timestamp": "2025-09-07T11:03:23.185Z",
+	"boards": [
+		{
+			"boardId": "1402911026",
+			"boardName": "Leads",
+			"toolName": "getLeads",
+			"relations": [
+				{
+					"columnId": "connect_boards8",
+					"columnTitle": "*Duplicated Lead Detector",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911026]
+				},
+				{
+					"columnId": "link_to_contacts",
+					"columnTitle": "*Existing Contact Detector",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911034]
+				},
+				{
+					"columnId": "link_to_accounts7",
+					"columnTitle": "*Existing Account Detector",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911027]
+				},
+				{
+					"columnId": "link_to___activities_board",
+					"columnTitle": "Activities",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911042]
+				},
+				{
+					"columnId": "connect_boards__1",
+					"columnTitle": "Advertiser/Publisher",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911027]
+				},
+				{
+					"columnId": "connect_boards70__1",
+					"columnTitle": "Opportunities",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911049]
+				}
+			]
+		},
+		{
+			"boardId": "1402911027",
+			"boardName": "Accounts",
+			"toolName": "getAccounts",
+			"relations": [
+				{
+					"columnId": "connect_boards",
+					"columnTitle": "Agency (Group)",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911027]
+				},
+				{
+					"columnId": "connect_boards0__1",
+					"columnTitle": "Additional Accounts",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911027]
+				},
+				{
+					"columnId": "account_contact",
+					"columnTitle": "*Contacts",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911034]
+				},
+				{
+					"columnId": "account_deal",
+					"columnTitle": "*Opportunities",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911049]
+				},
+				{
+					"columnId": "connect_boards9",
+					"columnTitle": "Leads",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911026]
+				},
+				{
+					"columnId": "connect_boards7",
+					"columnTitle": "Bureau Contact (old)",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911034]
+				},
+				{
+					"columnId": "link_to_contacts__1",
+					"columnTitle": "Agency Contact",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911034]
+				},
+				{
+					"columnId": "link_to_customers_projects",
+					"columnTitle": "Client Projects",
+					"columnType": "board_relation",
+					"targetBoardIds": []
+				},
+				{
+					"columnId": "link_to_accounts_management",
+					"columnTitle": "Client Onboarding / Account Managers",
+					"columnType": "board_relation",
+					"targetBoardIds": []
+				},
+				{
+					"columnId": "link_to_invoices_and_collections",
+					"columnTitle": "Invoices and Collections",
+					"columnType": "board_relation",
+					"targetBoardIds": []
+				},
+				{
+					"columnId": "board_relation8__1",
+					"columnTitle": "Sales Activities",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911042]
+				},
+				{
+					"columnId": "board_relation_mks2y6p",
+					"columnTitle": "*Sales Activities",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911042]
+				},
+				{
+					"columnId": "link_to_opportunities__1",
+					"columnTitle": "link to Opportunities",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911049]
+				},
+				{
+					"columnId": "link_to_leads__1",
+					"columnTitle": "link to Leads",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911026]
+				},
+				{
+					"columnId": "board_relation6__1",
+					"columnTitle": "link to Subitems of Projects",
+					"columnType": "board_relation",
+					"targetBoardIds": [1637006077]
+				},
+				{
+					"columnId": "link_to_tickets__1",
+					"columnTitle": "Tickets",
+					"columnType": "board_relation",
+					"targetBoardIds": [1647372207, 1734103411, 1868329933]
+				},
+				{
+					"columnId": "link_to_projects_3_0__1",
+					"columnTitle": "link to Projects 3.0",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631918525]
+				},
+				{
+					"columnId": "link_to_deals_mkmjwqv",
+					"columnTitle": "link to Deals",
+					"columnType": "board_relation",
+					"targetBoardIds": [1623368485]
+				},
+				{
+					"columnId": "link_to_deals_mkmj2xjg",
+					"columnTitle": "link to Deals",
+					"columnType": "board_relation",
+					"targetBoardIds": [1623368485]
+				},
+				{
+					"columnId": "board_relation_mkpjs94e",
+					"columnTitle": "link to Subitems of OKR",
+					"columnType": "board_relation",
+					"targetBoardIds": [1635166158]
+				},
+				{
+					"columnId": "board_relation_mkse2pp9",
+					"columnTitle": "link to STEP x JFM Business: Native samarbejde",
+					"columnType": "board_relation",
+					"targetBoardIds": [2028159787]
+				}
+			]
+		},
+		{
+			"boardId": "1402911034",
+			"boardName": "Contacts",
+			"toolName": "getContacts",
+			"relations": [
+				{
+					"columnId": "contact_account",
+					"columnTitle": "* Account",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911027]
+				},
+				{
+					"columnId": "connect_boards__1",
+					"columnTitle": "Customer",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911027]
+				},
+				{
+					"columnId": "connect_boards7",
+					"columnTitle": "*Leads",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911026]
+				},
+				{
+					"columnId": "contact_deal",
+					"columnTitle": "*Opportunities",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911049]
+				},
+				{
+					"columnId": "board_relation__1",
+					"columnTitle": "Latest Sales Activity",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911042]
+				},
+				{
+					"columnId": "connect_boards67__1",
+					"columnTitle": "Sales Activities",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911042]
+				},
+				{
+					"columnId": "link_to_opportunities__1",
+					"columnTitle": "Campaign Contact",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911049]
+				},
+				{
+					"columnId": "link_to_opportunities0__1",
+					"columnTitle": "Advertiser/Publisher Opportunities",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911049]
+				},
+				{
+					"columnId": "link_to_tickets__1",
+					"columnTitle": "Tickets",
+					"columnType": "board_relation",
+					"targetBoardIds": [1647372207, 1734103411, 1868329933]
+				},
+				{
+					"columnId": "board_relation_mkse567w",
+					"columnTitle": "link to STEP x JFM Business: Native samarbejde",
+					"columnType": "board_relation",
+					"targetBoardIds": [2028159787]
+				},
+				{
+					"columnId": "board_relation_mksww2dj",
+					"columnTitle": "link to *Publisher total overview",
+					"columnType": "board_relation",
+					"targetBoardIds": [1222800432]
+				}
+			]
+		},
+		{
+			"boardId": "1402911042",
+			"boardName": "Sales Activities",
+			"toolName": "getSalesActivities",
+			"relations": [
+				{
+					"columnId": "activity_item",
+					"columnTitle": "*Source item",
+					"columnType": "board_relation",
+					"targetBoardIds": [
+						1402911026, 1402911034, 1402911027, 1402911042, 1402911049
+					]
+				},
+				{
+					"columnId": "connect_boards9__1",
+					"columnTitle": "Advertiser",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911027]
+				},
+				{
+					"columnId": "link_to_contacts8__1",
+					"columnTitle": "Contact",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911034]
+				},
+				{
+					"columnId": "link_to_opportunities__1",
+					"columnTitle": "Opportunities",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911049]
+				},
+				{
+					"columnId": "board_relation__1",
+					"columnTitle": "Agency Strategy",
+					"columnType": "board_relation",
+					"targetBoardIds": [1637006077]
+				},
+				{
+					"columnId": "link_to_expenses__1",
+					"columnTitle": "Expenses",
+					"columnType": "board_relation",
+					"targetBoardIds": [1658073379]
+				},
+				{
+					"columnId": "link_to_key_results_Mjj8Pa33",
+					"columnTitle": "link to Key Results",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631918525]
+				},
+				{
+					"columnId": "board_relation_mkpjdq8x",
+					"columnTitle": "link to Subitems of OKR",
+					"columnType": "board_relation",
+					"targetBoardIds": [1635166158]
+				},
+				{
+					"columnId": "board_relation_mks2th6j",
+					"columnTitle": "Accounts",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911027]
+				}
+			]
+		},
+		{
+			"boardId": "1402911049",
+			"boardName": "Opportunities",
+			"toolName": "getOpportunities",
+			"relations": [
+				{
+					"columnId": "link_to_leads__1",
+					"columnTitle": "Leads",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911026]
+				},
+				{
+					"columnId": "connect_boards",
+					"columnTitle": "*Rep Name",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402910987]
+				},
+				{
+					"columnId": "connect_boards31",
+					"columnTitle": "🏢 Advertiser/Publisher",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911027]
+				},
+				{
+					"columnId": "connect_boards96__1",
+					"columnTitle": "Advertiser/Publisher Contact",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911034]
+				},
+				{
+					"columnId": "deal_contact",
+					"columnTitle": "Agency Contact",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911034]
+				},
+				{
+					"columnId": "connect_boards6__1",
+					"columnTitle": "Campaign Contact",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911034]
+				},
+				{
+					"columnId": "link_to___activities_board4",
+					"columnTitle": "Activities Connected",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911042]
+				},
+				{
+					"columnId": "link_to_accounts_management",
+					"columnTitle": "Client Onboarding / Account Managers",
+					"columnType": "board_relation",
+					"targetBoardIds": []
+				},
+				{
+					"columnId": "connect_boards8__1",
+					"columnTitle": "Booking",
+					"columnType": "board_relation",
+					"targetBoardIds": [1549621337]
+				},
+				{
+					"columnId": "connect_boards04__1",
+					"columnTitle": "Sales Activities",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911042]
+				},
+				{
+					"columnId": "link_to_projects__1",
+					"columnTitle": "Projects",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631918525]
+				},
+				{
+					"columnId": "board_relation__1",
+					"columnTitle": "link to Subitems of Projects 3.0",
+					"columnType": "board_relation",
+					"targetBoardIds": [1637006077]
+				},
+				{
+					"columnId": "link_to_key_results_Mjj8D3RA",
+					"columnTitle": "link to Key Results",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631918525]
+				},
+				{
+					"columnId": "board_relation_mkmntftm",
+					"columnTitle": "Publisher",
+					"columnType": "board_relation",
+					"targetBoardIds": [1222800432]
+				},
+				{
+					"columnId": "board_relation_mkpjq8tc",
+					"columnTitle": "link to Subitems of OKR",
+					"columnType": "board_relation",
+					"targetBoardIds": [1635166158]
+				},
+				{
+					"columnId": "connect_boards41",
+					"columnTitle": "Legal Request",
+					"columnType": "board_relation",
+					"targetBoardIds": []
+				},
+				{
+					"columnId": "connect_boards4",
+					"columnTitle": "Invoices and Collections",
+					"columnType": "board_relation",
+					"targetBoardIds": []
+				},
+				{
+					"columnId": "board_relation_mkpb11mt",
+					"columnTitle": "Publisher Group",
+					"columnType": "board_relation",
+					"targetBoardIds": [1875849929]
+				},
+				{
+					"columnId": "board_relation_mkse54z5",
+					"columnTitle": "link to STEP x JFM Business: Native samarbejde",
+					"columnType": "board_relation",
+					"targetBoardIds": [2028159787]
+				}
+			]
+		},
+		{
+			"boardId": "1549621337",
+			"boardName": "Bookings 3.0",
+			"toolName": "getBookings",
+			"relations": [
+				{
+					"columnId": "link_to_opportunities__1",
+					"columnTitle": "Opportunities",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911049]
+				}
+			]
+		},
+		{
+			"boardId": "1612664689",
+			"boardName": "People",
+			"toolName": "getPeople",
+			"relations": [
+				{
+					"columnId": "board_relation_mkqncjd",
+					"columnTitle": "Task Board",
+					"columnType": "board_relation",
+					"targetBoardIds": [1698570295]
+				},
+				{
+					"columnId": "link_to_platforms__1",
+					"columnTitle": "Platforms",
+					"columnType": "board_relation",
+					"targetBoardIds": [1611329866]
+				},
+				{
+					"columnId": "link_to_processes__1",
+					"columnTitle": "Processes",
+					"columnType": "board_relation",
+					"targetBoardIds": [1611396339]
+				},
+				{
+					"columnId": "link_to_products__1",
+					"columnTitle": "Products",
+					"columnType": "board_relation",
+					"targetBoardIds": [1611223368, 2051827669]
+				},
+				{
+					"columnId": "link_to_products8__1",
+					"columnTitle": "link to Products",
+					"columnType": "board_relation",
+					"targetBoardIds": [1611223368, 2051827669]
+				},
+				{
+					"columnId": "link_to_products9__1",
+					"columnTitle": "link to Products",
+					"columnType": "board_relation",
+					"targetBoardIds": [1611223368, 2051827669]
+				},
+				{
+					"columnId": "link_to_teams__1",
+					"columnTitle": "Teams",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631927696]
+				},
+				{
+					"columnId": "link_to_tickets__1",
+					"columnTitle": "link to Tickets",
+					"columnType": "board_relation",
+					"targetBoardIds": [1647372207, 1734103411, 1868329933]
+				},
+				{
+					"columnId": "link_to_tickets1__1",
+					"columnTitle": "link to Tickets",
+					"columnType": "board_relation",
+					"targetBoardIds": [1647372207, 1734103411, 1868329933]
+				},
+				{
+					"columnId": "link_to_key_results__1",
+					"columnTitle": "link to Key Results",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631918525]
+				},
+				{
+					"columnId": "link_to_objectives__1",
+					"columnTitle": "link to Objectives",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631918659]
+				}
+			]
+		},
+		{
+			"boardId": "1623368485",
+			"boardName": "Deals",
+			"toolName": "getDeals",
+			"relations": [
+				{
+					"columnId": "connect_boards_mkmjpjjc",
+					"columnTitle": "Agency",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911027]
+				},
+				{
+					"columnId": "connect_boards_mkmjr3e3",
+					"columnTitle": "Advertiser",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911027]
+				},
+				{
+					"columnId": "connect_boards3__1",
+					"columnTitle": "Contacts",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911034]
+				}
+			]
+		},
+		{
+			"boardId": "1631907569",
+			"boardName": "Tasks - Tech & Intelligence",
+			"toolName": "getTasksTechIntelligence",
+			"relations": [
+				{
+					"columnId": "board_relation_mkpjqgpv",
+					"columnTitle": "Key Result",
+					"columnType": "board_relation",
+					"targetBoardIds": [1635166158]
+				},
+				{
+					"columnId": "board_relation7__1",
+					"columnTitle": "Key Result Subitem",
+					"columnType": "board_relation",
+					"targetBoardIds": [1637006077]
+				},
+				{
+					"columnId": "link_to_teams_Mjj8g28X",
+					"columnTitle": "My Team",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631927696]
+				},
+				{
+					"columnId": "link_to_teams_Mjj8wIFJ",
+					"columnTitle": "Send To Team",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631927696]
+				},
+				{
+					"columnId": "connect_boards_Mjj8zwYL",
+					"columnTitle": "Task From Team",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631927696]
+				},
+				{
+					"columnId": "connect_boards_Mjj8XLFi",
+					"columnTitle": "Team Task",
+					"columnType": "board_relation",
+					"targetBoardIds": [
+						1717613454, 1635251745, 1635510115, 1693359113, 1762038452,
+						1631907569
+					]
+				},
+				{
+					"columnId": "connect_boards_mkn596j9",
+					"columnTitle": "Related To",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631907569]
+				},
+				{
+					"columnId": "board_relation_mkqhkyb7",
+					"columnTitle": "link to STEPhie",
+					"columnType": "board_relation",
+					"targetBoardIds": [1938986335, 1939583448]
+				}
+			]
+		},
+		{
+			"boardId": "1631918659",
+			"boardName": "Objectives & Key Results",
+			"toolName": "getOKR",
+			"relations": [
+				{
+					"columnId": "connect_boards__1",
+					"columnTitle": "Team",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631927696]
+				},
+				{
+					"columnId": "connect_boards1__1",
+					"columnTitle": "Key Results",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631918525]
+				},
+				{
+					"columnId": "link_to_strategies__1",
+					"columnTitle": "Strategies",
+					"columnType": "board_relation",
+					"targetBoardIds": [1637264041]
+				},
+				{
+					"columnId": "connect_boards3__1",
+					"columnTitle": "Products",
+					"columnType": "board_relation",
+					"targetBoardIds": [1611223368, 2051827669]
+				},
+				{
+					"columnId": "connect_boards35__1",
+					"columnTitle": "People",
+					"columnType": "board_relation",
+					"targetBoardIds": [1612664689]
+				}
+			]
+		},
+		{
+			"boardId": "1631927696",
+			"boardName": "Teams",
+			"toolName": "getTeams",
+			"relations": [
+				{
+					"columnId": "connect_boards__1",
+					"columnTitle": "People",
+					"columnType": "board_relation",
+					"targetBoardIds": [1612664689]
+				},
+				{
+					"columnId": "link_to_okrs__1",
+					"columnTitle": "Objectives",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631918659]
+				},
+				{
+					"columnId": "link_to_projects__1",
+					"columnTitle": "Key Results",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631918525]
+				},
+				{
+					"columnId": "link_to_key_results__1",
+					"columnTitle": "Key Result Dependencies",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631918525]
+				},
+				{
+					"columnId": "link_to_boards__1",
+					"columnTitle": "Boards",
+					"columnType": "board_relation",
+					"targetBoardIds": [1698570295]
+				},
+				{
+					"columnId": "board_relation_mks6a11q",
+					"columnTitle": "link to Subitems of Feature Requests",
+					"columnType": "board_relation",
+					"targetBoardIds": [1939243899]
+				}
+			]
+		},
+		{
+			"boardId": "1635251745",
+			"boardName": "Tasks - AdTech",
+			"toolName": "getTasksAdTech",
+			"relations": [
+				{
+					"columnId": "board_relation_mkpj798k",
+					"columnTitle": "Key Result",
+					"columnType": "board_relation",
+					"targetBoardIds": [1635166158]
+				},
+				{
+					"columnId": "active_task__1",
+					"columnTitle": "Active task",
+					"columnType": "board_relation",
+					"targetBoardIds": [1284396911, 1272801602, 1270170411, 1384026363]
+				},
+				{
+					"columnId": "board_relation4__1",
+					"columnTitle": "Key Result Subitems",
+					"columnType": "board_relation",
+					"targetBoardIds": [1637006077]
+				},
+				{
+					"columnId": "link_to_teams_Mjj8h8H0",
+					"columnTitle": "My Team",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631927696]
+				},
+				{
+					"columnId": "link_to_teams_Mjj8tJFz",
+					"columnTitle": "Send To Team",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631927696]
+				},
+				{
+					"columnId": "connect_boards_Mjj8I0gY",
+					"columnTitle": "Task From Team",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631927696]
+				},
+				{
+					"columnId": "connect_boards_Mjj8E7qA",
+					"columnTitle": "Team Task",
+					"columnType": "board_relation",
+					"targetBoardIds": [
+						1717613454, 1693359113, 1635510115, 1631907569, 1762038452,
+						1635251745
+					]
+				}
+			]
+		},
+		{
+			"boardId": "1635510115",
+			"boardName": "Tasks - Video",
+			"toolName": "getTasksVideo",
+			"relations": [
+				{
+					"columnId": "board_relation_mkpj1ppt",
+					"columnTitle": "Key Result",
+					"columnType": "board_relation",
+					"targetBoardIds": [1635166158]
+				},
+				{
+					"columnId": "connect_boards7__1",
+					"columnTitle": "Products",
+					"columnType": "board_relation",
+					"targetBoardIds": [1611223368, 2051827669]
+				},
+				{
+					"columnId": "connect_boards3__1",
+					"columnTitle": "Platforms",
+					"columnType": "board_relation",
+					"targetBoardIds": [1611329866]
+				},
+				{
+					"columnId": "board_relation__1",
+					"columnTitle": "Key Result Subitems",
+					"columnType": "board_relation",
+					"targetBoardIds": [1637006077]
+				},
+				{
+					"columnId": "link_to_teams_Mjj8IyXZ",
+					"columnTitle": "My Team",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631927696]
+				},
+				{
+					"columnId": "connect_boards_Mjj87GdS",
+					"columnTitle": "Team Task",
+					"columnType": "board_relation",
+					"targetBoardIds": [
+						1635251745, 1717613454, 1693359113, 1631907569, 1762038452,
+						1635510115
+					]
+				},
+				{
+					"columnId": "connect_boards_Mjj8UnYS",
+					"columnTitle": "Task From Team",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631927696]
+				}
+			]
+		},
+		{
+			"boardId": "1637264041",
+			"boardName": "Strategies",
+			"toolName": "getStrategies",
+			"relations": [
+				{
+					"columnId": "connect_boards__1",
+					"columnTitle": "Objectives",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631918659]
+				}
+			]
+		},
+		{
+			"boardId": "1647372207",
+			"boardName": "Tickets",
+			"toolName": "getTickets",
+			"relations": [
+				{
+					"columnId": "connect_boards8__1",
+					"columnTitle": "Contacts",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911034]
+				},
+				{
+					"columnId": "connect_boards_Mjj4yp1J",
+					"columnTitle": "Sub-Tickets",
+					"columnType": "board_relation",
+					"targetBoardIds": [1647372207]
+				},
+				{
+					"columnId": "connect_boards2",
+					"columnTitle": "Incidents",
+					"columnType": "board_relation",
+					"targetBoardIds": [1647372209]
+				},
+				{
+					"columnId": "connect_boards__1",
+					"columnTitle": "Assigned",
+					"columnType": "board_relation",
+					"targetBoardIds": [1612664689]
+				},
+				{
+					"columnId": "connect_boards9__1",
+					"columnTitle": "Initiator",
+					"columnType": "board_relation",
+					"targetBoardIds": [1612664689]
+				},
+				{
+					"columnId": "connect_boards08__1",
+					"columnTitle": "Publisher total overview",
+					"columnType": "board_relation",
+					"targetBoardIds": [1222800432]
+				},
+				{
+					"columnId": "connect_boards5__1",
+					"columnTitle": "Publisher Group",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911027]
+				},
+				{
+					"columnId": "connect_boards81__1",
+					"columnTitle": "Platforms",
+					"columnType": "board_relation",
+					"targetBoardIds": [1611329866]
+				},
+				{
+					"columnId": "connect_boards0__1",
+					"columnTitle": "Products",
+					"columnType": "board_relation",
+					"targetBoardIds": [1611223368, 2051827669]
+				},
+				{
+					"columnId": "connect_boards82__1",
+					"columnTitle": "SLAs",
+					"columnType": "board_relation",
+					"targetBoardIds": [1671781875]
+				},
+				{
+					"columnId": "connect_boards98__1",
+					"columnTitle": "Publisher IO bookings",
+					"columnType": "board_relation",
+					"targetBoardIds": [1222800531]
+				},
+				{
+					"columnId": "board_relation__1",
+					"columnTitle": "link to Tasks - Tech & Intelligence",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631907569]
+				}
+			]
+		},
+		{
+			"boardId": "1658073379",
+			"boardName": "Expenses",
+			"toolName": "getMarketingExpenses",
+			"relations": [
+				{
+					"columnId": "connect_boards1__1",
+					"columnTitle": "Sales Activities",
+					"columnType": "board_relation",
+					"targetBoardIds": [1402911042]
+				},
+				{
+					"columnId": "link_to_budgets__1",
+					"columnTitle": "Budgets",
+					"columnType": "board_relation",
+					"targetBoardIds": [1677240056]
+				},
+				{
+					"columnId": "board_relation_mkn2b33z",
+					"columnTitle": "Tasks",
+					"columnType": "board_relation",
+					"targetBoardIds": [1693359113]
+				},
+				{
+					"columnId": "board_relation_mkn27hzj",
+					"columnTitle": "Task Subitem",
+					"columnType": "board_relation",
+					"targetBoardIds": [1743738324]
+				},
+				{
+					"columnId": "board_relation_mkncvqsy",
+					"columnTitle": "link to Tasks - Marketing",
+					"columnType": "board_relation",
+					"targetBoardIds": [1693359113]
+				},
+				{
+					"columnId": "connect_boards_mkncv02e",
+					"columnTitle": "Key Results",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631918525]
+				}
+			]
+		},
+		{
+			"boardId": "1677240056",
+			"boardName": "Budgets",
+			"toolName": "getMarketingBudgets",
+			"relations": [
+				{
+					"columnId": "connect_boards8__1",
+					"columnTitle": "Expenses",
+					"columnType": "board_relation",
+					"targetBoardIds": [1658073379]
+				},
+				{
+					"columnId": "board_relation_mkn28mrh",
+					"columnTitle": "Tasks",
+					"columnType": "board_relation",
+					"targetBoardIds": [1693359113]
+				}
+			]
+		},
+		{
+			"boardId": "1693359113",
+			"boardName": "Tasks - Marketing",
+			"toolName": "getTasksMarketing",
+			"relations": [
+				{
+					"columnId": "board_relation_mkpjg0ky",
+					"columnTitle": "Key Result",
+					"columnType": "board_relation",
+					"targetBoardIds": [1635166158]
+				},
+				{
+					"columnId": "connect_boards__1",
+					"columnTitle": "Target Audience",
+					"columnType": "board_relation",
+					"targetBoardIds": [1683469417]
+				},
+				{
+					"columnId": "connect_boards1__1",
+					"columnTitle": "Segments",
+					"columnType": "board_relation",
+					"targetBoardIds": [1691598905]
+				},
+				{
+					"columnId": "link_to_teams_Mjj8UZOX",
+					"columnTitle": "My Team",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631927696]
+				},
+				{
+					"columnId": "link_to_teams_Mjj8FZuw",
+					"columnTitle": "Send To Team",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631927696]
+				},
+				{
+					"columnId": "connect_boards_Mjj8nYoW",
+					"columnTitle": "Team Task",
+					"columnType": "board_relation",
+					"targetBoardIds": [
+						1635251745, 1635510115, 1717613454, 1631907569, 1762038452,
+						1693359113
+					]
+				},
+				{
+					"columnId": "connect_boards_Mjj8u5eG",
+					"columnTitle": "Task From Team",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631927696]
+				},
+				{
+					"columnId": "budgets_mkn2xpkt",
+					"columnTitle": "Budget",
+					"columnType": "board_relation",
+					"targetBoardIds": [1677240056]
+				},
+				{
+					"columnId": "board_relation_mknce448",
+					"columnTitle": "Subitems",
+					"columnType": "board_relation",
+					"targetBoardIds": [1743738324]
+				}
+			]
+		},
+		{
+			"boardId": "1717613454",
+			"boardName": "Tasks - AdOps",
+			"toolName": "getTasksAdOps",
+			"relations": [
+				{
+					"columnId": "board_relation_mkpjy03a",
+					"columnTitle": "Key Result",
+					"columnType": "board_relation",
+					"targetBoardIds": [1635166158]
+				},
+				{
+					"columnId": "board_relation7__1",
+					"columnTitle": "Key Result Subitem",
+					"columnType": "board_relation",
+					"targetBoardIds": [1637006077]
+				},
+				{
+					"columnId": "link_to_teams_Mjj8SqY6",
+					"columnTitle": "My Team",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631927696]
+				},
+				{
+					"columnId": "link_to_teams_Mjj8r8Eo",
+					"columnTitle": "Send To Team",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631927696]
+				},
+				{
+					"columnId": "connect_boards_Mjj8MNws",
+					"columnTitle": "Team Task",
+					"columnType": "board_relation",
+					"targetBoardIds": [
+						1631907569, 1635251745, 1635510115, 1693359113, 1762038452,
+						1717613454
+					]
+				},
+				{
+					"columnId": "connect_boards_Mjj8hhFM",
+					"columnTitle": "Task From Team",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631927696]
+				},
+				{
+					"columnId": "connect_boards_mkkxdfax",
+					"columnTitle": "Publisher",
+					"columnType": "board_relation",
+					"targetBoardIds": [1222800432, 1875849929]
+				}
+			]
+		},
+		{
+			"boardId": "1762038452",
+			"boardName": "Tasks - Yield & Growth",
+			"toolName": "getTasksYieldGrowth",
+			"relations": [
+				{
+					"columnId": "board_relation_mkpj5fav",
+					"columnTitle": "Key Result",
+					"columnType": "board_relation",
+					"targetBoardIds": [1635166158]
+				},
+				{
+					"columnId": "board_relation7__1",
+					"columnTitle": "Key Result Subitem",
+					"columnType": "board_relation",
+					"targetBoardIds": [1637006077]
+				},
+				{
+					"columnId": "link_to_teams_Mjj8SqY6",
+					"columnTitle": "My Team",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631927696]
+				},
+				{
+					"columnId": "link_to_teams_Mjj8r8Eo",
+					"columnTitle": "Send To Team",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631927696]
+				},
+				{
+					"columnId": "connect_boards_Mjj8MNws",
+					"columnTitle": "Team Task",
+					"columnType": "board_relation",
+					"targetBoardIds": [
+						1631907569, 1635251745, 1635510115, 1693359113, 1762038452,
+						1717613454
+					]
+				},
+				{
+					"columnId": "connect_boards_Mjj8hhFM",
+					"columnTitle": "Task From Team",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631927696]
+				}
+			]
+		},
+		{
+			"boardId": "1938986335",
+			"boardName": "Features",
+			"toolName": "getFeatures",
+			"relations": [
+				{
+					"columnId": "board_relation_mkqqn0wt",
+					"columnTitle": "Versions",
+					"columnType": "board_relation",
+					"targetBoardIds": [1942604978]
+				},
+				{
+					"columnId": "board_relation_mkqhpaq1",
+					"columnTitle": "Tasks - Tech & Intelligence",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631907569, 1939166037]
+				},
+				{
+					"columnId": "dependency_mkqhzez9",
+					"columnTitle": "Dependent On",
+					"columnType": "dependency",
+					"targetBoardIds": [1938986335]
+				},
+				{
+					"columnId": "board_relation_mkqh5gc1",
+					"columnTitle": "link to Roadmap",
+					"columnType": "board_relation",
+					"targetBoardIds": [1939249804]
+				}
+			]
+		},
+		{
+			"boardId": "1939583448",
+			"boardName": "Bugs",
+			"toolName": "getBugs",
+			"relations": [
+				{
+					"columnId": "board_relation_mkqshkt4",
+					"columnTitle": "Versions",
+					"columnType": "board_relation",
+					"targetBoardIds": [1942604978]
+				},
+				{
+					"columnId": "board_relation_mkqhpaq1",
+					"columnTitle": "Tasks - Tech & Intelligence",
+					"columnType": "board_relation",
+					"targetBoardIds": [1631907569, 1939166037]
+				},
+				{
+					"columnId": "dependency_mkqhzez9",
+					"columnTitle": "Dependent On",
+					"columnType": "dependency",
+					"targetBoardIds": [1939583448]
+				},
+				{
+					"columnId": "board_relation_mkqh84s9",
+					"columnTitle": "link to STEPhie",
+					"columnType": "board_relation",
+					"targetBoardIds": [1939249804]
+				}
+			]
+		},
+		{
+			"boardId": "2054670440",
+			"boardName": "Vertikaler",
+			"toolName": "getVertikaler",
+			"relations": [
+				{
+					"columnId": "board_relation_mksxr042",
+					"columnTitle": "Publishers",
+					"columnType": "board_relation",
+					"targetBoardIds": [1222800432]
+				}
+			]
+		}
+	],
+	"recommendations": [
+		"getLeads: Add duplicated_lead_detectorId parameter for \"*Duplicated Lead Detector\" (connect_boards8)",
+		"getLeads: Add existing_contact_detectorId parameter for \"*Existing Contact Detector\" (link_to_contacts)",
+		"getLeads: Add existing_account_detectorId parameter for \"*Existing Account Detector\" (link_to_accounts7)",
+		"getLeads: Add activitiesId parameter for \"Activities\" (link_to___activities_board)",
+		"getLeads: Add advertiser_publisherId parameter for \"Advertiser/Publisher\" (connect_boards__1)",
+		"getLeads: Add opportunitiesId parameter for \"Opportunities\" (connect_boards70__1)",
+		"getAccounts: Add agency_groupId parameter for \"Agency (Group)\" (connect_boards)",
+		"getAccounts: Add additional_accountsId parameter for \"Additional Accounts\" (connect_boards0__1)",
+		"getAccounts: Add bureau_contact_oldId parameter for \"Bureau Contact (old)\" (connect_boards7)",
+		"getAccounts: Add agency_contactId parameter for \"Agency Contact\" (link_to_contacts__1)",
+		"getAccounts: Add client_projectsId parameter for \"Client Projects\" (link_to_customers_projects)",
+		"getAccounts: Add client_onboarding_account_managersId parameter for \"Client Onboarding / Account Managers\" (link_to_accounts_management)",
+		"getAccounts: Add invoices_and_collectionsId parameter for \"Invoices and Collections\" (link_to_invoices_and_collections)",
+		"getAccounts: Add sales_activitiesId parameter for \"Sales Activities\" (board_relation8__1)",
+		"getAccounts: Add sales_activitiesId parameter for \"*Sales Activities\" (board_relation_mks2y6p)",
+		"getAccounts: Add link_to_opportunitiesId parameter for \"link to Opportunities\" (link_to_opportunities__1)",
+		"getAccounts: Add link_to_leadsId parameter for \"link to Leads\" (link_to_leads__1)",
+		"getAccounts: Add link_to_subitems_of_projectsId parameter for \"link to Subitems of Projects\" (board_relation6__1)",
+		"getAccounts: Add ticketsId parameter for \"Tickets\" (link_to_tickets__1)",
+		"getAccounts: Add link_to_projects_3_0Id parameter for \"link to Projects 3.0\" (link_to_projects_3_0__1)",
+		"getAccounts: Add link_to_dealsId parameter for \"link to Deals\" (link_to_deals_mkmjwqv)",
+		"getAccounts: Add link_to_dealsId parameter for \"link to Deals\" (link_to_deals_mkmj2xjg)",
+		"getAccounts: Add link_to_subitems_of_okrId parameter for \"link to Subitems of OKR\" (board_relation_mkpjs94e)",
+		"getAccounts: Add link_to_step_x_jfm_business_native_samarbejdeId parameter for \"link to STEP x JFM Business: Native samarbejde\" (board_relation_mkse2pp9)",
+		"getContacts: Add customerId parameter for \"Customer\" (connect_boards__1)",
+		"getContacts: Add leadsId parameter for \"*Leads\" (connect_boards7)",
+		"getContacts: Add latest_sales_activityId parameter for \"Latest Sales Activity\" (board_relation__1)",
+		"getContacts: Add sales_activitiesId parameter for \"Sales Activities\" (connect_boards67__1)",
+		"getContacts: Add campaign_contactId parameter for \"Campaign Contact\" (link_to_opportunities__1)",
+		"getContacts: Add advertiser_publisher_opportunitiesId parameter for \"Advertiser/Publisher Opportunities\" (link_to_opportunities0__1)",
+		"getContacts: Add ticketsId parameter for \"Tickets\" (link_to_tickets__1)",
+		"getContacts: Add link_to_step_x_jfm_business_native_samarbejdeId parameter for \"link to STEP x JFM Business: Native samarbejde\" (board_relation_mkse567w)",
+		"getContacts: Add link_to_publisher_total_overviewId parameter for \"link to *Publisher total overview\" (board_relation_mksww2dj)",
+		"getSalesActivities: Add source_itemId parameter for \"*Source item\" (activity_item)",
+		"getSalesActivities: Add advertiserId parameter for \"Advertiser\" (connect_boards9__1)",
+		"getSalesActivities: Add opportunitiesId parameter for \"Opportunities\" (link_to_opportunities__1)",
+		"getSalesActivities: Add agency_strategyId parameter for \"Agency Strategy\" (board_relation__1)",
+		"getSalesActivities: Add expensesId parameter for \"Expenses\" (link_to_expenses__1)",
+		"getSalesActivities: Add link_to_key_resultsId parameter for \"link to Key Results\" (link_to_key_results_Mjj8Pa33)",
+		"getSalesActivities: Add link_to_subitems_of_okrId parameter for \"link to Subitems of OKR\" (board_relation_mkpjdq8x)",
+		"getSalesActivities: Add accountsId parameter for \"Accounts\" (board_relation_mks2th6j)",
+		"getOpportunities: Add leadsId parameter for \"Leads\" (link_to_leads__1)",
+		"getOpportunities: Add rep_nameId parameter for \"*Rep Name\" (connect_boards)",
+		"getOpportunities: Add advertiser_publisherId parameter for \"🏢 Advertiser/Publisher\" (connect_boards31)",
+		"getOpportunities: Add advertiser_publisher_contactId parameter for \"Advertiser/Publisher Contact\" (connect_boards96__1)",
+		"getOpportunities: Add agency_contactId parameter for \"Agency Contact\" (deal_contact)",
+		"getOpportunities: Add campaign_contactId parameter for \"Campaign Contact\" (connect_boards6__1)",
+		"getOpportunities: Add activities_connectedId parameter for \"Activities Connected\" (link_to___activities_board4)",
+		"getOpportunities: Add client_onboarding_account_managersId parameter for \"Client Onboarding / Account Managers\" (link_to_accounts_management)",
+		"getOpportunities: Add sales_activitiesId parameter for \"Sales Activities\" (connect_boards04__1)",
+		"getOpportunities: Add projectsId parameter for \"Projects\" (link_to_projects__1)",
+		"getOpportunities: Add link_to_subitems_of_projects_3_0Id parameter for \"link to Subitems of Projects 3.0\" (board_relation__1)",
+		"getOpportunities: Add link_to_key_resultsId parameter for \"link to Key Results\" (link_to_key_results_Mjj8D3RA)",
+		"getOpportunities: Add publisherId parameter for \"Publisher\" (board_relation_mkmntftm)",
+		"getOpportunities: Add link_to_subitems_of_okrId parameter for \"link to Subitems of OKR\" (board_relation_mkpjq8tc)",
+		"getOpportunities: Add legal_requestId parameter for \"Legal Request\" (connect_boards41)",
+		"getOpportunities: Add invoices_and_collectionsId parameter for \"Invoices and Collections\" (connect_boards4)",
+		"getOpportunities: Add publisher_groupId parameter for \"Publisher Group\" (board_relation_mkpb11mt)",
+		"getOpportunities: Add link_to_step_x_jfm_business_native_samarbejdeId parameter for \"link to STEP x JFM Business: Native samarbejde\" (board_relation_mkse54z5)",
+		"getBookings: Add opportunitiesId parameter for \"Opportunities\" (link_to_opportunities__1)",
+		"getPeople: Add task_boardId parameter for \"Task Board\" (board_relation_mkqncjd)",
+		"getPeople: Add platformsId parameter for \"Platforms\" (link_to_platforms__1)",
+		"getPeople: Add processesId parameter for \"Processes\" (link_to_processes__1)",
+		"getPeople: Add productsId parameter for \"Products\" (link_to_products__1)",
+		"getPeople: Add link_to_productsId parameter for \"link to Products\" (link_to_products8__1)",
+		"getPeople: Add link_to_productsId parameter for \"link to Products\" (link_to_products9__1)",
+		"getPeople: Add teamsId parameter for \"Teams\" (link_to_teams__1)",
+		"getPeople: Add link_to_ticketsId parameter for \"link to Tickets\" (link_to_tickets__1)",
+		"getPeople: Add link_to_ticketsId parameter for \"link to Tickets\" (link_to_tickets1__1)",
+		"getPeople: Add link_to_key_resultsId parameter for \"link to Key Results\" (link_to_key_results__1)",
+		"getPeople: Add link_to_objectivesId parameter for \"link to Objectives\" (link_to_objectives__1)",
+		"getTasksTechIntelligence: Add key_resultId parameter for \"Key Result\" (board_relation_mkpjqgpv)",
+		"getTasksTechIntelligence: Add key_result_subitemId parameter for \"Key Result Subitem\" (board_relation7__1)",
+		"getTasksTechIntelligence: Add my_teamId parameter for \"My Team\" (link_to_teams_Mjj8g28X)",
+		"getTasksTechIntelligence: Add send_to_teamId parameter for \"Send To Team\" (link_to_teams_Mjj8wIFJ)",
+		"getTasksTechIntelligence: Add task_from_teamId parameter for \"Task From Team\" (connect_boards_Mjj8zwYL)",
+		"getTasksTechIntelligence: Add team_taskId parameter for \"Team Task\" (connect_boards_Mjj8XLFi)",
+		"getTasksTechIntelligence: Add related_toId parameter for \"Related To\" (connect_boards_mkn596j9)",
+		"getTasksTechIntelligence: Add link_to_stephieId parameter for \"link to STEPhie\" (board_relation_mkqhkyb7)",
+		"getOKR: Add key_resultsId parameter for \"Key Results\" (connect_boards1__1)",
+		"getOKR: Add productsId parameter for \"Products\" (connect_boards3__1)",
+		"getTeams: Add objectivesId parameter for \"Objectives\" (link_to_okrs__1)",
+		"getTeams: Add key_resultsId parameter for \"Key Results\" (link_to_projects__1)",
+		"getTeams: Add key_result_dependenciesId parameter for \"Key Result Dependencies\" (link_to_key_results__1)",
+		"getTeams: Add boardsId parameter for \"Boards\" (link_to_boards__1)",
+		"getTeams: Add link_to_subitems_of_feature_requestsId parameter for \"link to Subitems of Feature Requests\" (board_relation_mks6a11q)",
+		"getTasksAdTech: Add key_resultId parameter for \"Key Result\" (board_relation_mkpj798k)",
+		"getTasksAdTech: Add active_taskId parameter for \"Active task\" (active_task__1)",
+		"getTasksAdTech: Add key_result_subitemsId parameter for \"Key Result Subitems\" (board_relation4__1)",
+		"getTasksAdTech: Add my_teamId parameter for \"My Team\" (link_to_teams_Mjj8h8H0)",
+		"getTasksAdTech: Add send_to_teamId parameter for \"Send To Team\" (link_to_teams_Mjj8tJFz)",
+		"getTasksAdTech: Add task_from_teamId parameter for \"Task From Team\" (connect_boards_Mjj8I0gY)",
+		"getTasksAdTech: Add team_taskId parameter for \"Team Task\" (connect_boards_Mjj8E7qA)",
+		"getTasksVideo: Add key_resultId parameter for \"Key Result\" (board_relation_mkpj1ppt)",
+		"getTasksVideo: Add productsId parameter for \"Products\" (connect_boards7__1)",
+		"getTasksVideo: Add platformsId parameter for \"Platforms\" (connect_boards3__1)",
+		"getTasksVideo: Add key_result_subitemsId parameter for \"Key Result Subitems\" (board_relation__1)",
+		"getTasksVideo: Add my_teamId parameter for \"My Team\" (link_to_teams_Mjj8IyXZ)",
+		"getTasksVideo: Add team_taskId parameter for \"Team Task\" (connect_boards_Mjj87GdS)",
+		"getTasksVideo: Add task_from_teamId parameter for \"Task From Team\" (connect_boards_Mjj8UnYS)",
+		"getStrategies: Add objectivesId parameter for \"Objectives\" (connect_boards__1)",
+		"getTickets: Add contactsId parameter for \"Contacts\" (connect_boards8__1)",
+		"getTickets: Add sub_ticketsId parameter for \"Sub-Tickets\" (connect_boards_Mjj4yp1J)",
+		"getTickets: Add incidentsId parameter for \"Incidents\" (connect_boards2)",
+		"getTickets: Add initiatorId parameter for \"Initiator\" (connect_boards9__1)",
+		"getTickets: Add publisher_total_overviewId parameter for \"Publisher total overview\" (connect_boards08__1)",
+		"getTickets: Add publisher_groupId parameter for \"Publisher Group\" (connect_boards5__1)",
+		"getTickets: Add platformsId parameter for \"Platforms\" (connect_boards81__1)",
+		"getTickets: Add productsId parameter for \"Products\" (connect_boards0__1)",
+		"getTickets: Add slasId parameter for \"SLAs\" (connect_boards82__1)",
+		"getTickets: Add publisher_io_bookingsId parameter for \"Publisher IO bookings\" (connect_boards98__1)",
+		"getTickets: Add link_to_tasks_tech_intelligenceId parameter for \"link to Tasks - Tech & Intelligence\" (board_relation__1)",
+		"getMarketingExpenses: Add sales_activitiesId parameter for \"Sales Activities\" (connect_boards1__1)",
+		"getMarketingExpenses: Add budgetsId parameter for \"Budgets\" (link_to_budgets__1)",
+		"getMarketingExpenses: Add tasksId parameter for \"Tasks\" (board_relation_mkn2b33z)",
+		"getMarketingExpenses: Add task_subitemId parameter for \"Task Subitem\" (board_relation_mkn27hzj)",
+		"getMarketingExpenses: Add link_to_tasks_marketingId parameter for \"link to Tasks - Marketing\" (board_relation_mkncvqsy)",
+		"getMarketingExpenses: Add key_resultsId parameter for \"Key Results\" (connect_boards_mkncv02e)",
+		"getMarketingBudgets: Add expensesId parameter for \"Expenses\" (connect_boards8__1)",
+		"getMarketingBudgets: Add tasksId parameter for \"Tasks\" (board_relation_mkn28mrh)",
+		"getTasksMarketing: Add key_resultId parameter for \"Key Result\" (board_relation_mkpjg0ky)",
+		"getTasksMarketing: Add target_audienceId parameter for \"Target Audience\" (connect_boards__1)",
+		"getTasksMarketing: Add segmentsId parameter for \"Segments\" (connect_boards1__1)",
+		"getTasksMarketing: Add my_teamId parameter for \"My Team\" (link_to_teams_Mjj8UZOX)",
+		"getTasksMarketing: Add send_to_teamId parameter for \"Send To Team\" (link_to_teams_Mjj8FZuw)",
+		"getTasksMarketing: Add team_taskId parameter for \"Team Task\" (connect_boards_Mjj8nYoW)",
+		"getTasksMarketing: Add task_from_teamId parameter for \"Task From Team\" (connect_boards_Mjj8u5eG)",
+		"getTasksMarketing: Add subitemsId parameter for \"Subitems\" (board_relation_mknce448)",
+		"getTasksAdOps: Add key_resultId parameter for \"Key Result\" (board_relation_mkpjy03a)",
+		"getTasksAdOps: Add key_result_subitemId parameter for \"Key Result Subitem\" (board_relation7__1)",
+		"getTasksAdOps: Add my_teamId parameter for \"My Team\" (link_to_teams_Mjj8SqY6)",
+		"getTasksAdOps: Add send_to_teamId parameter for \"Send To Team\" (link_to_teams_Mjj8r8Eo)",
+		"getTasksAdOps: Add team_taskId parameter for \"Team Task\" (connect_boards_Mjj8MNws)",
+		"getTasksAdOps: Add task_from_teamId parameter for \"Task From Team\" (connect_boards_Mjj8hhFM)",
+		"getTasksYieldGrowth: Add key_resultId parameter for \"Key Result\" (board_relation_mkpj5fav)",
+		"getTasksYieldGrowth: Add key_result_subitemId parameter for \"Key Result Subitem\" (board_relation7__1)",
+		"getTasksYieldGrowth: Add my_teamId parameter for \"My Team\" (link_to_teams_Mjj8SqY6)",
+		"getTasksYieldGrowth: Add send_to_teamId parameter for \"Send To Team\" (link_to_teams_Mjj8r8Eo)",
+		"getTasksYieldGrowth: Add team_taskId parameter for \"Team Task\" (connect_boards_Mjj8MNws)",
+		"getTasksYieldGrowth: Add task_from_teamId parameter for \"Task From Team\" (connect_boards_Mjj8hhFM)",
+		"getFeatures: Add versionsId parameter for \"Versions\" (board_relation_mkqqn0wt)",
+		"getFeatures: Add tasks_tech_intelligenceId parameter for \"Tasks - Tech & Intelligence\" (board_relation_mkqhpaq1)",
+		"getFeatures: Add dependent_onId parameter for \"Dependent On\" (dependency_mkqhzez9)",
+		"getFeatures: Add link_to_roadmapId parameter for \"link to Roadmap\" (board_relation_mkqh5gc1)",
+		"getBugs: Add versionsId parameter for \"Versions\" (board_relation_mkqshkt4)",
+		"getBugs: Add tasks_tech_intelligenceId parameter for \"Tasks - Tech & Intelligence\" (board_relation_mkqhpaq1)",
+		"getBugs: Add dependent_onId parameter for \"Dependent On\" (dependency_mkqhzez9)",
+		"getBugs: Add link_to_stephieId parameter for \"link to STEPhie\" (board_relation_mkqh84s9)",
+		"getVertikaler: Add publishersId parameter for \"Publishers\" (board_relation_mksxr042)"
+	]
 }

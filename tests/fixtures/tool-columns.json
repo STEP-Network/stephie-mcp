@@ -1,275 +1,259 @@
 {
-  "getLeads": {
-    "tool": "getLeads",
-    "boardId": "1402911026",
-    "columns": [
-      "name",
-      "lead_owner",
-      "lead_status",
-      "status_1__1",
-      "date0__1",
-      "link_to_contacts",
-      "link_to_accounts7",
-      "connect_boards70__1"
-    ],
-    "filePath": "crm/getLeads.ts"
-  },
-  "getAccounts": {
-    "tool": "getAccounts",
-    "boardId": "1402911027",
-    "columns": [
-      "name",
-      "people",
-      "status",
-      "status5",
-      "text5",
-      "account_contact",
-      "account_deal",
-      "connect_boards9"
-    ],
-    "filePath": "crm/getAccounts.ts"
-  },
-  "getContacts": {
-    "tool": "getContacts",
-    "boardId": "1402911034",
-    "columns": [
-      "name",
-      "text6",
-      "people",
-      "status__1",
-      "contact_account",
-      "contact_deal"
-    ],
-    "filePath": "crm/getContacts.ts"
-  },
-  "getSalesActivities": {
-    "tool": "getSalesActivities",
-    "boardId": "1402911042",
-    "columns": [
-      "name",
-      "activity_owner",
-      "activity_status",
-      "activity_type",
-      "connect_boards9__1",
-      "link_to_contacts8__1",
-      "link_to_opportunities__1"
-    ],
-    "filePath": "sales/getSalesActivities.ts"
-  },
-  "getOpportunities": {
-    "tool": "getOpportunities",
-    "boardId": "1402911049",
-    "columns": [
-      "name",
-      "connect_boards",
-      "deal_stage",
-      "date1",
-      "deal_creation_date",
-      "deal_expected_close_date",
-      "deal_close_date",
-      "status3__1",
-      "text2__1",
-      "date5__1",
-      "connect_boards31",
-      "deal_contact",
-      "connect_boards8__1"
-    ],
-    "filePath": "sales/getOpportunities.ts"
-  },
-  "getDeals": {
-    "tool": "getDeals",
-    "boardId": "1623368485",
-    "columns": [
-      "name",
-      "text5__1",
-      "text__1",
-      "deal_names__1",
-      "pricing_type_mkmj9a6x",
-      "color_mkqby95j",
-      "connect_boards_mkmjpjjc",
-      "connect_boards_mkmjr3e3",
-      "connect_boards3__1"
-    ],
-    "filePath": "sales/getDeals.ts"
-  },
-  "getBookings": {
-    "tool": "getBookings",
-    "boardId": "1549621337",
-    "columns": [
-      "name",
-      "status0__1",
-      "date",
-      "person",
-      "status_3",
-      "status2",
-      "status9",
-      "text0__1",
-      "numbers4__1",
-      "link_to_opportunities__1"
-    ],
-    "filePath": "operations/getBookings.ts"
-  },
-  "getOKR": {
-    "tool": "getOKR",
-    "boardId": "1631918659",
-    "columns": [
-      "status0__1",
-      "person",
-      "numbers__1",
-      "date8__1",
-      "text_1__1"
-    ],
-    "filePath": "okr/getOKR.ts"
-  },
-  "getTeams": {
-    "tool": "getTeams",
-    "boardId": "1631927696",
-    "columns": [
-      "name",
-      "board_id_mkn336m7",
-      "status",
-      "connect_boards__1",
-      "link_to_okrs__1"
-    ],
-    "filePath": "hr/getTeams.ts"
-  },
-  "getPeople": {
-    "tool": "getPeople",
-    "boardId": "1612664689",
-    "columns": [
-      "name",
-      "text__1",
-      "date__1",
-      "text6__1",
-      "status",
-      "link_to_teams__1",
-      "date6__1"
-    ],
-    "filePath": "hr/getPeople.ts"
-  },
-  "getTickets": {
-    "tool": "getTickets",
-    "boardId": "1647372207",
-    "columns": [
-      "name",
-      "status95",
-      "text",
-      "priority",
-      "request_type",
-      "date",
-      "date5",
-      "date__1",
-      "date4__1",
-      "connect_boards2",
-      "connect_boards8__1",
-      "connect_boards__1",
-      "connect_boards08__1"
-    ],
-    "filePath": "support/getTickets.ts"
-  },
-  "getBugs": {
-    "tool": "getBugs",
-    "boardId": "1939583448",
-    "columns": [
-      "name",
-      "color_mkqnwy18",
-      "color_mkqhya7m",
-      "multiple_person_mkqhq07m",
-      "date4",
-      "date_mkqhdjw7"
-    ],
-    "filePath": "development/getBugs.ts"
-  },
-  "getFeatures": {
-    "tool": "getFeatures",
-    "boardId": "1938986335",
-    "columns": [
-      "name",
-      "color_mkqn9n66",
-      "color_mkqhya7m",
-      "multiple_person_mkqhq07m",
-      "date_mkqhdjw7",
-      "date4"
-    ],
-    "filePath": "development/getFeatures.ts"
-  },
-  "getMarketingBudgets": {
-    "tool": "getMarketingBudgets",
-    "boardId": "1677240056",
-    "columns": [
-      "name",
-      "date_mkn42vh4",
-      "numbers_mkn4bxpz",
-      "type_mkn4rg75"
-    ],
-    "filePath": "marketing/getMarketingBudgets.ts"
-  },
-  "getMarketingExpenses": {
-    "tool": "getMarketingExpenses",
-    "boardId": "1658073379",
-    "columns": [
-      "name",
-      "numbers__1",
-      "date4",
-      "link_to_budgets__1"
-    ],
-    "filePath": "marketing/getMarketingExpenses.ts"
-  },
-  "getTasksTechIntelligence": {
-    "tool": "getTasksTechIntelligence",
-    "boardId": "1631907569",
-    "columns": [
-      "name",
-      "person",
-      "status_19__1",
-      "type_1__1",
-      "priority_1__1",
-      "date__1",
-      "date4",
-      "date3__1",
-      "date7__1",
-      "date4__1",
-      "board_relation_mkpjqgpv",
-      "connect_boards_Mjj8XLFi"
-    ],
-    "filePath": "tasks/getTasksTechIntelligence.ts"
-  },
-  "getTasksAdOps": {
-    "tool": "getTasksAdOps",
-    "boardId": "1717613454",
-    "columns": [
-      "name",
-      "person",
-      "status_mkkwc3ez",
-      "label_mkkwem4d",
-      "color_mknxxz44",
-      "date__1",
-      "date4",
-      "date3__1",
-      "date7__1",
-      "date4__1",
-      "board_relation_mkpjy03a",
-      "connect_boards_mkkxdfax"
-    ],
-    "filePath": "tasks/getTasksAdOps.ts"
-  },
-  "getTasksMarketing": {
-    "tool": "getTasksMarketing",
-    "boardId": "1693359113",
-    "columns": [
-      "name",
-      "person",
-      "status_1__1",
-      "color_mkpwc7hm",
-      "status_mkkw7ehb",
-      "publish_date_mkn21n6b",
-      "budget_mkn22001",
-      "title_mkn256dt",
-      "link_to_teams_Mjj8UZOX",
-      "link_to_teams_Mjj8FZuw",
-      "board_relation_mkpjg0ky",
-      "budgets_mkn2xpkt"
-    ],
-    "filePath": "tasks/getTasksMarketing.ts"
-  }
+	"getLeads": {
+		"tool": "getLeads",
+		"boardId": "1402911026",
+		"columns": [
+			"name",
+			"lead_owner",
+			"lead_status",
+			"status_1__1",
+			"date0__1",
+			"link_to_contacts",
+			"link_to_accounts7",
+			"connect_boards70__1"
+		],
+		"filePath": "crm/getLeads.ts"
+	},
+	"getAccounts": {
+		"tool": "getAccounts",
+		"boardId": "1402911027",
+		"columns": [
+			"name",
+			"people",
+			"status",
+			"status5",
+			"text5",
+			"account_contact",
+			"account_deal",
+			"connect_boards9"
+		],
+		"filePath": "crm/getAccounts.ts"
+	},
+	"getContacts": {
+		"tool": "getContacts",
+		"boardId": "1402911034",
+		"columns": [
+			"name",
+			"text6",
+			"people",
+			"status__1",
+			"contact_account",
+			"contact_deal"
+		],
+		"filePath": "crm/getContacts.ts"
+	},
+	"getSalesActivities": {
+		"tool": "getSalesActivities",
+		"boardId": "1402911042",
+		"columns": [
+			"name",
+			"activity_owner",
+			"activity_status",
+			"activity_type",
+			"connect_boards9__1",
+			"link_to_contacts8__1",
+			"link_to_opportunities__1"
+		],
+		"filePath": "sales/getSalesActivities.ts"
+	},
+	"getOpportunities": {
+		"tool": "getOpportunities",
+		"boardId": "1402911049",
+		"columns": [
+			"name",
+			"connect_boards",
+			"deal_stage",
+			"date1",
+			"deal_creation_date",
+			"deal_expected_close_date",
+			"deal_close_date",
+			"status3__1",
+			"text2__1",
+			"date5__1",
+			"connect_boards31",
+			"deal_contact",
+			"connect_boards8__1"
+		],
+		"filePath": "sales/getOpportunities.ts"
+	},
+	"getDeals": {
+		"tool": "getDeals",
+		"boardId": "1623368485",
+		"columns": [
+			"name",
+			"text5__1",
+			"text__1",
+			"deal_names__1",
+			"pricing_type_mkmj9a6x",
+			"color_mkqby95j",
+			"connect_boards_mkmjpjjc",
+			"connect_boards_mkmjr3e3",
+			"connect_boards3__1"
+		],
+		"filePath": "sales/getDeals.ts"
+	},
+	"getBookings": {
+		"tool": "getBookings",
+		"boardId": "1549621337",
+		"columns": [
+			"name",
+			"status0__1",
+			"date",
+			"person",
+			"status_3",
+			"status2",
+			"status9",
+			"text0__1",
+			"numbers4__1",
+			"link_to_opportunities__1"
+		],
+		"filePath": "operations/getBookings.ts"
+	},
+	"getOKR": {
+		"tool": "getOKR",
+		"boardId": "1631918659",
+		"columns": ["status0__1", "person", "numbers__1", "date8__1", "text_1__1"],
+		"filePath": "okr/getOKR.ts"
+	},
+	"getTeams": {
+		"tool": "getTeams",
+		"boardId": "1631927696",
+		"columns": [
+			"name",
+			"board_id_mkn336m7",
+			"status",
+			"connect_boards__1",
+			"link_to_okrs__1"
+		],
+		"filePath": "hr/getTeams.ts"
+	},
+	"getPeople": {
+		"tool": "getPeople",
+		"boardId": "1612664689",
+		"columns": [
+			"name",
+			"text__1",
+			"date__1",
+			"text6__1",
+			"status",
+			"link_to_teams__1",
+			"date6__1"
+		],
+		"filePath": "hr/getPeople.ts"
+	},
+	"getTickets": {
+		"tool": "getTickets",
+		"boardId": "1647372207",
+		"columns": [
+			"name",
+			"status95",
+			"text",
+			"priority",
+			"request_type",
+			"date",
+			"date5",
+			"date__1",
+			"date4__1",
+			"connect_boards2",
+			"connect_boards8__1",
+			"connect_boards__1",
+			"connect_boards08__1"
+		],
+		"filePath": "support/getTickets.ts"
+	},
+	"getBugs": {
+		"tool": "getBugs",
+		"boardId": "1939583448",
+		"columns": [
+			"name",
+			"color_mkqnwy18",
+			"color_mkqhya7m",
+			"multiple_person_mkqhq07m",
+			"date4",
+			"date_mkqhdjw7"
+		],
+		"filePath": "development/getBugs.ts"
+	},
+	"getFeatures": {
+		"tool": "getFeatures",
+		"boardId": "1938986335",
+		"columns": [
+			"name",
+			"color_mkqn9n66",
+			"color_mkqhya7m",
+			"multiple_person_mkqhq07m",
+			"date_mkqhdjw7",
+			"date4"
+		],
+		"filePath": "development/getFeatures.ts"
+	},
+	"getMarketingBudgets": {
+		"tool": "getMarketingBudgets",
+		"boardId": "1677240056",
+		"columns": ["name", "date_mkn42vh4", "numbers_mkn4bxpz", "type_mkn4rg75"],
+		"filePath": "marketing/getMarketingBudgets.ts"
+	},
+	"getMarketingExpenses": {
+		"tool": "getMarketingExpenses",
+		"boardId": "1658073379",
+		"columns": ["name", "numbers__1", "date4", "link_to_budgets__1"],
+		"filePath": "marketing/getMarketingExpenses.ts"
+	},
+	"getTasksTechIntelligence": {
+		"tool": "getTasksTechIntelligence",
+		"boardId": "1631907569",
+		"columns": [
+			"name",
+			"person",
+			"status_19__1",
+			"type_1__1",
+			"priority_1__1",
+			"date__1",
+			"date4",
+			"date3__1",
+			"date7__1",
+			"date4__1",
+			"board_relation_mkpjqgpv",
+			"connect_boards_Mjj8XLFi"
+		],
+		"filePath": "tasks/getTasksTechIntelligence.ts"
+	},
+	"getTasksAdOps": {
+		"tool": "getTasksAdOps",
+		"boardId": "1717613454",
+		"columns": [
+			"name",
+			"person",
+			"status_mkkwc3ez",
+			"label_mkkwem4d",
+			"color_mknxxz44",
+			"date__1",
+			"date4",
+			"date3__1",
+			"date7__1",
+			"date4__1",
+			"board_relation_mkpjy03a",
+			"connect_boards_mkkxdfax"
+		],
+		"filePath": "tasks/getTasksAdOps.ts"
+	},
+	"getTasksMarketing": {
+		"tool": "getTasksMarketing",
+		"boardId": "1693359113",
+		"columns": [
+			"name",
+			"person",
+			"status_1__1",
+			"color_mkpwc7hm",
+			"status_mkkw7ehb",
+			"publish_date_mkn21n6b",
+			"budget_mkn22001",
+			"title_mkn256dt",
+			"link_to_teams_Mjj8UZOX",
+			"link_to_teams_Mjj8FZuw",
+			"board_relation_mkpjg0ky",
+			"budgets_mkn2xpkt"
+		],
+		"filePath": "tasks/getTasksMarketing.ts"
+	}
 }
