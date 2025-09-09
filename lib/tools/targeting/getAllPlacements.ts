@@ -67,16 +67,24 @@ export async function getAllPlacements(args: { includeIds?: boolean }) {
 
 		if (placements.length > 0) {
 			// Categorize placements
-			const specialPlacements = ["RON", "Gambling", "Finance", "RE-AD"];
+			// Note: "READ" in the placement names corresponds to "RE-AD" (Responsible Advertisement)
+			const specialPlacements = ["RON", "Gambling", "Finance", "READ"];
 			const verticals: Array<Record<string, unknown>> = [];
 			const special: Array<Record<string, unknown>> = [];
 
 			placements.forEach((p: { name: unknown; placementId: string }) => {
-				if (
-					specialPlacements.some((sp) =>
-						(p.name as string).toLowerCase().includes(sp.toLowerCase()),
-					)
-				) {
+				const placementName = p.name as string;
+				// Check if this is a special placement
+				// Special handling for READ/RE-AD - check for "READ" but not as part of another word
+				const isSpecial = specialPlacements.some((sp) => {
+					if (sp === "READ") {
+						// Match "- READ (" to ensure it's the standalone READ placement
+						return placementName.includes("- READ (");
+					}
+					return placementName.toLowerCase().includes(sp.toLowerCase());
+				});
+
+				if (isSpecial) {
 					special.push(p);
 				} else {
 					verticals.push(p);
