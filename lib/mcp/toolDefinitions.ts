@@ -375,7 +375,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 	{
 		name: "availabilityForecast",
 		description:
-			"Get availability forecast from Google Ad Manager. Returns impression availability for specified ad units, targeting, and date range.",
+			"Get availability forecast from Google Ad Manager. Returns impression availability for specified targeting and date range.",
 		inputSchema: {
 			type: "object",
 			properties: {
@@ -397,7 +397,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 						items: { type: "number" },
 					},
 					description:
-						"Array of ad sizes as [width, height] pairs, e.g. [[300,250], [1,2]]",
+						"Array of ad sizes as [width, height] pairs, e.g. [[300,250], [1,2]]. Use getAllSizes tool to confirm the available sizes.",
 					required: true,
 				},
 				goalQuantity: {
@@ -408,28 +408,28 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					type: "array",
 					items: { type: "number" },
 					description:
-						"Array of ad unit IDs to target (from findPublisherAdUnits). Defaults to [21808880960] if not provided",
+						"Array of ad unit IDs to target. Use findPublisherAdUnits tool to get valid IDs. Not necessary if using RON placement.",
 				},
 				excludedAdUnitIds: {
 					type: "array",
 					items: { type: "number" },
-					description: "Array of ad unit IDs to exclude from forecast",
+					description: "Array of ad unit IDs to exclude from forecast. Use findPublisherAdUnits tool to get valid IDs.",
 				},
 				audienceSegmentIds: {
 					type: "array",
 					items: { type: "string" },
-					description: "Array of audience segment IDs for demographic targeting",
+					description: "Array of audience segment IDs for demographic targeting. Use getAudienceSegments tool to get valid IDs.",
 				},
 				customTargeting: {
 					type: "array",
 					items: {
 						type: "object",
 						properties: {
-							keyId: { type: "string", description: "Custom targeting key ID" },
+							keyId: { type: "string", description: "Custom targeting key ID. Use getKeyValues tool to get valid key IDs." },
 							valueIds: {
 								type: "array",
 								items: { type: "string" },
-								description: "Array of value IDs for the key",
+								description: "Array of value IDs for the key. Use getKeyValues tool to get valid value IDs.",
 							},
 							operator: {
 								type: "string",
@@ -438,7 +438,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 							},
 						},
 					},
-					description: "Array of custom targeting key-value pairs",
+					description: "Array of custom targeting key-value pairs. Use getKeyValues tool to get valid keys and values.",
 				},
 				frequencyCapMaxImpressions: {
 					type: "number",
@@ -462,20 +462,20 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 						targetedLocationIds: {
 							type: "array",
 							items: { type: "string" },
-							description: "Array of location IDs to target",
+							description: "Array of location IDs to target. Use getGeoLocations tool to get valid IDs.",
 						},
 						excludedLocationIds: {
 							type: "array",
 							items: { type: "string" },
-							description: "Array of location IDs to exclude",
+							description: "Array of location IDs to exclude. Use getGeoLocations tool to get valid IDs.",
 						},
 					},
-					description: "Geographic targeting configuration",
+					description: "Geographic targeting configuration. Use getGeoLocations tool to get valid location IDs.",
 				},
 				targetedPlacementIds: {
 					type: "array",
 					items: { type: "string" },
-					description: "Array of placement IDs to target (from getAllPlacements)",
+					description: "Array of placement IDs to target. Use getAllPlacements tool to get valid IDs.",
 				},
 			},
 			required: ["startDate", "endDate", "sizes"],

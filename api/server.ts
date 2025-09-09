@@ -143,7 +143,12 @@ const handler = createMcpHandler((server) => {
 			names: z.array(z.string()),
 		},
 		async (input) => {
-			const result = await findPublisherAdUnits(input);
+			// Parse string-encoded array if needed
+			const names = typeof input.names === "string" 
+				? JSON.parse(input.names) 
+				: input.names;
+			
+			const result = await findPublisherAdUnits({ names });
 			const text =
 				typeof result === "string" ? result : JSON.stringify(result, null, 2);
 			return { content: [{ type: "text", text }] };
@@ -256,7 +261,15 @@ const handler = createMcpHandler((server) => {
 			limit: z.number().default(20).optional(),
 		},
 		async (input) => {
-			const result = await getGeoLocations(input);
+			// Parse string-encoded array if needed
+			const params = {
+				...input,
+				search: input.search && typeof input.search === "string" 
+					? JSON.parse(input.search)
+					: input.search,
+			};
+			
+			const result = await getGeoLocations(params);
 			const text =
 				typeof result === "string" ? result : JSON.stringify(result, null, 2);
 			return { content: [{ type: "text", text }] };
@@ -329,13 +342,37 @@ const handler = createMcpHandler((server) => {
 				.describe("Array of placement IDs to target (from getAllPlacements)"),
 		},
 		async (input) => {
-			// Ensure required fields are present
+			// Helper to parse string-encoded arrays
+			const parseArrayParam = (value: any): any => {
+				if (typeof value === "string") {
+					try {
+						return JSON.parse(value);
+					} catch {
+						return value;
+					}
+				}
+				return value;
+			};
+
+			// Parse any string-encoded array parameters
 			const params = {
 				startDate: input.startDate,
 				endDate: input.endDate,
-				sizes: input.sizes,
-				...input,
+				sizes: parseArrayParam(input.sizes),
+				goalQuantity: input.goalQuantity,
+				targetedAdUnitIds: parseArrayParam(input.targetedAdUnitIds),
+				excludedAdUnitIds: parseArrayParam(input.excludedAdUnitIds),
+				audienceSegmentIds: parseArrayParam(input.audienceSegmentIds),
+				customTargeting: parseArrayParam(input.customTargeting),
+				frequencyCapMaxImpressions: input.frequencyCapMaxImpressions,
+				frequencyCapTimeUnit: input.frequencyCapTimeUnit,
+				geoTargeting: input.geoTargeting ? {
+					targetedLocationIds: parseArrayParam(input.geoTargeting.targetedLocationIds),
+					excludedLocationIds: parseArrayParam(input.geoTargeting.excludedLocationIds),
+				} : input.geoTargeting,
+				targetedPlacementIds: parseArrayParam(input.targetedPlacementIds),
 			};
+
 			const result = await availabilityForecast(
 				params as Parameters<typeof availabilityForecast>[0],
 			);
@@ -404,14 +441,26 @@ const handler = createMcpHandler((server) => {
 			includeColumnMetadata: z.boolean().optional(),
 		},
 		async (input) => {
+			// Helper to parse string-encoded arrays
+			const parseArrayParam = (value: any): any => {
+				if (typeof value === "string") {
+					try {
+						return JSON.parse(value);
+					} catch {
+						return value;
+					}
+				}
+				return value;
+			};
+
 			// Transform input to match expected types
 			const params = {
 				boardId: input.boardId,
 				limit: input.limit,
-				columnIds: input.columnIds,
-				itemIds: input.itemIds,
+				columnIds: parseArrayParam(input.columnIds),
+				itemIds: parseArrayParam(input.itemIds),
 				search: input.search,
-				columnFilters: input.columnFilters as ColumnFilter[] | undefined,
+				columnFilters: parseArrayParam(input.columnFilters) as ColumnFilter[] | undefined,
 				includeColumnMetadata: input.includeColumnMetadata,
 			};
 			const result = await getItems(params);
