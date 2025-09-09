@@ -1,8 +1,7 @@
 import dotenv from "dotenv";
 import express from "express";
 import healthHandler from "./api/health.js";
-import indexHandler from "./api/index.js";
-import sseHandler from "./api/sse.js";
+import { POST as mcpHandlerPost } from "./api/server.js";
 
 // Load environment variables
 dotenv.config({ path: ".env.local" });
@@ -58,8 +57,8 @@ const wrapHandler = (handler: any) => {
 };
 
 // Routes
-app.post("/api", wrapHandler(indexHandler));
-app.post("/api/sse", wrapHandler(sseHandler));
+app.post("/api", wrapHandler(mcpHandlerPost));
+app.post("/api/sse", wrapHandler(mcpHandlerPost)); // SSE uses same handler
 app.get("/api/health", wrapHandler(healthHandler));
 app.get("/health", wrapHandler(healthHandler));
 

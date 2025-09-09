@@ -838,6 +838,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					description: "Operator for done date comparison",
 				},
 			},
+			required: [],
 		},
 	},
 

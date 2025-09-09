@@ -84,7 +84,7 @@ const buildZodSchema = (name: string): Record<string, any> => {
 		const tool = TOOL_DEFINITIONS.find((t) => t.name === name);
 		if (!tool) return {};
 		
-		// Handle tools with no parameters
+		// Handle tools with no parameters - return empty schema that accepts empty object
 		if (!tool.inputSchema?.properties || Object.keys(tool.inputSchema.properties).length === 0) {
 			return {};
 		}
@@ -220,6 +220,9 @@ const buildZodSchema = (name: string): Record<string, any> => {
 		
 		// Handle nullable/optional
 		if (!prop.required && !tool.inputSchema.required?.includes(key)) {
+			zodType = zodType?.nullable?.()?.optional?.() || zodType?.optional?.();
+		} else if (!tool.inputSchema.required?.includes(key)) {
+			// If no explicit required array is specified, make all properties optional
 			zodType = zodType?.nullable?.()?.optional?.() || zodType?.optional?.();
 		}
 		
@@ -398,14 +401,14 @@ const handler = createMcpHandler((server) => {
 					timeoutPromise
 				]);
 				
-				const elapsed = Date.now() - activeRequests.get(requestId)!.startTime;
+				const elapsed = Date.now() - (activeRequests.get(requestId)?.startTime || Date.now());
 				console.error(`[server.ts] availabilityForecast SUCCESS (${requestId}) in ${elapsed}ms`);
 				activeRequests.delete(requestId);
 				
 				// Result is already a JSON string from the tool
 				return { content: [{ type: "text", text: result }] };
 			} catch (error) {
-				const elapsed = Date.now() - activeRequests.get(requestId)!.startTime;
+				const elapsed = Date.now() - (activeRequests.get(requestId)?.startTime || Date.now());
 				console.error(`[server.ts] availabilityForecast ERROR (${requestId}) after ${elapsed}ms:`, error);
 				activeRequests.delete(requestId);
 				
@@ -526,7 +529,7 @@ const handler = createMcpHandler((server) => {
 		"getTasksTechIntelligence",
 		getToolDescription("getTasksTechIntelligence"),
 		buildZodSchema("getTasksTechIntelligence"),
-		async (input) => {
+		async (input = {}) => {
 			const result = await getTasksTechIntelligence(input);
 			return { content: [{ type: "text", text: result }] };
 		},
