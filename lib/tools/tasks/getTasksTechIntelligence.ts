@@ -147,6 +147,9 @@ export async function getTasksTechIntelligence(
               id
               text
               value
+              ... on BoardRelationValue {
+                linked_items { id name }
+              }
               column {
                 title
                 type
@@ -178,7 +181,14 @@ export async function getTasksTechIntelligence(
 			(item as MondayItemResponse).column_values.forEach(
 				(col: Record<string, unknown>) => {
 					const column = col as MondayColumnValueResponse;
-					const fieldName = column.column?.title?.toLowerCase().replace(/\s+/g, '_') || column.id;
+					let fieldName = column.column?.title?.toLowerCase().replace(/\s+/g, '_') || column.id;
+					
+					// Special handling for specific columns
+					if (column.id === 'board_relation_mkpjqgpv') {
+						fieldName = 'key_result';
+					} else if (column.id === 'board_relation_mkqhkyb7') {
+						fieldName = 'stephie_feature';
+					}
 					
 					// Parse different column types
 					if (column.column?.type === 'status' || column.column?.type === 'dropdown') {
@@ -188,8 +198,15 @@ export async function getTasksTechIntelligence(
 							label: column.text || null
 						};
 					} else if (column.column?.type === 'board-relation') {
-						const parsedValue = column.value ? JSON.parse(column.value) : null;
-						formatted[fieldName] = parsedValue?.linkedItemIds || [];
+						// Use linked_items from GraphQL fragment if available, fallback to parsed value
+						const columnWithLinkedItems = column as MondayColumnValueResponse & { linked_items?: Array<{ id: string; name: string }> };
+						const linkedItems = columnWithLinkedItems.linked_items || [];
+						if (linkedItems.length > 0) {
+							formatted[fieldName] = linkedItems;
+						} else {
+							const parsedValue = column.value ? JSON.parse(column.value) : null;
+							formatted[fieldName] = parsedValue?.linkedItemIds || [];
+						}
 					} else if (column.column?.type === 'multiple-person') {
 						const parsedValue = column.value ? JSON.parse(column.value) : null;
 						formatted[fieldName] = parsedValue?.personsAndTeams || [];
