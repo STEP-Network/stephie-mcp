@@ -227,6 +227,9 @@ const buildZodSchema = (name: string): Record<string, any> => {
 	}
 };
 
+// Track active requests for debugging
+const activeRequests = new Map<string, { tool: string; startTime: number }>();
+
 // Create the MCP handler with all tools
 const handler = createMcpHandler((server) => {
 	// Publisher tools
@@ -394,15 +397,42 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("availabilityForecast"),
 		buildZodSchema("availabilityForecast"),
 		async (input) => {
-			console.error(`[server.ts] availabilityForecast input:`, JSON.stringify(input));
+			const requestId = `forecast-${Date.now()}`;
+			activeRequests.set(requestId, { tool: "availabilityForecast", startTime: Date.now() });
 			
-			// Zod preprocessing will handle JSON string parsing, so we can pass input directly
-			const result = await availabilityForecast(
-				input as Parameters<typeof availabilityForecast>[0],
-			);
-			const text =
-				typeof result === "string" ? result : JSON.stringify(result, null, 2);
-			return { content: [{ type: "text", text }] };
+			console.error(`[server.ts] availabilityForecast START (${requestId}):`, JSON.stringify(input));
+			
+			try {
+				// Add timeout wrapper - 4.5 minutes (270 seconds) to stay within Vercel's 5 minute limit
+				const timeoutPromise = new Promise<never>((_, reject) => 
+					setTimeout(() => reject(new Error("Forecast request timed out after 270 seconds")), 270000)
+				);
+				
+				const result = await Promise.race([
+					availabilityForecast(input as Parameters<typeof availabilityForecast>[0]),
+					timeoutPromise
+				]);
+				
+				const elapsed = Date.now() - activeRequests.get(requestId)!.startTime;
+				console.error(`[server.ts] availabilityForecast SUCCESS (${requestId}) in ${elapsed}ms`);
+				activeRequests.delete(requestId);
+				
+				const text = typeof result === "string" ? result : JSON.stringify(result, null, 2);
+				return { content: [{ type: "text", text }] };
+			} catch (error) {
+				const elapsed = Date.now() - activeRequests.get(requestId)!.startTime;
+				console.error(`[server.ts] availabilityForecast ERROR (${requestId}) after ${elapsed}ms:`, error);
+				activeRequests.delete(requestId);
+				
+				// Return a more informative error
+				const errorMessage = error instanceof Error ? error.message : String(error);
+				return { 
+					content: [{ 
+						type: "text", 
+						text: `# Availability Forecast Error\n\n**Error:** ${errorMessage}\n\n**Request ID:** ${requestId}\n**Duration:** ${elapsed}ms\n\nPlease try again or check the logs for more details.`
+					}] 
+				};
+			}
 		},
 	);
 
