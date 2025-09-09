@@ -77,7 +77,7 @@ export const availabilityForecast = async (params: {
 
 		// Add default ad unit ID if none provided
 		const effectiveTargetedAdUnitIds = (!targetedAdUnitIds || targetedAdUnitIds.length === 0) 
-			? [21809957681] 
+			? [21808880960] 
 			: targetedAdUnitIds;
 
 		console.error(
