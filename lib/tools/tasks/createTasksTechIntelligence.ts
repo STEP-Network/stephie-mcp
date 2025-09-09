@@ -28,28 +28,40 @@ interface FormattedItem {
 }
 
 export async function createTasksTechIntelligence(params: CreateTasksParams) {
+	console.log('[createTasksTechIntelligence] Starting with params:', JSON.stringify(params, null, 2));
+	
 	const { tasks } = params;
 
 	if (!tasks || tasks.length === 0) {
+		console.log('[createTasksTechIntelligence] Error: No tasks provided');
 		throw new Error("tasks array is required and must contain at least one task");
 	}
+
+	console.log('[createTasksTechIntelligence] Processing', tasks.length, 'tasks');
 
 	const BOARD_ID = "1631907569";
 	const createdItems: FormattedItem[] = [];
 
 	// Process each task individually
 	for (const task of tasks) {
+		console.log('[createTasksTechIntelligence] Processing task:', JSON.stringify(task, null, 2));
+		
 		if (!task.name) {
+			console.log('[createTasksTechIntelligence] Error: Missing name for task');
 			throw new Error("name is required for each task");
 		}
 
 		if (task.type_1__1 === undefined) {
+			console.log('[createTasksTechIntelligence] Error: Missing type_1__1 for task:', task.name);
 			throw new Error("type_1__1 is required for each task");
 		}
 
 		if (task.priority_1__1 === undefined) {
+			console.log('[createTasksTechIntelligence] Error: Missing priority_1__1 for task:', task.name);
 			throw new Error("priority_1__1 is required for each task");
 		}
+
+		console.log('[createTasksTechIntelligence] Task validation passed for:', task.name);
 
 		const columnValues: Record<string, unknown> = {};
 
@@ -112,12 +124,20 @@ export async function createTasksTechIntelligence(params: CreateTasksParams) {
 		`;
 
 		try {
+			console.log('[createTasksTechIntelligence] Sending mutation to Monday API for task:', task.name);
+			console.log('[createTasksTechIntelligence] Mutation:', mutation);
+			
 			const response = await mondayApi(mutation);
+			console.log('[createTasksTechIntelligence] Received response from Monday API for task:', task.name);
+			
 			const createdItem = response.data?.create_item as MondayItemResponse;
 
 			if (!createdItem) {
+				console.log('[createTasksTechIntelligence] Error: No created item returned for task:', task.name);
 				throw new Error(`Failed to create task: ${task.name}`);
 			}
+
+			console.log('[createTasksTechIntelligence] Successfully created item:', createdItem.id, 'for task:', task.name);
 
 			// Format the created item for JSON response
 			const formattedItem: FormattedItem = {
@@ -149,10 +169,12 @@ export async function createTasksTechIntelligence(params: CreateTasksParams) {
 
 			createdItems.push(formattedItem);
 		} catch (error) {
-			console.error(`Error creating task "${task.name}":`, error);
+			console.error(`[createTasksTechIntelligence] Error creating task "${task.name}":`, error);
 			throw new Error(`Failed to create task "${task.name}": ${error}`);
 		}
 	}
+
+	console.log('[createTasksTechIntelligence] Successfully created all tasks, returning response');
 
 	const metadata = {
 		boardId: BOARD_ID,
@@ -162,7 +184,7 @@ export async function createTasksTechIntelligence(params: CreateTasksParams) {
 		parameters: params
 	};
 
-	return JSON.stringify(
+	const result = JSON.stringify(
 		createSuccessResponse(
 			"createTasksTechIntelligence",
 			"created",
@@ -176,4 +198,7 @@ export async function createTasksTechIntelligence(params: CreateTasksParams) {
 		null,
 		2
 	);
+	
+	console.log('[createTasksTechIntelligence] Final result length:', result.length);
+	return result;
 }
