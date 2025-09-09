@@ -281,26 +281,27 @@ const handler = createMcpHandler((server) => {
 	// Forecasting tool
 	server.tool(
 		"availabilityForecast",
-		getToolDescription("availabilityForecast"),
+		"Get availability forecast from Google Ad Manager. Returns impression availability for specified ad units, targeting, and date range. If no ad units are specified, defaults to ad unit ID 21808880960.",
 		{
-			startDate: z.string(),
-			endDate: z.string(),
-			sizes: z.array(z.array(z.number())),
-			goalQuantity: z.number().nullable().optional(),
-			targetedAdUnitIds: z.array(z.number()).nullable().optional(),
-			excludedAdUnitIds: z.array(z.number()).nullable().optional(),
-			audienceSegmentIds: z.array(z.string()).nullable().optional(),
+			startDate: z.string().describe('Start date in YYYY-MM-DD format or "now" for immediate start'),
+			endDate: z.string().describe("End date in YYYY-MM-DD format"),
+			sizes: z.array(z.array(z.number())).describe("Array of ad sizes as [width, height] pairs, e.g. [[300,250], [728,90]]"),
+			goalQuantity: z.number().nullable().optional().describe("Target number of impressions. Leave null for maximum available"),
+			targetedAdUnitIds: z.array(z.number()).nullable().optional().describe("Array of ad unit IDs to target (from findPublisherAdUnits). Defaults to [21808880960] if not provided"),
+			excludedAdUnitIds: z.array(z.number()).nullable().optional().describe("Array of ad unit IDs to exclude from forecast"),
+			audienceSegmentIds: z.array(z.string()).nullable().optional().describe("Array of audience segment IDs for demographic targeting"),
 			customTargeting: z
 				.array(
 					z.object({
-						keyId: z.string(),
-						valueIds: z.array(z.string()),
-						operator: z.enum(["IS", "IS_NOT"]).optional(),
+						keyId: z.string().describe("Custom targeting key ID"),
+						valueIds: z.array(z.string()).describe("Array of value IDs for the key"),
+						operator: z.enum(["IS", "IS_NOT"]).optional().describe("Targeting operator"),
 					}),
 				)
 				.nullable()
-				.optional(),
-			frequencyCapMaxImpressions: z.number().nullable().optional(),
+				.optional()
+				.describe("Array of custom targeting key-value pairs"),
+			frequencyCapMaxImpressions: z.number().nullable().optional().describe("Maximum impressions per user for frequency capping"),
 			frequencyCapTimeUnit: z
 				.enum([
 					"MINUTE",
@@ -309,13 +310,23 @@ const handler = createMcpHandler((server) => {
 					"WEEK",
 					"MONTH",
 					"LIFETIME",
-					"POD",
-					"STREAM",
-					"UNKNOWN",
 				])
 				.nullable()
-				.optional(),
-			frequencyCapTimeLength: z.number().nullable().optional(),
+				.optional()
+				.describe("Time unit for frequency capping (defaults to WEEK)"),
+			geoTargeting: z
+				.object({
+					targetedLocationIds: z.array(z.string()).optional().describe("Array of location IDs to target"),
+					excludedLocationIds: z.array(z.string()).optional().describe("Array of location IDs to exclude"),
+				})
+				.nullable()
+				.optional()
+				.describe("Geographic targeting configuration"),
+			targetedPlacementIds: z
+				.array(z.string())
+				.nullable()
+				.optional()
+				.describe("Array of placement IDs to target (from getAllPlacements)"),
 		},
 		async (input) => {
 			// Ensure required fields are present
