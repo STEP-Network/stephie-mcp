@@ -67,6 +67,7 @@ export interface MondayColumnValueResponse {
 	column?: {
 		title: string;
 		id: string;
+		type?: string;
 	};
 	linked_items?: Array<{
 		id: string;

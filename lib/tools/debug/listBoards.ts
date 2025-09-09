@@ -1,4 +1,8 @@
-import { mondayApi } from "../../monday/client.js";
+import {
+	type MondayColumnValueResponse,
+	type MondayItemResponse,
+	mondayApi,
+} from "../../monday/client.js";
 
 const BOARDS_BOARD_ID = "1698570295"; // The "Boards" board that contains all board references
 
@@ -30,7 +34,10 @@ export async function listAllBoards() {
 		const response = await mondayApi(query);
 
 		if (!response.data?.boards || response.data.boards.length === 0) {
-			return { error: "Boards board not found", boards: [] as Array<Record<string, unknown>> };
+			return {
+				error: "Boards board not found",
+				boards: [] as Array<Record<string, unknown>>,
+			};
 		}
 
 		const boardItems = response.data.boards[0].items_page?.items || [];
@@ -39,9 +46,12 @@ export async function listAllBoards() {
 		const boards = boardItems.map((item: Record<string, unknown>) => {
 			const columnValues: Record<string, unknown> = {};
 
-			(item as any).column_values?.forEach((col: Record<string, unknown>) => {
-				columnValues[(col as any).column?.title] = col.text || col.value || "";
-			});
+			(item as MondayItemResponse).column_values?.forEach(
+				(col: Record<string, unknown>) => {
+					columnValues[(col as MondayColumnValueResponse).column?.title] =
+						col.text || col.value || "";
+				},
+			);
 
 			// Look for ID column or extract from specific columns
 			const boardId =
@@ -63,7 +73,7 @@ export async function listAllBoards() {
 		});
 
 		// Group by type if available
-		const boardsByType: Record<string, any[]> = {};
+		const boardsByType: Record<string, Array<Record<string, unknown>>> = {};
 		boards.forEach((board: Record<string, unknown>) => {
 			const type = (board.type as string) || "Other";
 			if (!boardsByType[type]) {

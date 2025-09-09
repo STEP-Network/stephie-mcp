@@ -1,4 +1,4 @@
-import { mondayApi } from "../../monday/client.js";
+import { type MondayItemResponse, mondayApi } from "../../monday/client.js";
 
 const CUSTOM_TARGETING_BOARD_ID = "2056578615";
 
@@ -118,7 +118,9 @@ export async function getKeyValues(args: {
 		// Process keys
 		for (const item of items) {
 			const columnMap = new Map(
-				(item as any).column_values.map((col: Record<string, unknown>) => [col.id, col]),
+				(item as MondayItemResponse).column_values.map(
+					(col: Record<string, unknown>) => [col.id, col],
+				),
 			);
 
 			const gamId = (columnMap.get(COLUMNS.GAM_ID) as any)?.text || "";
@@ -195,10 +197,9 @@ export async function getKeyValues(args: {
 
 			for (const item of valueItems) {
 				const columnMap = new Map(
-					(item as any).column_values.map((col: Record<string, unknown>) => [
-						col.id,
-						col,
-					]),
+					(item as MondayItemResponse).column_values.map(
+						(col: Record<string, unknown>) => [col.id, col],
+					),
 				);
 
 				const keyRelation = columnMap.get(COLUMNS.KEY_RELATION) as any;

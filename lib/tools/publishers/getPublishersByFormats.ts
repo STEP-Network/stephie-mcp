@@ -1,4 +1,8 @@
-import { BOARD_IDS, mondayApi } from "../../monday/client.js";
+import {
+	BOARD_IDS,
+	type MondayItemResponse,
+	mondayApi,
+} from "../../monday/client.js";
 
 // Device type options based on actual Monday.com columns
 export type DeviceType = "Desktop" | "Mobile" | "App" | "All" | null;
@@ -32,7 +36,7 @@ export interface FormatFilters {
 	videoPlayback?: boolean; // Click To Play / Autoplay funktion (video)
 	ott?: boolean; // OTT (video)
 	reAd?: boolean; // RE-AD Status
-	
+
 	// Index signature for dynamic access
 	[key: string]: string | boolean | undefined;
 }
@@ -150,7 +154,7 @@ export async function getPublishersByFormats(args: FormatFilters) {
 
 		for (const item of items) {
 			const publisherName = item.name;
-			const columnValues = (item as any).column_values || [];
+			const columnValues = (item as MondayItemResponse).column_values || [];
 
 			// IMPORTANT: Only include Live publishers (status8 column)
 			const statusCol = columnValues.find(
@@ -286,7 +290,9 @@ export async function getPublishersByFormats(args: FormatFilters) {
 
 		// Sort by number of matching formats
 		matchingPublishers.sort(
-			(a, b) => (b.supportedFormats as any[]).length - (a.supportedFormats as any[]).length,
+			(a, b) =>
+				(b.supportedFormats as string[]).length -
+				(a.supportedFormats as string[]).length,
 		);
 
 		// Format output
@@ -339,7 +345,7 @@ export async function getPublishersByFormats(args: FormatFilters) {
 		// Group by format count
 		const byFormatCount = new Map<number, any[]>();
 		matchingPublishers.forEach((pub) => {
-			const count = (pub.supportedFormats as any[]).length;
+			const count = (pub.supportedFormats as string[]).length;
 			if (!byFormatCount.has(count)) {
 				byFormatCount.set(count, []);
 			}
