@@ -1,5 +1,6 @@
 import { parseStringPromise } from "xml2js";
-import { getGoogleServiceAuth } from "./auth.js";
+import { getGoogleServiceAuthCached, getGAMAccessTokenCached } from "./auth-cache.js";
+import { gamRequestQueue } from "./request-queue.js";
 
 /**
  * Builds geo targeting XML for SOAP request
@@ -293,27 +294,26 @@ export async function getAvailabilityForecast(params: {
 	} | null;
 	targetedPlacementIds?: number[] | null;
 }) {
-	try {
-		// Get service account JWT client
-		const jwtClient = await getGoogleServiceAuth();
+	// Queue the request to avoid rate limiting
+	return gamRequestQueue.add(async () => {
+		try {
+			// Get cached access token
+			const token = await getGAMAccessTokenCached();
+			console.error("[GAM SOAP] Access Token acquired");
 
-		// Get access token
-		const token = await jwtClient.getAccessToken();
-		console.error("[GAM SOAP] Access Token acquired");
+			// Build SOAP XML payload
+			const xmlBody = buildAvailabilityForecastXML(params);
 
-		// Build SOAP XML payload
-		const xmlBody = buildAvailabilityForecastXML(params);
+			console.error("[GAM SOAP] Sending SOAP request to GAM API");
 
-		console.error("[GAM SOAP] Sending SOAP request to GAM API");
-
-		// Make the request
-		const response = await fetch(
+			// Make the request
+			const response = await fetch(
 			`https://www.google.com/apis/ads/publisher/v202502/ForecastService?getAvailabilityForecast`,
 			{
 				method: "POST",
 				headers: {
 					"Content-Type": "text/xml;charset=UTF-8",
-					Authorization: `Bearer ${token.token}`,
+					Authorization: `Bearer ${token}`,
 					"Accept-Encoding": "gzip",
 				},
 				body: xmlBody,
@@ -347,11 +347,12 @@ export async function getAvailabilityForecast(params: {
 			success: true,
 			data: responseText,
 		};
-	} catch (error) {
-		console.error("SOAP Request Failed:", error);
-		return {
-			success: false,
-			error: error instanceof Error ? error.message : "Unknown error occurred",
-		};
-	}
+		} catch (error) {
+			console.error("SOAP Request Failed:", error);
+			return {
+				success: false,
+				error: error instanceof Error ? error.message : "Unknown error occurred",
+			};
+		}
+	});
 }

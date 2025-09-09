@@ -106,7 +106,10 @@ export const availabilityForecast = async (params: {
 		// Check if startDate is "now" for immediate start
 		const isImmediateStart = startDate.toLowerCase() === "now";
 
-		// Call the SOAP implementation
+		// Call the SOAP implementation with timeout protection
+		const startTime = Date.now();
+		console.error(`[availabilityForecast] Starting SOAP request at ${new Date(startTime).toISOString()}`);
+		
 		const soapResult = await getAvailabilityForecast({
 			startDateTime: isImmediateStart ? "IMMEDIATELY" : startDate,
 			endDateTime: endDate,
@@ -131,8 +134,12 @@ export const availabilityForecast = async (params: {
 			targetedPlacementIds:
 				targetedPlacementIds?.map((id) => Number.parseInt(id, 10)) || null,
 		});
+		
+		const elapsed = Date.now() - startTime;
+		console.error(`[availabilityForecast] SOAP request completed in ${elapsed}ms`);
 
 		if (!soapResult.success) {
+			console.error(`[availabilityForecast] SOAP request failed after ${elapsed}ms:`, soapResult.error);
 			throw new Error(soapResult.error || "SOAP request failed");
 		}
 
