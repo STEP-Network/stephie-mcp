@@ -197,7 +197,7 @@ export async function getTasksTechIntelligence(
 							index: parsedValue?.index,
 							label: column.text || null
 						};
-					} else if (column.column?.type === 'board-relation') {
+					} else if (column.column?.type === 'board_relation') {
 						// Use linked_items from GraphQL fragment if available, fallback to parsed value
 						const columnWithLinkedItems = column as MondayColumnValueResponse & { linked_items?: Array<{ id: string; name: string }> };
 						const linkedItems = columnWithLinkedItems.linked_items || [];
