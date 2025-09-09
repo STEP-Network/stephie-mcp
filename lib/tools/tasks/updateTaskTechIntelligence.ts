@@ -14,16 +14,63 @@ interface UpdateParams {
 	date4__1?: string;
 	date3__1?: string;
 	date7__1?: string;
+	archive?: boolean;
 }
 
 export async function updateTaskTechIntelligence(params: UpdateParams) {
-	const { itemId, ...updates } = params;
+	const { itemId, archive, ...updates } = params;
 
 	if (!itemId) {
 		throw new Error("itemId is required");
 	}
 
 	const BOARD_ID = "1631907569";
+
+	// Handle archive case separately
+	if (archive === true) {
+		const archiveMutation = `
+			mutation {
+				archive_item(item_id: ${itemId}) {
+					id
+				}
+			}
+		`;
+
+		try {
+			const response = await mondayApi(archiveMutation);
+			const archivedItem = response.data?.archive_item as { id: string };
+
+			if (!archivedItem) {
+				throw new Error(`Failed to archive task with ID: ${itemId}`);
+			}
+
+			const metadata = {
+				boardId: BOARD_ID,
+				boardName: "Tech Intelligence Tasks",
+				action: "archive",
+				itemId: itemId
+			};
+
+			return JSON.stringify(
+				createSuccessResponse(
+					"updateTaskTechIntelligence",
+					"deleted",
+					{
+						id: archivedItem.id,
+						message: `Successfully archived task ${itemId}`
+					},
+					metadata
+				),
+				null,
+				2
+			);
+		} catch (error) {
+			console.error(`Error archiving task ${itemId}:`, error);
+			throw new Error(`Failed to archive task ${itemId}: ${error}`);
+		}
+	}
+
+	// Regular update logic continues below
 	const columnValues: Record<string, unknown> = {};
 
 	if (updates.name !== undefined) {

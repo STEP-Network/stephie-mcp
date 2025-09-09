@@ -847,7 +847,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 	{
 		name: "updateTaskTechIntelligence",
 		description:
-			"Update an existing task in the Tasks - Tech & Intelligence board (team members: Nate).",
+			"Update or archive an existing task in the Tasks - Tech & Intelligence board (team members: Nate). Use archive: true to delete/archive a task.",
 		inputSchema: {
 			type: "object",
 			properties: {
@@ -887,6 +887,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					type: "string",
 					description:
 						"Follow up date: 'YYYY-MM-DD'",
+				},
+				archive: {
+					type: "boolean",
+					description: "Set to true to archive (delete) the task. When true, other fields are ignored.",
 				},
 			},
 			required: ["itemId"],
