@@ -29,7 +29,7 @@
 1. **Implementation**: `/lib/tools/[category]/[toolName].ts`
 2. **Definition**: Add to `/lib/mcp/toolDefinitions.ts`
 3. **Registration**: BOTH files:
-   - `api/server.ts` (Vercel deployment)
+   - `api/server.ts` (Vercel deployment) - use `getToolDescription(toolName)`
    - `mcp-server.ts` (local MCP)
 
 ### Board IDs (Centralized)
@@ -74,6 +74,11 @@ GOOGLE_PRIVATE_KEY
 ```
 
 ## Common Patterns
+
+### GAM Availability Forecast
+
+- **Default Ad Unit**: If `targetedAdUnitIds` is null/empty, defaults to `21808880960`
+- Use for RON (Run of Network) forecasts without specifying individual ad units
 
 ### Board Relations
 

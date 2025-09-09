@@ -375,7 +375,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 	{
 		name: "availabilityForecast",
 		description:
-			"Get availability forecast from Google Ad Manager. Returns impression availability for specified ad units, targeting, and date range. If no ad units are specified, defaults to ad unit ID 21808880960.",
+			"Get availability forecast from Google Ad Manager. Returns impression availability for specified ad units, targeting, and date range.",
 		inputSchema: {
 			type: "object",
 			properties: {
@@ -397,7 +397,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 						items: { type: "number" },
 					},
 					description:
-						"Array of ad sizes as [width, height] pairs, e.g. [[300,250], [728,90]]",
+						"Array of ad sizes as [width, height] pairs, e.g. [[300,250], [1,2]]",
 					required: true,
 				},
 				goalQuantity: {

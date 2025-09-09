@@ -281,7 +281,7 @@ const handler = createMcpHandler((server) => {
 	// Forecasting tool
 	server.tool(
 		"availabilityForecast",
-		"Get availability forecast from Google Ad Manager. Returns impression availability for specified ad units, targeting, and date range. If no ad units are specified, defaults to ad unit ID 21808880960.",
+		getToolDescription("availabilityForecast"),
 		{
 			startDate: z.string().describe('Start date in YYYY-MM-DD format or "now" for immediate start'),
 			endDate: z.string().describe("End date in YYYY-MM-DD format"),
