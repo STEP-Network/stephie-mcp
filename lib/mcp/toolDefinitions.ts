@@ -726,7 +726,8 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 							"Not Labelled",
 							"Bugfix",
 							"Documentation",
-							"Meeting"
+							"Meeting",
+							"Test"
 						]
 					},
 					description:
@@ -871,7 +872,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 							type: {
 								type: "number",
 								description:
-									"Required parameter - Type index: 1=Support, 3=Maintenance, 4=Development, 5=Not Labelled, 6=Bugfix, 7=Documentation, 12=Meeting",
+									"Required parameter - Type index: 1=Support, 3=Maintenance, 4=Development, 5=Not Labelled, 6=Bugfix, 7=Documentation, 12=Meeting, 13=Test",
 								required: true,
 							},
 							priority: {
@@ -932,7 +933,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 							type: {
 								type: "number",
 								description:
-									"Type index: 1=Support, 3=Maintenance, 4=Development, 5=Not Labelled, 6=Bugfix, 7=Documentation, 12=Meeting",
+									"Type index: 1=Support, 3=Maintenance, 4=Development, 5=Not Labelled, 6=Bugfix, 7=Documentation, 12=Meeting, 13=Test",
 							},
 							priority: {
 								type: "number",

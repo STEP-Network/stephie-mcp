@@ -76,7 +76,8 @@ export async function getTasksTechIntelligence(
 		"Not Labelled": 5,
 		"Bugfix": 6,
 		"Documentation": 7,
-		"Meeting": 12
+		"Meeting": 12,
+		"Test": 13
 	};
 
 	const priorityMapping = {
