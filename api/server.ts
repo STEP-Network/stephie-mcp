@@ -68,7 +68,7 @@ import { getTasksYieldGrowth } from "../lib/tools/tasks/getTasksYieldGrowth.js";
 import { updateTaskAdOps } from "../lib/tools/tasks/updateTaskAdOps.js";
 import { updateTaskAdTech } from "../lib/tools/tasks/updateTaskAdTech.js";
 import { updateTaskMarketing } from "../lib/tools/tasks/updateTaskMarketing.js";
-import { updateTaskTechIntelligence } from "../lib/tools/tasks/updateTaskTechIntelligence.js";
+import { updateTasksTechIntelligence } from "../lib/tools/tasks/updateTasksTechIntelligence.js";
 import { updateTaskVideo } from "../lib/tools/tasks/updateTaskVideo.js";
 import { updateTaskYieldGrowth } from "../lib/tools/tasks/updateTaskYieldGrowth.js";
 
@@ -545,12 +545,12 @@ const handler = createMcpHandler((server) => {
 	);
 
 	server.tool(
-		"updateTaskTechIntelligence",
-		getToolDescription("updateTaskTechIntelligence"),
-		buildZodSchema("updateTaskTechIntelligence"),
+		"updateTasksTechIntelligence",
+		getToolDescription("updateTasksTechIntelligence"),
+		buildZodSchema("updateTasksTechIntelligence"),
 		async (input) => {
-			const result = await updateTaskTechIntelligence(
-				input as Parameters<typeof updateTaskTechIntelligence>[0],
+			const result = await updateTasksTechIntelligence(
+				input as Parameters<typeof updateTasksTechIntelligence>[0],
 			);
 			return { content: [{ type: "text", text: result }] };
 		},

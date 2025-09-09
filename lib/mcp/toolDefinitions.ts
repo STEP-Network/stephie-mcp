@@ -845,55 +845,66 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 		},
 	},
 	{
-		name: "updateTaskTechIntelligence",
+		name: "updateTasksTechIntelligence",
 		description:
-			"Update or archive an existing task in the Tasks - Tech & Intelligence board (team members: Nate). Use archive: true to delete/archive a task.",
+			"Update or delete multiple tasks in the Tasks - Tech & Intelligence board (team members: Nate). Use delete: true to delete tasks.",
 		inputSchema: {
 			type: "object",
 			properties: {
-				itemId: { type: "string", description: "Item ID to update (required)" },
-				name: { type: "string", description: "Task name" },
-				board_relation_mkpjqgpv: {
-					type: "string",
-					description:
-						"Link to key result item ID (use OKR subitems tool to find IDs)",
-				},
-				board_relation_mkqhkyb7: {
-					type: "string",
-					description:
-						"Link to STEPhie feature item ID (use getStephieFeatures tool to find IDs)",
-				},
-				status_19__1: {
-					type: "number",
-					description:
-						"Status index: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold",
-				},
-				type_1__1: {
-					type: "number",
-					description:
-						"Type index: 1=Support, 3=Maintenance, 4=Development, 5=Not Labelled, 6=Bugfix, 7=Documentation, 12=Meeting",
-				},
-				priority_1__1: {
-					type: "number",
-					description:
-						"Priority index: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown",
-				},
-				date__1: {
-					type: "string",
-					description:
-						"Due date: 'YYYY-MM-DD'",
-				},
-				date4: {
-					type: "string",
-					description:
-						"Follow up date: 'YYYY-MM-DD'",
-				},
-				archive: {
-					type: "boolean",
-					description: "Set to true to archive (delete) the task. When true, other fields are ignored.",
+				tasks: {
+					type: "array",
+					items: {
+						type: "object",
+						properties: {
+							itemId: { type: "string", description: "Item ID to update (required)", required: true },
+							name: { type: "string", description: "Task name" },
+							board_relation_mkpjqgpv: {
+								type: "string",
+								description:
+									"Link to key result item ID (use OKR subitems tool to find IDs)",
+							},
+							board_relation_mkqhkyb7: {
+								type: "string",
+								description:
+									"Link to STEPhie feature item ID (use getStephieFeatures tool to find IDs)",
+							},
+							status_19__1: {
+								type: "number",
+								description:
+									"Status index: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold",
+							},
+							type_1__1: {
+								type: "number",
+								description:
+									"Type index: 1=Support, 3=Maintenance, 4=Development, 5=Not Labelled, 6=Bugfix, 7=Documentation, 12=Meeting",
+							},
+							priority_1__1: {
+								type: "number",
+								description:
+									"Priority index: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown",
+							},
+							date__1: {
+								type: "string",
+								description:
+									"Due date: 'YYYY-MM-DD'",
+							},
+							date4: {
+								type: "string",
+								description:
+									"Follow up date: 'YYYY-MM-DD'",
+							},
+							delete: {
+								type: "boolean",
+								description: "Set to true to delete the task. When true, other fields are ignored.",
+							},
+						},
+						required: ["itemId"],
+					},
+					description: "Array of task objects to update or delete",
+					required: true,
 				},
 			},
-			required: ["itemId"],
+			required: ["tasks"],
 		},
 	},
 	{

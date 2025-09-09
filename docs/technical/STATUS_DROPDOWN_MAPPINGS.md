@@ -8,7 +8,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 
 ## Tasks - Tech & Intelligence
 
-### Tool: `getTasksTechIntelligence`, `createTasksTechIntelligence`, `updateTaskTechIntelligence`
+### Tool: `getTasksTechIntelligence`, `createTasksTechIntelligence`, `updateTasksTechIntelligence`
 
 **status_19__1** (Status):
 - 0 = In Review

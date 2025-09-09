@@ -57,7 +57,7 @@ import { getTasksVideo } from "./lib/tools/tasks/getTasksVideo.js";
 import { getTasksYieldGrowth } from "./lib/tools/tasks/getTasksYieldGrowth.js";
 import { getTasksTechIntelligence } from "./lib/tools/tasks/getTasksTechIntelligence.js";
 import { createTasksTechIntelligence } from "./lib/tools/tasks/createTasksTechIntelligence.js";
-import { updateTaskTechIntelligence } from "./lib/tools/tasks/updateTaskTechIntelligence.js";
+import { updateTasksTechIntelligence } from "./lib/tools/tasks/updateTasksTechIntelligence.js";
 import { createTaskAdOps } from "./lib/tools/tasks/createTaskAdOps.js";
 import { updateTaskAdOps } from "./lib/tools/tasks/updateTaskAdOps.js";
 import { createTaskMarketing } from "./lib/tools/tasks/createTaskMarketing.js";
@@ -207,7 +207,7 @@ const toolImplementations: Record<
 	getTasksYieldGrowth: (args) => getTasksYieldGrowth(args),
 	getTasksTechIntelligence: (args) => getTasksTechIntelligence(args),
 	createTasksTechIntelligence: (args) => createTasksTechIntelligence(args as any),
-	updateTaskTechIntelligence: (args) => updateTaskTechIntelligence(args as any),
+	updateTasksTechIntelligence: (args) => updateTasksTechIntelligence(args as any),
 	createTaskAdOps: (args) => createTaskAdOps(args as any),
 	updateTaskAdOps: (args) => updateTaskAdOps(args as any),
 	createTaskMarketing: (args) => createTaskMarketing(args as any),
