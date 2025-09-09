@@ -1064,5 +1064,543 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
       },
       required: ['itemId']
     }
+  },
+  
+  // Create/Update Tools - CRM
+  {
+    name: 'createAccount',
+    description: 'Create a new account in the CRM system',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'Account name' },
+        status: { type: 'number', description: 'Account Status: 0=On hold, 4=Client, 13=Past Client, 17=New Biz' },
+        status5: { type: 'number', description: 'Type: 0=Agency, 1=Agency Group, 2=Partner, 3=Publisher, 4=Publisher Lead, 107=Advertiser' },
+        people: { type: 'string', description: 'Owner (person ID)' },
+        email: { type: 'string', description: 'Email address' },
+        phone: { type: 'string', description: 'Phone number' },
+        text: { type: 'string', description: 'Website' },
+        contactsId: { type: 'string', description: 'Link to contacts (use getContacts to find IDs)' },
+        opportunitiesId: { type: 'string', description: 'Link to opportunities (use getOpportunities to find IDs)' },
+        leadsId: { type: 'string', description: 'Link to leads (use getLeads to find IDs)' },
+        groupId: { type: 'string', description: 'Group to add the item to' }
+      },
+      required: ['name']
+    }
+  },
+  {
+    name: 'updateAccount',
+    description: 'Update an existing account in the CRM system',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        itemId: { type: 'string', description: 'Item ID to update' },
+        name: { type: 'string', description: 'Account name' },
+        status: { type: 'number', description: 'Account Status: 0=On hold, 4=Client, 13=Past Client, 17=New Biz' },
+        status5: { type: 'number', description: 'Type: 0=Agency, 1=Agency Group, 2=Partner, 3=Publisher, 4=Publisher Lead, 107=Advertiser' },
+        people: { type: 'string', description: 'Owner (person ID)' },
+        email: { type: 'string', description: 'Email address' },
+        phone: { type: 'string', description: 'Phone number' },
+        text: { type: 'string', description: 'Website' },
+        contactsId: { type: 'string', description: 'Link to contacts' },
+        opportunitiesId: { type: 'string', description: 'Link to opportunities' },
+        leadsId: { type: 'string', description: 'Link to leads' }
+      },
+      required: ['itemId']
+    }
+  },
+  {
+    name: 'createContact',
+    description: 'Create a new contact in the CRM system',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'Contact name' },
+        status: { type: 'number', description: 'Department: 0=CEO/C-Suite, 1=Sales Director, 2=Sales Manager, 3=Head of Programmatic/Media, 10=AdOps, 102=Marketing, 103=Finance, 104=Data/Engineering/Tech, 108=Head of Creative' },
+        people: { type: 'string', description: 'Owner (person ID)' },
+        email: { type: 'string', description: 'Email address' },
+        phone: { type: 'string', description: 'Phone number' },
+        text: { type: 'string', description: 'Position' },
+        accountId: { type: 'string', description: 'Link to account (use getAccounts to find IDs)' },
+        opportunitiesId: { type: 'string', description: 'Link to opportunities' },
+        leadsId: { type: 'string', description: 'Link to leads' },
+        groupId: { type: 'string', description: 'Group to add the item to' }
+      },
+      required: ['name']
+    }
+  },
+  {
+    name: 'updateContact',
+    description: 'Update an existing contact in the CRM system',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        itemId: { type: 'string', description: 'Item ID to update' },
+        name: { type: 'string', description: 'Contact name' },
+        status: { type: 'number', description: 'Department: 0=CEO/C-Suite, 1=Sales Director, 2=Sales Manager, 3=Head of Programmatic/Media, 10=AdOps, 102=Marketing, 103=Finance, 104=Data/Engineering/Tech, 108=Head of Creative' },
+        people: { type: 'string', description: 'Owner (person ID)' },
+        email: { type: 'string', description: 'Email address' },
+        phone: { type: 'string', description: 'Phone number' },
+        text: { type: 'string', description: 'Position' },
+        accountId: { type: 'string', description: 'Link to account' },
+        opportunitiesId: { type: 'string', description: 'Link to opportunities' },
+        leadsId: { type: 'string', description: 'Link to leads' }
+      },
+      required: ['itemId']
+    }
+  },
+  {
+    name: 'createLead',
+    description: 'Create a new lead in the CRM system',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'Lead name' },
+        status: { type: 'number', description: 'Lead Status: 0=Nurturing, 5=Closed Lost, 15=Lead, 20=Reached-out, 21=Connected, 22=Evaluated, 24=Qualified' },
+        status1: { type: 'number', description: 'Lead Rating: 0=Hot, 1=Warm, 2=Cold' },
+        status_12: { type: 'number', description: 'Tier: 0=1, 1=2, 2=3, 3=4' },
+        people: { type: 'string', description: 'Owner (person ID)' },
+        email: { type: 'string', description: 'Email address' },
+        phone: { type: 'string', description: 'Phone number' },
+        text: { type: 'string', description: 'Company' },
+        accountId: { type: 'string', description: 'Link to account' },
+        contactId: { type: 'string', description: 'Link to contact' },
+        opportunitiesId: { type: 'string', description: 'Link to opportunities' },
+        groupId: { type: 'string', description: 'Group to add the item to' }
+      },
+      required: ['name']
+    }
+  },
+  {
+    name: 'updateLead',
+    description: 'Update an existing lead in the CRM system',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        itemId: { type: 'string', description: 'Item ID to update' },
+        name: { type: 'string', description: 'Lead name' },
+        status: { type: 'number', description: 'Lead Status: 0=Nurturing, 5=Closed Lost, 15=Lead, 20=Reached-out, 21=Connected, 22=Evaluated, 24=Qualified' },
+        status1: { type: 'number', description: 'Lead Rating: 0=Hot, 1=Warm, 2=Cold' },
+        status_12: { type: 'number', description: 'Tier: 0=1, 1=2, 2=3, 3=4' },
+        people: { type: 'string', description: 'Owner (person ID)' },
+        email: { type: 'string', description: 'Email address' },
+        phone: { type: 'string', description: 'Phone number' },
+        text: { type: 'string', description: 'Company' },
+        accountId: { type: 'string', description: 'Link to account' },
+        contactId: { type: 'string', description: 'Link to contact' },
+        opportunitiesId: { type: 'string', description: 'Link to opportunities' }
+      },
+      required: ['itemId']
+    }
+  },
+  
+  // Sales Tools
+  {
+    name: 'createOpportunity',
+    description: 'Create a new sales opportunity',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'Opportunity name' },
+        status: { type: 'number', description: 'Opportunity Stage: 0=Lead, 1=Lead Nurturing, 2=Meeting, 3=Negotiation, 4=Legal, 5=Sent Commercial, 7=Closed Lost, 9=Closed Won, 101=Pilot' },
+        people: { type: 'string', description: 'Owner (person ID)' },
+        status_14: { type: 'number', description: 'Product Type: 0=Display, 2=Video, 3=Display + Video, 5=OOH/DOOH, 8=Display + Video + OOH/DOOH, 10=Display + OOH/DOOH, 11=Video + OOH/DOOH' },
+        numbers: { type: 'number', description: 'Deal Size' },
+        leadId: { type: 'string', description: 'Link to lead' },
+        accountId: { type: 'string', description: 'Link to account' },
+        contactId: { type: 'string', description: 'Link to contact' },
+        groupId: { type: 'string', description: 'Group to add the item to' }
+      },
+      required: ['name']
+    }
+  },
+  {
+    name: 'updateOpportunity',
+    description: 'Update an existing sales opportunity',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        itemId: { type: 'string', description: 'Item ID to update' },
+        name: { type: 'string', description: 'Opportunity name' },
+        status: { type: 'number', description: 'Opportunity Stage: 0=Lead, 1=Lead Nurturing, 2=Meeting, 3=Negotiation, 4=Legal, 5=Sent Commercial, 7=Closed Lost, 9=Closed Won, 101=Pilot' },
+        people: { type: 'string', description: 'Owner (person ID)' },
+        status_14: { type: 'number', description: 'Product Type: 0=Display, 2=Video, 3=Display + Video, 5=OOH/DOOH, 8=Display + Video + OOH/DOOH, 10=Display + OOH/DOOH, 11=Video + OOH/DOOH' },
+        numbers: { type: 'number', description: 'Deal Size' },
+        leadId: { type: 'string', description: 'Link to lead' },
+        accountId: { type: 'string', description: 'Link to account' },
+        contactId: { type: 'string', description: 'Link to contact' }
+      },
+      required: ['itemId']
+    }
+  },
+  {
+    name: 'createSalesActivity',
+    description: 'Create a new sales activity',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'Activity name' },
+        status: { type: 'number', description: 'Status: 0=To do, 1=Done, 2=Meeting canceled, 6=No meeting yet' },
+        dropdown: { type: 'number', description: 'Activity Type: 0=Email, 1=Phone, 2=Call, 3=Meeting, 7=Note' },
+        people: { type: 'string', description: 'Lead Owner (person ID)' },
+        date: { type: 'string', description: 'Activity Date (YYYY-MM-DD format)' },
+        text: { type: 'string', description: 'Notes' },
+        accountId: { type: 'string', description: 'Link to account' },
+        opportunityId: { type: 'string', description: 'Link to opportunity' },
+        leadId: { type: 'string', description: 'Link to lead' },
+        contactId: { type: 'string', description: 'Link to contact' },
+        groupId: { type: 'string', description: 'Group to add the item to' }
+      },
+      required: ['name']
+    }
+  },
+  {
+    name: 'updateSalesActivity',
+    description: 'Update an existing sales activity',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        itemId: { type: 'string', description: 'Item ID to update' },
+        name: { type: 'string', description: 'Activity name' },
+        status: { type: 'number', description: 'Status: 0=To do, 1=Done, 2=Meeting canceled, 6=No meeting yet' },
+        dropdown: { type: 'number', description: 'Activity Type: 0=Email, 1=Phone, 2=Call, 3=Meeting, 7=Note' },
+        people: { type: 'string', description: 'Lead Owner (person ID)' },
+        date: { type: 'string', description: 'Activity Date (YYYY-MM-DD format)' },
+        text: { type: 'string', description: 'Notes' },
+        accountId: { type: 'string', description: 'Link to account' },
+        opportunityId: { type: 'string', description: 'Link to opportunity' },
+        leadId: { type: 'string', description: 'Link to lead' },
+        contactId: { type: 'string', description: 'Link to contact' }
+      },
+      required: ['itemId']
+    }
+  },
+  {
+    name: 'createDeal',
+    description: 'Create a new sales deal',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'Deal name' },
+        status: { type: 'number', description: 'Deal Stage: 0=Lead, 1=Meeting, 2=Proposal, 3=Negotiation, 9=Won, 5=Lost' },
+        status5: { type: 'number', description: 'Deal Type: 0=New Business, 1=Expansion, 2=Renewal' },
+        people: { type: 'string', description: 'Owner (person ID)' },
+        numbers: { type: 'number', description: 'Deal Value' },
+        date: { type: 'string', description: 'Close Date (YYYY-MM-DD format)' },
+        accountId: { type: 'string', description: 'Link to account' },
+        contactId: { type: 'string', description: 'Link to contact' },
+        opportunityId: { type: 'string', description: 'Link to opportunity' },
+        groupId: { type: 'string', description: 'Group to add the item to' }
+      },
+      required: ['name']
+    }
+  },
+  {
+    name: 'updateDeal',
+    description: 'Update an existing sales deal',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        itemId: { type: 'string', description: 'Item ID to update' },
+        name: { type: 'string', description: 'Deal name' },
+        status: { type: 'number', description: 'Deal Stage: 0=Lead, 1=Meeting, 2=Proposal, 3=Negotiation, 9=Won, 5=Lost' },
+        status5: { type: 'number', description: 'Deal Type: 0=New Business, 1=Expansion, 2=Renewal' },
+        people: { type: 'string', description: 'Owner (person ID)' },
+        numbers: { type: 'number', description: 'Deal Value' },
+        date: { type: 'string', description: 'Close Date (YYYY-MM-DD format)' },
+        accountId: { type: 'string', description: 'Link to account' },
+        contactId: { type: 'string', description: 'Link to contact' },
+        opportunityId: { type: 'string', description: 'Link to opportunity' }
+      },
+      required: ['itemId']
+    }
+  },
+  
+  // Development Tools
+  {
+    name: 'createBug',
+    description: 'Create a new bug report',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'Bug title' },
+        status: { type: 'number', description: 'Status: 0=Open, 1=Fixed, 2=In Progress, 3=Pending Review, 4=Cancelled, 5=Investigating, 6=Won\'t Fix, 107=Retest' },
+        priority: { type: 'number', description: 'Priority: 0=Critical, 1=High, 2=Medium, 3=Low, 4=Best Effort' },
+        dropdown: { type: 'number', description: 'Type: 0=Bug, 1=Improvement, 2=Infrastructure, 3=Feature Request, 4=UI' },
+        people: { type: 'string', description: 'Developer (person ID)' },
+        long_text: { type: 'string', description: 'Bug Report' },
+        text: { type: 'string', description: 'Environment' },
+        groupId: { type: 'string', description: 'Group to add the item to' }
+      },
+      required: ['name']
+    }
+  },
+  {
+    name: 'updateBug',
+    description: 'Update an existing bug report',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        itemId: { type: 'string', description: 'Item ID to update' },
+        name: { type: 'string', description: 'Bug title' },
+        status: { type: 'number', description: 'Status: 0=Open, 1=Fixed, 2=In Progress, 3=Pending Review, 4=Cancelled, 5=Investigating, 6=Won\'t Fix, 107=Retest' },
+        priority: { type: 'number', description: 'Priority: 0=Critical, 1=High, 2=Medium, 3=Low, 4=Best Effort' },
+        dropdown: { type: 'number', description: 'Type: 0=Bug, 1=Improvement, 2=Infrastructure, 3=Feature Request, 4=UI' },
+        people: { type: 'string', description: 'Developer (person ID)' },
+        long_text: { type: 'string', description: 'Bug Report' },
+        text: { type: 'string', description: 'Environment' }
+      },
+      required: ['itemId']
+    }
+  },
+  
+  // Task Tools
+  {
+    name: 'createTaskAdOps',
+    description: 'Create a new AdOps task',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'Task name' },
+        status: { type: 'number', description: 'Status: 0=Done, 3=Working on it, 4=New, 5=Waiting/On hold, 6=Ready to work, 8=Test pending, 9=Not doing, 10=In review, 11=Stuck' },
+        priority: { type: 'number', description: 'Priority: 0=Critical, 1=High, 2=Medium, 3=Low' },
+        people: { type: 'string', description: 'Person (person ID)' },
+        date4: { type: 'string', description: 'Due Date (YYYY-MM-DD format)' },
+        text: { type: 'string', description: 'Description' },
+        groupId: { type: 'string', description: 'Group to add the item to' }
+      },
+      required: ['name']
+    }
+  },
+  {
+    name: 'updateTaskAdOps',
+    description: 'Update an existing AdOps task',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        itemId: { type: 'string', description: 'Item ID to update' },
+        name: { type: 'string', description: 'Task name' },
+        status: { type: 'number', description: 'Status: 0=Done, 3=Working on it, 4=New, 5=Waiting/On hold, 6=Ready to work, 8=Test pending, 9=Not doing, 10=In review, 11=Stuck' },
+        priority: { type: 'number', description: 'Priority: 0=Critical, 1=High, 2=Medium, 3=Low' },
+        people: { type: 'string', description: 'Person (person ID)' },
+        date4: { type: 'string', description: 'Due Date (YYYY-MM-DD format)' },
+        text: { type: 'string', description: 'Description' }
+      },
+      required: ['itemId']
+    }
+  },
+  {
+    name: 'createTaskMarketing',
+    description: 'Create a new Marketing task',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'Task name' },
+        status: { type: 'number', description: 'Status: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold' },
+        priority: { type: 'number', description: 'Priority: 0=Critical, 1=High, 2=Medium, 3=Low' },
+        people: { type: 'string', description: 'Assignee (person ID)' },
+        date: { type: 'string', description: 'Due Date (YYYY-MM-DD format)' },
+        long_text: { type: 'string', description: 'Notes' },
+        groupId: { type: 'string', description: 'Group to add the item to' }
+      },
+      required: ['name']
+    }
+  },
+  {
+    name: 'updateTaskMarketing',
+    description: 'Update an existing Marketing task',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        itemId: { type: 'string', description: 'Item ID to update' },
+        name: { type: 'string', description: 'Task name' },
+        status: { type: 'number', description: 'Status: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold' },
+        priority: { type: 'number', description: 'Priority: 0=Critical, 1=High, 2=Medium, 3=Low' },
+        people: { type: 'string', description: 'Assignee (person ID)' },
+        date: { type: 'string', description: 'Due Date (YYYY-MM-DD format)' },
+        long_text: { type: 'string', description: 'Notes' }
+      },
+      required: ['itemId']
+    }
+  },
+  {
+    name: 'createTaskAdTech',
+    description: 'Create a new AdTech task',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'Task name' },
+        status: { type: 'number', description: 'Status: 0=Done, 2=In Progress, 3=New, 5=On Hold, 6=Waiting, 7=Blocked' },
+        priority: { type: 'number', description: 'Priority: 0=Critical, 1=High, 2=Medium, 3=Low' },
+        people: { type: 'string', description: 'Assignee (person ID)' },
+        date4: { type: 'string', description: 'Due Date (YYYY-MM-DD format)' },
+        text: { type: 'string', description: 'Notes' },
+        groupId: { type: 'string', description: 'Group to add the item to' }
+      },
+      required: ['name']
+    }
+  },
+  {
+    name: 'updateTaskAdTech',
+    description: 'Update an existing AdTech task',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        itemId: { type: 'string', description: 'Item ID to update' },
+        name: { type: 'string', description: 'Task name' },
+        status: { type: 'number', description: 'Status: 0=Done, 2=In Progress, 3=New, 5=On Hold, 6=Waiting, 7=Blocked' },
+        priority: { type: 'number', description: 'Priority: 0=Critical, 1=High, 2=Medium, 3=Low' },
+        people: { type: 'string', description: 'Assignee (person ID)' },
+        date4: { type: 'string', description: 'Due Date (YYYY-MM-DD format)' },
+        text: { type: 'string', description: 'Notes' }
+      },
+      required: ['itemId']
+    }
+  },
+  {
+    name: 'createTaskVideo',
+    description: 'Create a new Video task',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'Task name' },
+        status: { type: 'number', description: 'Status: 0=Done, 1=Working on it, 2=Stuck, 3=On Hold, 9=New, 102=Missing Status' },
+        priority: { type: 'number', description: 'Priority: 0=Critical, 1=High, 2=Medium, 3=Low' },
+        people: { type: 'string', description: 'Assignee (person ID)' },
+        date4: { type: 'string', description: 'Due Date (YYYY-MM-DD format)' },
+        text: { type: 'string', description: 'Notes' },
+        groupId: { type: 'string', description: 'Group to add the item to' }
+      },
+      required: ['name']
+    }
+  },
+  {
+    name: 'updateTaskVideo',
+    description: 'Update an existing Video task',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        itemId: { type: 'string', description: 'Item ID to update' },
+        name: { type: 'string', description: 'Task name' },
+        status: { type: 'number', description: 'Status: 0=Done, 1=Working on it, 2=Stuck, 3=On Hold, 9=New, 102=Missing Status' },
+        priority: { type: 'number', description: 'Priority: 0=Critical, 1=High, 2=Medium, 3=Low' },
+        people: { type: 'string', description: 'Assignee (person ID)' },
+        date4: { type: 'string', description: 'Due Date (YYYY-MM-DD format)' },
+        text: { type: 'string', description: 'Notes' }
+      },
+      required: ['itemId']
+    }
+  },
+  {
+    name: 'createTaskYieldGrowth',
+    description: 'Create a new Yield Growth task',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'Task name' },
+        status: { type: 'number', description: 'Status: 0=Done, 1=Working on it, 2=Stuck, 3=Waiting for review, 5=Not started' },
+        priority: { type: 'number', description: 'Priority: 0=Critical, 1=High, 2=Medium, 3=Low' },
+        people: { type: 'string', description: 'Assignee (person ID)' },
+        date4: { type: 'string', description: 'Due Date (YYYY-MM-DD format)' },
+        text: { type: 'string', description: 'Notes' },
+        groupId: { type: 'string', description: 'Group to add the item to' }
+      },
+      required: ['name']
+    }
+  },
+  {
+    name: 'updateTaskYieldGrowth',
+    description: 'Update an existing Yield Growth task',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        itemId: { type: 'string', description: 'Item ID to update' },
+        name: { type: 'string', description: 'Task name' },
+        status: { type: 'number', description: 'Status: 0=Done, 1=Working on it, 2=Stuck, 3=Waiting for review, 5=Not started' },
+        priority: { type: 'number', description: 'Priority: 0=Critical, 1=High, 2=Medium, 3=Low' },
+        people: { type: 'string', description: 'Assignee (person ID)' },
+        date4: { type: 'string', description: 'Due Date (YYYY-MM-DD format)' },
+        text: { type: 'string', description: 'Notes' }
+      },
+      required: ['itemId']
+    }
+  },
+  
+  // Business/OKR Tools
+  {
+    name: 'createOKR',
+    description: 'Create a new OKR (Objectives and Key Results)',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'OKR name' },
+        status: { type: 'number', description: 'Status: 0=On Track, 1=At Risk, 2=Off Track, 3=Completed, 5=Not Started' },
+        people: { type: 'string', description: 'Owner (person ID)' },
+        numbers: { type: 'number', description: 'Progress (0-100)' },
+        date: { type: 'string', description: 'Target Date (YYYY-MM-DD format)' },
+        long_text: { type: 'string', description: 'Key Results' },
+        teamId: { type: 'string', description: 'Link to team (use getTeams to find IDs)' },
+        groupId: { type: 'string', description: 'Group to add the item to' }
+      },
+      required: ['name']
+    }
+  },
+  {
+    name: 'updateOKR',
+    description: 'Update an existing OKR (Objectives and Key Results)',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        itemId: { type: 'string', description: 'Item ID to update' },
+        name: { type: 'string', description: 'OKR name' },
+        status: { type: 'number', description: 'Status: 0=On Track, 1=At Risk, 2=Off Track, 3=Completed, 5=Not Started' },
+        people: { type: 'string', description: 'Owner (person ID)' },
+        numbers: { type: 'number', description: 'Progress (0-100)' },
+        date: { type: 'string', description: 'Target Date (YYYY-MM-DD format)' },
+        long_text: { type: 'string', description: 'Key Results' },
+        teamId: { type: 'string', description: 'Link to team' }
+      },
+      required: ['itemId']
+    }
+  },
+  
+  // Support Tools
+  {
+    name: 'createTicket',
+    description: 'Create a new support ticket',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'Ticket title' },
+        status: { type: 'number', description: 'Status: 0=New, 1=In Progress, 2=Waiting for Customer, 3=Resolved, 4=Closed' },
+        priority: { type: 'number', description: 'Priority: 0=Urgent, 1=High, 2=Medium, 3=Low' },
+        people: { type: 'string', description: 'Assignee (person ID)' },
+        email: { type: 'string', description: 'Customer Email' },
+        text: { type: 'string', description: 'Subject' },
+        long_text: { type: 'string', description: 'Description' },
+        date: { type: 'string', description: 'Due Date (YYYY-MM-DD format)' },
+        groupId: { type: 'string', description: 'Group to add the item to' }
+      },
+      required: ['name']
+    }
+  },
+  {
+    name: 'updateTicket',
+    description: 'Update an existing support ticket',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        itemId: { type: 'string', description: 'Item ID to update' },
+        name: { type: 'string', description: 'Ticket title' },
+        status: { type: 'number', description: 'Status: 0=New, 1=In Progress, 2=Waiting for Customer, 3=Resolved, 4=Closed' },
+        priority: { type: 'number', description: 'Priority: 0=Urgent, 1=High, 2=Medium, 3=Low' },
+        people: { type: 'string', description: 'Assignee (person ID)' },
+        email: { type: 'string', description: 'Customer Email' },
+        text: { type: 'string', description: 'Subject' },
+        long_text: { type: 'string', description: 'Description' },
+        date: { type: 'string', description: 'Due Date (YYYY-MM-DD format)' }
+      },
+      required: ['itemId']
+    }
   }
 ];

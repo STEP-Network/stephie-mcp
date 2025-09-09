@@ -44,6 +44,36 @@ import { getTeams } from '../lib/tools/hr/getTeams.js';
 import { getPeople } from '../lib/tools/hr/getPeople.js';
 import { getTickets } from '../lib/tools/support/getTickets.js';
 
+// Import create/update tools
+import { createAccount } from '../lib/tools/crm/createAccount.js';
+import { updateAccount } from '../lib/tools/crm/updateAccount.js';
+import { createContact } from '../lib/tools/crm/createContact.js';
+import { updateContact } from '../lib/tools/crm/updateContact.js';
+import { createLead } from '../lib/tools/crm/createLead.js';
+import { updateLead } from '../lib/tools/crm/updateLead.js';
+import { createOpportunity } from '../lib/tools/sales/createOpportunity.js';
+import { updateOpportunity } from '../lib/tools/sales/updateOpportunity.js';
+import { createSalesActivity } from '../lib/tools/sales/createSalesActivity.js';
+import { updateSalesActivity } from '../lib/tools/sales/updateSalesActivity.js';
+import { createBug } from '../lib/tools/development/createBug.js';
+import { updateBug } from '../lib/tools/development/updateBug.js';
+import { createTaskAdOps } from '../lib/tools/tasks/createTaskAdOps.js';
+import { updateTaskAdOps } from '../lib/tools/tasks/updateTaskAdOps.js';
+import { createTaskMarketing } from '../lib/tools/tasks/createTaskMarketing.js';
+import { updateTaskMarketing } from '../lib/tools/tasks/updateTaskMarketing.js';
+import { createTaskAdTech } from '../lib/tools/tasks/createTaskAdTech.js';
+import { updateTaskAdTech } from '../lib/tools/tasks/updateTaskAdTech.js';
+import { createTaskVideo } from '../lib/tools/tasks/createTaskVideo.js';
+import { updateTaskVideo } from '../lib/tools/tasks/updateTaskVideo.js';
+import { createTaskYieldGrowth } from '../lib/tools/tasks/createTaskYieldGrowth.js';
+import { updateTaskYieldGrowth } from '../lib/tools/tasks/updateTaskYieldGrowth.js';
+import { createOKR } from '../lib/tools/business/createOKR.js';
+import { updateOKR } from '../lib/tools/business/updateOKR.js';
+import { createDeal } from '../lib/tools/sales/createDeal.js';
+import { updateDeal } from '../lib/tools/sales/updateDeal.js';
+import { createTicket } from '../lib/tools/support/createTicket.js';
+import { updateTicket } from '../lib/tools/support/updateTicket.js';
+
 // Helper to get tool description
 const getToolDescription = (name: string): string => {
   const tool = TOOL_DEFINITIONS.find(t => t.name === name);
@@ -252,7 +282,7 @@ const handler = createMcpHandler((server) => {
         sizes: input.sizes,
         ...input
       };
-      const result = await availabilityForecast(params as any);
+      const result = await availabilityForecast(params as Parameters<typeof availabilityForecast>[0]);
       const text = typeof result === 'string' ? result : JSON.stringify(result, null, 2);
       return { content: [{ type: 'text', text }] };
     }
@@ -465,7 +495,7 @@ const handler = createMcpHandler((server) => {
       groupId: z.string().optional()
     },
     async (input) => {
-      const result = await createTaskTechIntelligence(input as any);
+      const result = await createTaskTechIntelligence(input as Parameters<typeof createTaskTechIntelligence>[0]);
       return { content: [{ type: 'text', text: result }] };
     }
   );
@@ -492,7 +522,7 @@ const handler = createMcpHandler((server) => {
       teamTaskId: z.string().optional()
     },
     async (input) => {
-      const result = await updateTaskTechIntelligence(input as any);
+      const result = await updateTaskTechIntelligence(input as Parameters<typeof updateTaskTechIntelligence>[0]);
       return { content: [{ type: 'text', text: result }] };
     }
   );
@@ -661,6 +691,546 @@ const handler = createMcpHandler((server) => {
     },
     async (input) => {
       const result = await getTickets(input);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  // Create/Update tools - Accounts
+  server.tool('createAccount',
+    getToolDescription('createAccount'),
+    {
+      name: z.string(),
+      status: z.number().optional().describe('Account Status: 0=On hold, 4=Client, 13=Past Client, 17=New Biz'),
+      status5: z.number().optional().describe('Type: 0=Agency, 1=Agency Group, 2=Partner, 3=Publisher, 4=Publisher Lead, 107=Advertiser'),
+      people: z.string().optional(),
+      email: z.string().optional(),
+      phone: z.string().optional(),
+      text: z.string().optional(),
+      contactsId: z.string().optional(),
+      opportunitiesId: z.string().optional(),
+      leadsId: z.string().optional(),
+      groupId: z.string().optional()
+    },
+    async (input) => {
+      const result = await createAccount(input as Parameters<typeof createAccount>[0]);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('updateAccount',
+    getToolDescription('updateAccount'),
+    {
+      itemId: z.string(),
+      name: z.string().optional(),
+      status: z.number().optional().describe('Account Status: 0=On hold, 4=Client, 13=Past Client, 17=New Biz'),
+      status5: z.number().optional().describe('Type: 0=Agency, 1=Agency Group, 2=Partner, 3=Publisher, 4=Publisher Lead, 107=Advertiser'),
+      people: z.string().optional(),
+      email: z.string().optional(),
+      phone: z.string().optional(),
+      text: z.string().optional(),
+      contactsId: z.string().optional(),
+      opportunitiesId: z.string().optional(),
+      leadsId: z.string().optional()
+    },
+    async (input) => {
+      const result = await updateAccount(input as Parameters<typeof updateAccount>[0]);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  // Create/Update tools - Contacts
+  server.tool('createContact',
+    getToolDescription('createContact'),
+    {
+      name: z.string(),
+      status: z.number().optional().describe('Department: 0=CEO/C-Suite, 1=Sales Director, 2=Sales Manager, 3=Head of Programmatic/Media, 10=AdOps, 102=Marketing, 103=Finance, 104=Data/Engineering/Tech, 108=Head of Creative'),
+      people: z.string().optional(),
+      email: z.string().optional(),
+      phone: z.string().optional(),
+      text: z.string().optional(),
+      accountId: z.string().optional(),
+      opportunitiesId: z.string().optional(),
+      leadsId: z.string().optional(),
+      groupId: z.string().optional()
+    },
+    async (input) => {
+      const result = await createContact(input as Parameters<typeof createContact>[0]);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('updateContact',
+    getToolDescription('updateContact'),
+    {
+      itemId: z.string(),
+      name: z.string().optional(),
+      status: z.number().optional().describe('Department: 0=CEO/C-Suite, 1=Sales Director, 2=Sales Manager, 3=Head of Programmatic/Media, 10=AdOps, 102=Marketing, 103=Finance, 104=Data/Engineering/Tech, 108=Head of Creative'),
+      people: z.string().optional(),
+      email: z.string().optional(),
+      phone: z.string().optional(),
+      text: z.string().optional(),
+      accountId: z.string().optional(),
+      opportunitiesId: z.string().optional(),
+      leadsId: z.string().optional()
+    },
+    async (input) => {
+      const result = await updateContact(input as Parameters<typeof updateContact>[0]);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  // Create/Update tools - Leads
+  server.tool('createLead',
+    getToolDescription('createLead'),
+    {
+      name: z.string(),
+      status: z.number().optional().describe('Lead Status: 0=Nurturing, 5=Closed Lost, 15=Lead, 20=Reached-out, 21=Connected, 22=Evaluated, 24=Qualified'),
+      status1: z.number().optional().describe('Lead Rating: 0=Hot, 1=Warm, 2=Cold'),
+      status_12: z.number().optional().describe('Tier: 0=1, 1=2, 2=3, 3=4'),
+      people: z.string().optional(),
+      email: z.string().optional(),
+      phone: z.string().optional(),
+      text: z.string().optional(),
+      accountId: z.string().optional(),
+      contactId: z.string().optional(),
+      opportunitiesId: z.string().optional(),
+      groupId: z.string().optional()
+    },
+    async (input) => {
+      const result = await createLead(input as Parameters<typeof createLead>[0]);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('updateLead',
+    getToolDescription('updateLead'),
+    {
+      itemId: z.string(),
+      name: z.string().optional(),
+      status: z.number().optional().describe('Lead Status: 0=Nurturing, 5=Closed Lost, 15=Lead, 20=Reached-out, 21=Connected, 22=Evaluated, 24=Qualified'),
+      status1: z.number().optional().describe('Lead Rating: 0=Hot, 1=Warm, 2=Cold'),
+      status_12: z.number().optional().describe('Tier: 0=1, 1=2, 2=3, 3=4'),
+      people: z.string().optional(),
+      email: z.string().optional(),
+      phone: z.string().optional(),
+      text: z.string().optional(),
+      accountId: z.string().optional(),
+      contactId: z.string().optional(),
+      opportunitiesId: z.string().optional()
+    },
+    async (input) => {
+      const result = await updateLead(input as Parameters<typeof updateLead>[0]);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  // Create/Update tools - Opportunities
+  server.tool('createOpportunity',
+    getToolDescription('createOpportunity'),
+    {
+      name: z.string(),
+      status: z.number().optional().describe('Opportunity Stage: 0=Lead, 1=Lead Nurturing, 2=Meeting, 3=Negotiation, 4=Legal, 5=Sent Commercial, 7=Closed Lost, 9=Closed Won, 101=Pilot'),
+      people: z.string().optional(),
+      status_14: z.number().optional().describe('Product Type: 0=Display, 2=Video, 3=Display + Video, 5=OOH/DOOH, 8=Display + Video + OOH/DOOH, 10=Display + OOH/DOOH, 11=Video + OOH/DOOH'),
+      numbers: z.number().optional(),
+      leadId: z.string().optional(),
+      accountId: z.string().optional(),
+      contactId: z.string().optional(),
+      groupId: z.string().optional()
+    },
+    async (input) => {
+      const result = await createOpportunity(input as Parameters<typeof createOpportunity>[0]);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('updateOpportunity',
+    getToolDescription('updateOpportunity'),
+    {
+      itemId: z.string(),
+      name: z.string().optional(),
+      status: z.number().optional().describe('Opportunity Stage: 0=Lead, 1=Lead Nurturing, 2=Meeting, 3=Negotiation, 4=Legal, 5=Sent Commercial, 7=Closed Lost, 9=Closed Won, 101=Pilot'),
+      people: z.string().optional(),
+      status_14: z.number().optional().describe('Product Type: 0=Display, 2=Video, 3=Display + Video, 5=OOH/DOOH, 8=Display + Video + OOH/DOOH, 10=Display + OOH/DOOH, 11=Video + OOH/DOOH'),
+      numbers: z.number().optional(),
+      leadId: z.string().optional(),
+      accountId: z.string().optional(),
+      contactId: z.string().optional()
+    },
+    async (input) => {
+      const result = await updateOpportunity(input as Parameters<typeof updateOpportunity>[0]);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  // Create/Update tools - Sales Activities
+  server.tool('createSalesActivity',
+    getToolDescription('createSalesActivity'),
+    {
+      name: z.string(),
+      status: z.number().optional().describe('Status: 0=To do, 1=Done, 2=Meeting canceled, 6=No meeting yet'),
+      dropdown: z.number().optional().describe('Activity Type: 0=Email, 1=Phone, 2=Call, 3=Meeting, 7=Note'),
+      people: z.string().optional(),
+      date: z.string().optional(),
+      text: z.string().optional(),
+      accountId: z.string().optional(),
+      opportunityId: z.string().optional(),
+      leadId: z.string().optional(),
+      contactId: z.string().optional(),
+      groupId: z.string().optional()
+    },
+    async (input) => {
+      const result = await createSalesActivity(input as Parameters<typeof createSalesActivity>[0]);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('updateSalesActivity',
+    getToolDescription('updateSalesActivity'),
+    {
+      itemId: z.string(),
+      name: z.string().optional(),
+      status: z.number().optional().describe('Status: 0=To do, 1=Done, 2=Meeting canceled, 6=No meeting yet'),
+      dropdown: z.number().optional().describe('Activity Type: 0=Email, 1=Phone, 2=Call, 3=Meeting, 7=Note'),
+      people: z.string().optional(),
+      date: z.string().optional(),
+      text: z.string().optional(),
+      accountId: z.string().optional(),
+      opportunityId: z.string().optional(),
+      leadId: z.string().optional(),
+      contactId: z.string().optional()
+    },
+    async (input) => {
+      const result = await updateSalesActivity(input as Parameters<typeof updateSalesActivity>[0]);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  // Create/Update tools - Bugs
+  server.tool('createBug',
+    getToolDescription('createBug'),
+    {
+      name: z.string(),
+      status: z.number().optional().describe('Status: 0=Open, 1=Fixed, 2=In Progress, 3=Pending Review, 4=Cancelled, 5=Investigating, 6=Won\'t Fix, 107=Retest'),
+      priority: z.number().optional().describe('Priority: 0=Critical, 1=High, 2=Medium, 3=Low, 4=Best Effort'),
+      dropdown: z.number().optional().describe('Type: 0=Bug, 1=Improvement, 2=Infrastructure, 3=Feature Request, 4=UI'),
+      people: z.string().optional(),
+      long_text: z.string().optional(),
+      text: z.string().optional(),
+      groupId: z.string().optional()
+    },
+    async (input) => {
+      const result = await createBug(input as Parameters<typeof createBug>[0]);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('updateBug',
+    getToolDescription('updateBug'),
+    {
+      itemId: z.string(),
+      name: z.string().optional(),
+      status: z.number().optional().describe('Status: 0=Open, 1=Fixed, 2=In Progress, 3=Pending Review, 4=Cancelled, 5=Investigating, 6=Won\'t Fix, 107=Retest'),
+      priority: z.number().optional().describe('Priority: 0=Critical, 1=High, 2=Medium, 3=Low, 4=Best Effort'),
+      dropdown: z.number().optional().describe('Type: 0=Bug, 1=Improvement, 2=Infrastructure, 3=Feature Request, 4=UI'),
+      people: z.string().optional(),
+      long_text: z.string().optional(),
+      text: z.string().optional()
+    },
+    async (input) => {
+      const result = await updateBug(input as Parameters<typeof updateBug>[0]);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  // Create/Update tools - Tasks (AdOps)
+  server.tool('createTaskAdOps',
+    getToolDescription('createTaskAdOps'),
+    {
+      name: z.string(),
+      status: z.number().optional().describe('Status: 0=Done, 3=Working on it, 4=New, 5=Waiting/On hold, 6=Ready to work, 8=Test pending, 9=Not doing, 10=In review, 11=Stuck'),
+      priority: z.number().optional().describe('Priority: 0=Critical, 1=High, 2=Medium, 3=Low'),
+      people: z.string().optional(),
+      date4: z.string().optional(),
+      text: z.string().optional(),
+      groupId: z.string().optional()
+    },
+    async (input) => {
+      const result = await createTaskAdOps(input as Parameters<typeof createTaskAdOps>[0]);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('updateTaskAdOps',
+    getToolDescription('updateTaskAdOps'),
+    {
+      itemId: z.string(),
+      name: z.string().optional(),
+      status: z.number().optional().describe('Status: 0=Done, 3=Working on it, 4=New, 5=Waiting/On hold, 6=Ready to work, 8=Test pending, 9=Not doing, 10=In review, 11=Stuck'),
+      priority: z.number().optional().describe('Priority: 0=Critical, 1=High, 2=Medium, 3=Low'),
+      people: z.string().optional(),
+      date4: z.string().optional(),
+      text: z.string().optional()
+    },
+    async (input) => {
+      const result = await updateTaskAdOps(input as Parameters<typeof updateTaskAdOps>[0]);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  // Create/Update tools - Tasks (Marketing)
+  server.tool('createTaskMarketing',
+    getToolDescription('createTaskMarketing'),
+    {
+      name: z.string(),
+      status: z.number().optional().describe('Status: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold'),
+      priority: z.number().optional().describe('Priority: 0=Critical, 1=High, 2=Medium, 3=Low'),
+      people: z.string().optional(),
+      date: z.string().optional(),
+      long_text: z.string().optional(),
+      groupId: z.string().optional()
+    },
+    async (input) => {
+      const result = await createTaskMarketing(input as Parameters<typeof createTaskMarketing>[0]);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('updateTaskMarketing',
+    getToolDescription('updateTaskMarketing'),
+    {
+      itemId: z.string(),
+      name: z.string().optional(),
+      status: z.number().optional().describe('Status: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold'),
+      priority: z.number().optional().describe('Priority: 0=Critical, 1=High, 2=Medium, 3=Low'),
+      people: z.string().optional(),
+      date: z.string().optional(),
+      long_text: z.string().optional()
+    },
+    async (input) => {
+      const result = await updateTaskMarketing(input as Parameters<typeof updateTaskMarketing>[0]);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  // Create/Update tools - Tasks (AdTech)
+  server.tool('createTaskAdTech',
+    getToolDescription('createTaskAdTech'),
+    {
+      name: z.string(),
+      status: z.number().optional().describe('Status: 0=Done, 2=In Progress, 3=New, 5=On Hold, 6=Waiting, 7=Blocked'),
+      priority: z.number().optional().describe('Priority: 0=Critical, 1=High, 2=Medium, 3=Low'),
+      people: z.string().optional(),
+      date4: z.string().optional(),
+      text: z.string().optional(),
+      groupId: z.string().optional()
+    },
+    async (input) => {
+      const result = await createTaskAdTech(input as Parameters<typeof createTaskAdTech>[0]);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('updateTaskAdTech',
+    getToolDescription('updateTaskAdTech'),
+    {
+      itemId: z.string(),
+      name: z.string().optional(),
+      status: z.number().optional().describe('Status: 0=Done, 2=In Progress, 3=New, 5=On Hold, 6=Waiting, 7=Blocked'),
+      priority: z.number().optional().describe('Priority: 0=Critical, 1=High, 2=Medium, 3=Low'),
+      people: z.string().optional(),
+      date4: z.string().optional(),
+      text: z.string().optional()
+    },
+    async (input) => {
+      const result = await updateTaskAdTech(input as Parameters<typeof updateTaskAdTech>[0]);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  // Create/Update tools - Tasks (Video)
+  server.tool('createTaskVideo',
+    getToolDescription('createTaskVideo'),
+    {
+      name: z.string(),
+      status: z.number().optional().describe('Status: 0=Done, 1=Working on it, 2=Stuck, 3=On Hold, 9=New, 102=Missing Status'),
+      priority: z.number().optional().describe('Priority: 0=Critical, 1=High, 2=Medium, 3=Low'),
+      people: z.string().optional(),
+      date4: z.string().optional(),
+      text: z.string().optional(),
+      groupId: z.string().optional()
+    },
+    async (input) => {
+      const result = await createTaskVideo(input as Parameters<typeof createTaskVideo>[0]);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('updateTaskVideo',
+    getToolDescription('updateTaskVideo'),
+    {
+      itemId: z.string(),
+      name: z.string().optional(),
+      status: z.number().optional().describe('Status: 0=Done, 1=Working on it, 2=Stuck, 3=On Hold, 9=New, 102=Missing Status'),
+      priority: z.number().optional().describe('Priority: 0=Critical, 1=High, 2=Medium, 3=Low'),
+      people: z.string().optional(),
+      date4: z.string().optional(),
+      text: z.string().optional()
+    },
+    async (input) => {
+      const result = await updateTaskVideo(input as Parameters<typeof updateTaskVideo>[0]);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  // Create/Update tools - Tasks (Yield Growth)
+  server.tool('createTaskYieldGrowth',
+    getToolDescription('createTaskYieldGrowth'),
+    {
+      name: z.string(),
+      status: z.number().optional().describe('Status: 0=Done, 1=Working on it, 2=Stuck, 3=Waiting for review, 5=Not started'),
+      priority: z.number().optional().describe('Priority: 0=Critical, 1=High, 2=Medium, 3=Low'),
+      people: z.string().optional(),
+      date4: z.string().optional(),
+      text: z.string().optional(),
+      groupId: z.string().optional()
+    },
+    async (input) => {
+      const result = await createTaskYieldGrowth(input as Parameters<typeof createTaskYieldGrowth>[0]);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('updateTaskYieldGrowth',
+    getToolDescription('updateTaskYieldGrowth'),
+    {
+      itemId: z.string(),
+      name: z.string().optional(),
+      status: z.number().optional().describe('Status: 0=Done, 1=Working on it, 2=Stuck, 3=Waiting for review, 5=Not started'),
+      priority: z.number().optional().describe('Priority: 0=Critical, 1=High, 2=Medium, 3=Low'),
+      people: z.string().optional(),
+      date4: z.string().optional(),
+      text: z.string().optional()
+    },
+    async (input) => {
+      const result = await updateTaskYieldGrowth(input as Parameters<typeof updateTaskYieldGrowth>[0]);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  // Create/Update tools - OKRs
+  server.tool('createOKR',
+    getToolDescription('createOKR'),
+    {
+      name: z.string(),
+      status: z.number().optional().describe('Status: 0=On Track, 1=At Risk, 2=Off Track, 3=Completed, 5=Not Started'),
+      people: z.string().optional(),
+      numbers: z.number().optional(),
+      date: z.string().optional(),
+      long_text: z.string().optional(),
+      teamId: z.string().optional(),
+      groupId: z.string().optional()
+    },
+    async (input) => {
+      const result = await createOKR(input as Parameters<typeof createOKR>[0]);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('updateOKR',
+    getToolDescription('updateOKR'),
+    {
+      itemId: z.string(),
+      name: z.string().optional(),
+      status: z.number().optional().describe('Status: 0=On Track, 1=At Risk, 2=Off Track, 3=Completed, 5=Not Started'),
+      people: z.string().optional(),
+      numbers: z.number().optional(),
+      date: z.string().optional(),
+      long_text: z.string().optional(),
+      teamId: z.string().optional()
+    },
+    async (input) => {
+      const result = await updateOKR(input as Parameters<typeof updateOKR>[0]);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  // Create/Update tools - Deals
+  server.tool('createDeal',
+    getToolDescription('createDeal'),
+    {
+      name: z.string(),
+      status: z.number().optional().describe('Deal Stage: 0=Lead, 1=Meeting, 2=Proposal, 3=Negotiation, 9=Won, 5=Lost'),
+      status5: z.number().optional().describe('Deal Type: 0=New Business, 1=Expansion, 2=Renewal'),
+      people: z.string().optional(),
+      numbers: z.number().optional(),
+      date: z.string().optional(),
+      accountId: z.string().optional(),
+      contactId: z.string().optional(),
+      opportunityId: z.string().optional(),
+      groupId: z.string().optional()
+    },
+    async (input) => {
+      const result = await createDeal(input as Parameters<typeof createDeal>[0]);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('updateDeal',
+    getToolDescription('updateDeal'),
+    {
+      itemId: z.string(),
+      name: z.string().optional(),
+      status: z.number().optional().describe('Deal Stage: 0=Lead, 1=Meeting, 2=Proposal, 3=Negotiation, 9=Won, 5=Lost'),
+      status5: z.number().optional().describe('Deal Type: 0=New Business, 1=Expansion, 2=Renewal'),
+      people: z.string().optional(),
+      numbers: z.number().optional(),
+      date: z.string().optional(),
+      accountId: z.string().optional(),
+      contactId: z.string().optional(),
+      opportunityId: z.string().optional()
+    },
+    async (input) => {
+      const result = await updateDeal(input as Parameters<typeof updateDeal>[0]);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  // Create/Update tools - Tickets
+  server.tool('createTicket',
+    getToolDescription('createTicket'),
+    {
+      name: z.string(),
+      status: z.number().optional().describe('Status: 0=New, 1=In Progress, 2=Waiting for Customer, 3=Resolved, 4=Closed'),
+      priority: z.number().optional().describe('Priority: 0=Urgent, 1=High, 2=Medium, 3=Low'),
+      people: z.string().optional(),
+      email: z.string().optional(),
+      text: z.string().optional(),
+      long_text: z.string().optional(),
+      date: z.string().optional(),
+      groupId: z.string().optional()
+    },
+    async (input) => {
+      const result = await createTicket(input as Parameters<typeof createTicket>[0]);
+      return { content: [{ type: 'text', text: result }] };
+    }
+  );
+
+  server.tool('updateTicket',
+    getToolDescription('updateTicket'),
+    {
+      itemId: z.string(),
+      name: z.string().optional(),
+      status: z.number().optional().describe('Status: 0=New, 1=In Progress, 2=Waiting for Customer, 3=Resolved, 4=Closed'),
+      priority: z.number().optional().describe('Priority: 0=Urgent, 1=High, 2=Medium, 3=Low'),
+      people: z.string().optional(),
+      email: z.string().optional(),
+      text: z.string().optional(),
+      long_text: z.string().optional(),
+      date: z.string().optional()
+    },
+    async (input) => {
+      const result = await updateTicket(input as Parameters<typeof updateTicket>[0]);
       return { content: [{ type: 'text', text: result }] };
     }
   );
