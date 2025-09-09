@@ -99,6 +99,9 @@ export async function getOKR(
               id
               text
               value
+              ... on BoardRelationValue {
+                linked_items { id name }
+              }
               column {
                 title
                 type

@@ -152,12 +152,22 @@ const buildZodSchema = (name: string): Record<string, any> => {
 								objSchema[objKey] = objProp.enum 
 									? z.enum(objProp.enum as [string, ...string[]])
 									: z.string();
+							} else if (objProp.type === "number") {
+								objSchema[objKey] = z.number();
+							} else if (objProp.type === "boolean") {
+								objSchema[objKey] = z.boolean();
 							} else if (objProp.type === "array") {
 								objSchema[objKey] = z.array(z.string());
 							} else if (!objProp.type) {
 								// Handle missing type (defaults to any)
 								objSchema[objKey] = z.any();
 							}
+							
+							// Handle required fields for nested objects
+							if (!objProp.required) {
+								objSchema[objKey] = objSchema[objKey]?.optional?.();
+							}
+							
 							if (objProp.description && objSchema[objKey]) {
 								objSchema[objKey] = objSchema[objKey].describe(objProp.description);
 							}

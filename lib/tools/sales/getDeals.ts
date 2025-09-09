@@ -72,6 +72,9 @@ export async function getDeals(
               id
               text
               value
+              ... on BoardRelationValue {
+                linked_items { id name }
+              }
               column {
                 title
                 type
@@ -165,7 +168,7 @@ export async function getDeals(
 							index: parsedValue?.index,
 							label: column.text || null
 						};
-					} else if (column.column?.type === 'board-relation') {
+					} else if (column.column?.type === 'board_relation') {
 						// Parse board relations
 						const parsedValue = column.value ? JSON.parse(column.value) : null;
 						formatted[fieldName] = parsedValue?.linkedItemIds || [];

@@ -173,7 +173,7 @@ export function parseColumnValue(column: any): any {
         kind: p.kind,
       })) || [];
     
-    case 'board-relation':
+    case 'board_relation':
       return column.linkedItems?.map((item: any) => ({
         id: item.id,
         name: item.name,

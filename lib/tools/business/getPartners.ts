@@ -84,6 +84,9 @@ export async function getPartners(
               id
               text
               value
+              ... on BoardRelationValue {
+                linked_items { id name }
+              }
               column {
                 title
                 type
@@ -124,7 +127,7 @@ export async function getPartners(
 							index: parsedValue?.index,
 							label: column.text || null
 						};
-					} else if (column.column?.type === 'board-relation' || column.column?.type === 'board_relation') {
+					} else if (column.column?.type === 'board_relation') {
 						const parsedValue = column.value ? JSON.parse(column.value) : null;
 						formatted[fieldName] = parsedValue?.linkedItemIds || [];
 					} else if (column.column?.type === 'multiple-person' || column.column?.type === 'person') {

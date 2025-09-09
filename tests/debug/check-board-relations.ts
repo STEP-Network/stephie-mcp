@@ -5,8 +5,9 @@ config({ path: "../../.env.local" });
 
 (async () => {
 	const result = await getBoardColumns("1222800432");
-	const boardRelations = result.columns.filter(
-		(col: any) => col.type === "board-relation",
+	const parsedResult = JSON.parse(result);
+	const boardRelations = parsedResult.columns.filter(
+		(col: any) => col.type === "board_relation",
 	);
 	console.log("Board relation columns:");
 	boardRelations.forEach((col: any) => {

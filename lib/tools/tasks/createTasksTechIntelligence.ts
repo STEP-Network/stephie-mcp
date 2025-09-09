@@ -99,6 +99,9 @@ export async function createTasksTechIntelligence(params: CreateTasksParams) {
 						id
 						text
 						value
+                        ... on BoardRelationValue {
+                            linked_items { id name }
+                        }
 						column {
 							title
 							type
@@ -135,7 +138,7 @@ export async function createTasksTechIntelligence(params: CreateTasksParams) {
 							index: parsedValue?.index,
 							label: col.text || null
 						};
-					} else if (col.column?.type === 'board-relation') {
+					} else if (col.column?.type === 'board_relation') {
 						const parsedValue = col.value ? JSON.parse(col.value) : null;
 						formattedItem.fields[fieldName] = parsedValue?.linkedItemIds || [];
 					} else if (col.text) {

@@ -111,6 +111,9 @@ export async function getTickets(
               id
               text
               value
+              ... on BoardRelationValue {
+                linked_items { id name }
+              }
               column {
                 title
                 type
@@ -203,9 +206,16 @@ export async function getTickets(
 							index: parsedValue?.index,
 							label: column.text || null
 						};
-					} else if (column.column?.type === 'board-relation' || column.column?.type === 'board_relation') {
-						const parsedValue = column.value ? JSON.parse(column.value) : null;
-						formatted[fieldName] = parsedValue?.linkedItemIds || [];
+					} else if (column.column?.type === 'board_relation') {
+						// Use linked_items from GraphQL fragment if available, fallback to parsed value
+						const columnWithLinkedItems = column as MondayColumnValueResponse & { linked_items?: Array<{ id: string; name: string }> };
+						const linkedItems = columnWithLinkedItems.linked_items || [];
+						if (linkedItems.length > 0) {
+							formatted[fieldName] = linkedItems;
+						} else {
+							const parsedValue = column.value ? JSON.parse(column.value) : null;
+							formatted[fieldName] = parsedValue?.linkedItemIds || [];
+						}
 					} else if (column.column?.type === 'multiple-person' || column.column?.type === 'person') {
 						const parsedValue = column.value ? JSON.parse(column.value) : null;
 						if (column.column?.type === 'person') {
