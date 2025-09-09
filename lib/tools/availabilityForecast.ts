@@ -75,13 +75,18 @@ export const availabilityForecast = async (params: {
 			targetedPlacementIds,
 		} = params;
 
+		// Add default ad unit ID if none provided
+		const effectiveTargetedAdUnitIds = (!targetedAdUnitIds || targetedAdUnitIds.length === 0) 
+			? [21809957681] 
+			: targetedAdUnitIds;
+
 		console.error(
 			"[availabilityForecast] Making GAM availability forecast with params:",
 			{
 				startDate,
 				endDate,
 				goalQuantity,
-				targetedAdUnitIds: targetedAdUnitIds?.length || 0,
+				targetedAdUnitIds: effectiveTargetedAdUnitIds.length,
 				excludedAdUnitIds: excludedAdUnitIds?.length || 0,
 				sizes: sizes.length,
 				audienceSegmentIds: audienceSegmentIds?.length || 0,
@@ -107,7 +112,7 @@ export const availabilityForecast = async (params: {
 			endDateTime: endDate,
 			sizes: sizeValues,
 			goalImpressions: goalQuantity || null,
-			targetedAdUnitIds: targetedAdUnitIds || null,
+			targetedAdUnitIds: effectiveTargetedAdUnitIds,
 			excludedAdUnitIds: excludedAdUnitIds || null,
 			audienceSegmentIds: audienceSegmentIds || null,
 			customTargeting: customTargeting || null,
@@ -225,7 +230,7 @@ export const availabilityForecast = async (params: {
 		// Fetch ad unit names from Monday.com if we have IDs
 		const adUnitNames: Record<number, string> = {};
 		const allAdUnitIds = [
-			...(targetedAdUnitIds || []),
+			...effectiveTargetedAdUnitIds,
 			...(excludedAdUnitIds || []),
 		];
 
@@ -296,16 +301,16 @@ export const availabilityForecast = async (params: {
 		lines.push("");
 
 		// Targeting details
-		if (targetedAdUnitIds && targetedAdUnitIds.length > 0) {
+		if (effectiveTargetedAdUnitIds.length > 0) {
 			lines.push("### Targeted Ad Units");
-			lines.push(`*Count: ${targetedAdUnitIds.length} units*`);
+			lines.push(`*Count: ${effectiveTargetedAdUnitIds.length} units*`);
 			lines.push("");
-			targetedAdUnitIds.slice(0, 10).forEach((id) => {
+			effectiveTargetedAdUnitIds.slice(0, 10).forEach((id) => {
 				const name = adUnitNames[id] || `Ad Unit ${id}`;
 				lines.push(`- **${name}** \`${id}\``);
 			});
-			if (targetedAdUnitIds.length > 10) {
-				lines.push(`- ... and ${targetedAdUnitIds.length - 10} more`);
+			if (effectiveTargetedAdUnitIds.length > 10) {
+				lines.push(`- ... and ${effectiveTargetedAdUnitIds.length - 10} more`);
 			}
 			lines.push("");
 		}
