@@ -249,10 +249,8 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getPublisherFormats"),
 		buildZodSchema("getPublisherFormats"),
 		async (input) => {
-			const result = await getPublisherFormats(input);
-			const text =
-				typeof result === "string" ? result : JSON.stringify(result, null, 2);
-			return { content: [{ type: "text", text }] };
+			const result = await wrapToolWithJSON("getPublisherFormats", getPublisherFormats, input);
+			return { content: [{ type: "text", text: result }] };
 		},
 	);
 
@@ -261,10 +259,8 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getPublishersByFormats"),
 		buildZodSchema("getPublishersByFormats"),
 		async (input) => {
-			const result = await getPublishersByFormats(input);
-			const text =
-				typeof result === "string" ? result : JSON.stringify(result, null, 2);
-			return { content: [{ type: "text", text }] };
+			const result = await wrapToolWithJSON("getPublishersByFormats", getPublishersByFormats, input);
+			return { content: [{ type: "text", text: result }] };
 		},
 	);
 
@@ -273,11 +269,8 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("findPublisherAdUnits"),
 		buildZodSchema("findPublisherAdUnits"),
 		async (input) => {
-			// Zod preprocessing handles string parsing now
-			const result = await findPublisherAdUnits(input);
-			const text =
-				typeof result === "string" ? result : JSON.stringify(result, null, 2);
-			return { content: [{ type: "text", text }] };
+			const result = await wrapToolWithJSON("findPublisherAdUnits", findPublisherAdUnits, input);
+			return { content: [{ type: "text", text: result }] };
 		},
 	);
 
@@ -287,10 +280,8 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getAllProducts"),
 		buildZodSchema("getAllProducts"),
 		async () => {
-			const result = await getAllProducts({});
-			const text =
-				typeof result === "string" ? result : JSON.stringify(result, null, 2);
-			return { content: [{ type: "text", text }] };
+			const result = await wrapToolWithJSON("getAllProducts", getAllProducts, {});
+			return { content: [{ type: "text", text: result }] };
 		},
 	);
 
@@ -299,10 +290,8 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getAllFormats"),
 		buildZodSchema("getAllFormats"),
 		async () => {
-			const result = await getAllFormats({});
-			const text =
-				typeof result === "string" ? result : JSON.stringify(result, null, 2);
-			return { content: [{ type: "text", text }] };
+			const result = await wrapToolWithJSON("getAllFormats", getAllFormats, {});
+			return { content: [{ type: "text", text: result }] };
 		},
 	);
 
@@ -311,10 +300,8 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getAllSizes"),
 		buildZodSchema("getAllSizes"),
 		async () => {
-			const result = await getAllSizes({});
-			const text =
-				typeof result === "string" ? result : JSON.stringify(result, null, 2);
-			return { content: [{ type: "text", text }] };
+			const result = await wrapToolWithJSON("getAllSizes", getAllSizes, {});
+			return { content: [{ type: "text", text: result }] };
 		},
 	);
 
@@ -323,10 +310,8 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getAllAdPrices"),
 		buildZodSchema("getAllAdPrices"),
 		async () => {
-			const result = await getAllAdPrices({});
-			const text =
-				typeof result === "string" ? result : JSON.stringify(result, null, 2);
-			return { content: [{ type: "text", text }] };
+			const result = await wrapToolWithJSON("getAllAdPrices", getAllAdPrices, {});
+			return { content: [{ type: "text", text: result }] };
 		},
 	);
 
@@ -336,10 +321,8 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getKeyValues"),
 		buildZodSchema("getKeyValues"),
 		async (input) => {
-			const result = await getKeyValues(input);
-			const text =
-				typeof result === "string" ? result : JSON.stringify(result, null, 2);
-			return { content: [{ type: "text", text }] };
+			const result = await wrapToolWithJSON("getKeyValues", getKeyValues, input);
+			return { content: [{ type: "text", text: result }] };
 		},
 	);
 
@@ -348,10 +331,8 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getAudienceSegments"),
 		buildZodSchema("getAudienceSegments"),
 		async (input) => {
-			const result = await getAudienceSegments(input);
-			const text =
-				typeof result === "string" ? result : JSON.stringify(result, null, 2);
-			return { content: [{ type: "text", text }] };
+			const result = await wrapToolWithJSON("getAudienceSegments", getAudienceSegments, input);
+			return { content: [{ type: "text", text: result }] };
 		},
 	);
 
@@ -360,10 +341,8 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getAllPlacements"),
 		buildZodSchema("getAllPlacements"),
 		async () => {
-			const result = await getAllPlacements({});
-			const text =
-				typeof result === "string" ? result : JSON.stringify(result, null, 2);
-			return { content: [{ type: "text", text }] };
+			const result = await wrapToolWithJSON("getAllPlacements", getAllPlacements, {});
+			return { content: [{ type: "text", text: result }] };
 		},
 	);
 
@@ -372,11 +351,8 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getGeoLocations"),
 		buildZodSchema("getGeoLocations"),
 		async (input) => {
-			// Zod preprocessing handles string parsing now
-			const result = await getGeoLocations(input);
-			const text =
-				typeof result === "string" ? result : JSON.stringify(result, null, 2);
-			return { content: [{ type: "text", text }] };
+			const result = await wrapToolWithJSON("getGeoLocations", getGeoLocations, input);
+			return { content: [{ type: "text", text: result }] };
 		},
 	);
 
@@ -385,10 +361,8 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getContextualTargeting"),
 		buildZodSchema("getContextualTargeting"),
 		async (input) => {
-			const result = await getContextualTargeting(input);
-			const text =
-				typeof result === "string" ? result : JSON.stringify(result, null, 2);
-			return { content: [{ type: "text", text }] };
+			const result = await wrapToolWithJSON("getContextualTargeting", getContextualTargeting, input);
+			return { content: [{ type: "text", text: result }] };
 		},
 	);
 
@@ -439,11 +413,8 @@ const handler = createMcpHandler((server) => {
 
 	// Debug tools
 	server.tool("listBoards", getToolDescription("listBoards"), buildZodSchema("listBoards"), async () => {
-		const result = await listAllBoards();
-		// Convert object to string if needed
-		const text =
-			typeof result === "string" ? result : JSON.stringify(result, null, 2);
-		return { content: [{ type: "text", text }] };
+		const result = await wrapToolWithJSON("listBoards", listAllBoards);
+		return { content: [{ type: "text", text: result }] };
 	});
 
 	server.tool(
@@ -451,10 +422,11 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getBoardColumns"),
 		buildZodSchema("getBoardColumns"),
 		async (input) => {
-			const result = await getBoardColumns(input.boardId);
-			return {
-				content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
-			};
+			const result = await wrapToolWithJSON("getBoardColumns", async (params: any) => {
+				const res = await getBoardColumns(params.boardId);
+				return JSON.stringify(res, null, 2);
+			}, input);
+			return { content: [{ type: "text", text: result }] };
 		},
 	);
 
@@ -463,11 +435,11 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getItems"),
 		buildZodSchema("getItems"),
 		async (input) => {
-			// Zod preprocessing handles string parsing now
-			const result = await getItems(input);
-			return {
-				content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
-			};
+			const result = await wrapToolWithJSON("getItems", async (params: any) => {
+				const res = await getItems(params);
+				return JSON.stringify(res, null, 2);
+			}, input);
+			return { content: [{ type: "text", text: result }] };
 		},
 	);
 
@@ -487,7 +459,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getContacts"),
 		buildZodSchema("getContacts"),
 		async (input) => {
-			const result = await getContacts(input);
+			const result = await wrapToolWithJSON("getContacts", getContacts, input);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -497,7 +469,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getLeads"),
 		buildZodSchema("getLeads"),
 		async (input) => {
-			const result = await getLeads(input);
+			const result = await wrapToolWithJSON("getLeads", getLeads, input);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -507,7 +479,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getOpportunities"),
 		buildZodSchema("getOpportunities"),
 		async (input) => {
-			const result = await getOpportunities(input);
+			const result = await wrapToolWithJSON("getOpportunities", getOpportunities, input);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -517,7 +489,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getSalesActivities"),
 		buildZodSchema("getSalesActivities"),
 		async (input) => {
-			const result = await getSalesActivities(input);
+			const result = await wrapToolWithJSON("getSalesActivities", getSalesActivities, input);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -527,7 +499,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getBookings"),
 		buildZodSchema("getBookings"),
 		async (input) => {
-			const result = await getBookings(input);
+			const result = await wrapToolWithJSON("getBookings", getBookings, input);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -537,7 +509,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getBugs"),
 		buildZodSchema("getBugs"),
 		async (input) => {
-			const result = await getBugs(input);
+			const result = await wrapToolWithJSON("getBugs", getBugs, input);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -547,7 +519,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getTasksTechIntelligence"),
 		buildZodSchema("getTasksTechIntelligence"),
 		async (input) => {
-			const result = await getTasksTechIntelligence(input);
+			const result = await wrapToolWithJSON("getTasksTechIntelligence", getTasksTechIntelligence, input);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -581,7 +553,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getTasksAdOps"),
 		buildZodSchema("getTasksAdOps"),
 		async (input) => {
-			const result = await getTasksAdOps(input);
+			const result = await wrapToolWithJSON("getTasksAdOps", getTasksAdOps, input);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -591,7 +563,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getTasksMarketing"),
 		buildZodSchema("getTasksMarketing"),
 		async (input) => {
-			const result = await getTasksMarketing(input);
+			const result = await wrapToolWithJSON("getTasksMarketing", getTasksMarketing, input);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -601,7 +573,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getTasksAdTech"),
 		buildZodSchema("getTasksAdTech"),
 		async (input) => {
-			const result = await getTasksAdTech(input);
+			const result = await wrapToolWithJSON("getTasksAdTech", getTasksAdTech, input);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -611,7 +583,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getTasksVideo"),
 		buildZodSchema("getTasksVideo"),
 		async (input) => {
-			const result = await getTasksVideo(input);
+			const result = await wrapToolWithJSON("getTasksVideo", getTasksVideo, input);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -621,7 +593,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getTasksYieldGrowth"),
 		buildZodSchema("getTasksYieldGrowth"),
 		async (input) => {
-			const result = await getTasksYieldGrowth(input);
+			const result = await wrapToolWithJSON("getTasksYieldGrowth", getTasksYieldGrowth, input);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -631,7 +603,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getOKR"),
 		buildZodSchema("getOKR"),
 		async (input) => {
-			const result = await getOKR(input);
+			const result = await wrapToolWithJSON("getOKR", getOKR, input);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -641,7 +613,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getMarketingBudgets"),
 		buildZodSchema("getMarketingBudgets"),
 		async (input) => {
-			const result = await getMarketingBudgets(input);
+			const result = await wrapToolWithJSON("getMarketingBudgets", getMarketingBudgets, input);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -651,7 +623,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getDeals"),
 		buildZodSchema("getDeals"),
 		async (input) => {
-			const result = await getDeals(input);
+			const result = await wrapToolWithJSON("getDeals", getDeals, input);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -661,7 +633,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getTeams"),
 		buildZodSchema("getTeams"),
 		async (input) => {
-			const result = await getTeams(input);
+			const result = await wrapToolWithJSON("getTeams", getTeams, input);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -671,7 +643,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getPeople"),
 		buildZodSchema("getPeople"),
 		async (input) => {
-			const result = await getPeople(input);
+			const result = await wrapToolWithJSON("getPeople", getPeople, input);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -681,7 +653,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getTickets"),
 		buildZodSchema("getTickets"),
 		async (input) => {
-			const result = await getTickets(input);
+			const result = await wrapToolWithJSON("getTickets", getTickets, input);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -692,9 +664,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("createAccount"),
 		buildZodSchema("createAccount"),
 		async (input) => {
-			const result = await createAccount(
-				input as Parameters<typeof createAccount>[0],
-			);
+			const result = await wrapToolWithJSON("createAccount", createAccount, input as Parameters<typeof createAccount>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -704,9 +674,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("updateAccount"),
 		buildZodSchema("updateAccount"),
 		async (input) => {
-			const result = await updateAccount(
-				input as Parameters<typeof updateAccount>[0],
-			);
+			const result = await wrapToolWithJSON("updateAccount", updateAccount, input as Parameters<typeof updateAccount>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -717,9 +685,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("createContact"),
 		buildZodSchema("createContact"),
 		async (input) => {
-			const result = await createContact(
-				input as Parameters<typeof createContact>[0],
-			);
+			const result = await wrapToolWithJSON("createContact", createContact, input as Parameters<typeof createContact>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -729,9 +695,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("updateContact"),
 		buildZodSchema("updateContact"),
 		async (input) => {
-			const result = await updateContact(
-				input as Parameters<typeof updateContact>[0],
-			);
+			const result = await wrapToolWithJSON("updateContact", updateContact, input as Parameters<typeof updateContact>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -742,9 +706,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("createLead"),
 		buildZodSchema("createLead"),
 		async (input) => {
-			const result = await createLead(
-				input as Parameters<typeof createLead>[0],
-			);
+			const result = await wrapToolWithJSON("createLead", createLead, input as Parameters<typeof createLead>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -754,9 +716,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("updateLead"),
 		buildZodSchema("updateLead"),
 		async (input) => {
-			const result = await updateLead(
-				input as Parameters<typeof updateLead>[0],
-			);
+			const result = await wrapToolWithJSON("updateLead", updateLead, input as Parameters<typeof updateLead>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -767,9 +727,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("createOpportunity"),
 		buildZodSchema("createOpportunity"),
 		async (input) => {
-			const result = await createOpportunity(
-				input as Parameters<typeof createOpportunity>[0],
-			);
+			const result = await wrapToolWithJSON("createOpportunity", createOpportunity, input as Parameters<typeof createOpportunity>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -779,9 +737,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("updateOpportunity"),
 		buildZodSchema("updateOpportunity"),
 		async (input) => {
-			const result = await updateOpportunity(
-				input as Parameters<typeof updateOpportunity>[0],
-			);
+			const result = await wrapToolWithJSON("updateOpportunity", updateOpportunity, input as Parameters<typeof updateOpportunity>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -792,9 +748,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("createSalesActivity"),
 		buildZodSchema("createSalesActivity"),
 		async (input) => {
-			const result = await createSalesActivity(
-				input as Parameters<typeof createSalesActivity>[0],
-			);
+			const result = await wrapToolWithJSON("createSalesActivity", createSalesActivity, input as Parameters<typeof createSalesActivity>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -804,9 +758,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("updateSalesActivity"),
 		buildZodSchema("updateSalesActivity"),
 		async (input) => {
-			const result = await updateSalesActivity(
-				input as Parameters<typeof updateSalesActivity>[0],
-			);
+			const result = await wrapToolWithJSON("updateSalesActivity", updateSalesActivity, input as Parameters<typeof updateSalesActivity>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -817,7 +769,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("createBug"),
 		buildZodSchema("createBug"),
 		async (input) => {
-			const result = await createBug(input as Parameters<typeof createBug>[0]);
+			const result = await wrapToolWithJSON("createBug", createBug, input as Parameters<typeof createBug>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -827,7 +779,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("updateBug"),
 		buildZodSchema("updateBug"),
 		async (input) => {
-			const result = await updateBug(input as Parameters<typeof updateBug>[0]);
+			const result = await wrapToolWithJSON("updateBug", updateBug, input as Parameters<typeof updateBug>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -838,9 +790,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("createTaskAdOps"),
 		buildZodSchema("createTaskAdOps"),
 		async (input) => {
-			const result = await createTaskAdOps(
-				input as Parameters<typeof createTaskAdOps>[0],
-			);
+			const result = await wrapToolWithJSON("createTaskAdOps", createTaskAdOps, input as Parameters<typeof createTaskAdOps>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -850,9 +800,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("updateTaskAdOps"),
 		buildZodSchema("updateTaskAdOps"),
 		async (input) => {
-			const result = await updateTaskAdOps(
-				input as Parameters<typeof updateTaskAdOps>[0],
-			);
+			const result = await wrapToolWithJSON("updateTaskAdOps", updateTaskAdOps, input as Parameters<typeof updateTaskAdOps>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -863,9 +811,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("createTaskMarketing"),
 		buildZodSchema("createTaskMarketing"),
 		async (input) => {
-			const result = await createTaskMarketing(
-				input as Parameters<typeof createTaskMarketing>[0],
-			);
+			const result = await wrapToolWithJSON("createTaskMarketing", createTaskMarketing, input as Parameters<typeof createTaskMarketing>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -875,9 +821,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("updateTaskMarketing"),
 		buildZodSchema("updateTaskMarketing"),
 		async (input) => {
-			const result = await updateTaskMarketing(
-				input as Parameters<typeof updateTaskMarketing>[0],
-			);
+			const result = await wrapToolWithJSON("updateTaskMarketing", updateTaskMarketing, input as Parameters<typeof updateTaskMarketing>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -888,9 +832,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("createTaskAdTech"),
 		buildZodSchema("createTaskAdTech"),
 		async (input) => {
-			const result = await createTaskAdTech(
-				input as Parameters<typeof createTaskAdTech>[0],
-			);
+			const result = await wrapToolWithJSON("createTaskAdTech", createTaskAdTech, input as Parameters<typeof createTaskAdTech>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -900,9 +842,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("updateTaskAdTech"),
 		buildZodSchema("updateTaskAdTech"),
 		async (input) => {
-			const result = await updateTaskAdTech(
-				input as Parameters<typeof updateTaskAdTech>[0],
-			);
+			const result = await wrapToolWithJSON("updateTaskAdTech", updateTaskAdTech, input as Parameters<typeof updateTaskAdTech>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -913,9 +853,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("createTaskVideo"),
 		buildZodSchema("createTaskVideo"),
 		async (input) => {
-			const result = await createTaskVideo(
-				input as Parameters<typeof createTaskVideo>[0],
-			);
+			const result = await wrapToolWithJSON("createTaskVideo", createTaskVideo, input as Parameters<typeof createTaskVideo>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -925,9 +863,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("updateTaskVideo"),
 		buildZodSchema("updateTaskVideo"),
 		async (input) => {
-			const result = await updateTaskVideo(
-				input as Parameters<typeof updateTaskVideo>[0],
-			);
+			const result = await wrapToolWithJSON("updateTaskVideo", updateTaskVideo, input as Parameters<typeof updateTaskVideo>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -938,9 +874,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("createTaskYieldGrowth"),
 		buildZodSchema("createTaskYieldGrowth"),
 		async (input) => {
-			const result = await createTaskYieldGrowth(
-				input as Parameters<typeof createTaskYieldGrowth>[0],
-			);
+			const result = await wrapToolWithJSON("createTaskYieldGrowth", createTaskYieldGrowth, input as Parameters<typeof createTaskYieldGrowth>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -950,9 +884,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("updateTaskYieldGrowth"),
 		buildZodSchema("updateTaskYieldGrowth"),
 		async (input) => {
-			const result = await updateTaskYieldGrowth(
-				input as Parameters<typeof updateTaskYieldGrowth>[0],
-			);
+			const result = await wrapToolWithJSON("updateTaskYieldGrowth", updateTaskYieldGrowth, input as Parameters<typeof updateTaskYieldGrowth>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -963,7 +895,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("createOKR"),
 		buildZodSchema("createOKR"),
 		async (input) => {
-			const result = await createOKR(input as Parameters<typeof createOKR>[0]);
+			const result = await wrapToolWithJSON("createOKR", createOKR, input as Parameters<typeof createOKR>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -973,7 +905,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("updateOKR"),
 		buildZodSchema("updateOKR"),
 		async (input) => {
-			const result = await updateOKR(input as Parameters<typeof updateOKR>[0]);
+			const result = await wrapToolWithJSON("updateOKR", updateOKR, input as Parameters<typeof updateOKR>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -984,9 +916,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("createDeal"),
 		buildZodSchema("createDeal"),
 		async (input) => {
-			const result = await createDeal(
-				input as Parameters<typeof createDeal>[0],
-			);
+			const result = await wrapToolWithJSON("createDeal", createDeal, input as Parameters<typeof createDeal>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -996,9 +926,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("updateDeal"),
 		buildZodSchema("updateDeal"),
 		async (input) => {
-			const result = await updateDeal(
-				input as Parameters<typeof updateDeal>[0],
-			);
+			const result = await wrapToolWithJSON("updateDeal", updateDeal, input as Parameters<typeof updateDeal>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -1009,9 +937,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("createTicket"),
 		buildZodSchema("createTicket"),
 		async (input) => {
-			const result = await createTicket(
-				input as Parameters<typeof createTicket>[0],
-			);
+			const result = await wrapToolWithJSON("createTicket", createTicket, input as Parameters<typeof createTicket>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -1021,9 +947,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("updateTicket"),
 		buildZodSchema("updateTicket"),
 		async (input) => {
-			const result = await updateTicket(
-				input as Parameters<typeof updateTicket>[0],
-			);
+			const result = await wrapToolWithJSON("updateTicket", updateTicket, input as Parameters<typeof updateTicket>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
