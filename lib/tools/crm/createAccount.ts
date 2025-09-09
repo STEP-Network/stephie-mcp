@@ -1,6 +1,7 @@
 import { type MondayItemResponse, mondayApi } from "../../monday/client.js";
 import type { GraphQLError, MondayColumnValues } from "../../monday/types.js";
 import { TOOL_BOARD_IDS } from "../board-ids.js";
+import { createSuccessResponse, createErrorResponse } from "../json-output.js";
 
 export async function createAccount(params: {
 	name: string;
@@ -83,33 +84,70 @@ export async function createAccount(params: {
 
 		if (response.errors) {
 			console.error("GraphQL errors:", response.errors);
-			return `# Error Creating Account\n\n${response.errors.map((e: GraphQLError) => e.message).join("\n")}`;
+			return JSON.stringify(
+				createErrorResponse(
+					"createAccount",
+					response.errors.map((e: GraphQLError) => e.message).join(", ")
+				),
+				null,
+				2
+			);
 		}
 
 		const item = response.data?.create_item;
 		if (!item) {
-			return "# Error\n\nFailed to create account - no item returned";
+			return JSON.stringify(
+				createErrorResponse(
+					"createAccount",
+					"Failed to create account - no item returned"
+				),
+				null,
+				2
+			);
 		}
 
-		// Format response
-		let result = `# Account Created Successfully\n\n`;
-		result += `**Name:** ${(item as MondayItemResponse).name}\n`;
-		result += `**ID:** ${(item as MondayItemResponse).id}\n\n`;
+		// Format response data
+		const itemData = item as MondayItemResponse;
+		const responseData: any = {
+			id: itemData.id,
+			name: itemData.name,
+			columnValues: {}
+		};
 
-		// Parse column values for display
-		const columnData = (item as MondayItemResponse).column_values || [];
-		if (columnData.length > 0) {
-			result += `## Details\n\n`;
-			for (const col of columnData) {
-				if (col.text) {
-					result += `- **${col.id}:** ${col.text}\n`;
-				}
+		// Parse column values
+		const columnData = itemData.column_values || [];
+		for (const col of columnData) {
+			if (col.text) {
+				responseData.columnValues[col.id] = col.text;
 			}
 		}
 
-		return result;
+		// Build metadata
+		const metadata = {
+			boardId: TOOL_BOARD_IDS.ACCOUNTS,
+			boardName: "Accounts",
+			groupId: groupId || undefined
+		};
+
+		return JSON.stringify(
+			createSuccessResponse(
+				"createAccount",
+				"created",
+				responseData,
+				metadata
+			),
+			null,
+			2
+		);
 	} catch (error) {
 		console.error("Error creating account:", error);
-		return `# Error\n\nFailed to create account: ${error}`;
+		return JSON.stringify(
+			createErrorResponse(
+				"createAccount",
+				error instanceof Error ? error.message : String(error)
+			),
+			null,
+			2
+		);
 	}
 }

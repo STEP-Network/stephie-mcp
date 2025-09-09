@@ -8,7 +8,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 
 ## Tasks - Tech & Intelligence
 
-### Tool: `getTasksTechIntelligence`, `createTaskTechIntelligence`, `updateTaskTechIntelligence`
+### Tool: `getTasksTechIntelligence`, `createTasksTechIntelligence`, `updateTaskTechIntelligence`
 
 **status_19__1** (Status):
 - 0 = In Review
@@ -22,18 +22,12 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 - 8 = On Hold
 
 **type_1__1** (Type):
-- 0 = Training
 - 1 = Support
-- 2 = UI Element
 - 3 = Maintenance
 - 4 = Development
 - 5 = Not Labelled
-- 6 = Bug
+- 6 = Bugfix
 - 7 = Documentation
-- 8 = Info
-- 9 = Newsletter
-- 10 = Operations
-- 11 = Spam
 - 12 = Meeting
 
 **priority_1__1** (Priority):
@@ -446,7 +440,7 @@ Many boards use similar status patterns. Here are common ones:
 
 ### Creating a new Tech & Intelligence task with "In Progress" status:
 ```javascript
-createTaskTechIntelligence({
+createTasksTechIntelligence({
   name: "Implement new feature",
   status_19__1: 4,  // In Progress
   type_1__1: 4,     // Development

@@ -1,4 +1,5 @@
 import { getGAMAccessToken } from "../../gam/auth.js";
+import { createListResponse } from "../json-output.js";
 
 const NEUWO_CONTEXTUAL_KEY_ID = "14509472";
 const NETWORK_ID = process.env.GOOGLE_AD_MANAGER_NETWORK_CODE || "21809957681";
@@ -56,125 +57,78 @@ export async function getContextualTargeting(args: {
 			`[getContextualTargeting] Returning ${limitedValues.length} contextual values after filtering`,
 		);
 
-		// Convert to markdown format
-		const lines: string[] = [];
+		// Analyze category patterns
+		const categorized = analyzeCategoryPatterns(limitedValues);
 
-		lines.push("# Contextual Targeting Categories");
-		lines.push("");
-		lines.push(`**Total Categories:** ${limitedValues.length}`);
+		// Format for JSON response
+		const formattedCategories = limitedValues.map(value => ({
+			id: value.id,
+			name: value.name,
+			displayName: value.displayName,
+			matchType: value.matchType || "EXACT",
+			categoryType: categorized.mainCategories.includes(value) ? "main" : "subcategory",
+			parentCategory: value.displayName.includes("_") ? value.displayName.split("_")[0] : null
+		}));
+
+		// Build category groups summary
+		const categoryGroups = new Map<string, number>();
+		limitedValues.forEach((value) => {
+			const prefix = value.displayName.split(/[_\-\s]/)[0];
+			categoryGroups.set(prefix, (categoryGroups.get(prefix) || 0) + 1);
+		});
+
+		// Build metadata
+		const metadata: Record<string, any> = {
+			networkId: NETWORK_ID,
+			contextualKeyId: NEUWO_CONTEXTUAL_KEY_ID,
+			totalCategories: limitedValues.length,
+			mainCategories: categorized.mainCategories.length,
+			subCategories: categorized.subCategories.length,
+			filters: {
+				limit
+			},
+			categoryGroups: Array.from(categoryGroups.entries())
+				.sort((a, b) => b[1] - a[1])
+				.map(([group, count]) => ({ group, count })),
+			usage: {
+				description: "Use these contextual categories for content-based targeting",
+				categories: {
+					"News & Media": "Target news-related content",
+					"Sports": "Target sports content and events",
+					"Business": "Target business and finance content",
+					"Entertainment": "Target entertainment content"
+				},
+				exampleUsage: {
+					customTargeting: {
+						[NEUWO_CONTEXTUAL_KEY_ID]: limitedValues.slice(0, 3).map(v => v.id)
+					}
+				},
+				allCategoryIds: limitedValues.map(v => v.id)
+			}
+		};
+
 		if (searchTerms.length > 0) {
-			lines.push(`**Search Terms:** ${searchTerms.join(", ")}`);
+			metadata.filters.searchTerms = searchTerms;
 		}
+
 		if (filteredValues.length > limitedValues.length) {
-			lines.push(
-				`**Note:** Showing ${limitedValues.length} of ${filteredValues.length} matching results`,
-			);
-		}
-		lines.push("");
-
-		if (limitedValues.length === 0) {
-			lines.push("*No contextual categories found matching the criteria*");
-		} else {
-			// Group by category prefix if they have common patterns
-			const categorized = analyzeCategoryPatterns(limitedValues);
-
-			if (categorized.mainCategories.length > 0) {
-				lines.push("## Main Categories");
-				lines.push(
-					`*${categorized.mainCategories.length} top-level categories*`,
-				);
-				lines.push("");
-				lines.push("| Category | ID | Type |");
-				lines.push("|----------|----|----|");
-
-				categorized.mainCategories.forEach((value) => {
-					lines.push(
-						`| **${value.displayName}** | \`${value.id}\` | ${value.matchType || "EXACT"} |`,
-					);
-				});
-				lines.push("");
-			}
-
-			if (categorized.subCategories.length > 0) {
-				lines.push("## Subcategories");
-				lines.push(`*${categorized.subCategories.length} specific categories*`);
-				lines.push("");
-				lines.push("| Subcategory | ID | Parent Category |");
-				lines.push("|-------------|----|----|");
-
-				categorized.subCategories.forEach((value) => {
-					const parent = value.displayName.split("_")[0] || "General";
-					lines.push(`| ${value.displayName} | \`${value.id}\` | ${parent} |`);
-				});
-				lines.push("");
-			}
-
-			// Summary section
-			lines.push("## Category Summary");
-			lines.push("");
-
-			const categoryGroups = new Map<string, number>();
-			limitedValues.forEach((value) => {
-				const prefix = value.displayName.split(/[_\-\s]/)[0];
-				categoryGroups.set(prefix, (categoryGroups.get(prefix) || 0) + 1);
-			});
-
-			if (categoryGroups.size > 0) {
-				lines.push("| Category Group | Count |");
-				lines.push("|----------------|-------|");
-
-				Array.from(categoryGroups.entries())
-					.sort((a, b) => b[1] - a[1])
-					.forEach(([group, count]) => {
-						lines.push(`| ${group} | ${count} |`);
-					});
-				lines.push("");
-			}
-
-			// Usage section
-			lines.push("## Usage for GAM Targeting");
-			lines.push("");
-			lines.push(
-				"Use these contextual categories for content-based targeting:",
-			);
-			lines.push("- **News & Media**: Target news-related content");
-			lines.push("- **Sports**: Target sports content and events");
-			lines.push("- **Business**: Target business and finance content");
-			lines.push("- **Entertainment**: Target entertainment content");
-			lines.push("");
-			lines.push("### Example Usage:");
-			lines.push("```json");
-			lines.push("{");
-			lines.push('  "customTargeting": {');
-			lines.push('    "14509472": [');
-
-			// Show first 3 IDs as example
-			const exampleValues = limitedValues.slice(0, 3);
-			exampleValues.forEach((value, index) => {
-				const comma = index < exampleValues.length - 1 ? "," : "";
-				lines.push(`      "${value.id}"${comma}`);
-			});
-
-			lines.push("    ]");
-			lines.push("  }");
-			lines.push("}");
-			lines.push("```");
-
-			// All IDs for easy copying
-			lines.push("");
-			lines.push("### All Category IDs");
-			lines.push("```json");
-			lines.push(
-				JSON.stringify(
-					limitedValues.map((v) => v.id),
-					null,
-					2,
-				),
-			);
-			lines.push("```");
+			metadata.note = `Showing ${limitedValues.length} of ${filteredValues.length} matching results`;
 		}
 
-		return lines.join("\n");
+		return JSON.stringify(
+			createListResponse(
+				"getContextualTargeting",
+				formattedCategories,
+				metadata,
+				{
+					summary: limitedValues.length === 0 
+						? "No contextual categories found matching the criteria"
+						: `Found ${limitedValues.length} contextual targeting categor${limitedValues.length !== 1 ? 'ies' : 'y'}: ${categorized.mainCategories.length} main, ${categorized.subCategories.length} subcategor${categorized.subCategories.length !== 1 ? 'ies' : 'y'}`
+				}
+			),
+			null,
+			2
+		);
 	} catch (error: any) {
 		console.error("[getContextualTargeting] Error:", error);
 		throw new Error(`Failed to fetch contextual targeting: ${error.message}`);

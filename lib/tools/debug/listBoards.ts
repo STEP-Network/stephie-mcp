@@ -34,10 +34,10 @@ export async function listAllBoards() {
 		const response = await mondayApi(query);
 
 		if (!response.data?.boards || response.data.boards.length === 0) {
-			return {
+			return JSON.stringify({
 				error: "Boards board not found",
 				boards: [] as Array<Record<string, unknown>>,
-			};
+			}, null, 2);
 		}
 
 		const boardItems = response.data.boards[0].items_page?.items || [];
@@ -82,12 +82,12 @@ export async function listAllBoards() {
 			boardsByType[type].push(board);
 		});
 
-		return {
+		return JSON.stringify({
 			boards,
 			total: boards.length,
 			boardsByType,
 			source: "Boards board (1698570295)",
-		};
+		}, null, 2);
 	} catch (error) {
 		console.error("Error listing boards:", error);
 		throw error;

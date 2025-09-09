@@ -4,6 +4,7 @@ import {
 	mondayApi,
 } from "../../monday/client.js";
 import { getDynamicColumns } from "../dynamic-columns.js";
+import { createListResponse } from "../json-output.js";
 
 export async function getTasksAdOps(
 	params: {
@@ -155,36 +156,72 @@ export async function getTasksAdOps(
 			});
 		}
 
-		// Format response as markdown
-		const lines: string[] = [];
-		lines.push(`# Tasks - AdOps`);
-		lines.push(`**Total Items:** ${items.length}`);
+		// Format items for JSON response
+		const formattedItems = items.map((item: Record<string, unknown>) => {
+			const formatted: any = {
+				id: item.id,
+				name: item.name,
+				createdAt: item.created_at,
+				updatedAt: item.updated_at,
+			};
 
-		// Show active filters
-		if (keyResultId)
-			lines.push(`**Filter:** Related to Key Result ID ${keyResultId}`);
-		if (publisherId)
-			lines.push(`**Filter:** Related to Publisher ID ${publisherId}`);
-
-		lines.push("");
-
-		items.forEach((item: Record<string, unknown>) => {
-			lines.push(`## ${item.name}`);
-			lines.push(`- **ID:** ${item.id}`);
-
+			// Process column values
 			(item as MondayItemResponse).column_values.forEach(
 				(col: Record<string, unknown>) => {
-					if (col.text) {
-						lines.push(
-							`- **${(col as MondayColumnValueResponse).column?.title}:** ${col.text}`,
-						);
+					const column = col as MondayColumnValueResponse;
+					const fieldName = column.column?.title?.toLowerCase().replace(/\s+/g, '_') || column.id;
+					
+					// Parse different column types
+					if (column.column?.type === 'status' || column.column?.type === 'dropdown') {
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = {
+							index: parsedValue?.index,
+							label: column.text || null
+						};
+					} else if (column.column?.type === 'board-relation') {
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = parsedValue?.linkedItemIds || [];
+					} else if (column.column?.type === 'multiple-person') {
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = parsedValue?.personsAndTeams || [];
+					} else {
+						formatted[fieldName] = column.text || null;
 					}
 				},
 			);
-			lines.push("");
+
+			return formatted;
 		});
 
-		return lines.join("\n");
+		// Build metadata
+		const metadata: Record<string, any> = {
+			boardId: "1549618667",
+			boardName: "Tasks - AdOps",
+			limit,
+			filters: {}
+		};
+
+		if (search) metadata.filters.search = search;
+		if (person) metadata.filters.owner = person;
+		if (label_mkkwem4d !== undefined) metadata.filters.type = label_mkkwem4d;
+		if (color_mknxxz44 !== undefined) metadata.filters.priority = color_mknxxz44;
+		if (status_mkkwc3ez !== undefined) metadata.filters.status = status_mkkwc3ez;
+		if (date__1) metadata.filters.timeline = date__1;
+		if (keyResultId) metadata.filters.keyResultId = keyResultId;
+		if (publisherId) metadata.filters.publisherId = publisherId;
+
+		return JSON.stringify(
+			createListResponse(
+				"getTasksAdOps",
+				formattedItems,
+				metadata,
+				{
+					summary: `Found ${formattedItems.length} task${formattedItems.length !== 1 ? 's' : ''}`
+				}
+			),
+			null,
+			2
+		);
 	} catch (error) {
 		console.error("Error fetching TasksAdOps items:", error);
 		throw error;

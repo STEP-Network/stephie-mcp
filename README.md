@@ -16,7 +16,7 @@ Model Context Protocol (MCP) server for STEPhie tools, providing secure access t
 
 This project follows the [Vercel MCP template](https://github.com/vercel-labs/mcp-on-vercel) best practices with a clean, maintainable structure:
 
-```
+```folders
 stephie-mcp/
 ├── api/
 │   ├── server.ts        # Main Vercel endpoint (uses mcp-handler)
@@ -56,18 +56,21 @@ stephie-mcp/
 ## Available Tools
 
 ### Publisher Management
+
 - `getAllPublishers` - Get all 126 Live publishers/sites with GAM IDs, verticals, groups
 - `getPublisherFormats` - Matrix of publishers/sites and their ad formats by device
 - `getPublishersByFormats` - Find publishers/sites supporting specific formats
 - `findPublisherAdUnits` - Complete 3-level ad unit hierarchy
 
 ### Product & Pricing
+
 - `getAllProducts` - Ad products and product groups
 - `getAllFormats` - Ad format specifications by device
 - `getAllSizes` - Ad unit sizes with IAB standards
 - `getAllAdPrices` - CPM rates in DKK
 
 ### Targeting
+
 - `getKeyValues` - 22,000+ custom targeting options
 - `getAudienceSegments` - Demographic/behavioral segments
 - `getAllPlacements` - GAM placements and verticals
@@ -75,19 +78,22 @@ stephie-mcp/
 - `getContextualTargeting` - Neuwo content categories
 
 ### Forecasting
+
 - `availabilityForecast` - Real GAM SOAP API integration for inventory forecasting
 
 ### Board Tools (34 tools)
+
 - **CRM**: `getAccounts`, `getContacts`, `getLeads`
 - **Sales**: `getDeals`, `getOpportunities`, `getSalesActivities`
-- **Tasks**: 
+- **Tasks**:
   - Get: `getTasksAdOps`, `getTasksMarketing`, `getTasksTechIntelligence`, etc.
-  - Create/Update: `createTaskTechIntelligence`, `updateTaskTechIntelligence`
+  - Create/Update: `createTasksTechIntelligence`, `updateTaskTechIntelligence`
 - **Operations**: `getBookings`, `getInternalAdOpsAdTech`
 - **Development**: `getBugs`, `getFeatures`, `getTests`, `getChangelog`
 - And 15+ more covering HR, Support, Marketing, Business, OKR boards
 
 ### Debug Tools
+
 - `listBoards` - List all Monday.com boards with metadata
 - `getBoardColumns` - Inspect board columns with status/dropdown options
 - `getItems` - Generic item fetcher with advanced filtering
@@ -129,9 +135,9 @@ DATABASE_URL=your_postgres_url
 1. **Deploy to Vercel** (see deployment section below)
 
 2. **Configure Claude Desktop:**
-   
+
    Edit your Claude Desktop config (`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
-   
+
    ```json
    {
      "mcpServers": {
@@ -148,12 +154,13 @@ DATABASE_URL=your_postgres_url
 ### Claude Desktop (Local Development)
 
 1. **Build the MCP server:**
+
    ```bash
    pnpm mcp:build
    ```
 
 2. **Configure Claude Desktop for local server:**
-   
+
    ```json
    {
      "mcpServers": {
@@ -177,6 +184,7 @@ DATABASE_URL=your_postgres_url
 ### Vercel Deployment (Cloud)
 
 1. **Deploy to Vercel:**
+
    ```bash
    vercel --prod
    ```
@@ -187,6 +195,7 @@ DATABASE_URL=your_postgres_url
    - Add each variable for Production environment
 
 3. **Verify deployment:**
+
    ```bash
    # Check SSE endpoint
    curl -I https://stephie-mcp.vercel.app/sse
@@ -206,6 +215,7 @@ The codebase includes a **Dynamic Column System** that eliminates hardcoded colu
 - **✨ Zero Maintenance**: When Monday.com boards change, just update the Columns board
 
 ### How It Works
+
 ```typescript
 // Instead of hardcoding columns in each tool:
 const columns = await getDynamicColumns(boardId);
@@ -213,6 +223,7 @@ const columns = await getDynamicColumns(boardId);
 ```
 
 ### Migration Status
+
 - ✅ Infrastructure complete with 333 columns migrated
 - ✅ `getDynamicColumns()` function ready in `lib/tools/dynamic-columns.ts`
 - 🔄 Tools being migrated (see `DYNAMIC_COLUMNS_MIGRATION_GUIDE.md`)
@@ -294,6 +305,7 @@ import { getExample } from './lib/tools/example/getExample.js';
 #### Parameter Description Management
 
 The `buildZodSchema()` helper automatically:
+
 - Reads parameter definitions from `toolDefinitions.ts`
 - Builds proper Zod validation schemas
 - Includes all descriptions, defaults, and enums
@@ -303,20 +315,23 @@ const toolImplementations = {
   // ...
   getExample: (args) => getExample(args),
 };
-```
 
 ### Adding New Board Tools
 
 1. **Auto-generate from Monday.com boards:**
+
    ```bash
    npx tsx scripts/generate-board-tools.ts
    ```
+
    This creates tools with essential columns and filtering
 
 2. **Update meta board column names:**
+
    ```bash
    npx tsx scripts/add-column-names-to-boards.ts
    ```
+
    Tracks column usage across boards
 
 3. **Register in server.ts** to make available immediately
@@ -384,27 +399,32 @@ The MCP server exposes tools via the Model Context Protocol. Each tool returns m
 ## Troubleshooting
 
 ### "No items found" errors
+
 - Verify board IDs in `lib/monday/client.ts`
 - Check column IDs match current Monday.com schema
 - Use `getBoardColumns` tool to inspect structure
 
 ### Authentication failures
+
 - For local dev: Set `TEST_AUTH_TOKEN=test-token`
 - For production: Ensure valid Stack Auth token
 - Check environment variables are loaded
 
 ### Vercel deployment issues
+
 - Ensure TypeScript compiles: `pnpm build`
 - Check Vercel logs: `vercel logs stephie-mcp.vercel.app`
 - Verify environment variables are set in Vercel dashboard
 - Note: DOM types are required in tsconfig.json for Response API
 
 ### MCP connection issues
+
 - The server uses SSE transport at `/sse` endpoint
 - Requires mcp-remote for Claude Desktop connection
 - Check that rewrites in vercel.json include `/sse` and `/message`
 
 ### Rate limiting
+
 - Monday.com API has rate limits
 - Implement caching for frequently accessed data
 - Use batch operations where possible

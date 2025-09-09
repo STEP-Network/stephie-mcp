@@ -4,51 +4,82 @@ import {
 	mondayApi,
 } from "../../monday/client.js";
 import { getDynamicColumns } from "../dynamic-columns.js";
-
+import { createListResponse } from "../json-output.js";
 export async function getTasksTechIntelligence(
 	params: {
 		limit?: number;
-		search?: string;
-		person?: string; // Owner
+		name?: string;
 		status_19__1?: number; // Status (numeric index)
 		type_1__1?: number; // Type (numeric index)
 		priority_1__1?: number; // Priority (numeric index)
 		date__1?: string; // Due Date (YYYY-MM-DD)
-		keyResultId?: string; // Filter by linked key result (use OKR subitems to find IDs)
-		teamTaskId?: string; // Filter by linked team tasks
+		date__1_operator?: "any_of" | "not_any_of" | "greater_than" | "lower_than"; // Due Date operator
+		date4?: string; // Follow Up Date (YYYY-MM-DD)
+		date4_operator?: "any_of" | "not_any_of" | "greater_than" | "lower_than"; // Follow Up Date operator
+		date4__1?: string; // Created Date (YYYY-MM-DD)
+		date4__1_operator?: "any_of" | "not_any_of" | "greater_than" | "lower_than"; // Created Date operator
+		date3__1?: string; // Started Date (YYYY-MM-DD)
+		date3__1_operator?: "any_of" | "not_any_of" | "greater_than" | "lower_than"; // Started Date operator
+		date7__1?: string; // Done Date (YYYY-MM-DD)
+		date7__1_operator?: "any_of" | "not_any_of" | "greater_than" | "lower_than"; // Done Date operator
+		board_relation_mkpjqgpv?: string; // Filter by linked key result (use OKR subitems tool to find IDs)
+		board_relation_mkqhkyb7?: string; // Filter by linked STEPhie features (use STEPhie Features tool to find IDs)
 	} = {},
-) {
+): Promise<string> {
 	const {
 		limit = 10,
-		search,
-		person,
+		name,
 		status_19__1,
 		type_1__1,
 		priority_1__1,
-		date__1,
-		keyResultId,
-		teamTaskId,
+		date__1,					// Due Date
+		date__1_operator = "any_of",  // Default operator
+		date4,						// Follow Up Date
+		date4_operator = "any_of",   // Default operator
+		date4__1,					// Created Date
+		date4__1_operator = "any_of", // Default operator
+		date3__1,					// Started Date
+		date3__1_operator = "any_of", // Default operator
+		date7__1,					// Done Date
+		date7__1_operator = "any_of", // Default operator
+		board_relation_mkpjqgpv,	// Key Result ID (OKR Subitem ID)
+		board_relation_mkqhkyb7,	// STEPhie Feature ID
 	} = params;
 
 	// Fetch dynamic columns from Columns board
 	const BOARD_ID = "1631907569";
 	const dynamicColumns = await getDynamicColumns(BOARD_ID);
 
+	// Helper function to add date filters
+	const addDateFilter = (
+		columnId: string, 
+		value: string | undefined, 
+		operator: string
+	) => {
+		if (!value) return;
+		
+		// For greater_than and lower_than, value should be a single date string
+		// For any_of and not_any_of, value should be wrapped in array
+		const compareValue = (operator === "greater_than" || operator === "lower_than") 
+			? value 
+			: [value];
+			
+		filters.push({
+			column_id: columnId,
+			compare_value: compareValue,
+			operator: operator,
+		});
+	};
+
 	// Build filters
 	const filters: Array<Record<string, unknown>> = [];
-	if (search) {
+	if (name) {
 		filters.push({
 			column_id: "name",
-			compare_value: search,
+			compare_value: name,
 			operator: "contains_text",
 		});
 	}
-	if (person)
-		filters.push({
-			column_id: "person",
-			compare_value: person,
-			operator: "contains_text",
-		});
 	if (status_19__1 !== undefined)
 		filters.push({
 			column_id: "status_19__1",
@@ -67,11 +98,25 @@ export async function getTasksTechIntelligence(
 			compare_value: [priority_1__1],
 			operator: "any_of",
 		});
-	if (date__1)
+	
+	// Date filters with operators
+	addDateFilter("date__1", date__1, date__1_operator);
+	addDateFilter("date4", date4, date4_operator);
+	addDateFilter("date4__1", date4__1, date4__1_operator);
+	addDateFilter("date3__1", date3__1, date3__1_operator);
+	addDateFilter("date7__1", date7__1, date7__1_operator);
+	
+	if (board_relation_mkpjqgpv)
 		filters.push({
-			column_id: "date__1",
-			compare_value: date__1,
-			operator: "contains_text",
+			column_id: "board_relation_mkpjqgpv",
+			compare_value: [board_relation_mkpjqgpv],
+			operator: "any_of",
+		});
+	if (board_relation_mkqhkyb7)
+		filters.push({
+			column_id: "board_relation_mkqhkyb7",
+			compare_value: [board_relation_mkqhkyb7],
+			operator: "any_of",
 		});
 
 	const queryParams =
@@ -118,73 +163,72 @@ export async function getTasksTechIntelligence(
 		const board = response.data?.boards?.[0];
 		if (!board) throw new Error("Board not found");
 
-		let items = board.items_page?.items || [];
+		const items = board.items_page?.items || [];
 
-		// Apply board relation filters
-		if (keyResultId) {
-			items = items.filter((item: Record<string, unknown>) => {
-				const relationCol = (item as MondayItemResponse).column_values.find(
-					(c: Record<string, unknown>) => c.id === "board_relation_mkpjqgpv",
-				);
-				if (relationCol?.value) {
-					try {
-						const linked = JSON.parse(relationCol.value);
-						return linked?.linkedItemIds?.includes(keyResultId);
-					} catch {
-						return false;
-					}
-				}
-				return false;
-			});
-		}
+		// Format items for JSON response
+		const formattedItems = items.map((item: Record<string, unknown>) => {
+			const formatted: Record<string, unknown> = {
+				id: item.id,
+				name: item.name,
+				createdAt: item.created_at,
+				updatedAt: item.updated_at,
+			};
 
-		if (teamTaskId) {
-			items = items.filter((item: Record<string, unknown>) => {
-				const relationCol = (item as MondayItemResponse).column_values.find(
-					(c: Record<string, unknown>) => c.id === "connect_boards_Mjj8XLFi",
-				);
-				if (relationCol?.value) {
-					try {
-						const linked = JSON.parse(relationCol.value);
-						return linked?.linkedItemIds?.includes(teamTaskId);
-					} catch {
-						return false;
-					}
-				}
-				return false;
-			});
-		}
-
-		// Format response as markdown
-		const lines: string[] = [];
-		lines.push(`# Tasks - Tech & Intelligence`);
-		lines.push(`**Total Items:** ${items.length}`);
-
-		// Show active filters
-		if (keyResultId)
-			lines.push(`**Filter:** Related to Key Result ID ${keyResultId}`);
-		if (teamTaskId)
-			lines.push(`**Filter:** Related to Team Task ID ${teamTaskId}`);
-
-		lines.push("");
-
-		items.forEach((item: Record<string, unknown>) => {
-			lines.push(`## ${item.name}`);
-			lines.push(`- **ID:** ${item.id}`);
-
+			// Process column values
 			(item as MondayItemResponse).column_values.forEach(
 				(col: Record<string, unknown>) => {
-					if (col.text) {
-						lines.push(
-							`- **${(col as MondayColumnValueResponse).column?.title}:** ${col.text}`,
-						);
+					const column = col as MondayColumnValueResponse;
+					const fieldName = column.column?.title?.toLowerCase().replace(/\s+/g, '_') || column.id;
+					
+					// Parse different column types
+					if (column.column?.type === 'status' || column.column?.type === 'dropdown') {
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = {
+							index: parsedValue?.index,
+							label: column.text || null
+						};
+					} else if (column.column?.type === 'board-relation') {
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = parsedValue?.linkedItemIds || [];
+					} else if (column.column?.type === 'multiple-person') {
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = parsedValue?.personsAndTeams || [];
+					} else {
+						formatted[fieldName] = column.text || null;
 					}
 				},
 			);
-			lines.push("");
+
+			return formatted;
 		});
 
-		return lines.join("\n");
+		// Build metadata
+		const metadata: Record<string, unknown> = {
+			boardId: "2186669074",
+			boardName: "Tasks - Tech & Intelligence",
+			limit,
+			filters: {} as Record<string, unknown>
+		};
+
+		if (name) (metadata.filters as Record<string, unknown>).name = name;
+		if (type_1__1) (metadata.filters as Record<string, unknown>).type = type_1__1;
+		if (priority_1__1) (metadata.filters as Record<string, unknown>).priority = priority_1__1;
+		if (status_19__1) (metadata.filters as Record<string, unknown>).status = status_19__1;
+		if (board_relation_mkpjqgpv) (metadata.filters as Record<string, unknown>).keyResultId = board_relation_mkpjqgpv;
+		if (board_relation_mkqhkyb7) (metadata.filters as Record<string, unknown>).stephieFeatureId = board_relation_mkqhkyb7;
+
+		return JSON.stringify(
+			createListResponse(
+				"getTasksTechIntelligence",
+				formattedItems,
+				metadata,
+				{
+					summary: `Found ${formattedItems.length} task${formattedItems.length !== 1 ? 's' : ''}`
+				}
+			),
+			null,
+			2
+		);
 	} catch (error) {
 		console.error("Error fetching TasksTechIntelligence items:", error);
 		throw error;

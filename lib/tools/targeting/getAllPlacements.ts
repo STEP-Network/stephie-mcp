@@ -3,6 +3,7 @@ import {
 	type MondayItemResponse,
 	mondayApi,
 } from "../../monday/client.js";
+import { createListResponse } from "../json-output.js";
 
 export async function getAllPlacements(args: { includeIds?: boolean }) {
 	const { includeIds = true } = args;
@@ -49,94 +50,74 @@ export async function getAllPlacements(args: { includeIds?: boolean }) {
 
 		console.error(`[getAllPlacements] Found ${placements.length} placements`);
 
-		// Convert to markdown format
-		const lines: string[] = [];
+		// Categorize placements
+		// Note: "READ" in the placement names corresponds to "RE-AD" (Responsible Advertisement)
+		const specialPlacements = ["RON", "Gambling", "Finance", "READ"];
+		const verticals: Array<{ name: string; placementId: string; category: string }> = [];
+		const special: Array<{ name: string; placementId: string; category: string }> = [];
 
-		lines.push("# GAM Placements / Verticals");
-		lines.push("");
-		lines.push(`**Total Placements:** ${placements.length}`);
-		lines.push("");
-		lines.push(
-			"> **Important:** Everything in this list is a vertical (content category) EXCEPT:",
-		);
-		lines.push("> - **RON** (Run of Network)");
-		lines.push("> - **Gambling** (Special approval category)");
-		lines.push("> - **Finance** (Special approval category)");
-		lines.push("> - **RE-AD** (Responsible Advertisement - not retargeting)");
-		lines.push("");
-
-		if (placements.length > 0) {
-			// Categorize placements
-			// Note: "READ" in the placement names corresponds to "RE-AD" (Responsible Advertisement)
-			const specialPlacements = ["RON", "Gambling", "Finance", "READ"];
-			const verticals: Array<Record<string, unknown>> = [];
-			const special: Array<Record<string, unknown>> = [];
-
-			placements.forEach((p: { name: unknown; placementId: string }) => {
-				const placementName = p.name as string;
-				// Check if this is a special placement
-				// Special handling for READ/RE-AD - check for "READ" but not as part of another word
-				const isSpecial = specialPlacements.some((sp) => {
-					if (sp === "READ") {
-						// Match "- READ (" to ensure it's the standalone READ placement
-						return placementName.includes("- READ (");
-					}
-					return placementName.toLowerCase().includes(sp.toLowerCase());
-				});
-
-				if (isSpecial) {
-					special.push(p);
-				} else {
-					verticals.push(p);
+		placements.forEach((p: { name: unknown; placementId: string }) => {
+			const placementName = p.name as string;
+			// Check if this is a special placement
+			// Special handling for READ/RE-AD - check for "READ" but not as part of another word
+			const isSpecial = specialPlacements.some((sp) => {
+				if (sp === "READ") {
+					// Match "- READ (" to ensure it's the standalone READ placement
+					return placementName.includes("- READ (");
 				}
+				return placementName.toLowerCase().includes(sp.toLowerCase());
 			});
 
-			// Show verticals
-			if (verticals.length > 0) {
-				lines.push("## Content Verticals");
-				lines.push("*Use these for targeting specific content categories*");
-				lines.push("");
-				lines.push("| Vertical | Placement ID |");
-				lines.push("|----------|--------------|");
+			const placement = {
+				name: placementName,
+				placementId: includeIds ? p.placementId : null,
+				category: isSpecial ? "special" : "vertical"
+			};
 
-				verticals.sort((a, b) =>
-					(a.name as string).localeCompare(b.name as string),
-				);
-				verticals.forEach((placement) => {
-					const placementId =
-						includeIds && placement.placementId
-							? `\`${placement.placementId}\``
-							: "N/A";
-					lines.push(`| **${placement.name}** | ${placementId} |`);
-				});
-				lines.push("");
+			if (isSpecial) {
+				special.push(placement);
+			} else {
+				verticals.push(placement);
 			}
+		});
 
-			// Show non-verticals (special placements)
-			if (special.length > 0) {
-				lines.push("## Special Categories");
-				lines.push("*Non-vertical placements with special requirements*");
-				lines.push("");
-				lines.push("| Category | Placement ID |");
-				lines.push("|----------|--------------|");
+		// Sort both arrays
+		verticals.sort((a, b) => a.name.localeCompare(b.name));
+		special.sort((a, b) => a.name.localeCompare(b.name));
 
-				special.sort((a, b) =>
-					(a.name as string).localeCompare(b.name as string),
-				);
-				special.forEach((placement) => {
-					const placementId =
-						includeIds && placement.placementId
-							? `\`${placement.placementId}\``
-							: "N/A";
-					lines.push(`| **${placement.name}** | ${placementId} |`);
-				});
-				lines.push("");
+		// Combine all placements
+		const allPlacements = [...verticals, ...special];
+
+		const metadata: Record<string, any> = {
+			boardId: BOARD_IDS.AD_UNITS,
+			boardName: "Ad Units",
+			totalPlacements: placements.length,
+			verticals: verticals.length,
+			specialCategories: special.length,
+			includeIds,
+			notes: {
+				important: "Everything in this list is a vertical (content category) EXCEPT:",
+				specialCategories: [
+					"RON (Run of Network)",
+					"Gambling (Special approval category)",
+					"Finance (Special approval category)",
+					"RE-AD (Responsible Advertisement - not retargeting)"
+				]
 			}
-		} else {
-			lines.push("*No placements found.*");
-		}
+		};
 
-		return lines.join("\n");
+		return JSON.stringify(
+			createListResponse(
+				"getAllPlacements",
+				allPlacements,
+				metadata,
+				{
+					summary: `Found ${placements.length} GAM placement${placements.length !== 1 ? 's' : ''}: ${verticals.length} content vertical${verticals.length !== 1 ? 's' : ''} and ${special.length} special categor${special.length !== 1 ? 'ies' : 'y'}`
+				}
+			),
+			null,
+			2
+		);
 	} catch (error) {
 		console.error("[getAllPlacements] Error:", error);
 		throw new Error(

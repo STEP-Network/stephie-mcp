@@ -1,4 +1,5 @@
 import { type MondayItemResponse, mondayApi } from "../../monday/client.js";
+import { createListResponse } from "../json-output.js";
 
 const CUSTOM_TARGETING_BOARD_ID = "2056578615";
 
@@ -109,7 +110,16 @@ export async function getKeyValues(args: {
 		const response = await mondayApi(keyQuery);
 
 		if (!response.data?.boards || response.data.boards.length === 0) {
-			return { keys: [] as CustomTargetingKeyResult[], total: 0 };
+			return JSON.stringify(
+				createListResponse(
+					"getKeyValues",
+					[],
+					{ limit, search: search || undefined, total: 0 },
+					{ summary: "No custom targeting keys found" }
+				),
+				null,
+				2
+			);
 		}
 
 		const items = response.data.boards[0].items_page.items || [];
@@ -235,24 +245,23 @@ export async function getKeyValues(args: {
 		// Apply limit
 		const limitedResults = allKeys.slice(0, limit);
 
-		// Format as text output
-		const textLines: string[] = [];
-		textLines.push(`CUSTOM TARGETING KEYS (${limitedResults.length} keys)`);
-		textLines.push("");
-
-		for (const key of limitedResults) {
-			textLines.push(`${key.displayName} [${key.gamId}] (${key.type})`);
-			if (key.values && key.values.length > 0) {
-				textLines.push(`  Values (${key.valueCount} total):`);
-				for (const value of key.values) {
-					textLines.push(`    - ${value.displayName} [${value.id}]`);
+		// Return using createListResponse
+		return JSON.stringify(
+			createListResponse(
+				"getKeyValues",
+				limitedResults,
+				{
+					limit,
+					search: search || undefined,
+					total: limitedResults.length
+				},
+				{
+					summary: `Found ${limitedResults.length} custom targeting key${limitedResults.length !== 1 ? 's' : ''}`
 				}
-			} else if (key.valueCount) {
-				textLines.push(`  ${key.valueCount} values available`);
-			}
-		}
-
-		return textLines.join("\n");
+			),
+			null,
+			2
+		);
 	} catch (error) {
 		console.error("Error fetching key values:", error);
 		throw new Error(

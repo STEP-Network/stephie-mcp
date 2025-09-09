@@ -4,7 +4,7 @@ import {
 	mondayApi,
 } from "../../monday/client.js";
 import { getDynamicColumns } from "../dynamic-columns.js";
-
+import { createListResponse } from "../json-output.js";
 export async function getTests(
 	params: { limit?: number; search?: string } = {},
 ) {
@@ -70,29 +70,70 @@ export async function getTests(
 
 		const items = board.items_page?.items || [];
 
-		// Format response as markdown
-		const lines: string[] = [];
-		lines.push(`# Tests`);
-		lines.push(`**Total Items:** ${items.length}`);
-		lines.push("");
+		// Format items for JSON response
+		const formattedItems = items.map((item: Record<string, unknown>) => {
+			const formatted: any = {
+				id: item.id,
+				name: item.name,
+				createdAt: item.created_at,
+				updatedAt: item.updated_at,
+			};
 
-		items.forEach((item: Record<string, unknown>) => {
-			lines.push(`## ${item.name}`);
-			lines.push(`- **ID:** ${item.id}`);
-
+			// Process column values
 			(item as MondayItemResponse).column_values.forEach(
 				(col: Record<string, unknown>) => {
-					if (col.text) {
-						lines.push(
-							`- **${(col as MondayColumnValueResponse).column?.title}:** ${col.text}`,
-						);
+					const column = col as MondayColumnValueResponse;
+					const fieldName = column.column?.title?.toLowerCase().replace(/\s+/g, '_') || column.id;
+					
+					// Parse different column types
+					if (column.column?.type === 'status' || column.column?.type === 'dropdown' || column.column?.type === 'color') {
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = {
+							index: parsedValue?.index,
+							label: column.text || null,
+							type: column.column?.type
+						};
+					} else if (column.column?.type === 'board-relation' || column.column?.type === 'board_relation') {
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = parsedValue?.linkedItemIds || [];
+					} else if (column.column?.type === 'multiple-person' || column.column?.type === 'multiple_person') {
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = parsedValue?.personsAndTeams || [];
+					} else if (column.column?.type === 'date') {
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = parsedValue?.date || column.text || null;
+					} else {
+						formatted[fieldName] = column.text || null;
 					}
 				},
 			);
-			lines.push("");
+
+			return formatted;
 		});
 
-		return lines.join("\n");
+		// Build metadata
+		const metadata: Record<string, any> = {
+			boardId: BOARD_ID,
+			boardName: "Tests",
+			limit,
+			dynamicColumns: dynamicColumns.length,
+			filters: {}
+		};
+
+		if (search) metadata.filters.search = search;
+
+		return JSON.stringify(
+			createListResponse(
+				"getTests",
+				formattedItems,
+				metadata,
+				{
+					summary: `Found ${formattedItems.length} test${formattedItems.length !== 1 ? 's' : ''} (${dynamicColumns.length} dynamic columns)`
+				}
+			),
+			null,
+			2
+		);
 	} catch (error) {
 		console.error("Error fetching Tests items:", error);
 		throw error;

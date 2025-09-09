@@ -3,6 +3,8 @@
  * Single source of truth for all MCP server implementations
  */
 
+import { required } from "zod/v4-mini";
+
 export interface ToolDefinition {
 	name: string;
 	description: string;
@@ -402,7 +404,8 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 				},
 				goalQuantity: {
 					type: "number",
-					description: "Target number of impressions. Leave null for maximum available",
+					description:
+						"Target number of impressions. Leave null for maximum available",
 				},
 				targetedAdUnitIds: {
 					type: "array",
@@ -413,23 +416,30 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 				excludedAdUnitIds: {
 					type: "array",
 					items: { type: "number" },
-					description: "Array of ad unit IDs to exclude from forecast. Use findPublisherAdUnits tool to get valid IDs. Can include any level ad units regardless of targetedAdUnitIds.",
+					description:
+						"Array of ad unit IDs to exclude from forecast. Use findPublisherAdUnits tool to get valid IDs. Can include any level ad units regardless of targetedAdUnitIds.",
 				},
 				audienceSegmentIds: {
 					type: "array",
 					items: { type: "string" },
-					description: "Array of audience segment IDs for demographic targeting. Use getAudienceSegments tool to get valid IDs.",
+					description:
+						"Array of audience segment IDs for demographic targeting. Use getAudienceSegments tool to get valid IDs.",
 				},
 				customTargeting: {
 					type: "array",
 					items: {
 						type: "object",
 						properties: {
-							keyId: { type: "string", description: "Custom targeting key ID. Use getKeyValues tool to get valid key IDs." },
+							keyId: {
+								type: "string",
+								description:
+									"Custom targeting key ID. Use getKeyValues tool to get valid key IDs.",
+							},
 							valueIds: {
 								type: "array",
 								items: { type: "string" },
-								description: "Array of value IDs for the key. Use getKeyValues tool to get valid value IDs.",
+								description:
+									"Array of value IDs for the key. Use getKeyValues tool to get valid value IDs.",
 							},
 							operator: {
 								type: "string",
@@ -438,7 +448,8 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 							},
 						},
 					},
-					description: "Array of custom targeting key-value pairs. Use getKeyValues tool to get valid keys and values.",
+					description:
+						"Array of custom targeting key-value pairs. Use getKeyValues tool to get valid keys and values.",
 				},
 				frequencyCapMaxImpressions: {
 					type: "number",
@@ -446,14 +457,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 				},
 				frequencyCapTimeUnit: {
 					type: "string",
-					enum: [
-						"MINUTE",
-						"HOUR",
-						"DAY",
-						"WEEK",
-						"MONTH",
-						"LIFETIME",
-					],
+					enum: ["MINUTE", "HOUR", "DAY", "WEEK", "MONTH", "LIFETIME"],
 					description: "Time unit for frequency capping (defaults to WEEK)",
 				},
 				geoTargeting: {
@@ -462,20 +466,24 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 						targetedLocationIds: {
 							type: "array",
 							items: { type: "string" },
-							description: "Array of location IDs to target. Use getGeoLocations tool to get valid IDs.",
+							description:
+								"Array of location IDs to target. Use getGeoLocations tool to get valid IDs.",
 						},
 						excludedLocationIds: {
 							type: "array",
 							items: { type: "string" },
-							description: "Array of location IDs to exclude. Use getGeoLocations tool to get valid IDs.",
+							description:
+								"Array of location IDs to exclude. Use getGeoLocations tool to get valid IDs.",
 						},
 					},
-					description: "Geographic targeting configuration. Use getGeoLocations tool to get valid location IDs.",
+					description:
+						"Geographic targeting configuration. Use getGeoLocations tool to get valid location IDs.",
 				},
 				targetedPlacementIds: {
 					type: "array",
 					items: { type: "string" },
-					description: "Array of placement IDs to target. Use getAllPlacements tool to get valid IDs. Not necessary if using targetedAdUnitIds.",
+					description:
+						"Array of placement IDs to target. Use getAllPlacements tool to get valid IDs. Not necessary if using targetedAdUnitIds.",
 				},
 			},
 			required: ["startDate", "endDate", "sizes"],
@@ -663,21 +671,25 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 	{
 		name: "getTasksTechIntelligence",
 		description:
-			'Get items from Tech & Intelligence Tasks board (team members: Nate). Progress on technical and data projects such as STEPhie, make.com and monday.com developments.',
+			"Get tasks from Tech & Intelligence Tasks board (team members: Nate). Progress on technical and data projects such as STEPhie, make.com and monday.com developments.",
 		inputSchema: {
 			type: "object",
 			properties: {
 				limit: { type: "number", default: 10 },
-				keyResultId: {
+				board_relation_mkpjqgpv: {
 					type: "string",
 					description:
-						"Filter by linked key result (use OKR subitems to find IDs)",
+						"Filter by linked key result item ID (use OKR subitems tool to find IDs)",
 				},
-				teamTaskId: {
+				board_relation_mkqhkyb7: {
 					type: "string",
-					description: "Filter by linked team tasks",
+					description:
+						"Filter by linked STEPhie feature item ID (use getStephieFeatures tool to find IDs)",
 				},
-				search: { type: "string" },
+				name: {
+					type: "string",
+					description: "Search tasks by full or partial name",
+				},
 				status_19__1: {
 					type: "number",
 					description:
@@ -686,14 +698,198 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 				type_1__1: {
 					type: "number",
 					description:
-						"Type index: 0=Training, 1=Support, 2=UI Element, 3=Maintenance, 4=Development, 5=Not Labelled, 6=Bug, 7=Documentation, 8=Info, 9=Newsletter, 10=Operations, 11=Spam, 12=Meeting",
+						"Type index: 1=Support, 3=Maintenance, 4=Development, 5=Not Labelled, 6=Bugfix, 7=Documentation, 12=Meeting",
 				},
 				priority_1__1: {
 					type: "number",
 					description:
 						"Priority index: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown",
 				},
+				date__1: {
+					type: "string",
+					description:
+						"Due date: 'YYYY-MM-DD', 'TODAY', 'TOMORROW', 'NEXT_WEEK', 'NEXT_MONTH', 'YESTERDAY', 'ONE_WEEK_AGO', 'ONE_MONTH_AGO'",
+				},
+				date__1_operator: {
+					type: "string",
+					enum: [
+						"any_of",
+						"not_any_of",
+						"greater_than",
+						"lower_than",
+					],
+					description: "Operator for due date comparison",
+				},
+				date4: {
+					type: "string",
+					description:
+						"Follow up date: 'YYYY-MM-DD', 'TODAY', 'TOMORROW', 'NEXT_WEEK', 'NEXT_MONTH', 'YESTERDAY', 'ONE_WEEK_AGO', 'ONE_MONTH_AGO'",
+				},
+				date4_operator: {
+					type: "string",
+					enum: [
+						"any_of",
+						"not_any_of",
+						"greater_than",
+						"lower_than",
+					],
+					description: "Operator for follow up date comparison",
+				},
+				date4__1: {
+					type: "string",
+					description:
+						"Created date: 'YYYY-MM-DD', 'TODAY', 'TOMORROW', 'NEXT_WEEK', 'NEXT_MONTH', 'YESTERDAY', 'ONE_WEEK_AGO', 'ONE_MONTH_AGO'",
+				},
+				date4__1_operator: {
+					type: "string",
+					enum: [
+						"any_of",
+						"not_any_of",
+						"greater_than",
+						"lower_than",
+					],
+					description: "Operator for created date comparison",
+				},
+				date3__1: {
+					type: "string",
+					description:
+						"Started date: 'YYYY-MM-DD', 'TODAY', 'TOMORROW', 'NEXT_WEEK', 'NEXT_MONTH', 'YESTERDAY', 'ONE_WEEK_AGO', 'ONE_MONTH_AGO'",
+				},
+				date3__1_operator: {
+					type: "string",
+					enum: [
+						"any_of",
+						"not_any_of",
+						"greater_than",
+						"lower_than",
+					],
+					description: "Operator for started date comparison",
+				},
+				date7__1: {
+					type: "string",
+					description:
+						"Done date: 'YYYY-MM-DD', 'TODAY', 'TOMORROW', 'NEXT_WEEK', 'NEXT_MONTH', 'YESTERDAY', 'ONE_WEEK_AGO', 'ONE_MONTH_AGO'",
+				},
+				date7__1_operator: {
+					type: "string",
+					enum: [
+						"any_of",
+						"not_any_of",
+						"greater_than",
+						"lower_than",
+					],
+					description: "Operator for done date comparison",
+				},
 			},
+		},
+	},
+
+	// Tasks - Tech & Intelligence Mutation Tools
+	{
+		name: "createTasksTechIntelligence",
+		description: "Create one or more tasks in the Tasks - Tech & Intelligence board.",
+		inputSchema: {
+			type: "object",
+			properties: {
+				tasks: {
+					type: "array",
+					items: {
+						type: "object",
+						properties: {
+							name: { type: "string", description: "Task name (required)", required: true },
+							board_relation_mkpjqgpv: {
+								type: "string",
+								description:
+									"Link to key result item ID (use OKR subitems tool to find IDs)",
+							},
+							board_relation_mkqhkyb7: {
+								type: "string",
+								description:
+									"Link to STEPhie feature item ID (use getStephieFeatures tool to find IDs)",
+							},
+							status_19__1: {
+								type: "number",
+								description:
+									"Status index: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold",
+							},
+							type_1__1: {
+								type: "number",
+								description:
+									"Type index: 1=Support, 3=Maintenance, 4=Development, 5=Not Labelled, 6=Bugfix, 7=Documentation, 12=Meeting",
+								required: true,
+							},
+							priority_1__1: {
+								type: "number",
+								description:
+									"Priority index: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown",
+								required: true,
+							},
+							date__1: {
+								type: "string",
+								description:
+									"Due date: 'YYYY-MM-DD'",
+							},
+							date4: {
+								type: "string",
+								description:
+									"Follow up date: 'YYYY-MM-DD'",
+							},
+						},
+						required: ["name", "type_1__1", "priority_1__1"],
+					},
+					description: "Array of task objects to create",
+					required: true,
+				},
+			},
+			required: ["tasks"],
+		},
+	},
+	{
+		name: "updateTaskTechIntelligence",
+		description:
+			"Update an existing task in the Tasks - Tech & Intelligence board.",
+		inputSchema: {
+			type: "object",
+			properties: {
+				itemId: { type: "string", description: "Item ID to update (required)" },
+				name: { type: "string", description: "Task name" },
+				board_relation_mkpjqgpv: {
+					type: "string",
+					description:
+						"Link to key result item ID (use OKR subitems tool to find IDs)",
+				},
+				board_relation_mkqhkyb7: {
+					type: "string",
+					description:
+						"Link to STEPhie feature item ID (use getStephieFeatures tool to find IDs)",
+				},
+				status_19__1: {
+					type: "number",
+					description:
+						"Status index: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold",
+				},
+				type_1__1: {
+					type: "number",
+					description:
+						"Type index: 1=Support, 3=Maintenance, 4=Development, 5=Not Labelled, 6=Bugfix, 7=Documentation, 12=Meeting",
+				},
+				priority_1__1: {
+					type: "number",
+					description:
+						"Priority index: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown",
+				},
+				date__1: {
+					type: "string",
+					description:
+						"Due date: 'YYYY-MM-DD'",
+				},
+				date4: {
+					type: "string",
+					description:
+						"Follow up date: 'YYYY-MM-DD'",
+				},
+			},
+			required: ["itemId"],
 		},
 	},
 	{
@@ -1296,107 +1492,6 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 				platform: { type: "number", description: "Platform Type index" },
 				status: { type: "number", description: "Publisher Status index" },
 			},
-		},
-	},
-
-	// Tasks - Tech & Intelligence Mutation Tools
-	{
-		name: "createTaskTechIntelligence",
-		description: "Create a new task in the Tasks - Tech & Intelligence board.",
-		inputSchema: {
-			type: "object",
-			properties: {
-				name: { type: "string", description: "Task name (required)" },
-				person: { type: "string", description: "Person ID to assign" },
-				status_19__1: {
-					type: "number",
-					description:
-						"Status index: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold",
-				},
-				type_1__1: {
-					type: "number",
-					description:
-						"Type index: 0=Training, 1=Support, 2=UI Element, 3=Maintenance, 4=Development, 5=Not Labelled, 6=Bug, 7=Documentation, 8=Info, 9=Newsletter, 10=Operations, 11=Spam, 12=Meeting",
-				},
-				priority_1__1: {
-					type: "number",
-					description:
-						"Priority index: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown",
-				},
-				date__1: { type: "string", description: "Due date (YYYY-MM-DD)" },
-				text__1: { type: "string", description: "Text field 1" },
-				text0__1: { type: "string", description: "Text field 2" },
-				long_text__1: { type: "string", description: "Long text description" },
-				link__1: {
-					type: "object",
-					properties: {
-						url: { type: "string" },
-						text: { type: "string" },
-					},
-					description: "Link with URL and text",
-				},
-				numbers__1: { type: "number", description: "Numbers field" },
-				keyResultId: {
-					type: "string",
-					description: "Related key result item ID",
-				},
-				teamTaskId: {
-					type: "string",
-					description: "Related team task item ID",
-				},
-				groupId: { type: "string", description: "Group ID to add the item to" },
-			},
-			required: ["name"],
-		},
-	},
-	{
-		name: "updateTaskTechIntelligence",
-		description:
-			"Update an existing task in the Tasks - Tech & Intelligence board.",
-		inputSchema: {
-			type: "object",
-			properties: {
-				itemId: { type: "string", description: "Item ID to update (required)" },
-				name: { type: "string", description: "Task name" },
-				person: { type: "string", description: "Person ID to assign" },
-				status_19__1: {
-					type: "number",
-					description:
-						"Status index: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold",
-				},
-				type_1__1: {
-					type: "number",
-					description:
-						"Type index: 0=Training, 1=Support, 2=UI Element, 3=Maintenance, 4=Development, 5=Not Labelled, 6=Bug, 7=Documentation, 8=Info, 9=Newsletter, 10=Operations, 11=Spam, 12=Meeting",
-				},
-				priority_1__1: {
-					type: "number",
-					description:
-						"Priority index: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown",
-				},
-				date__1: { type: "string", description: "Due date (YYYY-MM-DD)" },
-				text__1: { type: "string", description: "Text field 1" },
-				text0__1: { type: "string", description: "Text field 2" },
-				long_text__1: { type: "string", description: "Long text description" },
-				link__1: {
-					type: "object",
-					properties: {
-						url: { type: "string" },
-						text: { type: "string" },
-					},
-					description: "Link with URL and text",
-				},
-				numbers__1: { type: "number", description: "Numbers field" },
-				keyResultId: {
-					type: "string",
-					description: "Related key result item ID",
-				},
-				teamTaskId: {
-					type: "string",
-					description: "Related team task item ID",
-				},
-			},
-			required: ["itemId"],
 		},
 	},
 

@@ -4,7 +4,7 @@ import {
 	mondayApi,
 } from "../../monday/client.js";
 import { getDynamicColumns } from "../dynamic-columns.js";
-
+import { createListResponse, createSuccessResponse, createErrorResponse } from "../json-output.js";
 export async function getDeals(
 	params: {
 		limit?: number;
@@ -142,37 +142,73 @@ export async function getDeals(
 			});
 		}
 
-		// Format response as markdown
-		const lines: string[] = [];
-		lines.push(`# Deals`);
-		lines.push(`**Total Items:** ${items.length}`);
+		// Format items for JSON response
+		const formattedItems = items.map((item: Record<string, unknown>) => {
+			const formatted: any = {
+				id: item.id,
+				name: item.name,
+				createdAt: item.created_at,
+				updatedAt: item.updated_at,
+			};
 
-		// Show active filters
-		if (agencyId) lines.push(`**Filter:** Related to Agency ID ${agencyId}`);
-		if (advertiserId)
-			lines.push(`**Filter:** Related to Advertiser ID ${advertiserId}`);
-		if (contactsId)
-			lines.push(`**Filter:** Related to Contact ID ${contactsId}`);
-
-		lines.push("");
-
-		items.forEach((item: Record<string, unknown>) => {
-			lines.push(`## ${(item as MondayItemResponse).name}`);
-			lines.push(`- **ID:** ${(item as MondayItemResponse).id}`);
-
+			// Process column values
 			(item as MondayItemResponse).column_values.forEach(
 				(col: Record<string, unknown>) => {
-					if (col.text) {
-						lines.push(
-							`- **${(col as MondayColumnValueResponse).column?.title}:** ${col.text}`,
-						);
+					const column = col as MondayColumnValueResponse;
+					const fieldName = column.column?.title?.toLowerCase().replace(/\s+/g, '_') || column.id;
+					
+					// Parse different column types
+					if (column.column?.type === 'status' || column.column?.type === 'dropdown') {
+						// Try to get index for status/dropdown
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = {
+							index: parsedValue?.index,
+							label: column.text || null
+						};
+					} else if (column.column?.type === 'board-relation') {
+						// Parse board relations
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = parsedValue?.linkedItemIds || [];
+					} else if (column.column?.type === 'multiple-person') {
+						// Parse multiple person columns
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = parsedValue?.personsAndTeams || [];
+					} else {
+						// Default to text value
+						formatted[fieldName] = column.text || null;
 					}
 				},
 			);
-			lines.push("");
+
+			return formatted;
 		});
 
-		return lines.join("\n");
+		// Build metadata
+		const metadata: Record<string, any> = {
+			boardId: "1623368485",
+			boardName: "Deals",
+			limit,
+			filters: {}
+		};
+
+		if (search) metadata.filters.search = search;
+		if (color_mkqby95j !== undefined) metadata.filters.status = color_mkqby95j;
+		if (agencyId) metadata.filters.agencyId = agencyId;
+		if (advertiserId) metadata.filters.advertiserId = advertiserId;
+		if (contactsId) metadata.filters.contactsId = contactsId;
+
+		return JSON.stringify(
+			createListResponse(
+				"getDeals",
+				formattedItems,
+				metadata,
+				{
+					summary: `Found ${formattedItems.length} deal${formattedItems.length !== 1 ? 's' : ''}`
+				}
+			),
+			null,
+			2
+		);
 	} catch (error) {
 		console.error("Error fetching Deals items:", error);
 		throw error;

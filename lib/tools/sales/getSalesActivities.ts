@@ -4,7 +4,7 @@ import {
 	mondayApi,
 } from "../../monday/client.js";
 import { getDynamicColumns } from "../dynamic-columns.js";
-
+import { createListResponse, createSuccessResponse, createErrorResponse } from "../json-output.js";
 export async function getSalesActivities(
 	params: {
 		limit?: number;
@@ -12,6 +12,7 @@ export async function getSalesActivities(
 		activity_owner?: string; // *Owner
 		activity_status?: number; // Status (numeric index)
 		activity_type?: number; // *Activity Type (numeric index)
+		activity_date?: string; // Date filter
 		accountId?: string; // Filter by account (use getAccounts to find IDs)
 		contactId?: string; // Filter by contact (use getContacts to find IDs)
 		opportunityId?: string; // Filter by opportunity (use getOpportunities to find IDs)
@@ -23,6 +24,7 @@ export async function getSalesActivities(
 		activity_owner,
 		activity_status,
 		activity_type,
+		activity_date,
 		accountId,
 		contactId,
 		opportunityId,
@@ -158,36 +160,76 @@ export async function getSalesActivities(
 			});
 		}
 
-		// Format response as markdown
-		const lines: string[] = [];
-		lines.push(`# Sales Activities`);
-		lines.push(`**Total Items:** ${items.length}`);
+		// Format items for JSON response
+		const formattedItems = items.map((item: Record<string, unknown>) => {
+			const formatted: any = {
+				id: item.id,
+				name: item.name,
+				createdAt: item.created_at,
+				updatedAt: item.updated_at,
+			};
 
-		// Show active filters
-		if (accountId) lines.push(`**Filter:** Related to Account ID ${accountId}`);
-		if (contactId) lines.push(`**Filter:** Related to Contact ID ${contactId}`);
-		if (opportunityId)
-			lines.push(`**Filter:** Related to Opportunity ID ${opportunityId}`);
-
-		lines.push("");
-
-		items.forEach((item: Record<string, unknown>) => {
-			lines.push(`## ${(item as MondayItemResponse).name}`);
-			lines.push(`- **ID:** ${(item as MondayItemResponse).id}`);
-
+			// Process column values
 			(item as MondayItemResponse).column_values.forEach(
 				(col: Record<string, unknown>) => {
-					if (col.text) {
-						lines.push(
-							`- **${(col as MondayColumnValueResponse).column?.title}:** ${col.text}`,
-						);
+					const column = col as MondayColumnValueResponse;
+					const fieldName = column.column?.title?.toLowerCase().replace(/\s+/g, '_') || column.id;
+					
+					// Parse different column types
+					if (column.column?.type === 'status' || column.column?.type === 'dropdown') {
+						// Try to get index for status/dropdown
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = {
+							index: parsedValue?.index,
+							label: column.text || null
+						};
+					} else if (column.column?.type === 'board-relation') {
+						// Parse board relations
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = parsedValue?.linkedItemIds || [];
+					} else if (column.column?.type === 'multiple-person') {
+						// Parse multiple person columns
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = parsedValue?.personsAndTeams || [];
+					} else {
+						// Default to text value
+						formatted[fieldName] = column.text || null;
 					}
 				},
 			);
-			lines.push("");
+
+			return formatted;
 		});
 
-		return lines.join("\n");
+		// Build metadata
+		const metadata: Record<string, any> = {
+			boardId: "1549619087",
+			boardName: "Sales Activities",
+			limit,
+			filters: {}
+		};
+
+		if (search) metadata.filters.search = search;
+		if (activity_status !== undefined) metadata.filters.status = activity_status;
+		if (activity_type !== undefined) metadata.filters.type = activity_type;
+		if (activity_date) metadata.filters.date = activity_date;
+		if (activity_owner) metadata.filters.owner = activity_owner;
+		if (accountId) metadata.filters.accountId = accountId;
+		if (contactId) metadata.filters.contactId = contactId;
+		if (opportunityId) metadata.filters.opportunityId = opportunityId;
+
+		return JSON.stringify(
+			createListResponse(
+				"getSalesActivities",
+				formattedItems,
+				metadata,
+				{
+					summary: `Found ${formattedItems.length} sales activit${formattedItems.length !== 1 ? 'ies' : 'y'}`
+				}
+			),
+			null,
+			2
+		);
 	} catch (error) {
 		console.error("Error fetching SalesActivities items:", error);
 		throw error;

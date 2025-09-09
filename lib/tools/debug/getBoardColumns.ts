@@ -1,4 +1,5 @@
 import { mondayApi } from "../../monday/client.js";
+import { createListResponse } from "../json-output.js";
 
 export async function getBoardColumns(boardId: string = "1222800432") {
 	const query = `
@@ -22,7 +23,7 @@ export async function getBoardColumns(boardId: string = "1222800432") {
 		const response = await mondayApi(query, variables);
 
 		if (!response.data?.boards || response.data.boards.length === 0) {
-			return { error: "Board not found", columns: [] as unknown[] };
+			return JSON.stringify({ error: "Board not found", columns: [] as unknown[] }, null, 2);
 		}
 
 		const board = response.data.boards[0];
@@ -81,12 +82,28 @@ export async function getBoardColumns(boardId: string = "1222800432") {
 			);
 		});
 
-		return {
-			boardName: board.name,
-			totalColumns: columns.length,
-			columns: columns.map(parseColumnSettings),
-			formatColumns: formatColumns.map(parseColumnSettings),
-		};
+		return JSON.stringify(
+			createListResponse(
+				"getBoardColumns",
+				[{
+					boardName: board.name,
+					totalColumns: columns.length,
+					columns: columns.map(parseColumnSettings),
+					formatColumns: formatColumns.map(parseColumnSettings),
+				}],
+				{
+					boardId: boardId,
+					boardName: board.name,
+					totalColumns: columns.length,
+					formatColumnsCount: formatColumns.length
+				},
+				{
+					summary: `Board "${board.name}" has ${columns.length} columns (${formatColumns.length} format-related)`
+				}
+			),
+			null,
+			2
+		);
 	} catch (error) {
 		console.error("Error fetching board columns:", error);
 		throw error;

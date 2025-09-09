@@ -1,4 +1,5 @@
 import { type MondayItemResponse, mondayApi } from "../../monday/client.js";
+import { createListResponse } from "../json-output.js";
 
 const AUDIENCE_SEGMENTS_BOARD_ID = "2051827669";
 
@@ -101,7 +102,16 @@ export async function getAudienceSegments(args: {
 		const response = await mondayApi(query);
 
 		if (!response.data?.boards || response.data.boards.length === 0) {
-			return { segments: [] as AudienceSegmentResult[], total: 0 };
+			return JSON.stringify(
+				createListResponse(
+					"getAudienceSegments",
+					[],
+					{ limit, search: search || undefined, total: 0 },
+					{ summary: "No audience segments found" }
+				),
+				null,
+				2
+			);
 		}
 
 		const items = response.data.boards[0].items_page.items || [];
@@ -177,45 +187,23 @@ export async function getAudienceSegments(args: {
 		// Apply limit
 		const limitedResults = segments.slice(0, limit);
 
-		// Format as text output
-		const textLines: string[] = [];
-		textLines.push(`AUDIENCE SEGMENTS (${limitedResults.length} segments)`);
-		textLines.push("");
-
-		// Group by type
-		const segmentsByType = new Map<string, AudienceSegmentResult[]>();
-		for (const segment of limitedResults) {
-			if (!segmentsByType.has(segment.type)) {
-				segmentsByType.set(segment.type, []);
-			}
-			segmentsByType.get(segment.type)?.push(segment);
-		}
-
-		// Output by type
-		for (const [segType, segs] of segmentsByType) {
-			textLines.push(`${segType.toUpperCase()} (${segs.length})`);
-			textLines.push("─".repeat(40));
-
-			for (const segment of segs) {
-				const sizeStr = segment.size
-					? ` (${segment.size.toLocaleString()} users)`
-					: "";
-				textLines.push(`- ${segment.name} [${segment.gamId}]${sizeStr}`);
-
-				if (segment.dataProvider) {
-					textLines.push(`  Provider: ${segment.dataProvider}`);
+		// Return using createListResponse
+		return JSON.stringify(
+			createListResponse(
+				"getAudienceSegments",
+				limitedResults,
+				{
+					limit,
+					search: search || undefined,
+					total: limitedResults.length
+				},
+				{
+					summary: `Found ${limitedResults.length} audience segment${limitedResults.length !== 1 ? 's' : ''}`
 				}
-
-				if (segment.description) {
-					textLines.push(
-						`  ${segment.description.substring(0, 100)}${segment.description.length > 100 ? "..." : ""}`,
-					);
-				}
-			}
-			textLines.push("");
-		}
-
-		return textLines.join("\n");
+			),
+			null,
+			2
+		);
 	} catch (error) {
 		console.error("Error fetching audience segments:", error);
 		throw new Error(

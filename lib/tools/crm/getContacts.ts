@@ -4,6 +4,7 @@ import {
 	mondayApi,
 } from "../../monday/client.js";
 import { getDynamicColumns } from "../dynamic-columns.js";
+import { createListResponse } from "../json-output.js";
 
 export async function getContacts(
 	params: {
@@ -131,35 +132,73 @@ export async function getContacts(
 			});
 		}
 
-		// Format response as markdown
-		const lines: string[] = [];
-		lines.push(`# Contacts`);
-		lines.push(`**Total Items:** ${items.length}`);
+		// Format items for JSON response
+		const formattedItems = items.map((item: Record<string, unknown>) => {
+			const formatted: any = {
+				id: item.id,
+				name: item.name,
+				createdAt: item.created_at,
+				updatedAt: item.updated_at,
+			};
 
-		// Show active filters
-		if (accountId) lines.push(`**Filter:** Related to Account ID ${accountId}`);
-		if (opportunitiesId)
-			lines.push(`**Filter:** Related to Opportunity ID ${opportunitiesId}`);
-
-		lines.push("");
-
-		items.forEach((item: Record<string, unknown>) => {
-			lines.push(`## ${item.name}`);
-			lines.push(`- **ID:** ${item.id}`);
-
+			// Process column values
 			(item as MondayItemResponse).column_values.forEach(
 				(col: Record<string, unknown>) => {
-					if (col.text) {
-						lines.push(
-							`- **${(col as MondayColumnValueResponse).column?.title}:** ${col.text}`,
-						);
+					const column = col as MondayColumnValueResponse;
+					const fieldName = column.column?.title?.toLowerCase().replace(/\s+/g, '_') || column.id;
+					
+					// Parse different column types
+					if (column.column?.type === 'status' || column.column?.type === 'dropdown') {
+						// Try to get index for status/dropdown
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = {
+							index: parsedValue?.index,
+							label: column.text || null
+						};
+					} else if (column.column?.type === 'board-relation') {
+						// Parse board relations
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = parsedValue?.linkedItemIds || [];
+					} else if (column.column?.type === 'multiple-person') {
+						// Parse multiple person columns
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = parsedValue?.personsAndTeams || [];
+					} else {
+						// Default to text value
+						formatted[fieldName] = column.text || null;
 					}
 				},
 			);
-			lines.push("");
+
+			return formatted;
 		});
 
-		return lines.join("\n");
+		// Build metadata
+		const metadata: Record<string, any> = {
+			boardId: "1402911034",
+			boardName: "Contacts",
+			limit,
+			filters: {}
+		};
+
+		if (search) metadata.filters.search = search;
+		if (people) metadata.filters.owner = people;
+		if (status__1 !== undefined) metadata.filters.status = status__1;
+		if (accountId) metadata.filters.accountId = accountId;
+		if (opportunitiesId) metadata.filters.opportunitiesId = opportunitiesId;
+
+		return JSON.stringify(
+			createListResponse(
+				"getContacts",
+				formattedItems,
+				metadata,
+				{
+					summary: `Found ${formattedItems.length} contact${formattedItems.length !== 1 ? 's' : ''}`
+				}
+			),
+			null,
+			2
+		);
 	} catch (error) {
 		console.error("Error fetching Contacts items:", error);
 		throw error;

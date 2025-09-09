@@ -3,6 +3,7 @@ import {
 	type MondayItemResponse,
 	mondayApi,
 } from "../../monday/client.js";
+import { createListResponse } from "../json-output.js";
 
 // Device type options based on actual Monday.com columns
 export type DeviceType = "Desktop" | "Mobile" | "App" | "All" | null;
@@ -101,7 +102,18 @@ export async function getPublishersByFormats(args: FormatFilters) {
 
 	// If no formats specified, return error
 	if (requestedFormats.size === 0) {
-		return "# No Formats Selected\n\nPlease select at least one format to filter by. Set device type for display formats, or true for status formats.";
+		return JSON.stringify(
+			createListResponse(
+				"getPublishersByFormats",
+				[],
+				{ error: "No formats selected" },
+				{ 
+					summary: "Please select at least one format to filter by. Set device type for display formats, or true for status formats."
+				}
+			),
+			null,
+			2
+		);
 	}
 
 	const query = `
@@ -134,7 +146,16 @@ export async function getPublishersByFormats(args: FormatFilters) {
 
 		if (!response.data?.boards || response.data.boards.length === 0) {
 			console.error("No boards found in response");
-			return "# Error\n\nNo publisher formats board found.";
+			return JSON.stringify(
+				createListResponse(
+					"getPublishersByFormats",
+					[],
+					{ error: "No publisher formats board found" },
+					{ summary: "Failed to fetch publisher formats board" }
+				),
+				null,
+				2
+			);
 		}
 
 		const board = response.data.boards[0];
@@ -295,11 +316,14 @@ export async function getPublishersByFormats(args: FormatFilters) {
 				(a.supportedFormats as string[]).length,
 		);
 
-		// Format output
-		const lines: string[] = [];
-		lines.push(`# Publishers Supporting Selected Formats`);
-		lines.push("");
-		lines.push(`**Filters Applied:**`);
+		// Format output for JSON response
+		const formattedPublishers = matchingPublishers.map(pub => ({
+			name: pub.name,
+			supportedFormats: (pub.supportedFormats as Array<[string, string]>).map(([format, device]) => ({
+				format: formatLabels[format] || format,
+				device
+			}))
+		}));
 
 		// Format labels - explicitly show technology vendor
 		const formatLabels: Record<string, string> = {
@@ -322,65 +346,38 @@ export async function getPublishersByFormats(args: FormatFilters) {
 			"re-ad": "RE-AD (Responsible Ad)",
 		};
 
+		// Build metadata
+		const appliedFilters: Array<{ format: string; device: string }> = [];
 		requestedFormats.forEach((device, format) => {
 			const label = formatLabels[format] || format;
-			lines.push(`- ${label}: ${device === "All" ? "All devices" : device}`);
+			appliedFilters.push({
+				format: label,
+				device: device === "All" ? "All devices" : device
+			});
 		});
 
-		lines.push(`- **Status Filter:** Live publishers only`);
+		const metadata: Record<string, any> = {
+			boardId: BOARD_IDS.PUBLISHER_FORMATS,
+			boardName: "Publisher Formats",
+			totalPublishers: matchingPublishers.length,
+			statusFilter: "Live publishers only",
+			filtersApplied: appliedFilters
+		};
 
-		lines.push("");
-		lines.push(
-			`**Results:** ${matchingPublishers.length} Live publishers found`,
-		);
-		lines.push("");
-
-		if (matchingPublishers.length === 0) {
-			lines.push(
-				"No Live publishers found supporting the selected format and device combinations.",
-			);
-			return lines.join("\n");
-		}
-
-		// Group by format count
-		const byFormatCount = new Map<number, any[]>();
-		matchingPublishers.forEach((pub) => {
-			const count = (pub.supportedFormats as string[]).length;
-			if (!byFormatCount.has(count)) {
-				byFormatCount.set(count, []);
-			}
-			byFormatCount.get(count)?.push(pub);
-		});
-
-		// Output grouped results
-		const sortedCounts = Array.from(byFormatCount.keys()).sort((a, b) => b - a);
-
-		for (const count of sortedCounts) {
-			const pubs = byFormatCount.get(count) || [];
-			lines.push(
-				`## Supporting ${count} requested format${count > 1 ? "s" : ""} (${pubs.length} publisher${pubs.length > 1 ? "s" : ""})`,
-			);
-			lines.push("");
-
-			for (const pub of pubs) {
-				lines.push(`### ${pub.name}`);
-				lines.push(`**Matching Formats:**`);
-
-				for (const [format, device] of pub.supportedFormats) {
-					const label = formatLabels[format] || format;
-					lines.push(`- ${label}: ${device}`);
+		return JSON.stringify(
+			createListResponse(
+				"getPublishersByFormats",
+				formattedPublishers,
+				metadata,
+				{
+					summary: matchingPublishers.length === 0 
+						? "No Live publishers found supporting the selected format and device combinations"
+						: `Found ${matchingPublishers.length} Live publisher${matchingPublishers.length !== 1 ? 's' : ''} supporting the requested formats`
 				}
-				lines.push("");
-			}
-		}
-
-		// Add summary
-		lines.push("---");
-		lines.push(
-			`*Total: ${matchingPublishers.length} publishers supporting the requested formats*`,
+			),
+			null,
+			2
 		);
-
-		return lines.join("\n");
 	} catch (error) {
 		console.error("Error fetching publishers by formats:", error);
 		throw new Error(

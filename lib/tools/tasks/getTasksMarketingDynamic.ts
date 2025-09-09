@@ -4,7 +4,7 @@ import {
 	mondayApi,
 } from "../../monday/client.js";
 import { getDynamicColumns } from "../dynamic-columns.js";
-
+import { createListResponse } from "../json-output.js";
 /**
  * Dynamic version of getTasksMarketing that fetches columns from Columns board
  * This eliminates hardcoded column arrays and automatically adapts to column changes
@@ -168,75 +168,74 @@ export async function getTasksMarketingDynamic(
 			});
 		}
 
-		// Format response as markdown
-		const lines: string[] = [];
-		lines.push(`# ${board.name}`);
-		lines.push(`**Total Items:** ${items.length}`);
-		lines.push(
-			`**Dynamic Columns:** ${dynamicColumns.length} columns loaded from Columns board`,
-		);
+		// Format items for JSON response
+		const formattedItems = items.map((item: Record<string, unknown>) => {
+			const formatted: any = {
+				id: item.id,
+				name: item.name,
+				createdAt: item.created_at,
+				updatedAt: item.updated_at,
+			};
 
-		// Show active filters
-		if (keyResultId)
-			lines.push(`**Filter:** Related to Key Result ID ${keyResultId}`);
-		if (budgetId) lines.push(`**Filter:** Related to Budget ID ${budgetId}`);
-
-		lines.push("");
-
-		items.forEach((item: Record<string, unknown>) => {
-			lines.push(`## ${item.name}`);
-			lines.push(`- **ID:** ${item.id}`);
-
-			// Group columns by type for better readability
-			const textColumns: Array<Record<string, unknown>> = [];
-			const statusColumns: Array<Record<string, unknown>> = [];
-			const dateColumns: Array<Record<string, unknown>> = [];
-			const relationColumns: Array<Record<string, unknown>> = [];
-			const otherColumns: Array<Record<string, unknown>> = [];
-
+			// Process column values
 			(item as MondayItemResponse).column_values.forEach(
 				(col: Record<string, unknown>) => {
-					if (col.text) {
-						switch ((col as MondayColumnValueResponse).column?.type) {
-							case "text":
-							case "name":
-								textColumns.push(col);
-								break;
-							case "status":
-							case "color":
-								statusColumns.push(col);
-								break;
-							case "date":
-								dateColumns.push(col);
-								break;
-							case "board_relation":
-							case "link_to_board":
-								relationColumns.push(col);
-								break;
-							default:
-								otherColumns.push(col);
-						}
+					const column = col as MondayColumnValueResponse;
+					const fieldName = column.column?.title?.toLowerCase().replace(/\s+/g, '_') || column.id;
+					
+					// Parse different column types
+					if (column.column?.type === 'status' || column.column?.type === 'dropdown' || column.column?.type === 'color') {
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = {
+							index: parsedValue?.index,
+							label: column.text || null,
+							type: column.column?.type
+						};
+					} else if (column.column?.type === 'board-relation' || column.column?.type === 'board_relation' || column.column?.type === 'link_to_board') {
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = parsedValue?.linkedItemIds || [];
+					} else if (column.column?.type === 'multiple-person') {
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = parsedValue?.personsAndTeams || [];
+					} else {
+						formatted[fieldName] = column.text || null;
 					}
 				},
 			);
 
-			// Display grouped columns
-			[
-				...textColumns,
-				...statusColumns,
-				...dateColumns,
-				...relationColumns,
-				...otherColumns,
-			].forEach((col) => {
-				lines.push(
-					`- **${(col as MondayColumnValueResponse).column?.title}:** ${col.text}`,
-				);
-			});
-
-			lines.push("");
+			return formatted;
 		});
 
-		return lines.join("\n");
+		// Build metadata
+		const metadata: Record<string, any> = {
+			boardId: BOARD_ID,
+			boardName: board.name || BOARD_NAME,
+			limit,
+			dynamicColumns: dynamicColumns.length,
+			filters: {}
+		};
+
+		if (search) metadata.filters.search = search;
+		if (person) metadata.filters.owner = person;
+		if (status_1__1 !== undefined) metadata.filters.type = status_1__1;
+		if (color_mkpwc7hm !== undefined) metadata.filters.priority = color_mkpwc7hm;
+		if (status_mkkw7ehb !== undefined) metadata.filters.status = status_mkkw7ehb;
+		if (publish_date_mkn21n6b) metadata.filters.publishDate = publish_date_mkn21n6b;
+		if (keyResultId) metadata.filters.keyResultId = keyResultId;
+		if (budgetId) metadata.filters.budgetId = budgetId;
+
+		return JSON.stringify(
+			createListResponse(
+				"getTasksMarketingDynamic",
+				formattedItems,
+				metadata,
+				{
+					summary: `Found ${formattedItems.length} task${formattedItems.length !== 1 ? 's' : ''} (${dynamicColumns.length} dynamic columns)`
+				}
+			),
+			null,
+			2
+		);
 	} catch (error) {
 		console.error("Error fetching TasksMarketing items:", error);
 		throw error;

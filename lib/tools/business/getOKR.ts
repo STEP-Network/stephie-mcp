@@ -1,5 +1,6 @@
 import { type MondayItemResponse, mondayApi } from "../../monday/client.js";
 import { getDynamicColumns } from "../dynamic-columns.js";
+import { createListResponse } from "../json-output.js";
 
 export async function getOKR(
 	params: {
@@ -173,55 +174,16 @@ export async function getOKR(
 			});
 		}
 
-		// Format response as markdown
-		const lines: string[] = [];
-		lines.push("# Objectives & Key Results");
-		lines.push(`**Total Items:** ${items.length}`);
-		if (search) lines.push(`**Search:** "${search}"`);
-		if (status !== undefined) {
-			const statusLabels = [
-				"Planned",
-				"In Progress",
-				"On Hold",
-				"Done",
-				"Cancelled",
-			];
-			lines.push(
-				`**Status Filter:** ${statusLabels[status] || `Index ${status}`}`,
-			);
-		}
-		if (teamId) {
-			// Try to get team name from first matching item
-			let teamName = "Unknown";
-			const firstWithTeam = items.find((item: Record<string, unknown>) => {
-				const teamCol = (item as MondayItemResponse).column_values.find(
-					(c: Record<string, unknown>) => c.id === "connect_boards__1",
-				);
-				return teamCol?.text;
-			});
-			if (firstWithTeam) {
-				const teamCol = firstWithTeam.column_values.find(
-					(c: Record<string, unknown>) => c.id === "connect_boards__1",
-				);
-				teamName = teamCol?.text || "Unknown";
-			}
-			lines.push(`**Team Filter:** ${teamName} (ID: ${teamId})`);
-		}
-		if (strategiesId)
-			lines.push(`**Filter:** Related to Strategy ID ${strategiesId}`);
-		if (peopleId) lines.push(`**Filter:** Related to Person ID ${peopleId}`);
-		if (onlyActive) lines.push("**Filter:** Active objectives only");
-		lines.push("");
+		// Format items for JSON response
+		const formattedItems = items.map((item: Record<string, unknown>) => {
+			const formatted: any = {
+				id: item.id,
+				name: item.name,
+				createdAt: item.created_at,
+				updatedAt: item.updated_at,
+			};
 
-		// Statistics
-		const stats = {
-			totalObjectives: items.length,
-			totalKeyResults: 0,
-			byStatus: {} as Record<string, number>,
-		};
-
-		items.forEach((item: Record<string, unknown>) => {
-			// Parse objective data
+			// Parse objective columns
 			const statusCol = (item as MondayItemResponse).column_values.find(
 				(c: Record<string, unknown>) => c.id === "color_mkpksp3f",
 			);
@@ -240,37 +202,60 @@ export async function getOKR(
 			const teamCol = (item as MondayItemResponse).column_values.find(
 				(c: Record<string, unknown>) => c.id === "connect_boards__1",
 			);
+			const strategiesCol = (item as MondayItemResponse).column_values.find(
+				(c: Record<string, unknown>) => c.id === "link_to_strategies__1",
+			);
+			const peopleCol = (item as MondayItemResponse).column_values.find(
+				(c: Record<string, unknown>) => c.id === "connect_boards35__1",
+			);
 
-			// Update statistics
-			const statusText = statusCol?.text || "No Status";
-			stats.byStatus[statusText] = (stats.byStatus[statusText] || 0) + 1;
-			if (item.subitems) {
-				stats.totalKeyResults += (item.subitems as string[]).length;
+			// Parse status
+			const statusLabels = ["Planned", "In Progress", "On Hold", "Done", "Cancelled"];
+			const statusValue = statusCol?.value ? JSON.parse(statusCol.value) : null;
+			formatted.status = {
+				index: statusValue?.index,
+				label: statusCol?.text || null,
+				value: statusLabels[statusValue?.index] || statusCol?.text || null
+			};
+
+			// Parse other fields
+			formatted.owner = ownerCol?.text || null;
+			formatted.progress = progressCol?.text || null;
+			formatted.deadline = deadlineCol?.text || null;
+			formatted.description = descCol?.text || null;
+			formatted.team = teamCol?.text || null;
+
+			// Parse board relations
+			if (teamCol?.value) {
+				try {
+					const linked = JSON.parse(teamCol.value);
+					formatted.teamIds = linked?.linkedItemIds || [];
+				} catch {
+					formatted.teamIds = [];
+				}
 			}
 
-			// Format objective
-			lines.push(`## 🎯 ${item.name}`);
-			lines.push(`- **ID:** \`${item.id}\``);
-			lines.push(`- **Status:** ${statusCol?.text || "N/A"}`);
-			lines.push(`- **Owner:** ${ownerCol?.text || "N/A"}`);
-			lines.push(`- **Team:** ${teamCol?.text || "N/A"}`);
-			lines.push(`- **Progress:** ${progressCol?.text || "N/A"}`);
-			lines.push(`- **Deadline:** ${deadlineCol?.text || "N/A"}`);
+			if (strategiesCol?.value) {
+				try {
+					const linked = JSON.parse(strategiesCol.value);
+					formatted.strategiesIds = linked?.linkedItemIds || [];
+				} catch {
+					formatted.strategiesIds = [];
+				}
+			}
 
-			if (descCol?.text && descCol.text !== "") {
-				lines.push(`- **Description:** ${descCol.text}`);
+			if (peopleCol?.value) {
+				try {
+					const linked = JSON.parse(peopleCol.value);
+					formatted.peopleIds = linked?.linkedItemIds || [];
+				} catch {
+					formatted.peopleIds = [];
+				}
 			}
 
 			// Add Key Results if included
-			if (
-				includeKeyResults &&
-				item.subitems &&
-				(item.subitems as string[]).length > 0
-			) {
-				lines.push("");
-				lines.push(`### Key Results (${(item.subitems as string[]).length})`);
-
-				(item.subitems as MondayItemResponse[]).forEach((kr: MondayItemResponse, idx: number) => {
+			if (includeKeyResults && item.subitems) {
+				formatted.keyResults = (item.subitems as MondayItemResponse[]).map((kr: MondayItemResponse) => {
 					const krStatus = kr.column_values?.find(
 						(c: Record<string, unknown>) => c.id === "status0__1",
 					);
@@ -287,43 +272,74 @@ export async function getOKR(
 						(c: Record<string, unknown>) => c.id === "text_1__1",
 					);
 
-					lines.push(`${idx + 1}. **${kr.name}** (\`${kr.id}\`)`);
-					lines.push(`   - Status: ${krStatus?.text || "N/A"}`);
-					lines.push(`   - Owner: ${krOwner?.text || "N/A"}`);
-					lines.push(`   - Progress: ${krProgress?.text || "N/A"}`);
-					if (krDeadline?.text) {
-						lines.push(`   - Due: ${krDeadline.text}`);
-					}
-					if (krDesc?.text && krDesc.text !== "") {
-						lines.push(`   - Description: ${krDesc.text}`);
-					}
+					return {
+						id: kr.id,
+						name: kr.name,
+						status: krStatus?.text || null,
+						owner: krOwner?.text || null,
+						progress: krProgress?.text || null,
+						deadline: krDeadline?.text || null,
+						description: krDesc?.text || null
+					};
 				});
-			} else if (!includeKeyResults && item.subitems) {
-				lines.push(
-					`- **Key Results:** ${(item.subitems as string[]).length} items`,
-				);
+			} else if (item.subitems) {
+				formatted.keyResultsCount = (item.subitems as string[]).length;
 			}
 
-			lines.push("");
+			return formatted;
 		});
 
-		// Add summary statistics
-		lines.push("---");
-		lines.push("## 📊 Summary");
-		lines.push(`- **Total Objectives:** ${stats.totalObjectives}`);
-		if (includeKeyResults) {
-			lines.push(`- **Total Key Results:** ${stats.totalKeyResults}`);
-			lines.push(
-				`- **Average KRs per Objective:** ${stats.totalObjectives > 0 ? (stats.totalKeyResults / stats.totalObjectives).toFixed(1) : 0}`,
-			);
+		// Calculate statistics
+		const stats = {
+			totalObjectives: formattedItems.length,
+			totalKeyResults: 0,
+			byStatus: {} as Record<string, number>,
+			averageKRsPerObjective: 0
+		};
+
+		formattedItems.forEach(item => {
+			const statusLabel = item.status?.label || "No Status";
+			stats.byStatus[statusLabel] = (stats.byStatus[statusLabel] || 0) + 1;
+			if (item.keyResults) {
+				stats.totalKeyResults += item.keyResults.length;
+			} else if (item.keyResultsCount) {
+				stats.totalKeyResults += item.keyResultsCount;
+			}
+		});
+
+		if (stats.totalObjectives > 0) {
+			stats.averageKRsPerObjective = Number((stats.totalKeyResults / stats.totalObjectives).toFixed(1));
 		}
-		lines.push("");
-		lines.push("**Status Distribution:**");
-		Object.entries(stats.byStatus).forEach(([status, count]) => {
-			lines.push(`- ${status}: ${count}`);
-		});
 
-		return lines.join("\n");
+		// Build metadata
+		const metadata: Record<string, any> = {
+			boardId: BOARD_ID,
+			boardName: "OKR",
+			limit,
+			filters: {},
+			statistics: stats
+		};
+
+		if (search) metadata.filters.search = search;
+		if (status !== undefined) metadata.filters.status = status;
+		if (teamId) metadata.filters.teamId = teamId;
+		if (strategiesId) metadata.filters.strategiesId = strategiesId;
+		if (peopleId) metadata.filters.peopleId = peopleId;
+		if (onlyActive) metadata.filters.onlyActive = true;
+		if (!includeKeyResults) metadata.filters.includeKeyResults = false;
+
+		return JSON.stringify(
+			createListResponse(
+				"getOKR",
+				formattedItems,
+				metadata,
+				{
+					summary: `Found ${formattedItems.length} objective${formattedItems.length !== 1 ? 's' : ''}${includeKeyResults ? ` with ${stats.totalKeyResults} key result${stats.totalKeyResults !== 1 ? 's' : ''}` : ''}`
+				}
+			),
+			null,
+			2
+		);
 	} catch (error) {
 		console.error("Error fetching OKR items:", error);
 		throw error;

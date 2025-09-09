@@ -3,6 +3,7 @@ import {
 	type MondayItemResponse,
 	mondayApi,
 } from "../../monday/client.js";
+import { createListResponse } from "../json-output.js";
 
 export async function getAllPublishers() {
 	// Always fetch all Live publishers - no parameters needed
@@ -58,7 +59,7 @@ export async function getAllPublishers() {
 		// Check if we got boards
 		if (!response.data?.boards || response.data.boards.length === 0) {
 			console.error("No boards found in response");
-			return "# Error\n\nNo boards found in Monday.com response";
+			throw new Error("No boards found in Monday.com response");
 		}
 
 		const board = response.data.boards[0];
@@ -112,19 +113,6 @@ export async function getAllPublishers() {
 		// No filtering - always return all Live publishers
 		const filteredPublishers = publishers;
 
-		// Format as markdown
-		const lines: string[] = [];
-
-		lines.push("# Publishers/Sites");
-		lines.push("");
-		lines.push(`**Total:** ${filteredPublishers.length} Live publishers/sites`);
-		lines.push("");
-
-		if (filteredPublishers.length === 0) {
-			lines.push("*No publishers found matching criteria*");
-			return lines.join("\n");
-		}
-
 		// Sort publishers by vertical, then by name
 		const sortedPublishers = filteredPublishers.sort((a, b) => {
 			// First sort by vertical
@@ -138,17 +126,26 @@ export async function getAllPublishers() {
 				.localeCompare((b.name as string).toLowerCase());
 		});
 
-		// Create table with new columns
-		lines.push("| Publisher/Site | GAM ID | Vertical | Group | Approval |");
-		lines.push("|----------------|--------|----------|-------|----------|");
+		// Build metadata
+		const metadata = {
+			boardId: BOARD_IDS.PUBLISHERS,
+			boardName: "Publishers",
+			totalCount: sortedPublishers.length,
+			filter: "Live publishers only (status8 index 1)"
+		};
 
-		for (const pub of sortedPublishers as Array<Record<string, unknown>>) {
-			lines.push(
-				`| **${pub.name}** | ${pub.gamId} | ${pub.vertical} | ${pub.group} | ${pub.approval} |`,
-			);
-		}
-
-		return lines.join("\n");
+		return JSON.stringify(
+			createListResponse(
+				"getAllPublishers",
+				sortedPublishers,
+				metadata,
+				{
+					summary: `Found ${sortedPublishers.length} Live publisher${sortedPublishers.length !== 1 ? 's' : ''}/site${sortedPublishers.length !== 1 ? 's' : ''}`
+				}
+			),
+			null,
+			2
+		);
 	} catch (error) {
 		console.error("Error fetching publishers:", error);
 		throw new Error(

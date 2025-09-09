@@ -1,4 +1,5 @@
 import { GEO_LOCATIONS, type GeoLocation } from "../../data/geoLocations.js";
+import { createListResponse } from "../json-output.js";
 
 export async function getGeoLocations(args: {
 	search?: string[];
@@ -50,122 +51,77 @@ export async function getGeoLocations(args: {
 
 		console.error(`[getGeoLocations] Found ${allLocations.length} locations`);
 
-		// Convert to markdown format
-		const lines: string[] = [];
+		// Group by type for better organization
+		const grouped = allLocations.reduce(
+			(acc, loc) => {
+				if (!acc[loc.type]) acc[loc.type] = [];
+				acc[loc.type].push(loc);
+				return acc;
+			},
+			{} as Record<string, GeoLocation[]>,
+		);
 
-		lines.push("# Geographic Locations");
-		lines.push("");
-		lines.push(`**Total Locations:** ${allLocations.length}`);
+		// Sort each group by name
+		Object.keys(grouped).forEach(type => {
+			grouped[type].sort((a, b) => a.name.localeCompare(b.name));
+		});
+
+		// Build metadata
+		const metadata: Record<string, any> = {
+			totalLocations: allLocations.length,
+			filters: {},
+			locationsByType: Object.entries(grouped).reduce((acc, [type, locs]) => {
+				acc[type] = locs.length;
+				return acc;
+			}, {} as Record<string, number>),
+			usageInfo: {
+				description: "Use Criteria IDs for geographic targeting in GAM",
+				exampleGeoTargeting: {
+					geoTargeting: {
+						targetedLocations: allLocations.slice(0, 3).map(loc => loc.criteriaId)
+					}
+				}
+			}
+		};
 
 		if (search && search.length > 0) {
-			lines.push(`**Search Terms:** ${search.join(", ")}`);
+			metadata.filters.searchTerms = search;
 		}
 		if (type) {
-			lines.push(`**Type Filter:** ${mappedType}`);
+			metadata.filters.type = mappedType;
 		}
-		lines.push("");
+		if (limit) {
+			metadata.filters.limit = limit;
+		}
 
-		if (allLocations.length === 0) {
-			lines.push("*No locations found matching the criteria*");
-		} else {
-			// Group by type
-			const grouped = allLocations.reduce(
-				(acc, loc) => {
-					if (!acc[loc.type]) acc[loc.type] = [];
-					acc[loc.type].push(loc);
-					return acc;
-				},
-				{} as Record<string, GeoLocation[]>,
-			);
+		// Format locations for JSON response
+		const formattedLocations = allLocations.map(loc => ({
+			id: loc.criteriaId,
+			name: loc.name,
+			type: loc.type,
+			canonicalName: loc.canonicalName,
+			parentId: loc.parentId || null
+		}));
 
-			// Sort types for consistent output
-			const typeOrder = [
-				"Country",
-				"Region",
-				"City",
-				"Municipality",
-				"Postal Code",
-			];
-			const sortedTypes = Object.keys(grouped).sort((a, b) => {
-				const aIndex = typeOrder.indexOf(a);
-				const bIndex = typeOrder.indexOf(b);
-				if (aIndex === -1 && bIndex === -1) return a.localeCompare(b);
-				if (aIndex === -1) return 1;
-				if (bIndex === -1) return -1;
-				return aIndex - bIndex;
-			});
+		// Add grouped data for easier consumption
+		const dataWithGroups = {
+			items: formattedLocations,
+			groupedByType: grouped,
+			criteriaIds: allLocations.map(loc => loc.criteriaId)
+		};
 
-			for (const locType of sortedTypes) {
-				const locations = grouped[locType];
-				lines.push(`## ${locType}s`);
-				lines.push(
-					`*${locations.length} location${locations.length !== 1 ? "s" : ""}*`,
-				);
-				lines.push("");
-				lines.push("| Name | Criteria ID | Canonical Name |");
-				lines.push("|------|-------------|----------------|");
-
-				// Sort locations by name
-				locations.sort((a, b) => a.name.localeCompare(b.name));
-
-				for (const loc of locations) {
-					const canonicalShort =
-						loc.canonicalName.length > 50
-							? `${loc.canonicalName.substring(0, 47)}...`
-							: loc.canonicalName;
-					lines.push(
-						`| ${loc.name} | \`${loc.criteriaId}\` | ${canonicalShort} |`,
-					);
+		return JSON.stringify(
+			createListResponse(
+				"getGeoLocations",
+				allLocations,
+				metadata,
+				{
+					summary: `Found ${allLocations.length} geographic location${allLocations.length !== 1 ? 's' : ''}${type ? ` of type ${mappedType}` : ''}${search && search.length > 0 ? ` matching "${search.join(', ')}"` : ''}`
 				}
-				lines.push("");
-			}
-
-			// Add usage section
-			lines.push("## Usage for GAM Targeting");
-			lines.push("");
-			lines.push(
-				"Use the **Criteria IDs** (shown in code format) for geographic targeting in:",
-			);
-			lines.push(
-				"- `availabilityForecast` tool - Add to geoTargeting.targetedLocations",
-			);
-			lines.push(
-				"- Google Ad Manager campaigns - Geographic targeting settings",
-			);
-			lines.push("");
-			lines.push("### Example Usage:");
-			lines.push("```json");
-			lines.push("{");
-			lines.push('  "geoTargeting": {');
-			lines.push('    "targetedLocations": [');
-
-			// Show first 3 IDs as example
-			const exampleIds = allLocations.slice(0, 3).map((loc) => loc.criteriaId);
-			exampleIds.forEach((id, index) => {
-				const comma = index < exampleIds.length - 1 ? "," : "";
-				lines.push(`      ${id}${comma}`);
-			});
-
-			lines.push("    ]");
-			lines.push("  }");
-			lines.push("}");
-			lines.push("```");
-
-			// Extract all criteria IDs for easy copying
-			lines.push("");
-			lines.push("### All Criteria IDs");
-			lines.push("```json");
-			lines.push(
-				JSON.stringify(
-					allLocations.map((loc) => loc.criteriaId),
-					null,
-					2,
-				),
-			);
-			lines.push("```");
-		}
-
-		return lines.join("\n");
+			),
+			null,
+			2
+		);
 	} catch (error) {
 		console.error("[getGeoLocations] Error:", error);
 		throw new Error(

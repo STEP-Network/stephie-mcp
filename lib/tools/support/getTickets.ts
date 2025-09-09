@@ -4,6 +4,7 @@ import {
 	mondayApi,
 } from "../../monday/client.js";
 import { getDynamicColumns } from "../dynamic-columns.js";
+import { createListResponse } from "../json-output.js";
 
 export async function getTickets(
 	params: {
@@ -14,6 +15,9 @@ export async function getTickets(
 		request_type?: number; // Request Type (numeric index)
 		date?: string; // Creation Date (YYYY-MM-DD)
 		date5?: string; // Last Customer Response Date (YYYY-MM-DD)
+		date7?: string; // Created Date (YYYY-MM-DD)
+		date4?: string; // Resolved Date (YYYY-MM-DD)
+		multiple_person?: string; // Assigned person
 		contactId?: string; // Filter by linked contact (use getContacts to find IDs)
 		assignedId?: string; // Filter by assigned person (use getPeople to find IDs)
 		publisherId?: string; // Filter by publisher (use getAllPublishers to find IDs)
@@ -27,6 +31,9 @@ export async function getTickets(
 		request_type,
 		date,
 		date5,
+		date7,
+		date4,
+		multiple_person,
 		contactId,
 		assignedId,
 		publisherId,
@@ -174,37 +181,80 @@ export async function getTickets(
 			});
 		}
 
-		// Format response as markdown
-		const lines: string[] = [];
-		lines.push(`# Tickets`);
-		lines.push(`**Total Items:** ${items.length}`);
+		// Format items for JSON response
+		const formattedItems = items.map((item: Record<string, unknown>) => {
+			const formatted: any = {
+				id: (item as MondayItemResponse).id,
+				name: (item as MondayItemResponse).name,
+				createdAt: (item as MondayItemResponse).created_at,
+				updatedAt: (item as MondayItemResponse).updated_at,
+			};
 
-		// Show active filters
-		if (contactId) lines.push(`**Filter:** Related to Contact ID ${contactId}`);
-		if (assignedId)
-			lines.push(`**Filter:** Assigned to Person ID ${assignedId}`);
-		if (publisherId)
-			lines.push(`**Filter:** Related to Publisher ID ${publisherId}`);
-
-		lines.push("");
-
-		items.forEach((item: Record<string, unknown>) => {
-			lines.push(`## ${(item as MondayItemResponse).name}`);
-			lines.push(`- **ID:** ${(item as MondayItemResponse).id}`);
-
+			// Process column values
 			(item as MondayItemResponse).column_values.forEach(
 				(col: Record<string, unknown>) => {
-					if (col.text) {
-						lines.push(
-							`- **${(col as MondayColumnValueResponse).column?.title}:** ${col.text}`,
-						);
+					const column = col as MondayColumnValueResponse;
+					const fieldName = column.column?.title?.toLowerCase().replace(/\s+/g, '_') || column.id;
+					
+					// Parse different column types
+					if (column.column?.type === 'status' || column.column?.type === 'dropdown') {
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = {
+							index: parsedValue?.index,
+							label: column.text || null
+						};
+					} else if (column.column?.type === 'board-relation' || column.column?.type === 'board_relation') {
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = parsedValue?.linkedItemIds || [];
+					} else if (column.column?.type === 'multiple-person' || column.column?.type === 'person') {
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						if (column.column?.type === 'person') {
+							formatted[fieldName] = parsedValue?.id || column.text || null;
+						} else {
+							formatted[fieldName] = parsedValue?.personsAndTeams || [];
+						}
+					} else if (column.column?.type === 'date') {
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = parsedValue?.date || column.text || null;
+					} else {
+						formatted[fieldName] = column.text || null;
 					}
 				},
 			);
-			lines.push("");
+
+			return formatted;
 		});
 
-		return lines.join("\n");
+		// Build metadata
+		const metadata: Record<string, any> = {
+			boardId: BOARD_ID,
+			boardName: "Tickets",
+			limit,
+			dynamicColumns: dynamicColumns.length,
+			filters: {}
+		};
+
+		if (search) metadata.filters.search = search;
+		if (status95 !== undefined) metadata.filters.status = status95;
+		if (multiple_person !== undefined) metadata.filters.assignee = multiple_person;
+		if (date7) metadata.filters.createdDate = date7;
+		if (date4) metadata.filters.resolvedDate = date4;
+		if (contactId) metadata.filters.contactId = contactId;
+		if (assignedId) metadata.filters.assignedId = assignedId;
+		if (publisherId) metadata.filters.publisherId = publisherId;
+
+		return JSON.stringify(
+			createListResponse(
+				"getTickets",
+				formattedItems,
+				metadata,
+				{
+					summary: `Found ${formattedItems.length} ticket${formattedItems.length !== 1 ? 's' : ''} (${dynamicColumns.length} dynamic columns)`
+				}
+			),
+			null,
+			2
+		);
 	} catch (error) {
 		console.error("Error fetching Tickets items:", error);
 		throw error;

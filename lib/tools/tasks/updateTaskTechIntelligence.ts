@@ -1,20 +1,19 @@
 import { mondayApi, type MondayItemResponse, type MondayColumnValueResponse } from "../../monday/client.js";
+import { createSuccessResponse } from "../json-output.js";
 
 interface UpdateParams {
 	itemId: string;
 	name?: string;
-	person?: string;
+	board_relation_mkpjqgpv?: string;
+	board_relation_mkqhkyb7?: string;
 	status_19__1?: number;
 	type_1__1?: number;
 	priority_1__1?: number;
 	date__1?: string;
-	text__1?: string;
-	text0__1?: string;
-	long_text__1?: string;
-	link__1?: { url: string; text: string };
-	numbers__1?: number;
-	keyResultId?: string;
-	teamTaskId?: string;
+	date4?: string;
+	date4__1?: string;
+	date3__1?: string;
+	date7__1?: string;
 }
 
 export async function updateTaskTechIntelligence(params: UpdateParams) {
@@ -29,12 +28,6 @@ export async function updateTaskTechIntelligence(params: UpdateParams) {
 
 	if (updates.name !== undefined) {
 		columnValues.name = updates.name;
-	}
-
-	if (updates.person !== undefined) {
-		columnValues.person = {
-			personsAndTeams: [{ id: parseInt(updates.person, 10), kind: "person" }],
-		};
 	}
 
 	if (updates.status_19__1 !== undefined) {
@@ -53,32 +46,28 @@ export async function updateTaskTechIntelligence(params: UpdateParams) {
 		columnValues.date__1 = { date: updates.date__1 };
 	}
 
-	if (updates.text__1 !== undefined) {
-		columnValues.text__1 = updates.text__1;
+	if (updates.date4 !== undefined) {
+		columnValues.date4 = { date: updates.date4 };
 	}
 
-	if (updates.text0__1 !== undefined) {
-		columnValues.text0__1 = updates.text0__1;
+	if (updates.date4__1 !== undefined) {
+		columnValues.date4__1 = { date: updates.date4__1 };
 	}
 
-	if (updates.long_text__1 !== undefined) {
-		columnValues.long_text__1 = { text: updates.long_text__1 };
+	if (updates.date3__1 !== undefined) {
+		columnValues.date3__1 = { date: updates.date3__1 };
 	}
 
-	if (updates.link__1 !== undefined) {
-		columnValues.link__1 = updates.link__1;
+	if (updates.date7__1 !== undefined) {
+		columnValues.date7__1 = { date: updates.date7__1 };
 	}
 
-	if (updates.numbers__1 !== undefined) {
-		columnValues.numbers__1 = updates.numbers__1.toString();
+	if (updates.board_relation_mkpjqgpv !== undefined) {
+		columnValues.board_relation_mkpjqgpv = { item_ids: [updates.board_relation_mkpjqgpv] };
 	}
 
-	if (updates.keyResultId !== undefined) {
-		columnValues.board_relation_mkpjqgpv = { item_ids: [updates.keyResultId] };
-	}
-
-	if (updates.teamTaskId !== undefined) {
-		columnValues.connect_boards_Mjj8XLFi = { item_ids: [updates.teamTaskId] };
+	if (updates.board_relation_mkqhkyb7 !== undefined) {
+		columnValues.board_relation_mkqhkyb7 = { item_ids: [updates.board_relation_mkqhkyb7] };
 	}
 
 	if (Object.keys(columnValues).length === 0) {
@@ -99,6 +88,10 @@ export async function updateTaskTechIntelligence(params: UpdateParams) {
           id
           text
           value
+          column {
+            title
+            type
+          }
         }
       }
     }
@@ -106,29 +99,58 @@ export async function updateTaskTechIntelligence(params: UpdateParams) {
 
 	try {
 		const response = await mondayApi(mutation);
-		const updatedItem = response.data?.change_multiple_column_values;
+		const updatedItem = response.data?.change_multiple_column_values as MondayItemResponse;
 
 		if (!updatedItem) {
 			throw new Error("Failed to update item");
 		}
 
-		const lines: string[] = [];
-		lines.push(`# Task Updated Successfully`);
-		lines.push(`**Item ID:** ${(updatedItem as Record<string, unknown>).id}`);
-		lines.push(`**Name:** ${(updatedItem as Record<string, unknown>).name}`);
-		lines.push(`**Updated At:** ${(updatedItem as Record<string, unknown>).updated_at}`);
-		lines.push("");
-		lines.push("## Updated Fields");
+		// Format the updated item for JSON response
+		const formattedItem = {
+			id: updatedItem.id,
+			name: updatedItem.name,
+			updatedAt: updatedItem.updated_at as string,
+			updatedFields: {} as Record<string, unknown>
+		};
 
-		((updatedItem as MondayItemResponse).column_values || []).forEach(
+		// Process column values to show what was updated
+		(updatedItem.column_values || []).forEach(
 			(col: MondayColumnValueResponse) => {
-				if (col.text) {
-					lines.push(`- **${col.id}:** ${col.text}`);
+				const fieldName = col.column?.title?.toLowerCase().replace(/\s+/g, '_') || col.id;
+				
+				if (col.column?.type === 'status' || col.column?.type === 'dropdown') {
+					const parsedValue = col.value ? JSON.parse(col.value) : null;
+					formattedItem.updatedFields[fieldName] = {
+						index: parsedValue?.index,
+						label: col.text || null
+					};
+				} else if (col.column?.type === 'board-relation') {
+					const parsedValue = col.value ? JSON.parse(col.value) : null;
+					formattedItem.updatedFields[fieldName] = parsedValue?.linkedItemIds || [];
+				} else if (col.text) {
+					formattedItem.updatedFields[fieldName] = col.text;
 				}
 			},
 		);
 
-		return lines.join("\n");
+		const metadata = {
+			boardId: BOARD_ID,
+			boardName: "Tech Intelligence Tasks",
+			action: "update",
+			updatedColumns: Object.keys(columnValues),
+			parameters: params
+		};
+
+		return JSON.stringify(
+			createSuccessResponse(
+				"updateTaskTechIntelligence",
+				"updated",
+				formattedItem,
+				metadata
+			),
+			null,
+			2
+		);
 	} catch (error) {
 		console.error("Error updating TaskTechIntelligence item:", error);
 		throw error;

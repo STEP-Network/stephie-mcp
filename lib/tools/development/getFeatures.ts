@@ -4,6 +4,7 @@ import {
 	mondayApi,
 } from "../../monday/client.js";
 import { getDynamicColumns } from "../dynamic-columns.js";
+import { createListResponse } from "../json-output.js";
 
 export async function getFeatures(
 	params: {
@@ -116,29 +117,75 @@ export async function getFeatures(
 
 		const items = board.items_page?.items || [];
 
-		// Format response as markdown
-		const lines: string[] = [];
-		lines.push(`# Features`);
-		lines.push(`**Total Items:** ${items.length}`);
-		lines.push("");
+		// Format items for JSON response
+		const formattedItems = items.map((item: Record<string, unknown>) => {
+			const formatted: any = {
+				id: item.id,
+				name: item.name,
+				createdAt: item.created_at,
+				updatedAt: item.updated_at,
+			};
 
-		items.forEach((item: Record<string, unknown>) => {
-			lines.push(`## ${item.name}`);
-			lines.push(`- **ID:** ${item.id}`);
-
+			// Process column values
 			(item as MondayItemResponse).column_values.forEach(
 				(col: Record<string, unknown>) => {
-					if (col.text) {
-						lines.push(
-							`- **${(col as MondayColumnValueResponse).column?.title}:** ${col.text}`,
-						);
+					const column = col as MondayColumnValueResponse;
+					const fieldName = column.column?.title?.toLowerCase().replace(/\s+/g, '_') || column.id;
+					
+					// Parse different column types
+					if (column.column?.type === 'status' || column.column?.type === 'dropdown' || column.column?.type === 'color') {
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = {
+							index: parsedValue?.index,
+							label: column.text || null,
+							type: column.column?.type
+						};
+					} else if (column.column?.type === 'board-relation' || column.column?.type === 'board_relation') {
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = parsedValue?.linkedItemIds || [];
+					} else if (column.column?.type === 'multiple-person' || column.column?.type === 'multiple_person') {
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = parsedValue?.personsAndTeams || [];
+					} else if (column.column?.type === 'date') {
+						const parsedValue = column.value ? JSON.parse(column.value) : null;
+						formatted[fieldName] = parsedValue?.date || column.text || null;
+					} else {
+						formatted[fieldName] = column.text || null;
 					}
 				},
 			);
-			lines.push("");
+
+			return formatted;
 		});
 
-		return lines.join("\n");
+		// Build metadata
+		const metadata: Record<string, any> = {
+			boardId: BOARD_ID,
+			boardName: "Features",
+			limit,
+			dynamicColumns: dynamicColumns.length,
+			filters: {}
+		};
+
+		if (search) metadata.filters.search = search;
+		if (color_mkqn9n66 !== undefined) metadata.filters.priority = color_mkqn9n66;
+		if (color_mkqhya7m !== undefined) metadata.filters.status = color_mkqhya7m;
+		if (multiple_person_mkqhq07m) metadata.filters.owner = multiple_person_mkqhq07m;
+		if (date_mkqhdjw7) metadata.filters.dateReleased = date_mkqhdjw7;
+		if (date4) metadata.filters.dateAdded = date4;
+
+		return JSON.stringify(
+			createListResponse(
+				"getFeatures",
+				formattedItems,
+				metadata,
+				{
+					summary: `Found ${formattedItems.length} feature${formattedItems.length !== 1 ? 's' : ''} (${dynamicColumns.length} dynamic columns)`
+				}
+			),
+			null,
+			2
+		);
 	} catch (error) {
 		console.error("Error fetching Features items:", error);
 		throw error;

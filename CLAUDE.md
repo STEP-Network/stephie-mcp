@@ -33,6 +33,7 @@
    - `mcp-server.ts` (local MCP) - add to toolImplementations map
 
 **CRITICAL**: Parameter descriptions go ONLY in toolDefinitions.ts!
+
 ```typescript
 // In server.ts - NO manual schema definitions!
 server.tool(
@@ -110,9 +111,10 @@ if (teamId) {
 
 ### Output Format
 
-- Return markdown strings, never JSON objects
-- Use headers, tables, code blocks
-- Include metadata (counts, filters)
+- Tools now return **JSON strings** (not objects) for better LLM consumption
+- Consistent structure: `tool`, `timestamp`, `status`, `data`, `metadata`, `summary`
+- Use `createListResponse`, `createSuccessResponse`, or `createErrorResponse` from `/lib/tools/json-output.js`
+- Include metadata (counts, filters, board info, dynamic columns)
 
 ### Error Handling
 
