@@ -370,14 +370,19 @@ const handler = createMcpHandler((server) => {
 			const parseArrayParam = (value: any): any => {
 				if (typeof value === "string") {
 					try {
-						return JSON.parse(value);
+						const parsed = JSON.parse(value);
+						console.error(`[server.ts] Parsed string array: "${value}" -> ${JSON.stringify(parsed)}`);
+						return parsed;
 					} catch {
+						console.error(`[server.ts] Failed to parse string: "${value}"`);
 						return value;
 					}
 				}
 				return value;
 			};
 
+			console.error(`[server.ts] availabilityForecast input:`, JSON.stringify(input));
+			
 			// Parse any string-encoded array parameters
 			const params = {
 				startDate: input.startDate,
@@ -396,6 +401,8 @@ const handler = createMcpHandler((server) => {
 				} : input.geoTargeting,
 				targetedPlacementIds: parseArrayParam(input.targetedPlacementIds),
 			};
+			
+			console.error(`[server.ts] Parsed params:`, JSON.stringify(params));
 
 			const result = await availabilityForecast(
 				params as Parameters<typeof availabilityForecast>[0],
