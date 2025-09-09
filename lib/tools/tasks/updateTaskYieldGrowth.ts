@@ -1,5 +1,4 @@
 import { mondayApi } from '../../monday/client.js';
-import { TOOL_BOARD_IDS } from '../board-ids.js';
 
 export async function updateTaskYieldGrowth(params: {
   itemId: string;

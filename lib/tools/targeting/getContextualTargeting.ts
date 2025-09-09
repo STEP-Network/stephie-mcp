@@ -1,4 +1,4 @@
-import { getGAMAccessToken } from '../gam/auth.js';
+import { getGAMAccessToken } from '../../gam/auth.js';
 
 const NEUWO_CONTEXTUAL_KEY_ID = '14509472';
 const NETWORK_ID = process.env.GOOGLE_AD_MANAGER_NETWORK_CODE || '21809957681';

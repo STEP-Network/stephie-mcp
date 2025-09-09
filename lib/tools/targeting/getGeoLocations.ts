@@ -1,4 +1,4 @@
-import { GEO_LOCATIONS, type GeoLocation } from '../data/geoLocations.js';
+import { GEO_LOCATIONS, type GeoLocation } from '../../data/geoLocations.js';
 
 export async function getGeoLocations(args: {
   search?: string[];
@@ -95,7 +95,7 @@ export async function getGeoLocations(args: {
         
         for (const loc of locations) {
           const canonicalShort = loc.canonicalName.length > 50 
-            ? loc.canonicalName.substring(0, 47) + '...'
+            ? `${loc.canonicalName.substring(0, 47)}...`
             : loc.canonicalName;
           lines.push(`| ${loc.name} | \`${loc.criteriaId}\` | ${canonicalShort} |`);
         }

@@ -14,21 +14,21 @@ import { availabilityForecast } from './lib/tools/availabilityForecast.js';
 import { getBoardColumns } from './lib/tools/debug/getBoardColumns.js';
 import { getItems } from './lib/tools/debug/getItems.js';
 import { listAllBoards } from './lib/tools/debug/listBoards.js';
-import { findPublisherAdUnits } from './lib/tools/findPublisherAdUnits.js';
-import { getAllAdPrices } from './lib/tools/getAllAdPrices.js';
-import { getAllFormats } from './lib/tools/getAllFormats.js';
-import { getAllPlacements } from './lib/tools/getAllPlacements.js';
-import { getAllProducts } from './lib/tools/getAllProducts.js';
-import { getAllPublishers } from './lib/tools/getAllPublishers.js';
-import { getAllSizes } from './lib/tools/getAllSizes.js';
-import { getAudienceSegments } from './lib/tools/getAudienceSegments.js';
-import { getContextualTargeting } from './lib/tools/getContextualTargeting.js';
-import { getGeoLocations } from './lib/tools/getGeoLocations.js';
-import { getKeyValues } from './lib/tools/getKeyValues.js';
-import { getPublisherFormats } from './lib/tools/getPublisherFormats.js';
-import { getPublishersByFormats } from './lib/tools/getPublishersByFormats.js';
 
-// CRM Tools
+// Import all tools
+import { getAllPublishers } from './lib/tools/publishers/getAllPublishers.js';
+import { getPublisherFormats } from './lib/tools/publishers/getPublisherFormats.js';
+import { getPublishersByFormats } from './lib/tools/publishers/getPublishersByFormats.js';
+import { getAllProducts } from './lib/tools/business/getAllProducts.js';
+import { getAllFormats } from './lib/tools/business/getAllFormats.js';
+import { getAllSizes } from './lib/tools/targeting/getAllSizes.js';
+import { getAllAdPrices } from './lib/tools/business/getAllAdPrices.js';
+import { findPublisherAdUnits } from './lib/tools/targeting/findPublisherAdUnits.js';
+import { getKeyValues } from './lib/tools/targeting/getKeyValues.js';
+import { getAudienceSegments } from './lib/tools/targeting/getAudienceSegments.js';
+import { getAllPlacements } from './lib/tools/targeting/getAllPlacements.js';
+import { getGeoLocations } from './lib/tools/targeting/getGeoLocations.js';
+import { getContextualTargeting } from './lib/tools/targeting/getContextualTargeting.js';
 import { getAccounts } from './lib/tools/crm/getAccounts.js';
 import { getContacts } from './lib/tools/crm/getContacts.js';
 import { getLeads } from './lib/tools/crm/getLeads.js';
@@ -38,15 +38,11 @@ import { createContact } from './lib/tools/crm/createContact.js';
 import { updateContact } from './lib/tools/crm/updateContact.js';
 import { createLead } from './lib/tools/crm/createLead.js';
 import { updateLead } from './lib/tools/crm/updateLead.js';
-
-// HR Tools
-import { getPeople } from './lib/tools/hr/getPeople.js';
-import { getTeams } from './lib/tools/hr/getTeams.js';
-
-// Sales Tools
+import { getPeople } from './lib/tools/business/getPeople.js';
+import { getTeams } from './lib/tools/business/getTeams.js';
 import { getOpportunities } from './lib/tools/sales/getOpportunities.js';
 import { getSalesActivities } from './lib/tools/sales/getSalesActivities.js';
-import { getInternalAdSales } from './lib/tools/sales/getInternalAdSales.js';
+import { getInternalAdSales } from './lib/tools/support/getInternalAdSales.js';
 import { getDeals } from './lib/tools/sales/getDeals.js';
 import { createOpportunity } from './lib/tools/sales/createOpportunity.js';
 import { updateOpportunity } from './lib/tools/sales/updateOpportunity.js';
@@ -54,8 +50,6 @@ import { createSalesActivity } from './lib/tools/sales/createSalesActivity.js';
 import { updateSalesActivity } from './lib/tools/sales/updateSalesActivity.js';
 import { createDeal } from './lib/tools/sales/createDeal.js';
 import { updateDeal } from './lib/tools/sales/updateDeal.js';
-
-// Tasks Tools
 import { getTasksAdOps } from './lib/tools/tasks/getTasksAdOps.js';
 import { getTasksMarketing } from './lib/tools/tasks/getTasksMarketing.js';
 import { getTasksAdTech } from './lib/tools/tasks/getTasksAdTech.js';
@@ -74,45 +68,27 @@ import { createTaskVideo } from './lib/tools/tasks/createTaskVideo.js';
 import { updateTaskVideo } from './lib/tools/tasks/updateTaskVideo.js';
 import { createTaskYieldGrowth } from './lib/tools/tasks/createTaskYieldGrowth.js';
 import { updateTaskYieldGrowth } from './lib/tools/tasks/updateTaskYieldGrowth.js';
-
-// Development Tools
 import { getBugs } from './lib/tools/development/getBugs.js';
 import { getChangelog } from './lib/tools/development/getChangelog.js';
 import { getFeatures } from './lib/tools/development/getFeatures.js';
 import { getTests } from './lib/tools/development/getTests.js';
 import { createBug } from './lib/tools/development/createBug.js';
 import { updateBug } from './lib/tools/development/updateBug.js';
-
-// Business Tools
 import { getPartners } from './lib/tools/business/getPartners.js';
 import { getStrategies } from './lib/tools/business/getStrategies.js';
 import { getVertikaler } from './lib/tools/business/getVertikaler.js';
-
-// Marketing Tools
 import { getMarketingBudgets } from './lib/tools/marketing/getMarketingBudgets.js';
 import { getMarketingExpenses } from './lib/tools/marketing/getMarketingExpenses.js';
-
-// OKR Tools
-import { getOKR } from './lib/tools/okr/getOKR.js';
+import { getOKR } from './lib/tools/business/getOKR.js';
 import { createOKR } from './lib/tools/business/createOKR.js';
 import { updateOKR } from './lib/tools/business/updateOKR.js';
-
-// Operations Tools
-import { getBookings } from './lib/tools/operations/getBookings.js';
-import { getInternalAdOpsAdTech } from './lib/tools/operations/getInternalAdOpsAdTech.js';
-import { getProcesses } from './lib/tools/operations/getProcesses.js';
-
-// Support Tools
+import { getBookings } from './lib/tools/sales/getBookings.js';
+import { getInternalAdOpsAdTech } from './lib/tools/support/getInternalAdOpsAdTech.js';
 import { getTickets } from './lib/tools/support/getTickets.js';
 import { getPublisherFAQ } from './lib/tools/support/getPublisherFAQ.js';
 import { createTicket } from './lib/tools/support/createTicket.js';
 import { updateTicket } from './lib/tools/support/updateTicket.js';
-
-// Publishers Tools
 import { getOTTPublishers } from './lib/tools/publishers/getOTTPublishers.js';
-
-// Tech Tools
-import { getPlatforms } from './lib/tools/tech/getPlatforms.js';
 
 import * as dotenv from 'dotenv';
 import type { ColumnFilter } from './lib/tools/debug/getItems.js';
@@ -175,8 +151,6 @@ const toolImplementations: Record<string, (args: Record<string, unknown>) => Pro
     columnFilters?: ColumnFilter[];
     includeColumnMetadata?: boolean;
   }),
-  
-  // CRM Tools
   getAccounts: (args) => getAccounts(args),
   getContacts: (args) => getContacts(args),
   getLeads: (args) => getLeads(args),
@@ -186,12 +160,8 @@ const toolImplementations: Record<string, (args: Record<string, unknown>) => Pro
   updateContact: (args) => updateContact(args as any),
   createLead: (args) => createLead(args as any),
   updateLead: (args) => updateLead(args as any),
-  
-  // HR Tools
   getPeople: (args) => getPeople(args),
   getTeams: (args) => getTeams(args),
-  
-  // Sales Tools
   getOpportunities: (args) => getOpportunities(args),
   getSalesActivities: (args) => getSalesActivities(args),
   getInternalAdSales: (args) => getInternalAdSales(args),
@@ -202,8 +172,6 @@ const toolImplementations: Record<string, (args: Record<string, unknown>) => Pro
   updateSalesActivity: (args) => updateSalesActivity(args as any),
   createDeal: (args) => createDeal(args as any),
   updateDeal: (args) => updateDeal(args as any),
-  
-  // Tasks Tools
   getTasksAdOps: (args) => getTasksAdOps(args),
   getTasksMarketing: (args) => getTasksMarketing(args),
   getTasksAdTech: (args) => getTasksAdTech(args),
@@ -222,45 +190,27 @@ const toolImplementations: Record<string, (args: Record<string, unknown>) => Pro
   updateTaskVideo: (args) => updateTaskVideo(args as any),
   createTaskYieldGrowth: (args) => createTaskYieldGrowth(args as any),
   updateTaskYieldGrowth: (args) => updateTaskYieldGrowth(args as any),
-  
-  // Development Tools
   getBugs: (args) => getBugs(args),
   getChangelog: (args) => getChangelog(args),
   getFeatures: (args) => getFeatures(args),
   getTests: (args) => getTests(args),
   createBug: (args) => createBug(args as any),
   updateBug: (args) => updateBug(args as any),
-  
-  // Business Tools
   getPartners: (args) => getPartners(args),
   getStrategies: (args) => getStrategies(args),
   getVertikaler: (args) => getVertikaler(args),
-  
-  // Marketing Tools
   getMarketingBudgets: (args) => getMarketingBudgets(args),
   getMarketingExpenses: (args) => getMarketingExpenses(args),
-  
-  // OKR Tools
   getOKR: (args) => getOKR(args),
   createOKR: (args) => createOKR(args as any),
   updateOKR: (args) => updateOKR(args as any),
-  
-  // Operations Tools
   getBookings: (args) => getBookings(args),
   getInternalAdOpsAdTech: (args) => getInternalAdOpsAdTech(args),
-  getProcesses: (args) => getProcesses(args),
-  
-  // Support Tools
   getTickets: (args) => getTickets(args),
   getPublisherFAQ: (args) => getPublisherFAQ(args),
   createTicket: (args) => createTicket(args as any),
   updateTicket: (args) => updateTicket(args as any),
-  
-  // Publishers Tools
   getOTTPublishers: (args) => getOTTPublishers(args),
-  
-  // Tech Tools
-  getPlatforms: (args) => getPlatforms(args),
 };
 
 // Handle list tools request

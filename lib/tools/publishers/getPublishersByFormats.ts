@@ -1,4 +1,4 @@
-import { mondayApi, BOARD_IDS } from '../monday/client.js';
+import { mondayApi, BOARD_IDS } from '../../monday/client.js';
 
 // Device type options based on actual Monday.com columns
 export type DeviceType = 'Desktop' | 'Mobile' | 'App' | 'All' | null;

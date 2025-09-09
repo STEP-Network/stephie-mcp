@@ -1,4 +1,4 @@
-import { mondayApi } from '../monday/client.js';
+import { mondayApi } from '../../monday/client.js';
 
 const AD_PRICES_BOARD_ID = '1432155906';
 

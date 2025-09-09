@@ -1,4 +1,4 @@
-import { mondayApi } from '../monday/client.js';
+import { mondayApi } from '../../monday/client.js';
 
 const GAM_BOARD_ID = '1558569789';
 const VERTICALS_BOARD_ID = '2054670440';
@@ -417,7 +417,9 @@ export async function findPublisherAdUnits(args: {
       searchInfo.push(`Verticals: ${verticals.join(', ')}`);
     }
     if (searchInfo.length > 0) {
-      searchInfo.forEach(info => textLines.push(`**${info}**`));
+      searchInfo.forEach(info => {
+        textLines.push(`**${info}**`);
+      });
       textLines.push('');
     }
     

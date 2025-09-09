@@ -9,22 +9,22 @@ const boardToolDefinitions = JSON.parse(
 
 // Import all generated board tools
 import { getAccounts } from '../tools/crm/getAccounts.js';
-import { getBookings } from '../tools/operations/getBookings.js';
+import { getBookings } from '../tools/sales/getBookings.js';
 import { getBugs } from '../tools/development/getBugs.js';
 import { getChangelog } from '../tools/development/getChangelog.js';
 import { getContacts } from '../tools/crm/getContacts.js';
 import { getDeals } from '../tools/sales/getDeals.js';
 import { getFeatures } from '../tools/development/getFeatures.js';
-import { getInternalAdOpsAdTech } from '../tools/operations/getInternalAdOpsAdTech.js';
-import { getInternalAdSales } from '../tools/sales/getInternalAdSales.js';
+import { getInternalAdOpsAdTech } from '../tools/support/getInternalAdOpsAdTech.js';
+import { getInternalAdSales } from '../tools/support/getInternalAdSales.js';
 import { getLeads } from '../tools/crm/getLeads.js';
 import { getMarketingBudgets } from '../tools/marketing/getMarketingBudgets.js';
 import { getMarketingExpenses } from '../tools/marketing/getMarketingExpenses.js';
-import { getOKR } from '../tools/okr/getOKR.js';
+import { getOKR } from '../tools/business/getOKR.js';
 import { getOpportunities } from '../tools/sales/getOpportunities.js';
 import { getOTTPublishers } from '../tools/publishers/getOTTPublishers.js';
 import { getPartners } from '../tools/business/getPartners.js';
-import { getPeople } from '../tools/hr/getPeople.js';
+import { getPeople } from '../tools/business/getPeople.js';
 import { getPlatforms } from '../tools/tech/getPlatforms.js';
 import { getProcesses } from '../tools/operations/getProcesses.js';
 import { getPublisherFAQ } from '../tools/support/getPublisherFAQ.js';
@@ -36,7 +36,7 @@ import { getTasksMarketing } from '../tools/tasks/getTasksMarketing.js';
 import { getTasksTechIntelligence } from '../tools/tasks/getTasksTechIntelligence.js';
 import { getTasksVideo } from '../tools/tasks/getTasksVideo.js';
 import { getTasksYieldGrowth } from '../tools/tasks/getTasksYieldGrowth.js';
-import { getTeams } from '../tools/hr/getTeams.js';
+import { getTeams } from '../tools/business/getTeams.js';
 import { getTests } from '../tools/development/getTests.js';
 import { getTickets } from '../tools/support/getTickets.js';
 import { getVertikaler } from '../tools/business/getVertikaler.js';

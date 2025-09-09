@@ -35,6 +35,10 @@ stephie-mcp/
 │   ├── monday/          # Monday.com client
 │   ├── gam/             # Google Ad Manager integration
 │   └── auth/            # Authentication
+├── docs/                # Extended documentation
+│   ├── technical/       # Architecture & patterns
+│   ├── deployment/      # Setup & deployment guides
+│   └── implementation/  # Feature implementation details
 ├── scripts/             # Development utilities
 │   ├── generate-board-tools.ts    # Auto-generate tools from boards
 │   └── add-column-names-to-boards.ts # Update meta board
@@ -44,6 +48,8 @@ stephie-mcp/
 │   └── debug/
 ├── mcp-server.ts        # Claude Desktop server (stdio transport)
 ├── vercel.json          # Vercel deployment config
+├── CLAUDE.md            # AI assistant context guide
+├── CHANGELOG.md         # Version history
 └── package.json
 ```
 

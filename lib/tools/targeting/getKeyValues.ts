@@ -1,4 +1,4 @@
-import { mondayApi } from '../monday/client.js';
+import { mondayApi } from '../../monday/client.js';
 
 const CUSTOM_TARGETING_BOARD_ID = '2056578615';
 

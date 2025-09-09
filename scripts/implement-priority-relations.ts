@@ -123,7 +123,7 @@ async function updateToolDefinitions() {
 async function generateImplementationGuide() {
   console.log('\n📋 Generating Implementation Guide\n');
   
-  const guidePath = path.join(__dirname, '../docs/PRIORITY_RELATIONS_IMPLEMENTATION.md');
+  const guidePath = path.join(__dirname, '../docs/implementation/PRIORITY_RELATIONS_IMPLEMENTATION.md');
   
   let content = `# Priority Board Relations Implementation Guide
 

@@ -1,4 +1,4 @@
-import { mondayApi } from '../monday/client.js';
+import { mondayApi } from '../../monday/client.js';
 
 const AUDIENCE_SEGMENTS_BOARD_ID = '2051827669';
 

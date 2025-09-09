@@ -1,4 +1,4 @@
-import { mondayApi, BOARD_IDS } from '../monday/client.js';
+import { mondayApi, BOARD_IDS } from '../../monday/client.js';
 
 export async function getAllPlacements(args: {
   includeIds?: boolean;
