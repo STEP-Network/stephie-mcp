@@ -796,7 +796,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					items: {
 						type: "object",
 						properties: {
-							name: { type: "string", description: "Task name (required)", required: true },
+							name: { type: "string", description: "Required parameter - Task name", required: true },
 							board_relation_mkpjqgpv: {
 								type: "string",
 								description:
@@ -815,13 +815,13 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 							type_1__1: {
 								type: "number",
 								description:
-									"Type index: 1=Support, 3=Maintenance, 4=Development, 5=Not Labelled, 6=Bugfix, 7=Documentation, 12=Meeting",
+									"Required parameter - Type index: 1=Support, 3=Maintenance, 4=Development, 5=Not Labelled, 6=Bugfix, 7=Documentation, 12=Meeting",
 								required: true,
 							},
 							priority_1__1: {
 								type: "number",
 								description:
-									"Priority index: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown",
+									"Required parameter - Priority index: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown",
 								required: true,
 							},
 							date__1: {
