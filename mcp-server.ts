@@ -306,8 +306,29 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 // Start the server
 async function main() {
 	const transport = new StdioServerTransport();
-	await server.connect(transport);
-	console.error("STEPhie MCP server running on stdio");
+	
+	// Add process error handlers
+	process.on('uncaughtException', (error) => {
+		console.error('Uncaught Exception:', error);
+		// Don't exit, just log the error
+	});
+	
+	process.on('unhandledRejection', (reason, promise) => {
+		console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+		// Don't exit, just log the error
+	});
+	
+	// Add connection error handling
+	try {
+		await server.connect(transport);
+		console.error("STEPhie MCP server running on stdio");
+		
+		// Keep the process alive
+		process.stdin.resume();
+	} catch (error) {
+		console.error("Failed to start MCP server:", error);
+		throw error;
+	}
 }
 
 main().catch((error) => {

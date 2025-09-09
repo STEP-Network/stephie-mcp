@@ -11,6 +11,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 ### Tool: `getTasksTechIntelligence`, `createTasksTechIntelligence`, `updateTasksTechIntelligence`
 
 **status_19__1** (Status):
+
 - 0 = In Review
 - 1 = Done
 - 2 = Rejected
@@ -22,6 +23,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 - 8 = On Hold
 
 **type_1__1** (Type):
+
 - 1 = Support
 - 3 = Maintenance
 - 4 = Development
@@ -31,6 +33,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 - 12 = Meeting
 
 **priority_1__1** (Priority):
+
 - 0 = Medium
 - 1 = Minimal
 - 2 = Low
@@ -44,6 +47,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 ### Tool: `getTasksAdOps`
 
 **status** (Status):
+
 - 0 = In Review
 - 1 = Done
 - 2 = Rejected
@@ -55,6 +59,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 - 8 = On Hold
 
 **priority** (Priority):
+
 - 0 = Medium
 - 1 = Minimal
 - 2 = Low
@@ -64,6 +69,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 - 6 = Unknown
 
 **type** (Type):
+
 - 0 = Hackathon
 - 1 = Publisher
 - 2 = Product
@@ -75,6 +81,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 ### Tool: `getTasksMarketing`
 
 **status** (Status):
+
 - 0 = In Review
 - 1 = Done
 - 2 = Rejected
@@ -86,6 +93,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 - 8 = On Hold
 
 **priority** (Priority):
+
 - 0 = Medium
 - 1 = Minimal
 - 2 = Low
@@ -95,6 +103,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 - 6 = Unknown
 
 **type** (Type):
+
 - 0 = Andet
 - 1 = Kommunikationsplan Media Summit 2025
 - 3 = Case
@@ -102,6 +111,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 - 19 = Content
 
 **channel** (Channel - dropdown):
+
 - 0 = LinkedIn
 - 1 = Newsletter
 - 2 = PR
@@ -113,6 +123,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 ### Tool: `getTasksAdTech`
 
 **status** (Status):
+
 - 0 = In Review
 - 1 = Done
 - 2 = Rejected
@@ -124,6 +135,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 - 8 = On Hold
 
 **priority** (Priority):
+
 - 0 = P2 - Medium
 - 1 = P4 - Minimal
 - 2 = P3 - Low
@@ -133,6 +145,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 - 6 = P5 - Unknown
 
 **releaseStatus** (Release status):
+
 - 0 = Alpha (pre-testing)
 - 1 = Production (live)
 - 2 = Beta (pre-release)
@@ -145,6 +158,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 ### Tool: `getTasksVideo`
 
 **status** (Status):
+
 - 0 = In Review
 - 1 = Done
 - 2 = Rejected
@@ -156,6 +170,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 - 8 = On Hold
 
 **type** (Type):
+
 - 0 = Question
 - 1 = Idea
 - 2 = Opportunity
@@ -169,6 +184,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 ### Tool: `getTeams`
 
 **status** (Status):
+
 - 0 = Under-Ressourced
 - 1 = Active
 - 2 = Inactive
@@ -178,6 +194,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 ### Tool: `getOKR`
 
 **status** (Status):
+
 - 0 = In Review
 - 1 = Done
 - 2 = Rejected
@@ -189,6 +206,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 - 8 = On Hold
 
 **health** (Health):
+
 - 0 = At Risk
 - 1 = On Track
 - 2 = Off Track
@@ -198,6 +216,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 ### Tool: `getBugs`
 
 **color_mkqhya7m** (Status):
+
 - 0 = In Review
 - 1 = Done
 - 2 = Rejected
@@ -209,6 +228,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 - 8 = On Hold
 
 **color_mkqnwy18** (Priority):
+
 - 0 = Medium
 - 1 = Minimal
 - 2 = Low
@@ -222,6 +242,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 ### Tool: `getFeatures`
 
 **status** (Status):
+
 - 0 = In Review
 - 1 = Done
 - 2 = Rejected
@@ -233,6 +254,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 - 8 = On Hold
 
 **priority** (Priority):
+
 - 0 = Medium
 - 1 = Minimal
 - 2 = Low
@@ -246,6 +268,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 ### Tool: `getDeals`
 
 **status** (Status):
+
 - 0 = Working on it
 - 1 = Done
 - 2 = Stuck
@@ -260,6 +283,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 ### Tool: `getOpportunities`
 
 **stage** (Stage):
+
 - 0 = Contacted
 - 1 = Won (don't use)
 - 2 = Lost
@@ -271,6 +295,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 - 9 = In pitch
 
 **bookingStatus** (Booking Status):
+
 - 1 = Delivering completed + report sent
 - 2 = Deal not ready
 - 4 = Ready for midway report
@@ -279,6 +304,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 - 107 = Booked / Delivering
 
 **product** (Product):
+
 - 3 = Programmatic Guaranteed
 - 4 = Insertion Order
 - 6 = Brand Bridge
@@ -289,6 +315,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 ### Tool: `getSalesActivities`
 
 **status** (Status):
+
 - 0 = To do
 - 1 = Done
 - 2 = Open
@@ -297,6 +324,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 - 5 = Waiting for progress
 
 **type** (Activity Type):
+
 - 0 = Call summary
 - 1 = Email
 - 4 = Event
@@ -314,6 +342,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 ### Tool: `getContacts`
 
 **status** (Status):
+
 - 0 = Working on it
 - 1 = Good relation
 - 2 = Stuck
@@ -323,6 +352,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 - 107 = Waiting
 
 **tier** (Tier):
+
 - 0 = D-level
 - 1 = C-level
 - 2 = A-level
@@ -334,12 +364,14 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 ### Tool: `getAccounts`
 
 **status** (Account Status):
+
 - 0 = On hold
 - 4 = Client
 - 13 = Past Client
 - 17 = New Biz
 
 **status5** (Type):
+
 - 0 = Agency
 - 1 = Agency Group
 - 2 = Partner
@@ -352,6 +384,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 ### Tool: `getLeads`
 
 **status** (Status):
+
 - 0 = New
 - 1 = Qualified
 - 2 = New Lead
@@ -360,6 +393,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 - 14 = Contacted
 
 **type** (Type):
+
 - 1 = Publisher
 - 2 = Advertiser
 
@@ -368,6 +402,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 ### Tool: `getBookings`
 
 **status0__1** (Status):
+
 - 0 = Not ready
 - 1 = Delivering completed + report sent
 - 2 = Under Booking
@@ -381,6 +416,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 ### Tool: `getTickets`
 
 **status** (Status):
+
 - 0 = New response
 - 1 = Customer responded
 - 2 = On hold
@@ -390,6 +426,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 - 11 = Resolved
 
 **priority** (Priority):
+
 - 7 = Low
 - 10 = Critical
 - 109 = Medium
@@ -400,6 +437,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 ### Tool: `getTasksYieldGrowth`
 
 **status** (Status):
+
 - 0 = In Review
 - 1 = Done
 - 2 = Rejected
@@ -415,6 +453,7 @@ When using MCP tools, status and dropdown columns require numeric indices instea
 Many boards use similar status patterns. Here are common ones:
 
 ### Standard Task Status
+
 - New/Open
 - In Progress
 - Done/Completed
@@ -422,6 +461,7 @@ Many boards use similar status patterns. Here are common ones:
 - Rejected/Cancelled
 
 ### Priority Levels
+
 - Critical/Urgent
 - High
 - Medium
@@ -429,6 +469,7 @@ Many boards use similar status patterns. Here are common ones:
 - Minimal/None
 
 ### Sales Status
+
 - Lead
 - Qualified
 - Proposal
@@ -438,7 +479,8 @@ Many boards use similar status patterns. Here are common ones:
 
 ## Usage Examples
 
-### Creating a new Tech & Intelligence task with "In Progress" status:
+### Creating a new Tech & Intelligence task with "In Progress" status
+
 ```javascript
 createTasksTechIntelligence({
   name: "Implement new feature",
@@ -448,7 +490,8 @@ createTasksTechIntelligence({
 })
 ```
 
-### Filtering tasks by status:
+### Filtering tasks by status
+
 ```javascript
 getTasksTechIntelligence({
   status_19__1: 1  // Get all "Done" tasks
@@ -465,6 +508,7 @@ getTasksTechIntelligence({
 ## Updating This Document
 
 When adding new tools or boards:
+
 1. Run `scripts/get-status-dropdown-mappings.ts` to fetch current mappings
 2. Add the mappings to this document
 3. Update tool definitions in `lib/mcp/toolDefinitions.ts`
