@@ -9,9 +9,12 @@ export async function getTasksTechIntelligence(
 	params: {
 		limit?: number;
 		name?: string;
-		status_19__1?: number; // Status (numeric index)
-		type_1__1?: number; // Type (numeric index)
-		priority_1__1?: number; // Priority (numeric index)
+		status_19__1?: string[]; // Status enum array
+		status_19__1_operator?: "any_of" | "not_any_of"; // Status operator
+		type_1__1?: string[]; // Type enum array  
+		type_1__1_operator?: "any_of" | "not_any_of"; // Type operator
+		priority_1__1?: string[]; // Priority enum array
+		priority_1__1_operator?: "any_of" | "not_any_of"; // Priority operator
 		date__1?: string; // Due Date (YYYY-MM-DD)
 		date__1_operator?: "any_of" | "not_any_of" | "greater_than" | "lower_than"; // Due Date operator
 		date4?: string; // Follow Up Date (YYYY-MM-DD)
@@ -30,8 +33,11 @@ export async function getTasksTechIntelligence(
 		limit = 10,
 		name,
 		status_19__1,
+		status_19__1_operator = "any_of",
 		type_1__1,
+		type_1__1_operator = "any_of",
 		priority_1__1,
+		priority_1__1_operator = "any_of",
 		date__1,					// Due Date
 		date__1_operator = "any_of",  // Default operator
 		date4,						// Follow Up Date
@@ -49,6 +55,45 @@ export async function getTasksTechIntelligence(
 	// Fetch dynamic columns from Columns board
 	const BOARD_ID = "1631907569";
 	const dynamicColumns = await getDynamicColumns(BOARD_ID);
+
+	// Enum mappings for status, type, and priority
+	const statusMapping = {
+		"In Review": 0,
+		"Done": 1,
+		"Rejected": 2,
+		"Planned": 3,
+		"In Progress": 4,
+		"Missing Status": 5,
+		"Waiting On Others": 6,
+		"New": 7,
+		"On Hold": 8
+	};
+
+	const typeMapping = {
+		"Support": 1,
+		"Maintenance": 3,
+		"Development": 4,
+		"Not Labelled": 5,
+		"Bugfix": 6,
+		"Documentation": 7,
+		"Meeting": 12
+	};
+
+	const priorityMapping = {
+		"Medium": 0,
+		"Minimal": 1,
+		"Low": 2,
+		"Critical": 3,
+		"High": 4,
+		"Not Prioritized": 5,
+		"Unknown": 6
+	};
+
+	// Helper function to convert enum names to indices
+	const mapEnumsToIndices = (enumArray: string[] | undefined, mapping: Record<string, number>): number[] => {
+		if (!enumArray || enumArray.length === 0) return [];
+		return enumArray.map(name => mapping[name]).filter(index => index !== undefined);
+	};
 
 	// Helper function to add date filters
 	const addDateFilter = (
@@ -80,24 +125,42 @@ export async function getTasksTechIntelligence(
 			operator: "contains_text",
 		});
 	}
-	if (status_19__1 !== undefined)
-		filters.push({
-			column_id: "status_19__1",
-			compare_value: [status_19__1],
-			operator: "any_of",
-		});
-	if (type_1__1 !== undefined)
-		filters.push({
-			column_id: "type_1__1",
-			compare_value: [type_1__1],
-			operator: "any_of",
-		});
-	if (priority_1__1 !== undefined)
-		filters.push({
-			column_id: "priority_1__1",
-			compare_value: [priority_1__1],
-			operator: "any_of",
-		});
+	
+	// Status filtering with enum support
+	if (status_19__1 && status_19__1.length > 0) {
+		const statusIndices = mapEnumsToIndices(status_19__1, statusMapping);
+		if (statusIndices.length > 0) {
+			filters.push({
+				column_id: "status_19__1",
+				compare_value: statusIndices,
+				operator: status_19__1_operator,
+			});
+		}
+	}
+	
+	// Type filtering with enum support  
+	if (type_1__1 && type_1__1.length > 0) {
+		const typeIndices = mapEnumsToIndices(type_1__1, typeMapping);
+		if (typeIndices.length > 0) {
+			filters.push({
+				column_id: "type_1__1",
+				compare_value: typeIndices,
+				operator: type_1__1_operator,
+			});
+		}
+	}
+	
+	// Priority filtering with enum support
+	if (priority_1__1 && priority_1__1.length > 0) {
+		const priorityIndices = mapEnumsToIndices(priority_1__1, priorityMapping);
+		if (priorityIndices.length > 0) {
+			filters.push({
+				column_id: "priority_1__1",
+				compare_value: priorityIndices,
+				operator: priority_1__1_operator,
+			});
+		}
+	}
 	
 	// Date filters with operators
 	addDateFilter("date__1", date__1, date__1_operator);

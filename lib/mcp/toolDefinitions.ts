@@ -688,22 +688,78 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 				},
 				name: {
 					type: "string",
-					description: "Search tasks by full or partial name",
+					description: "Use a string to search tasks by full or partial task names",
 				},
 				status_19__1: {
-					type: "number",
+					type: "array",
+					items: {
+						type: "string",
+						enum: [
+							"In Review",
+							"Done", 
+							"Rejected",
+							"Planned",
+							"In Progress",
+							"Missing Status",
+							"Waiting On Others",
+							"New",
+							"On Hold"
+						]
+					},
 					description:
-						"Status index: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold",
+						"Filter by status values. Use status names like ['Done', 'In Progress'] or ['Rejected']",
+				},
+				status_19__1_operator: {
+					type: "string",
+					enum: ["any_of", "not_any_of"],
+					default: "any_of",
+					description: "Operator for status filtering: 'any_of' to include, 'not_any_of' to exclude",
 				},
 				type_1__1: {
-					type: "number",
+					type: "array",
+					items: {
+						type: "string",
+						enum: [
+							"Support",
+							"Maintenance",
+							"Development",
+							"Not Labelled",
+							"Bugfix",
+							"Documentation",
+							"Meeting"
+						]
+					},
 					description:
-						"Type index: 1=Support, 3=Maintenance, 4=Development, 5=Not Labelled, 6=Bugfix, 7=Documentation, 12=Meeting",
+						"Filter by type values. Use type names like ['Development', 'Bugfix'] or ['Meeting']",
+				},
+				type_1__1_operator: {
+					type: "string",
+					enum: ["any_of", "not_any_of"],
+					default: "any_of",
+					description: "Operator for type filtering: 'any_of' to include, 'not_any_of' to exclude",
 				},
 				priority_1__1: {
-					type: "number",
+					type: "array",
+					items: {
+						type: "string",
+						enum: [
+							"Medium",
+							"Minimal",
+							"Low",
+							"Critical",
+							"High",
+							"Not Prioritized",
+							"Unknown"
+						]
+					},
 					description:
-						"Priority index: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown",
+						"Filter by priority values. Use priority names like ['High', 'Critical'] or ['Low']",
+				},
+				priority_1__1_operator: {
+					type: "string",
+					enum: ["any_of", "not_any_of"],
+					default: "any_of",
+					description: "Operator for priority filtering: 'any_of' to include, 'not_any_of' to exclude",
 				},
 				date__1: {
 					type: "string",
