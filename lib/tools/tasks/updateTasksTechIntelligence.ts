@@ -3,16 +3,16 @@ import { mondayApi } from "../../monday/client.js";
 interface TaskUpdateParams {
     itemId: string;
     name?: string;
-    board_relation_mkpjqgpv?: string;
-    board_relation_mkqhkyb7?: string;
-    status_19__1?: number;
-    type_1__1?: number;
-    priority_1__1?: number;
-    date__1?: string;
-    date4?: string;
-    date4__1?: string;
-    date3__1?: string;
-    date7__1?: string;
+    keyResultId?: string;
+    stephieFeatureId?: string;
+    status?: number;
+    type?: number;
+    priority?: number;
+    dueDate?: string;
+    followUpDate?: string;
+    createdDate?: string;
+    startedDate?: string;
+    doneDate?: string;
     delete?: boolean;
 }
 
@@ -82,44 +82,44 @@ export async function updateTasksTechIntelligence(params: BatchUpdateParams) {
             columnValues.name = updates.name;
         }
 
-        if (updates.status_19__1 !== undefined) {
-            columnValues.status_19__1 = { index: updates.status_19__1 };
+        if (updates.status !== undefined) {
+            columnValues.status_19__1 = { index: updates.status };
         }
 
-        if (updates.type_1__1 !== undefined) {
-            columnValues.type_1__1 = { index: updates.type_1__1 };
+        if (updates.type !== undefined) {
+            columnValues.type_1__1 = { index: updates.type };
         }
 
-        if (updates.priority_1__1 !== undefined) {
-            columnValues.priority_1__1 = { index: updates.priority_1__1 };
+        if (updates.priority !== undefined) {
+            columnValues.priority_1__1 = { index: updates.priority };
         }
 
-        if (updates.date__1 !== undefined) {
-            columnValues.date__1 = { date: updates.date__1 };
+        if (updates.dueDate !== undefined) {
+            columnValues.date__1 = { date: updates.dueDate };
         }
 
-        if (updates.date4 !== undefined) {
-            columnValues.date4 = { date: updates.date4 };
+        if (updates.followUpDate !== undefined) {
+            columnValues.date4 = { date: updates.followUpDate };
         }
 
-        if (updates.date4__1 !== undefined) {
-            columnValues.date4__1 = { date: updates.date4__1 };
+        if (updates.createdDate !== undefined) {
+            columnValues.date4__1 = { date: updates.createdDate };
         }
 
-        if (updates.date3__1 !== undefined) {
-            columnValues.date3__1 = { date: updates.date3__1 };
+        if (updates.startedDate !== undefined) {
+            columnValues.date3__1 = { date: updates.startedDate };
         }
 
-        if (updates.date7__1 !== undefined) {
-            columnValues.date7__1 = { date: updates.date7__1 };
+        if (updates.doneDate !== undefined) {
+            columnValues.date7__1 = { date: updates.doneDate };
         }
 
-        if (updates.board_relation_mkpjqgpv !== undefined) {
-            columnValues.board_relation_mkpjqgpv = { item_ids: [updates.board_relation_mkpjqgpv] };
+        if (updates.keyResultId !== undefined) {
+            columnValues.board_relation_mkpjqgpv = { item_ids: [updates.keyResultId] };
         }
 
-        if (updates.board_relation_mkqhkyb7 !== undefined) {
-            columnValues.board_relation_mkqhkyb7 = { item_ids: [updates.board_relation_mkqhkyb7] };
+        if (updates.stephieFeatureId !== undefined) {
+            columnValues.board_relation_mkqhkyb7 = { item_ids: [updates.stephieFeatureId] };
         }
 
         // Only update if there are actual changes

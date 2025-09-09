@@ -7,13 +7,13 @@ import { createSuccessResponse } from "../json-output.js";
 
 interface TaskParams {
 	name: string;
-	board_relation_mkpjqgpv?: string;
-	board_relation_mkqhkyb7?: string;
-	status_19__1?: number;
-	type_1__1: number;
-	priority_1__1: number;
-	date__1?: string;
-	date4?: string;
+	keyResultId?: string;
+	stephieFeatureId?: string;
+	status?: number;
+	type: number;
+	priority: number;
+	dueDate?: string;
+	followUpDate?: string;
 }
 
 interface CreateTasksParams {
@@ -51,46 +51,46 @@ export async function createTasksTechIntelligence(params: CreateTasksParams) {
 			throw new Error("name is required for each task");
 		}
 
-		if (task.type_1__1 === undefined) {
-			console.log('[createTasksTechIntelligence] Error: Missing type_1__1 for task:', task.name);
-			throw new Error("type_1__1 is required for each task");
+		if (task.type === undefined) {
+			console.log('[createTasksTechIntelligence] Error: Missing type for task:', task.name);
+			throw new Error("type is required for each task");
 		}
 
-		if (task.priority_1__1 === undefined) {
-			console.log('[createTasksTechIntelligence] Error: Missing priority_1__1 for task:', task.name);
-			throw new Error("priority_1__1 is required for each task");
+		if (task.priority === undefined) {
+			console.log('[createTasksTechIntelligence] Error: Missing priority for task:', task.name);
+			throw new Error("priority is required for each task");
 		}
 
 		console.log('[createTasksTechIntelligence] Task validation passed for:', task.name);
 
 		const columnValues: Record<string, unknown> = {};
 
-		if (task.status_19__1 !== undefined) {
-			columnValues.status_19__1 = { index: task.status_19__1 };
+		if (task.status !== undefined) {
+			columnValues.status_19__1 = { index: task.status };
 		}
 
-		if (task.type_1__1 !== undefined) {
-			columnValues.type_1__1 = { index: task.type_1__1 };
+		if (task.type !== undefined) {
+			columnValues.type_1__1 = { index: task.type };
 		}
 
-		if (task.priority_1__1 !== undefined) {
-			columnValues.priority_1__1 = { index: task.priority_1__1 };
+		if (task.priority !== undefined) {
+			columnValues.priority_1__1 = { index: task.priority };
 		}
 
-		if (task.date__1 !== undefined) {
-			columnValues.date__1 = { date: task.date__1 };
+		if (task.dueDate !== undefined) {
+			columnValues.date__1 = { date: task.dueDate };
 		}
 
-		if (task.date4 !== undefined) {
-			columnValues.date4 = { date: task.date4 };
+		if (task.followUpDate !== undefined) {
+			columnValues.date4 = { date: task.followUpDate };
 		}
 
-		if (task.board_relation_mkpjqgpv !== undefined) {
-			columnValues.board_relation_mkpjqgpv = { item_ids: [task.board_relation_mkpjqgpv] };
+		if (task.keyResultId !== undefined) {
+			columnValues.board_relation_mkpjqgpv = { item_ids: [task.keyResultId] };
 		}
 
-		if (task.board_relation_mkqhkyb7 !== undefined) {
-			columnValues.board_relation_mkqhkyb7 = { item_ids: [task.board_relation_mkqhkyb7] };
+		if (task.stephieFeatureId !== undefined) {
+			columnValues.board_relation_mkqhkyb7 = { item_ids: [task.stephieFeatureId] };
 		}
 
 		const columnValuesParam =

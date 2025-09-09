@@ -676,12 +676,12 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			type: "object",
 			properties: {
 				limit: { type: "number", default: 10 },
-				board_relation_mkpjqgpv: {
+				keyResultId: {
 					type: "string",
 					description:
 						"Filter by linked key result item ID (use OKR subitems tool to find IDs)",
 				},
-				board_relation_mkqhkyb7: {
+				stephieFeatureId: {
 					type: "string",
 					description:
 						"Filter by linked STEPhie feature item ID (use getStephieFeatures tool to find IDs)",
@@ -690,7 +690,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					type: "string",
 					description: "Use a string to search tasks by full or partial task names",
 				},
-				status_19__1: {
+				status: {
 					type: "array",
 					items: {
 						type: "string",
@@ -709,13 +709,13 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					description:
 						"Filter by status values. Use status names like ['Done', 'In Progress'] or ['Rejected']",
 				},
-				status_19__1_operator: {
+				statusOperator: {
 					type: "string",
 					enum: ["any_of", "not_any_of"],
 					default: "any_of",
 					description: "Operator for status filtering: 'any_of' to include, 'not_any_of' to exclude",
 				},
-				type_1__1: {
+				type: {
 					type: "array",
 					items: {
 						type: "string",
@@ -732,13 +732,13 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					description:
 						"Filter by type values. Use type names like ['Development', 'Bugfix'] or ['Meeting']",
 				},
-				type_1__1_operator: {
+				typeOperator: {
 					type: "string",
 					enum: ["any_of", "not_any_of"],
 					default: "any_of",
 					description: "Operator for type filtering: 'any_of' to include, 'not_any_of' to exclude",
 				},
-				priority_1__1: {
+				priority: {
 					type: "array",
 					items: {
 						type: "string",
@@ -755,18 +755,18 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					description:
 						"Filter by priority values. Use priority names like ['High', 'Critical'] or ['Low']",
 				},
-				priority_1__1_operator: {
+				priorityOperator: {
 					type: "string",
 					enum: ["any_of", "not_any_of"],
 					default: "any_of",
 					description: "Operator for priority filtering: 'any_of' to include, 'not_any_of' to exclude",
 				},
-				date__1: {
+				dueDate: {
 					type: "string",
 					description:
 						"Due date: 'YYYY-MM-DD', 'TODAY', 'TOMORROW', 'NEXT_WEEK', 'NEXT_MONTH', 'YESTERDAY', 'ONE_WEEK_AGO', 'ONE_MONTH_AGO'",
 				},
-				date__1_operator: {
+				dueDateOperator: {
 					type: "string",
 					enum: [
 						"any_of",
@@ -776,12 +776,12 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					],
 					description: "Operator for due date comparison",
 				},
-				date4: {
+				followUpDate: {
 					type: "string",
 					description:
 						"Follow up date: 'YYYY-MM-DD', 'TODAY', 'TOMORROW', 'NEXT_WEEK', 'NEXT_MONTH', 'YESTERDAY', 'ONE_WEEK_AGO', 'ONE_MONTH_AGO'",
 				},
-				date4_operator: {
+				followUpDateOperator: {
 					type: "string",
 					enum: [
 						"any_of",
@@ -791,12 +791,12 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					],
 					description: "Operator for follow up date comparison",
 				},
-				date4__1: {
+				createdDate: {
 					type: "string",
 					description:
 						"Created date: 'YYYY-MM-DD', 'TODAY', 'TOMORROW', 'NEXT_WEEK', 'NEXT_MONTH', 'YESTERDAY', 'ONE_WEEK_AGO', 'ONE_MONTH_AGO'",
 				},
-				date4__1_operator: {
+				createdDateOperator: {
 					type: "string",
 					enum: [
 						"any_of",
@@ -806,12 +806,12 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					],
 					description: "Operator for created date comparison",
 				},
-				date3__1: {
+				startedDate: {
 					type: "string",
 					description:
 						"Started date: 'YYYY-MM-DD', 'TODAY', 'TOMORROW', 'NEXT_WEEK', 'NEXT_MONTH', 'YESTERDAY', 'ONE_WEEK_AGO', 'ONE_MONTH_AGO'",
 				},
-				date3__1_operator: {
+				startedDateOperator: {
 					type: "string",
 					enum: [
 						"any_of",
@@ -821,12 +821,12 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					],
 					description: "Operator for started date comparison",
 				},
-				date7__1: {
+				doneDate: {
 					type: "string",
 					description:
 						"Done date: 'YYYY-MM-DD', 'TODAY', 'TOMORROW', 'NEXT_WEEK', 'NEXT_MONTH', 'YESTERDAY', 'ONE_WEEK_AGO', 'ONE_MONTH_AGO'",
 				},
-				date7__1_operator: {
+				doneDateOperator: {
 					type: "string",
 					enum: [
 						"any_of",
@@ -853,45 +853,45 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 						type: "object",
 						properties: {
 							name: { type: "string", description: "Required parameter - Task name", required: true },
-							board_relation_mkpjqgpv: {
+							keyResultId: {
 								type: "string",
 								description:
 									"Link to key result item ID (use OKR subitems tool to find IDs)",
 							},
-							board_relation_mkqhkyb7: {
+							stephieFeatureId: {
 								type: "string",
 								description:
 									"Link to STEPhie feature item ID (use getStephieFeatures tool to find IDs)",
 							},
-							status_19__1: {
+							status: {
 								type: "number",
 								description:
 									"Status index: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold",
 							},
-							type_1__1: {
+							type: {
 								type: "number",
 								description:
 									"Required parameter - Type index: 1=Support, 3=Maintenance, 4=Development, 5=Not Labelled, 6=Bugfix, 7=Documentation, 12=Meeting",
 								required: true,
 							},
-							priority_1__1: {
+							priority: {
 								type: "number",
 								description:
 									"Required parameter - Priority index: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown",
 								required: true,
 							},
-							date__1: {
+							dueDate: {
 								type: "string",
 								description:
 									"Due date: 'YYYY-MM-DD'",
 							},
-							date4: {
+							followUpDate: {
 								type: "string",
 								description:
 									"Follow up date: 'YYYY-MM-DD'",
 							},
 						},
-						required: ["name", "type_1__1", "priority_1__1"],
+						required: ["name", "type", "priority"],
 					},
 					description: "Array of task objects to create",
 					required: true,
@@ -914,37 +914,37 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 						properties: {
 							itemId: { type: "string", description: "Item ID to update (required)", required: true },
 							name: { type: "string", description: "Task name" },
-							board_relation_mkpjqgpv: {
+							keyResultId: {
 								type: "string",
 								description:
 									"Link to key result item ID (use OKR subitems tool to find IDs)",
 							},
-							board_relation_mkqhkyb7: {
+							stephieFeatureId: {
 								type: "string",
 								description:
 									"Link to STEPhie feature item ID (use getStephieFeatures tool to find IDs)",
 							},
-							status_19__1: {
+							status: {
 								type: "number",
 								description:
 									"Status index: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold",
 							},
-							type_1__1: {
+							type: {
 								type: "number",
 								description:
 									"Type index: 1=Support, 3=Maintenance, 4=Development, 5=Not Labelled, 6=Bugfix, 7=Documentation, 12=Meeting",
 							},
-							priority_1__1: {
+							priority: {
 								type: "number",
 								description:
 									"Priority index: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown",
 							},
-							date__1: {
+							dueDate: {
 								type: "string",
 								description:
 									"Due date: 'YYYY-MM-DD'",
 							},
-							date4: {
+							followUpDate: {
 								type: "string",
 								description:
 									"Follow up date: 'YYYY-MM-DD'",

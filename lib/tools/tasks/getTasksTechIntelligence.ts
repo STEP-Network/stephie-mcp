@@ -8,48 +8,48 @@ import { createListResponse } from "../json-output.js";
 export async function getTasksTechIntelligence(
 	params: {
 		limit?: number;
+		keyResultId?: string; // Filter by linked key result (use OKR subitems tool to find IDs)
+		stephieFeatureId?: string; // Filter by linked STEPhie feature (use getStephieFeatures tool to find IDs)
 		name?: string;
-		status_19__1?: string[]; // Status enum array
-		status_19__1_operator?: "any_of" | "not_any_of"; // Status operator
-		type_1__1?: string[]; // Type enum array  
-		type_1__1_operator?: "any_of" | "not_any_of"; // Type operator
-		priority_1__1?: string[]; // Priority enum array
-		priority_1__1_operator?: "any_of" | "not_any_of"; // Priority operator
-		date__1?: string; // Due Date (YYYY-MM-DD)
-		date__1_operator?: "any_of" | "not_any_of" | "greater_than" | "lower_than"; // Due Date operator
-		date4?: string; // Follow Up Date (YYYY-MM-DD)
-		date4_operator?: "any_of" | "not_any_of" | "greater_than" | "lower_than"; // Follow Up Date operator
-		date4__1?: string; // Created Date (YYYY-MM-DD)
-		date4__1_operator?: "any_of" | "not_any_of" | "greater_than" | "lower_than"; // Created Date operator
-		date3__1?: string; // Started Date (YYYY-MM-DD)
-		date3__1_operator?: "any_of" | "not_any_of" | "greater_than" | "lower_than"; // Started Date operator
-		date7__1?: string; // Done Date (YYYY-MM-DD)
-		date7__1_operator?: "any_of" | "not_any_of" | "greater_than" | "lower_than"; // Done Date operator
-		board_relation_mkpjqgpv?: string; // Filter by linked key result (use OKR subitems tool to find IDs)
-		board_relation_mkqhkyb7?: string; // Filter by linked STEPhie features (use STEPhie Features tool to find IDs)
+		status?: string[]; // Status enum array
+		statusOperator?: "any_of" | "not_any_of"; // Status operator
+		type?: string[]; // Type enum array  
+		typeOperator?: "any_of" | "not_any_of"; // Type operator
+		priority?: string[]; // Priority enum array
+		priorityOperator?: "any_of" | "not_any_of"; // Priority operator
+		dueDate?: string; // Due Date (YYYY-MM-DD)
+		dueDateOperator?: "any_of" | "not_any_of" | "greater_than" | "lower_than"; // Due Date operator
+		followUpDate?: string; // Follow Up Date (YYYY-MM-DD)
+		followUpDateOperator?: "any_of" | "not_any_of" | "greater_than" | "lower_than"; // Follow Up Date operator
+		createdDate?: string; // Created Date (YYYY-MM-DD)
+		createdDateOperator?: "any_of" | "not_any_of" | "greater_than" | "lower_than"; // Created Date operator
+		startedDate?: string; // Started Date (YYYY-MM-DD)
+		startedDateOperator?: "any_of" | "not_any_of" | "greater_than" | "lower_than"; // Started Date operator
+		doneDate?: string; // Done Date (YYYY-MM-DD)
+		doneDateOperator?: "any_of" | "not_any_of" | "greater_than" | "lower_than"; // Done Date operator
 	} = {},
 ): Promise<string> {
 	const {
 		limit = 10,
+		keyResultId,				// Key Result ID (OKR Subitem ID)
+		stephieFeatureId,			// STEPhie Feature ID
 		name,
-		status_19__1,
-		status_19__1_operator = "any_of",
-		type_1__1,
-		type_1__1_operator = "any_of",
-		priority_1__1,
-		priority_1__1_operator = "any_of",
-		date__1,					// Due Date
-		date__1_operator = "any_of",  // Default operator
-		date4,						// Follow Up Date
-		date4_operator = "any_of",   // Default operator
-		date4__1,					// Created Date
-		date4__1_operator = "any_of", // Default operator
-		date3__1,					// Started Date
-		date3__1_operator = "any_of", // Default operator
-		date7__1,					// Done Date
-		date7__1_operator = "any_of", // Default operator
-		board_relation_mkpjqgpv,	// Key Result ID (OKR Subitem ID)
-		board_relation_mkqhkyb7,	// STEPhie Feature ID
+		status,
+		statusOperator = "any_of",
+		type,
+		typeOperator = "any_of",
+		priority,
+		priorityOperator = "any_of",
+		dueDate,					// Due Date
+		dueDateOperator = "any_of",  // Default operator
+		followUpDate,				// Follow Up Date
+		followUpDateOperator = "any_of",   // Default operator
+		createdDate,				// Created Date
+		createdDateOperator = "any_of", // Default operator
+		startedDate,				// Started Date
+		startedDateOperator = "any_of", // Default operator
+		doneDate,					// Done Date
+		doneDateOperator = "any_of", // Default operator
 	} = params;
 
 	// Fetch dynamic columns from Columns board
@@ -127,58 +127,58 @@ export async function getTasksTechIntelligence(
 	}
 	
 	// Status filtering with enum support
-	if (status_19__1 && status_19__1.length > 0) {
-		const statusIndices = mapEnumsToIndices(status_19__1, statusMapping);
+	if (status && status.length > 0) {
+		const statusIndices = mapEnumsToIndices(status, statusMapping);
 		if (statusIndices.length > 0) {
 			filters.push({
 				column_id: "status_19__1",
 				compare_value: statusIndices,
-				operator: status_19__1_operator,
+				operator: statusOperator,
 			});
 		}
 	}
 	
 	// Type filtering with enum support  
-	if (type_1__1 && type_1__1.length > 0) {
-		const typeIndices = mapEnumsToIndices(type_1__1, typeMapping);
+	if (type && type.length > 0) {
+		const typeIndices = mapEnumsToIndices(type, typeMapping);
 		if (typeIndices.length > 0) {
 			filters.push({
 				column_id: "type_1__1",
 				compare_value: typeIndices,
-				operator: type_1__1_operator,
+				operator: typeOperator,
 			});
 		}
 	}
 	
 	// Priority filtering with enum support
-	if (priority_1__1 && priority_1__1.length > 0) {
-		const priorityIndices = mapEnumsToIndices(priority_1__1, priorityMapping);
+	if (priority && priority.length > 0) {
+		const priorityIndices = mapEnumsToIndices(priority, priorityMapping);
 		if (priorityIndices.length > 0) {
 			filters.push({
 				column_id: "priority_1__1",
 				compare_value: priorityIndices,
-				operator: priority_1__1_operator,
+				operator: priorityOperator,
 			});
 		}
 	}
 	
 	// Date filters with operators
-	addDateFilter("date__1", date__1, date__1_operator);
-	addDateFilter("date4", date4, date4_operator);
-	addDateFilter("date4__1", date4__1, date4__1_operator);
-	addDateFilter("date3__1", date3__1, date3__1_operator);
-	addDateFilter("date7__1", date7__1, date7__1_operator);
+	addDateFilter("date__1", dueDate, dueDateOperator);
+	addDateFilter("date4", followUpDate, followUpDateOperator);
+	addDateFilter("date4__1", createdDate, createdDateOperator);
+	addDateFilter("date3__1", startedDate, startedDateOperator);
+	addDateFilter("date7__1", doneDate, doneDateOperator);
 	
-	if (board_relation_mkpjqgpv)
+	if (keyResultId)
 		filters.push({
 			column_id: "board_relation_mkpjqgpv",
-			compare_value: [board_relation_mkpjqgpv],
+			compare_value: [keyResultId],
 			operator: "any_of",
 		});
-	if (board_relation_mkqhkyb7)
+	if (stephieFeatureId)
 		filters.push({
 			column_id: "board_relation_mkqhkyb7",
-			compare_value: [board_relation_mkqhkyb7],
+			compare_value: [stephieFeatureId],
 			operator: "any_of",
 		});
 
@@ -291,11 +291,11 @@ export async function getTasksTechIntelligence(
 		};
 
 		if (name) (metadata.filters as Record<string, unknown>).name = name;
-		if (type_1__1) (metadata.filters as Record<string, unknown>).type = type_1__1;
-		if (priority_1__1) (metadata.filters as Record<string, unknown>).priority = priority_1__1;
-		if (status_19__1) (metadata.filters as Record<string, unknown>).status = status_19__1;
-		if (board_relation_mkpjqgpv) (metadata.filters as Record<string, unknown>).keyResultId = board_relation_mkpjqgpv;
-		if (board_relation_mkqhkyb7) (metadata.filters as Record<string, unknown>).stephieFeatureId = board_relation_mkqhkyb7;
+		if (type) (metadata.filters as Record<string, unknown>).type = type;
+		if (priority) (metadata.filters as Record<string, unknown>).priority = priority;
+		if (status) (metadata.filters as Record<string, unknown>).status = status;
+		if (keyResultId) (metadata.filters as Record<string, unknown>).keyResultId = keyResultId;
+		if (stephieFeatureId) (metadata.filters as Record<string, unknown>).stephieFeatureId = stephieFeatureId;
 
 		return JSON.stringify(
 			createListResponse(
