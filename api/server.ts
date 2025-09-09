@@ -79,17 +79,18 @@ const getToolDescription = (name: string): string => {
 
 // Helper to build Zod schema from tool definition
 const buildZodSchema = (name: string): Record<string, any> => {
-	const tool = TOOL_DEFINITIONS.find((t) => t.name === name);
-	if (!tool) return {};
-	
-	// Handle tools with no parameters
-	if (!tool.inputSchema.properties || Object.keys(tool.inputSchema.properties).length === 0) {
-		return {};
-	}
-	
-	const schema: Record<string, any> = {};
-	
-	for (const [key, prop] of Object.entries(tool.inputSchema.properties)) {
+	try {
+		const tool = TOOL_DEFINITIONS.find((t) => t.name === name);
+		if (!tool) return {};
+		
+		// Handle tools with no parameters
+		if (!tool.inputSchema?.properties || Object.keys(tool.inputSchema.properties).length === 0) {
+			return {};
+		}
+		
+		const schema: Record<string, any> = {};
+		
+		for (const [key, prop] of Object.entries(tool.inputSchema.properties)) {
 		let zodType: any;
 		
 		// Handle different types
@@ -181,6 +182,10 @@ const buildZodSchema = (name: string): Record<string, any> => {
 	}
 	
 	return schema;
+	} catch (error) {
+		console.error(`Error building Zod schema for ${name}:`, error);
+		return {};
+	}
 };
 
 // Create the MCP handler with all tools
