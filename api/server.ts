@@ -107,12 +107,41 @@ const buildZodSchema = (name: string): Record<string, any> => {
 			if (prop.items) {
 				const items = prop.items as any;
 				if (items.type === "string") {
-					zodType = z.array(z.string());
+					// Use preprocess to parse JSON strings into arrays
+					zodType = z.preprocess((val) => {
+						if (typeof val === "string") {
+							try {
+								return JSON.parse(val);
+							} catch {
+								return val;
+							}
+						}
+						return val;
+					}, z.array(z.string()));
 				} else if (items.type === "number") {
-					zodType = z.array(z.number());
+					// Use preprocess to parse JSON strings into arrays
+					zodType = z.preprocess((val) => {
+						if (typeof val === "string") {
+							try {
+								return JSON.parse(val);
+							} catch {
+								return val;
+							}
+						}
+						return val;
+					}, z.array(z.number()));
 				} else if (items.type === "array" && items.items) {
 					// Handle nested arrays like sizes [[300,250]]
-					zodType = z.array(z.array(z.number()));
+					zodType = z.preprocess((val) => {
+						if (typeof val === "string") {
+							try {
+								return JSON.parse(val);
+							} catch {
+								return val;
+							}
+						}
+						return val;
+					}, z.array(z.array(z.number())));
 				} else if (items.type === "object") {
 					// Handle array of objects
 					const objSchema: Record<string, any> = {};
@@ -146,7 +175,17 @@ const buildZodSchema = (name: string): Record<string, any> => {
 					} else if (objProp.type === "number") {
 						objSchema[objKey] = z.number();
 					} else if (objProp.type === "array") {
-						objSchema[objKey] = z.array(z.string());
+						// Use preprocess for nested arrays in objects too
+						objSchema[objKey] = z.preprocess((val) => {
+							if (typeof val === "string") {
+								try {
+									return JSON.parse(val);
+								} catch {
+									return val;
+								}
+							}
+							return val;
+						}, z.array(z.string()));
 					} else if (!objProp.type) {
 						// Handle missing type (defaults to any)
 						objSchema[objKey] = z.any();
@@ -230,12 +269,8 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("findPublisherAdUnits"),
 		buildZodSchema("findPublisherAdUnits"),
 		async (input) => {
-			// Parse string-encoded array if needed
-			const names = typeof input.names === "string" 
-				? JSON.parse(input.names) 
-				: input.names;
-			
-			const result = await findPublisherAdUnits({ names });
+			// Zod preprocessing handles string parsing now
+			const result = await findPublisherAdUnits(input);
 			const text =
 				typeof result === "string" ? result : JSON.stringify(result, null, 2);
 			return { content: [{ type: "text", text }] };
@@ -333,15 +368,8 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getGeoLocations"),
 		buildZodSchema("getGeoLocations"),
 		async (input) => {
-			// Parse string-encoded array if needed
-			const params = {
-				...input,
-				search: input.search && typeof input.search === "string" 
-					? JSON.parse(input.search)
-					: input.search,
-			};
-			
-			const result = await getGeoLocations(params);
+			// Zod preprocessing handles string parsing now
+			const result = await getGeoLocations(input);
 			const text =
 				typeof result === "string" ? result : JSON.stringify(result, null, 2);
 			return { content: [{ type: "text", text }] };
@@ -366,46 +394,11 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("availabilityForecast"),
 		buildZodSchema("availabilityForecast"),
 		async (input) => {
-			// Helper to parse string-encoded arrays
-			const parseArrayParam = (value: any): any => {
-				if (typeof value === "string") {
-					try {
-						const parsed = JSON.parse(value);
-						console.error(`[server.ts] Parsed string array: "${value}" -> ${JSON.stringify(parsed)}`);
-						return parsed;
-					} catch {
-						console.error(`[server.ts] Failed to parse string: "${value}"`);
-						return value;
-					}
-				}
-				return value;
-			};
-
 			console.error(`[server.ts] availabilityForecast input:`, JSON.stringify(input));
 			
-			// Parse any string-encoded array parameters
-			const params = {
-				startDate: input.startDate,
-				endDate: input.endDate,
-				sizes: parseArrayParam(input.sizes),
-				goalQuantity: input.goalQuantity,
-				targetedAdUnitIds: parseArrayParam(input.targetedAdUnitIds),
-				excludedAdUnitIds: parseArrayParam(input.excludedAdUnitIds),
-				audienceSegmentIds: parseArrayParam(input.audienceSegmentIds),
-				customTargeting: parseArrayParam(input.customTargeting),
-				frequencyCapMaxImpressions: input.frequencyCapMaxImpressions,
-				frequencyCapTimeUnit: input.frequencyCapTimeUnit,
-				geoTargeting: input.geoTargeting ? {
-					targetedLocationIds: parseArrayParam(input.geoTargeting.targetedLocationIds),
-					excludedLocationIds: parseArrayParam(input.geoTargeting.excludedLocationIds),
-				} : input.geoTargeting,
-				targetedPlacementIds: parseArrayParam(input.targetedPlacementIds),
-			};
-			
-			console.error(`[server.ts] Parsed params:`, JSON.stringify(params));
-
+			// Zod preprocessing will handle JSON string parsing, so we can pass input directly
 			const result = await availabilityForecast(
-				params as Parameters<typeof availabilityForecast>[0],
+				input as Parameters<typeof availabilityForecast>[0],
 			);
 			const text =
 				typeof result === "string" ? result : JSON.stringify(result, null, 2);
@@ -439,29 +432,8 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getItems"),
 		buildZodSchema("getItems"),
 		async (input) => {
-			// Helper to parse string-encoded arrays
-			const parseArrayParam = (value: any): any => {
-				if (typeof value === "string") {
-					try {
-						return JSON.parse(value);
-					} catch {
-						return value;
-					}
-				}
-				return value;
-			};
-
-			// Transform input to match expected types
-			const params = {
-				boardId: input.boardId,
-				limit: input.limit,
-				columnIds: parseArrayParam(input.columnIds),
-				itemIds: parseArrayParam(input.itemIds),
-				search: input.search,
-				columnFilters: parseArrayParam(input.columnFilters) as ColumnFilter[] | undefined,
-				includeColumnMetadata: input.includeColumnMetadata,
-			};
-			const result = await getItems(params);
+			// Zod preprocessing handles string parsing now
+			const result = await getItems(input);
 			return {
 				content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
 			};
