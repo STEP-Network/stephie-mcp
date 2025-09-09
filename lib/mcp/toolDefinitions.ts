@@ -787,7 +787,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 	// Tasks - Tech & Intelligence Mutation Tools
 	{
 		name: "createTasksTechIntelligence",
-		description: "Create one or more tasks in the Tasks - Tech & Intelligence board.",
+		description: "Create one or more tasks in the Tasks - Tech & Intelligence board (team members: Nate).",
 		inputSchema: {
 			type: "object",
 			properties: {
@@ -847,7 +847,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 	{
 		name: "updateTaskTechIntelligence",
 		description:
-			"Update an existing task in the Tasks - Tech & Intelligence board.",
+			"Update an existing task in the Tasks - Tech & Intelligence board (team members: Nate).",
 		inputSchema: {
 			type: "object",
 			properties: {
