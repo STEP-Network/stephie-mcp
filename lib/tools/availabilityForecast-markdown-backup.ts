@@ -1,7 +1,6 @@
 import { parseStringPromise } from "xml2js";
 import { getAvailabilityForecast } from "../gam/soap.js";
 import { type MondayItemResponse, mondayApi } from "../monday/client.js";
-import { createToolResponse, createErrorResponse } from "./json-output.js";
 
 export type ContendingLineItem = {
 	lineItemId: number;
@@ -28,7 +27,7 @@ export type CustomTargeting = {
 
 /**
  * Availability forecast tool for Google Ad Manager SOAP API
- * Returns JSON-formatted forecast data for LLM consumption
+ * Returns markdown-formatted forecast data for LLM consumption
  */
 export const availabilityForecast = async (params: {
 	startDate: string;
@@ -290,133 +289,203 @@ export const availabilityForecast = async (params: {
 			}
 		}
 
-		// Build JSON output
-		const forecastData = {
-			metrics: {
-				availableUnits,
-				matchedUnits,
-				possibleUnits,
-				deliveredUnits,
-				reservedUnits
-			},
-			request: {
-				period: {
-					start: startDate.toLowerCase() === "now" ? "now" : startDate,
-					end: endDate
-				},
-				sizes: sizes.map(([w, h]) => ({ width: w, height: h })),
-				goal: goalQuantity || null
-			},
-			targeting: {} as any,
-			contendingLineItems: contendingLineItems.length > 0 ? contendingLineItems : [],
-			targetingBreakdown: targetingCriteriaBreakdown.length > 0 ? targetingCriteriaBreakdown : [],
-			goalAchievement: null as any
-		};
+		// Build markdown output
+		const lines: string[] = [];
 
-		// Add targeting details to JSON
+		// Header
+		lines.push("# Google Ad Manager Availability Forecast");
+		lines.push("");
+
+		// Request details
+		const formattedStartDate =
+			startDate.toLowerCase() === "now" ? "now" : startDate;
+		lines.push("## Request Details");
+		lines.push(`**Period:** ${formattedStartDate} - ${endDate}`);
+		lines.push(`**Sizes:** ${sizes.map(([w, h]) => `${w}x${h}`).join(", ")}`);
+		if (goalQuantity) {
+			lines.push(`**Goal:** ${goalQuantity.toLocaleString()} impressions`);
+		}
+		lines.push("");
+
+		// Targeting details
 		if (effectiveTargetedAdUnitIds.length > 0) {
-			forecastData.targeting.adUnits = effectiveTargetedAdUnitIds.map(id => ({
-				id,
-				name: adUnitNames[id] || `Ad Unit ${id}`
-			}));
+			lines.push("### Targeted Ad Units");
+			lines.push(`*Count: ${effectiveTargetedAdUnitIds.length} units*`);
+			lines.push("");
+			effectiveTargetedAdUnitIds.slice(0, 10).forEach((id) => {
+				const name = adUnitNames[id] || `Ad Unit ${id}`;
+				lines.push(`- **${name}** \`${id}\``);
+			});
+			if (effectiveTargetedAdUnitIds.length > 10) {
+				lines.push(`- ... and ${effectiveTargetedAdUnitIds.length - 10} more`);
+			}
+			lines.push("");
 		}
 
 		if (excludedAdUnitIds && excludedAdUnitIds.length > 0) {
-			forecastData.targeting.excludedAdUnits = excludedAdUnitIds.map(id => ({
-				id,
-				name: adUnitNames[id] || `Ad Unit ${id}`
-			}));
+			lines.push("### Excluded Ad Units");
+			lines.push(`*Count: ${excludedAdUnitIds.length} units*`);
+			lines.push("");
+			excludedAdUnitIds.slice(0, 5).forEach((id) => {
+				const name = adUnitNames[id] || `Ad Unit ${id}`;
+				lines.push(`- **${name}** \`${id}\``);
+			});
+			if (excludedAdUnitIds.length > 5) {
+				lines.push(`- ... and ${excludedAdUnitIds.length - 5} more`);
+			}
+			lines.push("");
 		}
 
 		if (audienceSegmentIds && audienceSegmentIds.length > 0) {
-			forecastData.targeting.audienceSegments = audienceSegmentIds;
+			lines.push("### Audience Segments");
+			audienceSegmentIds.forEach((id) => {
+				lines.push(`- Segment \`${id}\``);
+			});
+			lines.push("");
 		}
 
 		if (customTargeting && customTargeting.length > 0) {
-			forecastData.targeting.customTargeting = customTargeting;
+			lines.push("### Custom Targeting");
+			customTargeting.forEach((ct) => {
+				const operator = ct.operator || "IS";
+				lines.push(
+					`- Key \`${ct.keyId}\` ${operator} [${ct.valueIds.join(", ")}]`,
+				);
+			});
+			lines.push("");
 		}
 
-		if (geoTargeting?.targetedLocationIds?.length || geoTargeting?.excludedLocationIds?.length) {
-			forecastData.targeting.geo = {
-				targeted: geoTargeting.targetedLocationIds || [],
-				excluded: geoTargeting.excludedLocationIds || []
-			};
+		if (geoTargeting?.targetedLocationIds?.length) {
+			lines.push("### Geographic Targeting");
+			lines.push(
+				`- Targeted locations: ${geoTargeting.targetedLocationIds.length} locations`,
+			);
+			if (geoTargeting.excludedLocationIds?.length) {
+				lines.push(
+					`- Excluded locations: ${geoTargeting.excludedLocationIds.length} locations`,
+				);
+			}
+			lines.push("");
 		}
 
 		if (targetedPlacementIds && targetedPlacementIds.length > 0) {
-			forecastData.targeting.placements = targetedPlacementIds;
+			lines.push("### Placement Targeting");
+			targetedPlacementIds.forEach((id) => {
+				lines.push(`- Placement \`${id}\``);
+			});
+			lines.push("");
 		}
 
 		if (frequencyCapMaxImpressions) {
-			forecastData.targeting.frequencyCap = {
-				maxImpressions: frequencyCapMaxImpressions,
-				timeUnit: frequencyCapTimeUnit || "WEEK"
-			};
+			lines.push("### Frequency Capping");
+			lines.push(
+				`- **Max impressions:** ${frequencyCapMaxImpressions} per ${frequencyCapTimeUnit?.toLowerCase() || "week"}`,
+			);
+			lines.push("");
 		}
 
-		// Calculate goal achievement
+		// Forecast results
+		lines.push("## Forecast Results");
+		lines.push("");
+
+		lines.push("| Metric | Value |");
+		lines.push("|--------|--------|");
+		lines.push(`| **Available Units** | ${availableUnits.toLocaleString()} |`);
+		lines.push(`| **Matched Units** | ${matchedUnits.toLocaleString()} |`);
+		lines.push(`| **Possible Units** | ${possibleUnits.toLocaleString()} |`);
+		lines.push(`| **Delivered Units** | ${deliveredUnits.toLocaleString()} |`);
+		lines.push(`| **Reserved Units** | ${reservedUnits.toLocaleString()} |`);
+		lines.push("");
+
+		// Goal achievement
 		if (goalQuantity) {
 			const percentageAvailable = (availableUnits / goalQuantity) * 100;
-			forecastData.goalAchievement = {
-				percentage: Math.round(percentageAvailable),
-				status: percentageAvailable >= 95 ? 'achievable' : 
-				        percentageAvailable >= 75 ? 'partially_achievable' : 
-				        'difficult',
-				canFulfill: percentageAvailable >= 100
-			};
+			lines.push("### Goal Achievement");
+			lines.push(
+				`**${Math.round(percentageAvailable)}%** of goal can be fulfilled`,
+			);
+			if (percentageAvailable >= 95) {
+				lines.push("✅ **Goal can be achieved**");
+			} else if (percentageAvailable >= 75) {
+				lines.push("⚠️ **Goal partially achievable**");
+			} else {
+				lines.push("❌ **Goal difficult to achieve**");
+			}
+			lines.push("");
 		}
 
-		// Build summary
-		let summary = '';
+		// Contending line items
+		if (contendingLineItems.length > 0) {
+			lines.push("### Contending Line Items");
+			lines.push(`*Found ${contendingLineItems.length} competing campaigns*`);
+			lines.push("");
+			lines.push("| Line Item | Priority | Contending Impressions |");
+			lines.push("|-----------|----------|----------------------|");
+			contendingLineItems.slice(0, 5).forEach((item) => {
+				const name = item.lineItemName || `Line Item ${item.lineItemId}`;
+				const priority = item.priority || "N/A";
+				lines.push(
+					`| **${name}** | ${priority} | ${item.contendingImpressions.toLocaleString()} |`,
+				);
+			});
+			if (contendingLineItems.length > 5) {
+				lines.push(`| ... | ... | *+${contendingLineItems.length - 5} more* |`);
+			}
+			lines.push("");
+		}
+
+		// Targeting criteria breakdown
+		if (targetingCriteriaBreakdown.length > 0) {
+			lines.push("### Targeting Breakdown");
+			lines.push("");
+			lines.push("| Criterion | Dimension | Available | Matched |");
+			lines.push("|-----------|-----------|-----------|---------|");
+			targetingCriteriaBreakdown.forEach((breakdown) => {
+				lines.push(
+					`| **${breakdown.targetingCriterion}** | ${breakdown.targetingDimension} | ${breakdown.availableUnits.toLocaleString()} | ${breakdown.matchedUnits.toLocaleString()} |`,
+				);
+			});
+			lines.push("");
+		}
+
+		// Summary
+		lines.push("---");
+		lines.push("");
+		lines.push("**Summary:** ");
 		if (goalQuantity) {
 			const percentageAvailable = (availableUnits / goalQuantity) * 100;
-			summary = `GAM can deliver ${availableUnits.toLocaleString()} impressions (${Math.round(percentageAvailable)}% of ${goalQuantity.toLocaleString()} goal) for the specified targeting and period.`;
+			lines.push(
+				`GAM can deliver ${availableUnits.toLocaleString()} impressions (${Math.round(percentageAvailable)}% of ${goalQuantity.toLocaleString()} goal) for the specified targeting and period.`,
+			);
 		} else {
-			summary = `GAM has ${availableUnits.toLocaleString()} available impressions for the specified targeting and period.`;
+			lines.push(
+				`GAM has ${availableUnits.toLocaleString()} available impressions for the specified targeting and period.`,
+			);
 		}
 
-		// Return JSON response
-		const metadata = {
-			dateRange: `${startDate} to ${endDate}`,
-			sizesCount: sizes.length,
-			targetedAdUnitsCount: effectiveTargetedAdUnitIds.length,
-			excludedAdUnitsCount: excludedAdUnitIds?.length || 0,
-			contendingLineItemsCount: contendingLineItems.length
-		};
-
-		return JSON.stringify(
-			createToolResponse(
-				"availabilityForecast",
-				forecastData,
-				metadata,
-				{ summary }
-			),
-			null,
-			2
-		);
+		return lines.join("\n");
 	} catch (error) {
 		console.error("[availabilityForecast] ERROR in tool execution:", error);
 		const errorMessage =
 			(error as Error)?.message ||
 			(typeof error === "string" ? error : "Failed to fetch forecast");
 
-		return JSON.stringify(
-			createErrorResponse(
-				"availabilityForecast",
-				errorMessage,
-				{
-					startDate: params.startDate,
-					endDate: params.endDate,
-					sizes: params.sizes
-				}
-			),
-			null,
-			2
-		);
+		const lines: string[] = [];
+		lines.push("# Availability Forecast Error");
+		lines.push("");
+		lines.push(`**Error:** ${errorMessage}`);
+		lines.push("");
+		lines.push("Please check the parameters and try again. Common issues:");
+		lines.push("- Invalid date format (use YYYY-MM-DD)");
+		lines.push("- Missing or invalid ad unit IDs");
+		lines.push("- Google Ad Manager authentication issues");
+		lines.push("- Network connectivity problems");
+
+		return lines.join("\n");
 	}
 };
 
-// Export the tool schema for MCP (unchanged)
+// Export the tool schema for MCP
 export const availabilityForecastTool = {
 	name: "availabilityForecast",
 	description:

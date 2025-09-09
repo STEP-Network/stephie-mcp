@@ -2,6 +2,7 @@ import { createMcpHandler } from "mcp-handler";
 import { z } from "zod";
 import { TOOL_DEFINITIONS } from "../lib/mcp/toolDefinitions.js";
 import { availabilityForecast } from "../lib/tools/availabilityForecast.js";
+import { wrapToolWithJSON } from "../lib/tools/convert-all-to-json.js";
 import { createOKR } from "../lib/tools/business/createOKR.js";
 import { getAllAdPrices } from "../lib/tools/business/getAllAdPrices.js";
 import { getAllFormats } from "../lib/tools/business/getAllFormats.js";
@@ -238,8 +239,8 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getAllPublishers"),
 		buildZodSchema("getAllPublishers"),
 		async () => {
-			const result = await getAllPublishers();
-			return { content: [{ type: "text", text: String(result) }] };
+			const result = await wrapToolWithJSON("getAllPublishers", getAllPublishers);
+			return { content: [{ type: "text", text: result }] };
 		},
 	);
 
@@ -417,8 +418,8 @@ const handler = createMcpHandler((server) => {
 				console.error(`[server.ts] availabilityForecast SUCCESS (${requestId}) in ${elapsed}ms`);
 				activeRequests.delete(requestId);
 				
-				const text = typeof result === "string" ? result : JSON.stringify(result, null, 2);
-				return { content: [{ type: "text", text }] };
+				// Result is already a JSON string from the tool
+				return { content: [{ type: "text", text: result }] };
 			} catch (error) {
 				const elapsed = Date.now() - activeRequests.get(requestId)!.startTime;
 				console.error(`[server.ts] availabilityForecast ERROR (${requestId}) after ${elapsed}ms:`, error);
