@@ -1,13 +1,47 @@
 import { mondayApi } from "../../monday/client.js";
 
+// Enum mappings
+const statusMapping: Record<string, number> = {
+    "In Review": 0,
+    "Done": 1,
+    "Rejected": 2,
+    "Planned": 3,
+    "In Progress": 4,
+    "Missing Status": 5,
+    "Waiting On Others": 6,
+    "New": 7,
+    "On Hold": 8
+};
+
+const typeMapping: Record<string, number> = {
+    "Support": 1,
+    "Maintenance": 3,
+    "Development": 4,
+    "Not Labelled": 5,
+    "Bugfix": 6,
+    "Documentation": 7,
+    "Meeting": 12,
+    "Test": 13
+};
+
+const priorityMapping: Record<string, number> = {
+    "Medium": 0,
+    "Minimal": 1,
+    "Low": 2,
+    "Critical": 3,
+    "High": 4,
+    "Not Prioritized": 5,
+    "Unknown": 6
+};
+
 interface TaskUpdateParams {
     itemId: string;
     name?: string;
     keyResultId?: string;
     stephieFeatureId?: string;
-    status?: number;
-    type?: number;
-    priority?: number;
+    status?: string;
+    type?: string;
+    priority?: string;
     dueDate?: string;
     followUpDate?: string;
     createdDate?: string;
@@ -82,16 +116,16 @@ export async function updateTasksTechIntelligence(params: BatchUpdateParams) {
             columnValues.name = updates.name;
         }
 
-        if (updates.status !== undefined) {
-            columnValues.status_19__1 = { index: updates.status };
+        if (updates.status && updates.status in statusMapping) {
+            columnValues.status_19__1 = { index: statusMapping[updates.status] };
         }
 
-        if (updates.type !== undefined) {
-            columnValues.type_1__1 = { index: updates.type };
+        if (updates.type && updates.type in typeMapping) {
+            columnValues.type_1__1 = { index: typeMapping[updates.type] };
         }
 
-        if (updates.priority !== undefined) {
-            columnValues.priority_1__1 = { index: updates.priority };
+        if (updates.priority && updates.priority in priorityMapping) {
+            columnValues.priority_1__1 = { index: priorityMapping[updates.priority] };
         }
 
         if (updates.dueDate !== undefined) {

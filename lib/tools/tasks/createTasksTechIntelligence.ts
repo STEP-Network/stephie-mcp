@@ -5,13 +5,47 @@ import {
 } from "../../monday/client.js";
 import { createSuccessResponse } from "../json-output.js";
 
+// Enum mappings
+const statusMapping: Record<string, number> = {
+	"In Review": 0,
+	"Done": 1,
+	"Rejected": 2,
+	"Planned": 3,
+	"In Progress": 4,
+	"Missing Status": 5,
+	"Waiting On Others": 6,
+	"New": 7,
+	"On Hold": 8
+};
+
+const typeMapping: Record<string, number> = {
+	"Support": 1,
+	"Maintenance": 3,
+	"Development": 4,
+	"Not Labelled": 5,
+	"Bugfix": 6,
+	"Documentation": 7,
+	"Meeting": 12,
+	"Test": 13
+};
+
+const priorityMapping: Record<string, number> = {
+	"Medium": 0,
+	"Minimal": 1,
+	"Low": 2,
+	"Critical": 3,
+	"High": 4,
+	"Not Prioritized": 5,
+	"Unknown": 6
+};
+
 interface TaskParams {
 	name: string;
 	keyResultId?: string;
 	stephieFeatureId?: string;
-	status?: number;
-	type: number;
-	priority: number;
+	status?: string;
+	type: string;
+	priority: string;
 	dueDate?: string;
 	followUpDate?: string;
 }
@@ -51,30 +85,40 @@ export async function createTasksTechIntelligence(params: CreateTasksParams) {
 			throw new Error("name is required for each task");
 		}
 
-		if (task.type === undefined) {
+		if (!task.type) {
 			console.log('[createTasksTechIntelligence] Error: Missing type for task:', task.name);
 			throw new Error("type is required for each task");
 		}
 
-		if (task.priority === undefined) {
+		if (!(task.type in typeMapping)) {
+			console.log('[createTasksTechIntelligence] Error: Invalid type for task:', task.name, 'Got:', task.type);
+			throw new Error(`Invalid type: ${task.type}. Valid types: ${Object.keys(typeMapping).join(', ')}`);
+		}
+
+		if (!task.priority) {
 			console.log('[createTasksTechIntelligence] Error: Missing priority for task:', task.name);
 			throw new Error("priority is required for each task");
+		}
+
+		if (!(task.priority in priorityMapping)) {
+			console.log('[createTasksTechIntelligence] Error: Invalid priority for task:', task.name, 'Got:', task.priority);
+			throw new Error(`Invalid priority: ${task.priority}. Valid priorities: ${Object.keys(priorityMapping).join(', ')}`);
 		}
 
 		console.log('[createTasksTechIntelligence] Task validation passed for:', task.name);
 
 		const columnValues: Record<string, unknown> = {};
 
-		if (task.status !== undefined) {
-			columnValues.status_19__1 = { index: task.status };
+		if (task.status && task.status in statusMapping) {
+			columnValues.status_19__1 = { index: statusMapping[task.status] };
 		}
 
-		if (task.type !== undefined) {
-			columnValues.type_1__1 = { index: task.type };
+		if (task.type && task.type in typeMapping) {
+			columnValues.type_1__1 = { index: typeMapping[task.type] };
 		}
 
-		if (task.priority !== undefined) {
-			columnValues.priority_1__1 = { index: task.priority };
+		if (task.priority && task.priority in priorityMapping) {
+			columnValues.priority_1__1 = { index: priorityMapping[task.priority] };
 		}
 
 		if (task.dueDate !== undefined) {

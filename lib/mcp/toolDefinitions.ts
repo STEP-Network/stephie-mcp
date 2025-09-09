@@ -865,20 +865,50 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 									"Link to STEPhie feature item ID (use getStephieFeatures tool to find IDs)",
 							},
 							status: {
-								type: "number",
+								type: "string",
+								enum: [
+									"In Review",
+									"Done", 
+									"Rejected",
+									"Planned",
+									"In Progress",
+									"Missing Status",
+									"Waiting On Others",
+									"New",
+									"On Hold"
+								],
 								description:
-									"Status index: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold",
+									"Status name (will be converted to index automatically)",
 							},
 							type: {
-								type: "number",
+								type: "string",
+								enum: [
+									"Support",
+									"Maintenance",
+									"Development",
+									"Not Labelled",
+									"Bugfix",
+									"Documentation",
+									"Meeting",
+									"Test"
+								],
 								description:
-									"Required parameter - Type index: 1=Support, 3=Maintenance, 4=Development, 5=Not Labelled, 6=Bugfix, 7=Documentation, 12=Meeting, 13=Test",
+									"Required parameter - Type name (will be converted to index automatically)",
 								required: true,
 							},
 							priority: {
-								type: "number",
+								type: "string",
+								enum: [
+									"Medium",
+									"Minimal",
+									"Low",
+									"Critical",
+									"High",
+									"Not Prioritized",
+									"Unknown"
+								],
 								description:
-									"Required parameter - Priority index: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown",
+									"Required parameter - Priority name (will be converted to index automatically)",
 								required: true,
 							},
 							dueDate: {
@@ -926,19 +956,49 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 									"Link to STEPhie feature item ID (use getStephieFeatures tool to find IDs)",
 							},
 							status: {
-								type: "number",
+								type: "string",
+								enum: [
+									"In Review",
+									"Done", 
+									"Rejected",
+									"Planned",
+									"In Progress",
+									"Missing Status",
+									"Waiting On Others",
+									"New",
+									"On Hold"
+								],
 								description:
-									"Status index: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold",
+									"Status name (will be converted to index automatically)",
 							},
 							type: {
-								type: "number",
+								type: "string",
+								enum: [
+									"Support",
+									"Maintenance",
+									"Development",
+									"Not Labelled",
+									"Bugfix",
+									"Documentation",
+									"Meeting",
+									"Test"
+								],
 								description:
-									"Type index: 1=Support, 3=Maintenance, 4=Development, 5=Not Labelled, 6=Bugfix, 7=Documentation, 12=Meeting, 13=Test",
+									"Type name (will be converted to index automatically)",
 							},
 							priority: {
-								type: "number",
+								type: "string",
+								enum: [
+									"Medium",
+									"Minimal",
+									"Low",
+									"Critical",
+									"High",
+									"Not Prioritized",
+									"Unknown"
+								],
 								description:
-									"Priority index: 0=Medium, 1=Minimal, 2=Low, 3=Critical, 4=High, 5=Not Prioritized, 6=Unknown",
+									"Priority name (will be converted to index automatically)",
 							},
 							dueDate: {
 								type: "string",
