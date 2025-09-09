@@ -82,6 +82,11 @@ const buildZodSchema = (name: string): Record<string, any> => {
 	const tool = TOOL_DEFINITIONS.find((t) => t.name === name);
 	if (!tool) return {};
 	
+	// Handle tools with no parameters
+	if (!tool.inputSchema.properties || Object.keys(tool.inputSchema.properties).length === 0) {
+		return {};
+	}
+	
 	const schema: Record<string, any> = {};
 	
 	for (const [key, prop] of Object.entries(tool.inputSchema.properties)) {
@@ -118,8 +123,11 @@ const buildZodSchema = (name: string): Record<string, any> => {
 									: z.string();
 							} else if (objProp.type === "array") {
 								objSchema[objKey] = z.array(z.string());
+							} else if (!objProp.type) {
+								// Handle missing type (defaults to any)
+								objSchema[objKey] = z.any();
 							}
-							if (objProp.description) {
+							if (objProp.description && objSchema[objKey]) {
 								objSchema[objKey] = objSchema[objKey].describe(objProp.description);
 							}
 						}
@@ -138,6 +146,9 @@ const buildZodSchema = (name: string): Record<string, any> => {
 						objSchema[objKey] = z.number();
 					} else if (objProp.type === "array") {
 						objSchema[objKey] = z.array(z.string());
+					} else if (!objProp.type) {
+						// Handle missing type (defaults to any)
+						objSchema[objKey] = z.any();
 					}
 					// Make nested properties optional by default
 					if (objSchema[objKey]) {
