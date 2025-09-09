@@ -375,19 +375,19 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 	{
 		name: "availabilityForecast",
 		description:
-			"Get inventory availability forecast from Google Ad Manager SOAP API (v202502). Provides impression availability, contending line items, and optimization suggestions. Supports comprehensive targeting options.",
+			"Get availability forecast from Google Ad Manager. Returns impression availability for specified ad units, targeting, and date range. If no ad units are specified, defaults to ad unit ID 21808880960.",
 		inputSchema: {
 			type: "object",
 			properties: {
 				startDate: {
 					type: "string",
 					description:
-						'Campaign start date (YYYY-MM-DD) or "now" for immediate start',
+						'Start date in YYYY-MM-DD format or "now" for immediate start',
 					required: true,
 				},
 				endDate: {
 					type: "string",
-					description: "Campaign end date (YYYY-MM-DD)",
+					description: "End date in YYYY-MM-DD format",
 					required: true,
 				},
 				sizes: {
@@ -397,99 +397,85 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 						items: { type: "number" },
 					},
 					description:
-						"Ad sizes as [width, height] arrays (e.g., [[300, 250], [728, 90]])",
+						"Array of ad sizes as [width, height] pairs, e.g. [[300,250], [728,90]]",
 					required: true,
 				},
-				adUnitIds: {
+				goalQuantity: {
+					type: "number",
+					description: "Target number of impressions. Leave null for maximum available",
+				},
+				targetedAdUnitIds: {
+					type: "array",
+					items: { type: "number" },
+					description:
+						"Array of ad unit IDs to target (from findPublisherAdUnits). Defaults to [21808880960] if not provided",
+				},
+				excludedAdUnitIds: {
+					type: "array",
+					items: { type: "number" },
+					description: "Array of ad unit IDs to exclude from forecast",
+				},
+				audienceSegmentIds: {
 					type: "array",
 					items: { type: "string" },
-					description:
-						"GAM ad unit IDs to target (get from findPublisherAdUnits)",
-				},
-				excludeAdUnitDescendants: {
-					type: "boolean",
-					description: "Exclude child ad units (default: false)",
-					default: false,
-				},
-				geoTargeting: {
-					type: "object",
-					properties: {
-						include: {
-							type: "array",
-							items: { type: "string" },
-							description: "Location IDs to include",
-						},
-						exclude: {
-							type: "array",
-							items: { type: "string" },
-							description: "Location IDs to exclude",
-						},
-					},
-					description: "Geographic targeting criteria",
+					description: "Array of audience segment IDs for demographic targeting",
 				},
 				customTargeting: {
 					type: "array",
 					items: {
 						type: "object",
 						properties: {
-							keyId: { type: "string" },
+							keyId: { type: "string", description: "Custom targeting key ID" },
 							valueIds: {
 								type: "array",
 								items: { type: "string" },
+								description: "Array of value IDs for the key",
 							},
 							operator: {
 								type: "string",
 								enum: ["IS", "IS_NOT"],
+								description: "Targeting operator",
 							},
 						},
 					},
-					description: "Custom key-value targeting",
+					description: "Array of custom targeting key-value pairs",
 				},
-				audienceSegmentIds: {
-					type: "array",
-					items: { type: "string" },
-					description: "Audience segment IDs for targeting",
+				frequencyCapMaxImpressions: {
+					type: "number",
+					description: "Maximum impressions per user for frequency capping",
 				},
-				placementIds: {
-					type: "array",
-					items: { type: "string" },
-					description: "Placement IDs for content vertical targeting",
+				frequencyCapTimeUnit: {
+					type: "string",
+					enum: [
+						"MINUTE",
+						"HOUR",
+						"DAY",
+						"WEEK",
+						"MONTH",
+						"LIFETIME",
+					],
+					description: "Time unit for frequency capping (defaults to WEEK)",
 				},
-				frequencyCap: {
+				geoTargeting: {
 					type: "object",
 					properties: {
-						maxImpressions: { type: "number" },
-						numTimeUnits: { type: "number" },
-						timeUnit: {
-							type: "string",
-							enum: [
-								"MINUTE",
-								"HOUR",
-								"DAY",
-								"WEEK",
-								"MONTH",
-								"LIFETIME",
-								"POD",
-								"STREAM",
-								"UNKNOWN",
-							],
+						targetedLocationIds: {
+							type: "array",
+							items: { type: "string" },
+							description: "Array of location IDs to target",
+						},
+						excludedLocationIds: {
+							type: "array",
+							items: { type: "string" },
+							description: "Array of location IDs to exclude",
 						},
 					},
-					description: "Frequency capping settings",
+					description: "Geographic targeting configuration",
 				},
-				goalQuantity: {
-					type: "number",
-					description: "Desired number of impressions",
-				},
-				includeContendingLineItems: {
-					type: "boolean",
-					description: "Include analysis of competing line items",
-					default: false,
-				},
-				includeTargetingCriteriaBreakdown: {
-					type: "boolean",
-					description: "Include breakdown by targeting criteria",
-					default: false,
+				targetedPlacementIds: {
+					type: "array",
+					items: { type: "string" },
+					description: "Array of placement IDs to target (from getAllPlacements)",
 				},
 			},
 			required: ["startDate", "endDate", "sizes"],

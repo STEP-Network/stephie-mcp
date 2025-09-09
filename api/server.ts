@@ -287,7 +287,7 @@ const handler = createMcpHandler((server) => {
 			endDate: z.string().describe("End date in YYYY-MM-DD format"),
 			sizes: z.array(z.array(z.number())).describe("Array of ad sizes as [width, height] pairs, e.g. [[300,250], [728,90]]"),
 			goalQuantity: z.number().nullable().optional().describe("Target number of impressions. Leave null for maximum available"),
-			targetedAdUnitIds: z.array(z.number()).nullable().optional().describe("Array of ad unit IDs to target (from findPublisherAdUnits). Defaults to [21808880960] if not provided"),
+			targetedAdUnitIds: z.array(z.number()).nullable().optional().describe("Array of ad unit IDs to target (from findPublisherAdUnits). Not necessary if using RON placement."),
 			excludedAdUnitIds: z.array(z.number()).nullable().optional().describe("Array of ad unit IDs to exclude from forecast"),
 			audienceSegmentIds: z.array(z.string()).nullable().optional().describe("Array of audience segment IDs for demographic targeting"),
 			customTargeting: z
