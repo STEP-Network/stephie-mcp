@@ -671,7 +671,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 	{
 		name: "getTasksTechIntelligence",
 		description:
-			"Get tasks from Tech & Intelligence Tasks board (team members: Nate). Progress on technical and data projects such as STEPhie, make.com and monday.com developments.",
+			"Get tasks from Tech & Intelligence Tasks board (team members: Nate). Progress on technical and data projects such as STEPhie, make.com and monday.com developments. Carefully set the proper filters/parameters to find relevant tasks based on user's intent.",
 		inputSchema: {
 			type: "object",
 			properties: {
