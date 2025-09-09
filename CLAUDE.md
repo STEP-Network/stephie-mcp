@@ -27,10 +27,21 @@
 ### Adding/Modifying Tools
 
 1. **Implementation**: `/lib/tools/[category]/[toolName].ts`
-2. **Definition**: Add to `/lib/mcp/toolDefinitions.ts`
+2. **Definition**: Add to `/lib/mcp/toolDefinitions.ts` (with ALL parameter descriptions)
 3. **Registration**: BOTH files:
-   - `api/server.ts` (Vercel deployment) - use `getToolDescription(toolName)`
-   - `mcp-server.ts` (local MCP)
+   - `api/server.ts` (Vercel) - use `getToolDescription()` and `buildZodSchema()`
+   - `mcp-server.ts` (local MCP) - add to toolImplementations map
+
+**CRITICAL**: Parameter descriptions go ONLY in toolDefinitions.ts!
+```typescript
+// In server.ts - NO manual schema definitions!
+server.tool(
+  'toolName',
+  getToolDescription('toolName'),  // Gets description
+  buildZodSchema('toolName'),      // Builds full Zod schema with descriptions
+  async (input) => { ... }
+);
+```
 
 ### Board IDs (Centralized)
 

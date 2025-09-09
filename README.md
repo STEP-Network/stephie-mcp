@@ -239,29 +239,66 @@ pnpm mcp:build
 
 ### Adding New Tools Manually
 
-⚠️ **IMPORTANT**: When adding a new tool, you MUST update THREE places:
+⚠️ **IMPORTANT**: When adding a new tool, you MUST update FOUR places:
 
 1. **Create tool implementation**: `/lib/tools/[category]/[toolName].ts`
-2. **Add to toolDefinitions**: `/lib/mcp/toolDefinitions.ts`
-3. **Register in MCP server**: 
-   - Import in `mcp-server.ts`
-   - Add to `toolImplementations` map
+2. **Add to toolDefinitions**: `/lib/mcp/toolDefinitions.ts` (with full parameter descriptions)
+3. **Register in BOTH servers**:
+   - `api/server.ts` (Vercel) - uses `buildZodSchema()` helper
+   - `mcp-server.ts` (local MCP) - add to `toolImplementations` map
 
-Example:
+#### Tool Definition Pattern
+
 ```typescript
 // 1. Create: lib/tools/example/getExample.ts
-export async function getExample(params: any) { ... }
-
-// 2. Add to: lib/mcp/toolDefinitions.ts
-{
-  name: 'getExample',
-  description: 'Get example data',
-  inputSchema: { ... }
+export async function getExample(params: { search?: string; limit?: number }) { 
+  // Implementation
 }
 
-// 3. Register in: mcp-server.ts
+// 2. Add to: lib/mcp/toolDefinitions.ts (SINGLE SOURCE OF TRUTH)
+{
+  name: 'getExample',
+  description: 'Get example data from the system',
+  inputSchema: {
+    type: 'object',
+    properties: {
+      search: { 
+        type: 'string', 
+        description: 'Search term to filter results'  // Descriptions here!
+      },
+      limit: { 
+        type: 'number', 
+        description: 'Maximum results (default: 10)',
+        default: 10
+      }
+    }
+  }
+}
+
+// 3. Register in: api/server.ts (NO REDUNDANT DESCRIPTIONS)
+server.tool(
+  'getExample',
+  getToolDescription('getExample'),        // Gets description from toolDefinitions
+  buildZodSchema('getExample'),            // Builds Zod schema from toolDefinitions
+  async (input) => {
+    const result = await getExample(input);
+    return { content: [{ type: 'text', text: result }] };
+  }
+);
+
+// 4. Register in: mcp-server.ts
 import { getExample } from './lib/tools/example/getExample.js';
-// ...
+// Add to toolImplementations map
+```
+
+#### Parameter Description Management
+
+The `buildZodSchema()` helper automatically:
+- Reads parameter definitions from `toolDefinitions.ts`
+- Builds proper Zod validation schemas
+- Includes all descriptions, defaults, and enums
+- Handles nested objects and arrays
+- **Eliminates redundancy** - maintain descriptions in ONE place only!
 const toolImplementations = {
   // ...
   getExample: (args) => getExample(args),
