@@ -675,6 +675,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 		inputSchema: {
 			type: "object",
 			properties: {
+				search: {
+					type: "string",
+					description: "Filter tasks by name - searches for tasks containing this text anywhere in the task name (case-insensitive partial match). For example: 'Test' will find tasks like 'Test Safari fix', 'Testing new feature', etc.",
+				},
 				limit: { type: "number", default: 10 },
 				keyResultId: {
 					type: "string",
@@ -685,10 +689,6 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					type: "string",
 					description:
 						"Filter by linked STEPhie feature item ID (use getStephieFeatures tool to find IDs)",
-				},
-				search: {
-					type: "string",
-					description: "Filter tasks by name - searches for tasks containing this text anywhere in the task name (case-insensitive partial match). For example: 'Test' will find tasks like 'Test Safari fix', 'Testing new feature', etc.",
 				},
 				status: {
 					type: "array",
@@ -838,7 +838,6 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					description: "Operator for done date comparison",
 				},
 			},
-			required: [],
 		},
 	},
 
