@@ -1,7 +1,6 @@
 import { createMcpHandler } from "mcp-handler";
 import { z } from "zod";
 import { TOOL_DEFINITIONS } from "../lib/mcp/toolDefinitions.js";
-import { withSSEKeepAlive, withMissingMethodHandlers } from "./sse-handler.js";
 import { availabilityForecast } from "../lib/tools/availabilityForecast.js";
 // JSON conversion now handled directly in tools
 import { createOKR } from "../lib/tools/business/createOKR.js";
@@ -247,29 +246,6 @@ const activeRequests = new Map<string, { tool: string; startTime: number }>();
 
 // Create the MCP handler with all tools
 const handler = createMcpHandler((server) => {
-	// Add support for missing methods that Claude Desktop expects
-	// These are empty implementations as we don't use them
-	(server as any).setRequestHandler?.({
-		method: 'prompts/list',
-		handler: async () => ({ prompts: [] })
-	});
-	
-	(server as any).setRequestHandler?.({
-		method: 'resources/list', 
-		handler: async () => ({ resources: [] })
-	});
-	
-	(server as any).setRequestHandler?.({
-		method: 'completion/complete',
-		handler: async () => ({
-			completion: {
-				values: [],
-				hasMore: false,
-				total: 0
-			}
-		})
-	});
-
 	// Publisher tools
 	server.tool(
 		"getAllPublishers",
@@ -988,8 +964,6 @@ const handler = createMcpHandler((server) => {
 	);
 });
 
-// Wrap handler with SSE keepalive and missing method handlers
-const enhancedHandler = withMissingMethodHandlers(withSSEKeepAlive(handler));
-
-// Export enhanced handler for Vercel Edge Runtime
-export { enhancedHandler as GET, enhancedHandler as POST };
+// Export handler directly for Vercel Edge Runtime
+// The wrappers were causing issues with mcp-remote
+export { handler as GET, handler as POST };
