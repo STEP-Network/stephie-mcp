@@ -18,10 +18,6 @@
 		{
 			"source": "/message",
 			"destination": "/api/server"
-		},
-		{
-			"source": "/",
-			"destination": "/api/server"
 		}
 	],
 	"headers": [
