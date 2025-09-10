@@ -13,7 +13,7 @@ export interface ToolDefinition {
 		properties: Record<
 			string,
 			{
-				type: string;
+				type: string | string[];
 				description?: string;
 				enum?: string[] | number[] | boolean[];
 				items?: unknown;
@@ -687,7 +687,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 						"Filter by linked STEPhie feature item ID (use getStephieFeatures tool to find IDs)",
 				},
 				taskName: {
-					type: "string",
+					type: ["string", "null"],
 					description: "Filter tasks by name - searches for tasks containing this text anywhere in the task name (case-insensitive partial match). For example: 'Test' will find tasks like 'Test Safari fix', 'Testing new feature', etc.",
 				},
 				status: {
