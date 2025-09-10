@@ -10,7 +10,8 @@ export async function getTasksTechIntelligence(
 		limit?: number;
 		keyResultId?: string; // Filter by linked key result (use OKR subitems tool to find IDs)
 		stephieFeatureId?: string; // Filter by linked STEPhie feature (use getStephieFeatures tool to find IDs)
-		search?: string;
+		search?: boolean | string; // DEPRECATED: For backward compatibility, accepts boolean but ignores it
+		searchQuery?: string; // New parameter for search text
 		status?: string[]; // Status enum array
 		statusOperator?: "any_of" | "not_any_of"; // Status operator
 		type?: string[]; // Type enum array  
@@ -34,6 +35,7 @@ export async function getTasksTechIntelligence(
 		keyResultId,				// Key Result ID (OKR Subitem ID)
 		stephieFeatureId,			// STEPhie Feature ID
 		search,
+		searchQuery,
 		status,
 		statusOperator = "any_of",
 		type,
@@ -117,12 +119,19 @@ export async function getTasksTechIntelligence(
 		});
 	};
 
+	// Handle search parameters - prefer searchQuery over search
+	// If search is a boolean, ignore it (Claude bug workaround)
+	if (typeof search === 'boolean') {
+		console.log('[getTasksTechIntelligence] Warning: Received boolean for search parameter, ignoring. Use searchQuery instead.');
+	}
+	const actualSearchTerm = searchQuery || (typeof search === 'string' ? search : undefined);
+	
 	// Build filters
 	const filters: Array<Record<string, unknown>> = [];
-	if (search) {
+	if (actualSearchTerm) {
 		filters.push({
 			column_id: "name",
-			compare_value: search,
+			compare_value: actualSearchTerm,
 			operator: "contains_text",
 		});
 	}
@@ -291,7 +300,7 @@ export async function getTasksTechIntelligence(
 			filters: {} as Record<string, unknown>
 		};
 
-		if (search) (metadata.filters as Record<string, unknown>).search = search;
+		if (actualSearchTerm) (metadata.filters as Record<string, unknown>).search = actualSearchTerm;
 		if (type) (metadata.filters as Record<string, unknown>).type = type;
 		if (priority) (metadata.filters as Record<string, unknown>).priority = priority;
 		if (status) (metadata.filters as Record<string, unknown>).status = status;

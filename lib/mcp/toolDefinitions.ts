@@ -676,8 +676,12 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			type: "object",
 			properties: {
 				search: {
+					type: "boolean",
+					description: "DEPRECATED: Use searchQuery instead. This parameter is ignored.",
+				},
+				searchQuery: {
 					type: "string",
-					description: "Search term for task names",
+					description: "Text to search for in task names (e.g., 'stephie', 'monday', 'bug')",
 				},
 				limit: { type: "number", default: 10 },
 				keyResultId: {
