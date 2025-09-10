@@ -686,9 +686,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					description:
 						"Filter by linked STEPhie feature item ID (use getStephieFeatures tool to find IDs)",
 				},
-				name: {
+				taskName: {
 					type: "string",
-					description: "Use a string to search tasks by full or partial task names",
+					description: "Filter tasks by name - searches for tasks containing this text anywhere in the task name (case-insensitive partial match). For example: 'Test' will find tasks like 'Test Safari fix', 'Testing new feature', etc.",
 				},
 				status: {
 					type: "array",

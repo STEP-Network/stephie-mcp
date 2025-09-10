@@ -10,7 +10,7 @@ export async function getTasksTechIntelligence(
 		limit?: number;
 		keyResultId?: string; // Filter by linked key result (use OKR subitems tool to find IDs)
 		stephieFeatureId?: string; // Filter by linked STEPhie feature (use getStephieFeatures tool to find IDs)
-		name?: string;
+		taskName?: string;
 		status?: string[]; // Status enum array
 		statusOperator?: "any_of" | "not_any_of"; // Status operator
 		type?: string[]; // Type enum array  
@@ -33,7 +33,7 @@ export async function getTasksTechIntelligence(
 		limit = 10,
 		keyResultId,				// Key Result ID (OKR Subitem ID)
 		stephieFeatureId,			// STEPhie Feature ID
-		name,
+		taskName,
 		status,
 		statusOperator = "any_of",
 		type,
@@ -119,10 +119,10 @@ export async function getTasksTechIntelligence(
 
 	// Build filters
 	const filters: Array<Record<string, unknown>> = [];
-	if (name) {
+	if (taskName) {
 		filters.push({
 			column_id: "name",
-			compare_value: name,
+			compare_value: taskName,
 			operator: "contains_text",
 		});
 	}
@@ -291,7 +291,7 @@ export async function getTasksTechIntelligence(
 			filters: {} as Record<string, unknown>
 		};
 
-		if (name) (metadata.filters as Record<string, unknown>).name = name;
+		if (taskName) (metadata.filters as Record<string, unknown>).taskName = taskName;
 		if (type) (metadata.filters as Record<string, unknown>).type = type;
 		if (priority) (metadata.filters as Record<string, unknown>).priority = priority;
 		if (status) (metadata.filters as Record<string, unknown>).status = status;
