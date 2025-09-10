@@ -1,6 +1,7 @@
 import { createMcpHandler } from "mcp-handler";
 import { z } from "zod";
 import { TOOL_DEFINITIONS } from "../lib/mcp/toolDefinitions.js";
+import { withSSEKeepAlive, withMissingMethodHandlers } from "./sse-handler.js";
 import { availabilityForecast } from "../lib/tools/availabilityForecast.js";
 // JSON conversion now handled directly in tools
 import { createOKR } from "../lib/tools/business/createOKR.js";
@@ -964,5 +965,8 @@ const handler = createMcpHandler((server) => {
 	);
 });
 
-// Export handler for Vercel Edge Runtime
-export { handler as GET, handler as POST };
+// Wrap handler with SSE keepalive and missing method handlers
+const enhancedHandler = withMissingMethodHandlers(withSSEKeepAlive(handler));
+
+// Export enhanced handler for Vercel Edge Runtime
+export { enhancedHandler as GET, enhancedHandler as POST };
