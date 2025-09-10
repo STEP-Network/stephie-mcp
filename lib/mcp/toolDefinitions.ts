@@ -677,7 +677,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			properties: {
 				search: {
 					type: "string",
-					description: "Filter tasks by name - searches for tasks containing this text anywhere in the task name (case-insensitive partial match). For example: 'Test' will find tasks like 'Test Safari fix', 'Testing new feature', etc.",
+					description: "Search term for task names",
 				},
 				limit: { type: "number", default: 10 },
 				keyResultId: {
