@@ -102,27 +102,41 @@ export function withMissingMethodHandlers(handler: Function) {
       
       // Check if this is a request for missing methods
       if (body?.method === "prompts/list") {
-        return new Response(JSON.stringify({
+        const response = new Response(JSON.stringify({
           jsonrpc: "2.0",
           id: body.id,
           result: { prompts: [] }
         }), {
-          headers: { "Content-Type": "application/json" }
+          headers: { 
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET,OPTIONS,POST",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization"
+          }
         });
+        console.log("[MCP] Handled prompts/list request");
+        return response;
       }
       
       if (body?.method === "resources/list") {
-        return new Response(JSON.stringify({
+        const response = new Response(JSON.stringify({
           jsonrpc: "2.0",
           id: body.id,
           result: { resources: [] }
         }), {
-          headers: { "Content-Type": "application/json" }
+          headers: { 
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET,OPTIONS,POST",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization"
+          }
         });
+        console.log("[MCP] Handled resources/list request");
+        return response;
       }
       
       if (body?.method === "completion/complete") {
-        return new Response(JSON.stringify({
+        const response = new Response(JSON.stringify({
           jsonrpc: "2.0",
           id: body.id,
           result: {
@@ -133,11 +147,34 @@ export function withMissingMethodHandlers(handler: Function) {
             }
           }
         }), {
-          headers: { "Content-Type": "application/json" }
+          headers: { 
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET,OPTIONS,POST",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization"
+          }
         });
+        console.log("[MCP] Handled completion/complete request");
+        return response;
       }
-    } catch {
-      // Ignore parsing errors, let original handler process
+
+      // Also handle these methods for SSE
+      if (body?.method === "notifications/list") {
+        const response = new Response(JSON.stringify({
+          jsonrpc: "2.0",
+          id: body.id,
+          result: { notifications: [] }
+        }), {
+          headers: { 
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+          }
+        });
+        return response;
+      }
+    } catch (err) {
+      // Log but don't fail
+      console.log("[MCP] Could not parse request body:", err);
     }
     
     // Pass through to original handler

@@ -247,6 +247,29 @@ const activeRequests = new Map<string, { tool: string; startTime: number }>();
 
 // Create the MCP handler with all tools
 const handler = createMcpHandler((server) => {
+	// Add support for missing methods that Claude Desktop expects
+	// These are empty implementations as we don't use them
+	(server as any).setRequestHandler?.({
+		method: 'prompts/list',
+		handler: async () => ({ prompts: [] })
+	});
+	
+	(server as any).setRequestHandler?.({
+		method: 'resources/list', 
+		handler: async () => ({ resources: [] })
+	});
+	
+	(server as any).setRequestHandler?.({
+		method: 'completion/complete',
+		handler: async () => ({
+			completion: {
+				values: [],
+				hasMore: false,
+				total: 0
+			}
+		})
+	});
+
 	// Publisher tools
 	server.tool(
 		"getAllPublishers",
