@@ -309,7 +309,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			properties: {
 				search: {
 					type: "string",
-					description: "Search term for segment names or descriptions",
+					description: "Optional text search in segment names or descriptions",
 				},
 				limit: {
 					type: "number",
@@ -343,7 +343,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			properties: {
 				search: {
 					type: "string",
-					description: "Search term for location (city, postal code, region)",
+					description: "Required: Search term for location (city, postal code, region)",
 					required: true,
 				},
 				limit: {
@@ -364,7 +364,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			properties: {
 				search: {
 					type: "string",
-					description: "Search term for category names",
+					description: "Optional text search in category names",
 				},
 				limit: {
 					type: "number",
@@ -544,7 +544,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 				},
 				search: {
 					type: "string",
-					description: "Name search",
+					description: "Optional text search in account names",
 				},
 				columnFilters: {
 					type: "array",
@@ -614,7 +614,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					type: "string",
 					description: "Filter by linked leads (use getLeads to find IDs)",
 				},
-				search: { type: "string" },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
 				status: {
 					type: "number",
 					description:
@@ -636,7 +639,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			type: "object",
 			properties: {
 				limit: { type: "number", default: 10 },
-				search: { type: "string" },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
 				status0__1: {
 					type: "number",
 					description:
@@ -654,7 +660,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			type: "object",
 			properties: {
 				limit: { type: "number", default: 10 },
-				search: { type: "string" },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
 				color_mkqnwy18: {
 					type: "number",
 					description:
@@ -676,12 +685,8 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			type: "object",
 			properties: {
 				search: {
-					type: "boolean",
-					description: "DEPRECATED: Use searchQuery instead. This parameter is ignored.",
-				},
-				searchQuery: {
 					type: "string",
-					description: "Text to search for in task names (e.g., 'stephie', 'monday', 'bug')",
+					description: "Optional text search in task names (e.g., 'stephie', 'monday', 'bug')",
 				},
 				limit: { type: "number", default: 10 },
 				keyResultId: {
@@ -1045,7 +1050,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					type: "string",
 					description: "Filter by linked people (use getPeople to find IDs)",
 				},
-				search: { type: "string" },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
 				status: {
 					type: "number",
 					description:
@@ -1072,7 +1080,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			type: "object",
 			properties: {
 				limit: { type: "number", default: 10 },
-				search: { type: "string" },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
 			},
 		},
 	},
@@ -1098,7 +1109,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					description:
 						"Filter by linked contacts (use getContacts to find IDs)",
 				},
-				search: { type: "string" },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
 				status: {
 					type: "number",
 					description:
@@ -1114,7 +1128,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			type: "object",
 			properties: {
 				limit: { type: "number", default: 10 },
-				search: { type: "string" },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
 				status: {
 					type: "number",
 					description: "Status: 0=Under-Ressourced, 1=Active, 2=Inactive",
@@ -1150,7 +1167,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					type: "string",
 					description: "Filter by publisher (use getAllPublishers to find IDs)",
 				},
-				search: { type: "string" },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
 				status: {
 					type: "number",
 					description:
@@ -1177,7 +1197,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					type: "string",
 					description: "Filter by linked account (use getAccounts to find IDs)",
 				},
-				search: { type: "string" },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
 				status: {
 					type: "number",
 					description:
@@ -1203,7 +1226,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					type: "string",
 					description: "Filter by assigned person (use getPeople to find IDs)",
 				},
-				search: { type: "string" },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
 				status: {
 					type: "number",
 					description:
@@ -1230,7 +1256,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					type: "string",
 					description: "Filter by team (use getTeams to find IDs)",
 				},
-				search: { type: "string" },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
 				role: { type: "number", description: "Role index" },
 			},
 		},
@@ -1257,7 +1286,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					type: "string",
 					description: "Filter by assigned person (use getPeople to find IDs)",
 				},
-				search: { type: "string" },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
 				stage: {
 					type: "number",
 					description:
@@ -1293,7 +1325,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					type: "string",
 					description: "Filter by assigned person (use getPeople to find IDs)",
 				},
-				search: { type: "string" },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
 				type: {
 					type: "number",
 					description:
@@ -1315,7 +1350,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			type: "object",
 			properties: {
 				limit: { type: "number", default: 10 },
-				search: { type: "string" },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
 				status: { type: "number", description: "Sales Status index" },
 			},
 		},
@@ -1334,7 +1372,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					type: "string",
 					description: "Filter by assigned person (use getPeople to find IDs)",
 				},
-				search: { type: "string" },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
 				status: {
 					type: "number",
 					description:
@@ -1365,7 +1406,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					type: "string",
 					description: "Filter by assigned person (use getPeople to find IDs)",
 				},
-				search: { type: "string" },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
 				status: {
 					type: "number",
 					description:
@@ -1401,7 +1445,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					type: "string",
 					description: "Filter by assigned person (use getPeople to find IDs)",
 				},
-				search: { type: "string" },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
 				status: {
 					type: "number",
 					description:
@@ -1432,7 +1479,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					type: "string",
 					description: "Filter by assigned person (use getPeople to find IDs)",
 				},
-				search: { type: "string" },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
 				status: {
 					type: "number",
 					description:
@@ -1458,7 +1508,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					type: "string",
 					description: "Filter by assigned person (use getPeople to find IDs)",
 				},
-				search: { type: "string" },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
 				status: {
 					type: "number",
 					description:
@@ -1478,7 +1531,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			type: "object",
 			properties: {
 				limit: { type: "number", default: 10 },
-				search: { type: "string" },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
 				version: { type: "string", description: "Filter by version number" },
 				type: { type: "number", description: "Change Type index" },
 			},
@@ -1496,7 +1552,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					type: "string",
 					description: "Filter by assigned person (use getPeople to find IDs)",
 				},
-				search: { type: "string" },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
 				status: {
 					type: "number",
 					description:
@@ -1522,7 +1581,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					type: "string",
 					description: "Filter by linked feature (use getFeatures to find IDs)",
 				},
-				search: { type: "string" },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
 				status: { type: "number", description: "Test Status index" },
 				result: { type: "number", description: "Test Result index" },
 			},
@@ -1538,7 +1600,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			type: "object",
 			properties: {
 				limit: { type: "number", default: 10 },
-				search: { type: "string" },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
 				type: { type: "number", description: "Partner Type index" },
 				status: { type: "number", description: "Partnership Status index" },
 			},
@@ -1552,7 +1617,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			type: "object",
 			properties: {
 				limit: { type: "number", default: 10 },
-				search: { type: "string" },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
 				quarter: {
 					type: "string",
 					description: 'Filter by quarter (e.g., "Q1 2024")',
@@ -1576,7 +1644,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					description:
 						"Filter by linked budget (use getMarketingBudgets to find IDs)",
 				},
-				search: { type: "string" },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
 				category: { type: "number", description: "Expense Category index" },
 				status: { type: "number", description: "Expense Status index" },
 			},
@@ -1592,7 +1663,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			type: "object",
 			properties: {
 				limit: { type: "number", default: 10 },
-				search: { type: "string" },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
 				type: { type: "number", description: "Process Type index" },
 				status: { type: "number", description: "Process Status index" },
 			},
@@ -1608,7 +1682,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			type: "object",
 			properties: {
 				limit: { type: "number", default: 10 },
-				search: { type: "string" },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
 				category: { type: "number", description: "FAQ Category index" },
 				status: { type: "number", description: "FAQ Status index" },
 			},
@@ -1624,7 +1701,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			type: "object",
 			properties: {
 				limit: { type: "number", default: 10 },
-				search: { type: "string" },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
 				platform: { type: "number", description: "Platform Type index" },
 				status: { type: "number", description: "Publisher Status index" },
 			},

@@ -10,8 +10,7 @@ export async function getTasksTechIntelligence(
 		limit?: number;
 		keyResultId?: string; // Filter by linked key result (use OKR subitems tool to find IDs)
 		stephieFeatureId?: string; // Filter by linked STEPhie feature (use getStephieFeatures tool to find IDs)
-		search?: boolean | string; // DEPRECATED: For backward compatibility, accepts boolean but ignores it
-		searchQuery?: string; // New parameter for search text
+		search?: string; // Text search in task names
 		status?: string[]; // Status enum array
 		statusOperator?: "any_of" | "not_any_of"; // Status operator
 		type?: string[]; // Type enum array  
@@ -35,7 +34,6 @@ export async function getTasksTechIntelligence(
 		keyResultId,				// Key Result ID (OKR Subitem ID)
 		stephieFeatureId,			// STEPhie Feature ID
 		search,
-		searchQuery,
 		status,
 		statusOperator = "any_of",
 		type,
@@ -119,19 +117,12 @@ export async function getTasksTechIntelligence(
 		});
 	};
 
-	// Handle search parameters - prefer searchQuery over search
-	// If search is a boolean, ignore it (Claude bug workaround)
-	if (typeof search === 'boolean') {
-		console.log('[getTasksTechIntelligence] Warning: Received boolean for search parameter, ignoring. Use searchQuery instead.');
-	}
-	const actualSearchTerm = searchQuery || (typeof search === 'string' ? search : undefined);
-	
 	// Build filters
 	const filters: Array<Record<string, unknown>> = [];
-	if (actualSearchTerm) {
+	if (search) {
 		filters.push({
 			column_id: "name",
-			compare_value: actualSearchTerm,
+			compare_value: search,
 			operator: "contains_text",
 		});
 	}
