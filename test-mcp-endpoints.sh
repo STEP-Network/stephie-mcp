@@ -5,9 +5,9 @@ echo "========================="
 
 # Test different possible endpoints
 URLS=(
-  "https://stephie.vercel.app/api/server"
-  "https://stephie.vercel.app/sse"  
-  "https://stephie.vercel.app/message"
+  "https://stephie-mcp.vercel.app/api/server"
+  "https://stephie-mcp.vercel.app/sse"  
+  "https://stephie-mcp.vercel.app/message"
   "https://stephie-mcp.vercel.app/api/server"
   "https://stephie-mcp.vercel.app/sse"
   "https://stephie-mcp.vercel.app/message"

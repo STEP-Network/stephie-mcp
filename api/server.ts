@@ -1,6 +1,7 @@
 import { createMcpHandler } from "mcp-handler";
 import { z } from "zod";
 import { TOOL_DEFINITIONS } from "../lib/mcp/toolDefinitions.js";
+import { RESOURCE_DEFINITIONS } from "../lib/mcp/resources.js";
 import { availabilityForecast } from "../lib/tools/availabilityForecast.js";
 // JSON conversion now handled directly in tools
 import { createOKR } from "../lib/tools/business/createOKR.js";
@@ -246,6 +247,11 @@ const activeRequests = new Map<string, { tool: string; startTime: number }>();
 
 // Create the MCP handler with all tools
 const handler = createMcpHandler((server) => {
+	// Note: mcp-handler doesn't expose the server.resource() method
+	// from the underlying MCP SDK. If it did, we would register resources here.
+	// For now, resources would need to be implemented as a custom handler
+	// or we need to wait for mcp-handler to expose this functionality.
+	
 	// Publisher tools
 	server.tool(
 		"getAllPublishers",
@@ -964,6 +970,215 @@ const handler = createMcpHandler((server) => {
 	);
 });
 
-// Export handler directly for Vercel Edge Runtime
-// The wrappers were causing issues with mcp-remote
-export { handler as GET, handler as POST };
+/**
+ * Wrapper to handle MCP spec-required methods and provide resource support
+ * that mcp-handler doesn't implement.
+ * 
+ * According to the MCP specification:
+ * - Servers MUST implement prompts/list and resources/list
+ * - Resources provide readable context (data), while tools perform actions
+ * 
+ * Since mcp-handler doesn't expose resource registration, we implement it here.
+ */
+const mcpCompliantHandler = async (request: Request): Promise<Response> => {
+	// Only intercept POST requests with JSON content
+	if (request.method === 'POST' && request.headers.get('content-type')?.includes('application/json')) {
+		// Check if this is an SSE request
+		const isSSE = request.url.includes('/sse');
+		
+		// Use request.clone() to peek at the body without consuming it
+		const clonedRequest = request.clone();
+		
+		try {
+			const body = await clonedRequest.json();
+			
+			// Handle prompts/list (no prompts in our server)
+			if (body.method === 'prompts/list') {
+				const response = {
+					jsonrpc: '2.0',
+					id: body.id,
+					result: { prompts: [] }
+				};
+				
+				if (isSSE) {
+					// Format as SSE
+					return new Response(
+						`data: ${JSON.stringify(response)}\n\n`,
+						{
+							status: 200,
+							headers: {
+								'Content-Type': 'text/event-stream',
+								'Cache-Control': 'no-cache',
+								'Connection': 'keep-alive'
+							}
+						}
+					);
+				} else {
+					return new Response(
+						JSON.stringify(response),
+						{
+							status: 200,
+							headers: { 'Content-Type': 'application/json' }
+						}
+					);
+				}
+			}
+			
+			// Handle resources/list - return our available resources
+			if (body.method === 'resources/list') {
+				const resources = RESOURCE_DEFINITIONS.map(r => ({
+					uri: r.uri,
+					name: r.name,
+					description: r.description,
+					mimeType: r.mimeType
+				}));
+				
+				const response = {
+					jsonrpc: '2.0',
+					id: body.id,
+					result: { resources }
+				};
+				
+				if (isSSE) {
+					// Format as SSE
+					return new Response(
+						`data: ${JSON.stringify(response)}\n\n`,
+						{
+							status: 200,
+							headers: {
+								'Content-Type': 'text/event-stream',
+								'Cache-Control': 'no-cache',
+								'Connection': 'keep-alive'
+							}
+						}
+					);
+				} else {
+					return new Response(
+						JSON.stringify(response),
+						{
+							status: 200,
+							headers: { 'Content-Type': 'application/json' }
+						}
+					);
+				}
+			}
+			
+			// Handle resources/read - fetch and return resource content
+			if (body.method === 'resources/read') {
+				const uri = body.params?.uri;
+				const resource = RESOURCE_DEFINITIONS.find(r => r.uri === uri);
+				
+				if (resource) {
+					try {
+						const content = await resource.fetcher();
+						const response = {
+							jsonrpc: '2.0',
+							id: body.id,
+							result: {
+								contents: [{
+									uri: resource.uri,
+									mimeType: resource.mimeType,
+									text: content
+								}]
+							}
+						};
+						
+						if (isSSE) {
+							// Format as SSE
+							return new Response(
+								`data: ${JSON.stringify(response)}\n\n`,
+								{
+									status: 200,
+									headers: {
+										'Content-Type': 'text/event-stream',
+										'Cache-Control': 'no-cache',
+										'Connection': 'keep-alive'
+									}
+								}
+							);
+						} else {
+							return new Response(
+								JSON.stringify(response),
+								{
+									status: 200,
+									headers: { 'Content-Type': 'application/json' }
+								}
+							);
+						}
+					} catch (error) {
+						const errorResponse = {
+							jsonrpc: '2.0',
+							id: body.id,
+							error: {
+								code: -32603,
+								message: `Failed to fetch resource: ${error}`
+							}
+						};
+						
+						if (isSSE) {
+							return new Response(
+								`data: ${JSON.stringify(errorResponse)}\n\n`,
+								{
+									status: 200,
+									headers: {
+										'Content-Type': 'text/event-stream',
+										'Cache-Control': 'no-cache',
+										'Connection': 'keep-alive'
+									}
+								}
+							);
+						} else {
+							return new Response(
+								JSON.stringify(errorResponse),
+								{
+									status: 200,
+									headers: { 'Content-Type': 'application/json' }
+								}
+							);
+						}
+					}
+				} else {
+					const errorResponse = {
+						jsonrpc: '2.0',
+						id: body.id,
+						error: {
+							code: -32602,
+							message: `Resource not found: ${uri}`
+						}
+					};
+					
+					if (isSSE) {
+						return new Response(
+							`data: ${JSON.stringify(errorResponse)}\n\n`,
+							{
+								status: 200,
+								headers: {
+									'Content-Type': 'text/event-stream',
+									'Cache-Control': 'no-cache',
+									'Connection': 'keep-alive'
+								}
+							}
+						);
+					} else {
+						return new Response(
+							JSON.stringify(errorResponse),
+							{
+								status: 200,
+								headers: { 'Content-Type': 'application/json' }
+							}
+						);
+					}
+				}
+			}
+		} catch {
+			// If JSON parsing fails, let the base handler deal with it
+		}
+	}
+	
+	// Pass all other requests to the base mcp-handler
+	return handler(request);
+};
+
+// Export the MCP-compliant handler for Vercel Edge Runtime
+// This follows the same export pattern as vercel-labs/mcp-on-vercel
+export { mcpCompliantHandler as GET, mcpCompliantHandler as POST };

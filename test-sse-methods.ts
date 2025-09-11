@@ -100,7 +100,7 @@ async function testSSE(url: string) {
 }
 
 async function main() {
-  const baseUrl = process.env.VERCEL_URL || 'https://stephie.vercel.app';
+  const baseUrl = process.env.VERCEL_URL || 'https://stephie-mcp.vercel.app';
   const url = baseUrl.startsWith('http') ? baseUrl : `https://${baseUrl}`;
   
   console.log(`Testing MCP server at: ${url}`);

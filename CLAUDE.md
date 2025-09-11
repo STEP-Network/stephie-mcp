@@ -8,6 +8,20 @@
 - **Stack**: TypeScript, MCP SDK, Monday.com GraphQL, GAM SOAP API v202502
 - **Deployment**: Vercel Edge Functions with SSE transport + Local MCP stdio
 
+## Endpoints
+
+### Production Endpoints
+- **SSE (Claude Desktop)**: `https://stephie-mcp.vercel.app/sse`
+- **JSON-RPC**: `https://stephie-mcp.vercel.app/api/server`
+- **Health Check**: `https://stephie-mcp.vercel.app/api/health`
+
+### MCP Methods
+- `tools/list` - Lists all available tools
+- `tools/call` - Executes a tool with parameters
+- `resources/list` - Lists available MCP resources
+- `resources/read` - Reads resource content by URI
+- `prompts/list` - Returns empty array (spec compliance)
+
 ## Architecture
 
 ```folders
