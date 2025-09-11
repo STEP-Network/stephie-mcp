@@ -11,11 +11,13 @@
 ## Endpoints
 
 ### Production Endpoints
+
 - **SSE (Claude Desktop)**: `https://stephie-mcp.vercel.app/sse`
 - **JSON-RPC**: `https://stephie-mcp.vercel.app/api/server`
 - **Health Check**: `https://stephie-mcp.vercel.app/api/health`
 
 ### MCP Methods
+
 - `tools/list` - Lists all available tools
 - `tools/call` - Executes a tool with parameters
 - `resources/list` - Lists available MCP resources
@@ -157,6 +159,8 @@ console.log(result);
 - [Status/Dropdown Mappings](docs/technical/STATUS_DROPDOWN_MAPPINGS.md)
 - [Dynamic Columns Guide](docs/technical/DYNAMIC_COLUMNS_MIGRATION_GUIDE.md)
 - [Deployment Guide](docs/deployment/DEPLOYMENT.md)
+- Project based on MCP package: `https://github.com/modelcontextprotocol/typescript-sdk/tree/main`
+- Sample project: `https://github.com/vercel-labs/mcp-on-vercel`
 
 ## Performance Notes
 

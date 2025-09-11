@@ -6,10 +6,13 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import {
 	CallToolRequestSchema,
 	ListToolsRequestSchema,
+	ListResourcesRequestSchema,
+	ReadResourceRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 
 import { AuthValidator } from "./lib/auth/auth-validator.js";
 import { TOOL_DEFINITIONS } from "./lib/mcp/toolDefinitions.js";
+import { RESOURCE_DEFINITIONS } from "./lib/mcp/resources.js";
 import { availabilityForecast } from "./lib/tools/availabilityForecast.js";
 import { getBoardColumns } from "./lib/tools/debug/getBoardColumns.js";
 import { getItems } from "./lib/tools/debug/getItems.js";
@@ -108,6 +111,7 @@ const server = new Server(
 	{
 		capabilities: {
 			tools: {},
+			resources: {},  // Enable resources capability
 		},
 	},
 );
@@ -300,6 +304,58 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 				},
 			],
 		};
+	}
+});
+
+// Handle list resources request with standard query parameter
+server.setRequestHandler(ListResourcesRequestSchema, async (request) => {
+	const query = request.params?.query;
+	
+	let resources = RESOURCE_DEFINITIONS;
+	
+	// Standard query filtering - search in name, description, and URI
+	if (query && typeof query === 'string') {
+		const searchTerm = query.toLowerCase();
+		resources = resources.filter(r => 
+			r.name.toLowerCase().includes(searchTerm) ||
+			r.description.toLowerCase().includes(searchTerm) ||
+			r.uri.toLowerCase().includes(searchTerm)
+		);
+	}
+	
+	return {
+		resources: resources.map(r => ({
+			uri: r.uri,
+			name: r.name,
+			description: r.description,
+			mimeType: r.mimeType
+		}))
+	};
+});
+
+// Handle read resource request
+server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+	const { uri } = request.params;
+	
+	// Find the resource definition
+	const resource = RESOURCE_DEFINITIONS.find(r => r.uri === uri);
+	if (!resource) {
+		throw new Error(`Resource not found: ${uri}`);
+	}
+	
+	try {
+		// Fetch the resource content
+		const content = await resource.fetcher();
+		
+		return {
+			contents: [{
+				uri: resource.uri,
+				mimeType: resource.mimeType,
+				text: typeof content === 'string' ? content : JSON.stringify(content)
+			}]
+		};
+	} catch (error) {
+		throw new Error(`Failed to fetch resource ${uri}: ${error instanceof Error ? error.message : 'Unknown error'}`);
 	}
 });
 

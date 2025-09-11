@@ -1024,9 +1024,23 @@ const mcpCompliantHandler = async (request: Request): Promise<Response> => {
 				}
 			}
 			
-			// Handle resources/list - return our available resources
+			// Handle resources/list - return our available resources with standard query support
 			if (body.method === 'resources/list') {
-				const resources = RESOURCE_DEFINITIONS.map(r => ({
+				const query = body.params?.query;
+				
+				let resources = RESOURCE_DEFINITIONS;
+				
+				// Standard MCP query filtering - search in name, description, and URI
+				if (query && typeof query === 'string') {
+					const searchTerm = query.toLowerCase();
+					resources = resources.filter(r => 
+						r.name.toLowerCase().includes(searchTerm) ||
+						r.description.toLowerCase().includes(searchTerm) ||
+						r.uri.toLowerCase().includes(searchTerm)
+					);
+				}
+				
+				const filteredResources = resources.map(r => ({
 					uri: r.uri,
 					name: r.name,
 					description: r.description,
@@ -1036,7 +1050,7 @@ const mcpCompliantHandler = async (request: Request): Promise<Response> => {
 				const response = {
 					jsonrpc: '2.0',
 					id: body.id,
-					result: { resources }
+					result: { resources: filteredResources }
 				};
 				
 				if (isSSE) {
