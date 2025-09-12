@@ -291,7 +291,7 @@ export async function getTasksTechIntelligence(
 			filters: {} as Record<string, unknown>
 		};
 
-		if (actualSearchTerm) (metadata.filters as Record<string, unknown>).search = actualSearchTerm;
+		if (search) (metadata.filters as Record<string, unknown>).search = search;
 		if (type) (metadata.filters as Record<string, unknown>).type = type;
 		if (priority) (metadata.filters as Record<string, unknown>).priority = priority;
 		if (status) (metadata.filters as Record<string, unknown>).status = status;

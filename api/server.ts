@@ -1024,23 +1024,11 @@ const mcpCompliantHandler = async (request: Request): Promise<Response> => {
 				}
 			}
 			
-			// Handle resources/list - return our available resources with standard query support
+			// Handle resources/list - return our available resources
+			// Note: MCP spec only supports 'cursor' parameter, not 'query'
 			if (body.method === 'resources/list') {
-				const query = body.params?.query;
-				
-				let resources = RESOURCE_DEFINITIONS;
-				
-				// Standard MCP query filtering - search in name, description, and URI
-				if (query && typeof query === 'string') {
-					const searchTerm = query.toLowerCase();
-					resources = resources.filter(r => 
-						r.name.toLowerCase().includes(searchTerm) ||
-						r.description.toLowerCase().includes(searchTerm) ||
-						r.uri.toLowerCase().includes(searchTerm)
-					);
-				}
-				
-				const filteredResources = resources.map(r => ({
+				// Return all resources - filtering should be done via ResourceTemplate URIs
+				const filteredResources = RESOURCE_DEFINITIONS.map(r => ({
 					uri: r.uri,
 					name: r.name,
 					description: r.description,

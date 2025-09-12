@@ -12,7 +12,7 @@ export async function getVertikaler(
 		color_mksxpbk5?: number; // Status (numeric index)
 	} = {},
 ) {
-	const { limit = 10, search, color_mksxpbk5 } = params;
+	const { limit = 100, search, color_mksxpbk5 } = params;
 
 	// Fetch dynamic columns from Columns board
 	const BOARD_ID = "2054670440";

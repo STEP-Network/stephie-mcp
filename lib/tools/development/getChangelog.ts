@@ -12,7 +12,7 @@ export async function getChangelog(
 		date1?: string; // Date (YYYY-MM-DD)
 	} = {},
 ) {
-	const { limit = 10, search, date1 } = params;
+	const { limit = 20, search, date1 } = params;
 
 	// Fetch dynamic columns from Columns board
 	const BOARD_ID = "1222800670";

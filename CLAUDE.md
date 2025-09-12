@@ -32,7 +32,10 @@
   /tools        → Tool implementations (organized by domain)
   /monday       → Monday.com API client
   /gam          → Google Ad Manager SOAP client
-  /mcp          → Tool definitions
+  /mcp          → MCP definitions and implementations
+    toolDefinitions.ts     → Tool schemas and metadata
+    resources.ts          → Resource definitions
+    tool-implementations.ts → Centralized tool mapping
 /scripts        → Automation scripts
 /tests          → Test suites
 /docs           → Extended documentation
@@ -44,9 +47,8 @@
 
 1. **Implementation**: `/lib/tools/[category]/[toolName].ts`
 2. **Definition**: Add to `/lib/mcp/toolDefinitions.ts` (with ALL parameter descriptions)
-3. **Registration**: BOTH files:
-   - `api/server.ts` (Vercel) - use `getToolDescription()` and `buildZodSchema()`
-   - `mcp-server.ts` (local MCP) - add to toolImplementations map
+3. **Registration**: Add to `/lib/mcp/tool-implementations.ts`
+   - Automatically used by both deployments
 
 **CRITICAL**: Parameter descriptions go ONLY in toolDefinitions.ts!
 
@@ -162,11 +164,49 @@ console.log(result);
 - Project based on MCP package: `https://github.com/modelcontextprotocol/typescript-sdk/tree/main`
 - Sample project: `https://github.com/vercel-labs/mcp-on-vercel`
 
+## MCP SDK Reference
+
+### Core Components
+
+**Tools (POST/PUT/DELETE)**: Actions with custom parameters. Use to perform actions, complex queries.
+```typescript
+server.tool('search', { search: z.string() }, async (params) => {})
+```
+
+**Resources (GET)**: Read-only data, cacheable. Two types:
+- Static: `server.resource('data', 'monday://data', async () => {})`  
+- Templates: URI with variables `monday://tasks/{board}?search={query}`
+
+**ResourceTemplate**: Enables filtered resources via URI parameters
+```typescript
+new ResourceTemplate('monday://tasks/{board}?search={query}', {
+  list: async () => [], // Optional listing
+  complete: { query: (v) => ['option1','option2'] } // Autocomplete
+})
+// Callback receives: (uri, variables: {board, query}, extra)
+```
+
+### Recent Improvements
+
+1. ✅ **Fixed**: Removed non-standard `query` from resources/list 
+2. ✅ **Fixed**: Standardized all tool `search` params as strings with clear descriptions
+3. ✅ **Fixed**: Migrated mcp-server.ts to use McpServer class from SDK
+4. ✅ **Fixed**: Centralized tool implementations in `/lib/mcp/tool-implementations.ts`
+5. ✅ **Fixed**: Cleaned up imports and reduced code duplication
+
+### Best Practices
+
+**Use Resources for**: Reading data, simple filtering via URI
+**Use Tools for**: Complex queries, modifications, real-time calculations
+
+**Correct filtering pattern**: ResourceTemplate with URI variables, not query params on list
+
 ## Performance Notes
 
 - Local cache for frequently accessed data
 - Batch operations where possible
 - Limit default results to 10-50 items
+- Resources can be cached by clients (unlike tools)
 
 ---
 *For detailed documentation, see `/docs` folder*

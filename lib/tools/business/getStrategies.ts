@@ -13,7 +13,7 @@ export async function getStrategies(
 		color_mknycf0d?: number; // AI Type (numeric index)
 	} = {},
 ) {
-	const { limit = 10, search, color_mkpkghqq, color_mknycf0d } = params;
+	const { limit = 100, search, color_mkpkghqq, color_mknycf0d } = params;
 
 	// Fetch dynamic columns from Columns board
 	const BOARD_ID = "1637264041";
@@ -21,6 +21,25 @@ export async function getStrategies(
 
 	// Build filters
 	const filters: Array<Record<string, unknown>> = [];
+	
+	// When used as a resource, filter out Done (1) and Rejected (2) statuses
+	// This ensures we only get active/open strategies
+	if (color_mkpkghqq === undefined) {
+		// Default behavior: exclude Done and Rejected
+		filters.push({
+			column_id: "color_mkpkghqq",
+			compare_value: [1, 2], // Done and Rejected indices
+			operator: "not_any_of",
+		});
+	} else {
+		// Explicit status filter provided
+		filters.push({
+			column_id: "color_mkpkghqq",
+			compare_value: [color_mkpkghqq],
+			operator: "any_of",
+		});
+	}
+	
 	if (search) {
 		filters.push({
 			column_id: "name",
@@ -28,12 +47,6 @@ export async function getStrategies(
 			operator: "contains_text",
 		});
 	}
-	if (color_mkpkghqq !== undefined)
-		filters.push({
-			column_id: "color_mkpkghqq",
-			compare_value: [color_mkpkghqq],
-			operator: "any_of",
-		});
 	if (color_mknycf0d !== undefined)
 		filters.push({
 			column_id: "color_mknycf0d",

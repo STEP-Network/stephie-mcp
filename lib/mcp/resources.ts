@@ -115,7 +115,52 @@ export const RESOURCE_DEFINITIONS: ResourceDefinition[] = [
 			const { getTasksTechIntelligence } = await import('../tools/tasks/getTasksTechIntelligence.js');
 			return getTasksTechIntelligence({ limit: 20 });
 		}
+	},
+	{
+		uri: 'monday://publishers/ott',
+		name: 'OTT Publishers',
+		description: 'Complete list of all OTT (Over-The-Top) publishers',
+		mimeType: 'application/json',
+		fetcher: async () => {
+			const { getOTTPublishers } = await import('../tools/publishers/getOTTPublishers.js');
+			// Get all OTT publishers without any filters
+			return getOTTPublishers({ limit: 100 });
+		}
+	},
+	{
+		uri: 'monday://strategies/active',
+		name: 'Active Strategies',
+		description: 'Active and open strategies (excludes Done and Rejected)',
+		mimeType: 'application/json',
+		fetcher: async () => {
+			const { getStrategies } = await import('../tools/business/getStrategies.js');
+			// Get strategies, filtering will be done in the modified function
+			return getStrategies({ limit: 100 });
+		}
+	},
+	{
+		uri: 'monday://verticals/all',
+		name: 'All Verticals',
+		description: 'Complete list of business verticals with all available data',
+		mimeType: 'application/json',
+		fetcher: async () => {
+			const { getVertikaler } = await import('../tools/business/getVertikaler.js');
+			// Get all verticals with all columns
+			return getVertikaler({ limit: 100 });
+		}
+	},
+	{
+		uri: 'monday://development/changelog',
+		name: 'Recent Changelog',
+		description: 'Latest changelog entries with optional search',
+		mimeType: 'application/json',
+		fetcher: async (search?: string) => {
+			const { getChangelog } = await import('../tools/development/getChangelog.js');
+			// Get 20 latest changelogs, with optional search
+			return getChangelog({ limit: 20, search });
+		}
 	}
+	// Note: getPublisherFAQ is intentionally not included yet
 ];
 
 /**

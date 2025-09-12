@@ -37,17 +37,17 @@ class SimpleCache {
 			if (fs.existsSync(CACHE_FILE)) {
 				const data = fs.readFileSync(CACHE_FILE, "utf8");
 				this.memoryCache = JSON.parse(data);
-				console.log(
+				console.error(
 					`✅ Loaded cache from disk (${Object.keys(this.memoryCache?.columns || {}).length} boards)`,
 				);
 
 				// Check if cache is stale
 				if (this.isStale()) {
-					console.log("⚠️ Cache is stale, will refresh in background");
+					console.error("⚠️ Cache is stale, will refresh in background");
 					this.refreshInBackground();
 				}
 			} else {
-				console.log("📦 No cache found, will sync on first request");
+				console.error("📦 No cache found, will sync on first request");
 			}
 		} catch (error) {
 			console.error("❌ Failed to initialize cache:", error);
@@ -70,7 +70,7 @@ class SimpleCache {
 		}
 
 		// Cache miss - sync and retry
-		console.log(`Cache miss for board ${boardId}, syncing...`);
+		console.error(`Cache miss for board ${boardId}, syncing...`);
 		await this.sync();
 
 		return this.memoryCache?.columns?.[boardId] || ["name", "status"];
@@ -93,7 +93,7 @@ class SimpleCache {
 	 * Force sync with Monday.com
 	 */
 	async sync(): Promise<void> {
-		console.log("🔄 Syncing metadata from Monday.com...");
+		console.error("🔄 Syncing metadata from Monday.com...");
 		const startTime = Date.now();
 
 		try {
@@ -128,7 +128,7 @@ class SimpleCache {
 			this.saveToDisk(metadata);
 
 			const duration = Date.now() - startTime;
-			console.log(
+			console.error(
 				`✅ Sync complete in ${duration}ms (${Object.keys(metadata.columns).length} boards)`,
 			);
 		} catch (error) {

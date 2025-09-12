@@ -1524,23 +1524,6 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 
 	// Development Tools
 	{
-		name: "getChangelog",
-		description:
-			"Get items from Changelog board. Track system updates and releases.",
-		inputSchema: {
-			type: "object",
-			properties: {
-				limit: { type: "number", default: 10 },
-				search: { 
-					type: "string",
-					description: "Optional text search in item names"
-				},
-				version: { type: "string", description: "Filter by version number" },
-				type: { type: "number", description: "Change Type index" },
-			},
-		},
-	},
-	{
 		name: "getFeatures",
 		description:
 			"Get items from Features board. Monitor feature requests and development.",
@@ -1592,43 +1575,6 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 	},
 
 	// Business Tools
-	{
-		name: "getPartners",
-		description:
-			"Get items from Partners board. Access business partner details and agreements.",
-		inputSchema: {
-			type: "object",
-			properties: {
-				limit: { type: "number", default: 10 },
-				search: { 
-					type: "string",
-					description: "Optional text search in item names"
-				},
-				type: { type: "number", description: "Partner Type index" },
-				status: { type: "number", description: "Partnership Status index" },
-			},
-		},
-	},
-	{
-		name: "getStrategies",
-		description:
-			"Get items from Strategies board. Monitor strategic initiatives and business plans.",
-		inputSchema: {
-			type: "object",
-			properties: {
-				limit: { type: "number", default: 10 },
-				search: { 
-					type: "string",
-					description: "Optional text search in item names"
-				},
-				quarter: {
-					type: "string",
-					description: 'Filter by quarter (e.g., "Q1 2024")',
-				},
-				status: { type: "number", description: "Strategy Status index" },
-			},
-		},
-	},
 
 	// Marketing Tools
 	{
@@ -1693,23 +1639,6 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 	},
 
 	// Publishers Tools
-	{
-		name: "getOTTPublishers",
-		description:
-			"Get items from OTT Publishers board. Access Over-The-Top streaming publisher details.",
-		inputSchema: {
-			type: "object",
-			properties: {
-				limit: { type: "number", default: 10 },
-				search: { 
-					type: "string",
-					description: "Optional text search in item names"
-				},
-				platform: { type: "number", description: "Platform Type index" },
-				status: { type: "number", description: "Publisher Status index" },
-			},
-		},
-	},
 
 	// Create/Update Tools - CRM
 	{
