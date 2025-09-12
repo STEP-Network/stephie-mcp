@@ -3,249 +3,279 @@ import {
 	type MondayItemResponse,
 	mondayApi,
 } from "../../monday/client.js";
-import { createListResponse } from "../json-output.js";
 
 const AD_SIZES_BOARD_ID = "1558597958";
+
+interface AdSize {
+	id: string;
+	name: string;
+	width: string;
+	height: string;
+	dimensions: string;
+	device: string;
+	deviceType: string;
+	adProducts: string[];
+	adFormats: string[];
+	standardCPM: number | null;
+	averageEAPM: number | null;
+	gamNames: string | null;
+	averageCTR: string | null;
+	averageViewability: string | null;
+	description: string | null;
+	specsUrl: string | null;
+	isVideo: boolean;
+	createdAt: string;
+	updatedAt: string;
+}
 
 export async function getAllSizes() {
 	try {
 		// Get all ad sizes from the Ad Sizes board
 		const query = `
-    query {
-      boards(ids: ${AD_SIZES_BOARD_ID}) {
-        items_page(limit: 500) {
-          cursor
-          items {
-            id
-            name
-            column_values {
-              id
-              text
-              value
-              ... on NumbersValue {
-                number
-                symbol
-              }
-              ... on DropdownValue {
-                display_value
-                text
-              }
-              ... on BoardRelationValue {
-                display_value
-                linked_items {
-                  id
-                  name
-                }
-              }
-              column {
-                title
-                type
-              }
-            }
-          }
-        }
-      }
-    }`;
+		query {
+			boards(ids: ${AD_SIZES_BOARD_ID}) {
+				id
+				name
+				items_page(limit: 500) {
+					cursor
+					items {
+						id
+						name
+						created_at
+						updated_at
+						column_values {
+							id
+							text
+							value
+							... on NumbersValue {
+								number
+								symbol
+							}
+							... on DropdownValue {
+								text
+							}
+							... on BoardRelationValue {
+								display_value
+								linked_items {
+									id
+									name
+								}
+							}
+							column {
+								id
+								title
+								type
+							}
+						}
+					}
+				}
+			}
+		}`;
+
+		console.error("[getAllSizes] Fetching ad sizes...");
 
 		const response = await mondayApi(query);
-		const items = response?.data?.boards?.[0]?.items_page?.items || [];
+		const board = response?.data?.boards?.[0];
+		if (!board) throw new Error("Board not found");
 
-		// Map the raw data to structured objects
-		const sizes = items.map((item: Record<string, unknown>) => {
-			const mondayItem = item as MondayItemResponse;
-			const columnValues = {
-				width: "",
-				height: "",
-				device: "",
-				standardCPM: "",
-				averageEAPM: "",
-				gamNames: "",
-				deviceType: "",
-				adFormats: "",
-				adProducts: "",
-				specsUrl: "",
-				averageCTR: "",
-				averageViewability: "",
-				description: "",
+		const items = board.items_page?.items || [];
+
+		// Process sizes
+		const sizes: AdSize[] = [];
+		const deviceTypeCounts = new Map<string, number>();
+		const productCounts = new Map<string, number>();
+		const formatCounts = new Map<string, number>();
+		const dimensionCounts = new Map<string, number>();
+
+		for (const item of items as MondayItemResponse[]) {
+			const columnValues = item.column_values || [];
+
+			// Helper to find column value by ID
+			const getColumnValue = (id: string) => {
+				return columnValues.find((col: MondayColumnValueResponse) => col.id === id);
 			};
 
-			// Process column values
-			mondayItem.column_values.forEach((col: MondayColumnValueResponse) => {
-				switch (col.id) {
-					case "text_mkqsh5w7":
-						// Width
-						columnValues.width = col.text || "";
-						break;
-					case "text_mkqrxz0z":
-						// Height
-						columnValues.height = col.text || "";
-						break;
-					case "dropdown_mks0xdmd":
-						columnValues.device = col.text || "";
-						break;
-					case "numeric_mkrhdmee":
-						columnValues.standardCPM =
-							col.number !== undefined
-								? col.symbol
-									? `${col.number}${col.symbol}`
-									: `${col.number}`
-								: "";
-						break;
-					case "numeric_mkqsqecq":
-						columnValues.averageEAPM =
-							col.number !== undefined
-								? col.symbol
-									? `${col.number}${col.symbol}`
-									: `${col.number}`
-								: "";
-						break;
-					case "text_mksgcrz8":
-						columnValues.gamNames = col.text || "";
-						break;
-					case "dropdown_mkqszqya":
-						columnValues.deviceType = col.text || "";
-						break;
-					case "board_relation_mkrhhdrx":
-						// Extract names from linked items for formats
-						columnValues.adFormats =
-							col.linked_items && col.linked_items.length > 0
-								? col.linked_items.map((item) => item.name).join(", ")
-								: col.display_value || col.text || "";
-						break;
-					case "board_relation_mkrhckxh":
-						// Extract names from linked items for products
-						columnValues.adProducts =
-							col.linked_items && col.linked_items.length > 0
-								? col.linked_items.map((item) => item.name).join(", ")
-								: col.display_value || col.text || "";
-						break;
-					case "text_mkj8a83s":
-						columnValues.specsUrl = col.text || "";
-						break;
-					case "text_mktj2qng":
-						columnValues.averageCTR = col.text || "";
-						break;
-					case "text_mkqse9p4":
-						columnValues.averageViewability = col.text || "";
-						break;
-					case "text_mknyx7mj":
-						columnValues.description = col.text || "";
-						break;
+			// Extract fields
+			const widthCol = getColumnValue("text_mkqsh5w7");
+			const heightCol = getColumnValue("text_mkqrxz0z");
+			const deviceCol = getColumnValue("dropdown_mks0xdmd");
+			const standardCPMCol = getColumnValue("numeric_mkrhdmee");
+			const averageEAPMCol = getColumnValue("numeric_mkqsqecq");
+			const gamNamesCol = getColumnValue("text_mksgcrz8");
+			const deviceTypeCol = getColumnValue("dropdown_mkqszqya");
+			const formatsCol = getColumnValue("board_relation_mkrhhdrx");
+			const productsCol = getColumnValue("board_relation_mkrhckxh");
+			const specsUrlCol = getColumnValue("text_mkj8a83s");
+			const averageCTRCol = getColumnValue("text_mktj2qng");
+			const averageViewabilityCol = getColumnValue("text_mkqse9p4");
+			const descriptionCol = getColumnValue("text_mknyx7mj");
+
+			// Parse dimensions
+			const width = widthCol?.text || "0";
+			const height = heightCol?.text || "0";
+			const dimensions = `${width}x${height}`;
+			const isVideo = String(item.name).endsWith("v");
+
+			// Parse board relations
+			const products = productsCol?.linked_items?.map((item: any) => item.name) || [];
+			const formats = formatsCol?.linked_items?.map((item: any) => item.name) || [];
+
+			// Parse numeric values
+			const parseNumber = (col: any): number | null => {
+				if (!col?.number) return null;
+				return Number(col.number);
+			};
+
+			const size: AdSize = {
+				id: String(item.id),
+				name: String(item.name),
+				width,
+				height,
+				dimensions,
+				device: deviceCol?.text || "Unknown",
+				deviceType: deviceTypeCol?.text || "Unknown",
+				adProducts: products,
+				adFormats: formats,
+				standardCPM: parseNumber(standardCPMCol),
+				averageEAPM: parseNumber(averageEAPMCol),
+				gamNames: gamNamesCol?.text || null,
+				averageCTR: averageCTRCol?.text || null,
+				averageViewability: averageViewabilityCol?.text || null,
+				description: descriptionCol?.text || null,
+				specsUrl: specsUrlCol?.text || null,
+				isVideo,
+				createdAt: String(item.created_at),
+				updatedAt: String(item.updated_at),
+			};
+
+			sizes.push(size);
+
+			// Count device types
+			deviceTypeCounts.set(size.deviceType, (deviceTypeCounts.get(size.deviceType) || 0) + 1);
+
+			// Count dimensions
+			const dimensionKey = isVideo ? `${dimensions} (video)` : dimensions;
+			dimensionCounts.set(dimensionKey, (dimensionCounts.get(dimensionKey) || 0) + 1);
+
+			// Count products and formats
+			for (const product of products) {
+				productCounts.set(product, (productCounts.get(product) || 0) + 1);
+			}
+			for (const format of formats) {
+				formatCounts.set(format, (formatCounts.get(format) || 0) + 1);
+			}
+		}
+
+		// Sort sizes
+		sizes.sort((a, b) => {
+			// Video sizes last
+			if (a.isVideo !== b.isVideo) return a.isVideo ? 1 : -1;
+
+			// Parse dimensions for numeric sort
+			const [aWidth, aHeight] = a.dimensions.split("x").map(Number);
+			const [bWidth, bHeight] = b.dimensions.split("x").map(Number);
+
+			// Sort by width descending, then height descending
+			if (aWidth !== bWidth) return bWidth - aWidth;
+			return bHeight - aHeight;
+		});
+
+		// Group sizes by device type
+		const sizesByDevice = new Map<string, AdSize[]>();
+		for (const size of sizes) {
+			const device = size.deviceType;
+			if (!sizesByDevice.has(device)) {
+				sizesByDevice.set(device, []);
+			}
+			sizesByDevice.get(device)?.push(size);
+		}
+
+		// Define device order
+		const deviceOrder = ["Desktop", "Mobile", "Tablet", "Cross Device"];
+
+		// Convert to hierarchical structure
+		const deviceGroups = Array.from(sizesByDevice.entries())
+			.sort(([a], [b]) => {
+				const aIndex = deviceOrder.indexOf(a);
+				const bIndex = deviceOrder.indexOf(b);
+				if (aIndex !== -1 && bIndex !== -1) {
+					return aIndex - bIndex;
 				}
+				if (aIndex !== -1) return -1;
+				if (bIndex !== -1) return 1;
+				return a.localeCompare(b);
+			})
+			.map(([deviceType, deviceSizes]) => {
+				// Count unique dimensions in this device type
+				const dimensions = new Set(deviceSizes.map(s => s.dimensions));
+				const videoCount = deviceSizes.filter(s => s.isVideo).length;
+				const displayCount = deviceSizes.filter(s => !s.isVideo).length;
+
+				// Find most common products and formats
+				const deviceProducts = new Set(deviceSizes.flatMap(s => s.adProducts));
+				const deviceFormats = new Set(deviceSizes.flatMap(s => s.adFormats));
+
+				return {
+					deviceType,
+					sizeCount: deviceSizes.length,
+					uniqueDimensions: dimensions.size,
+					videoCount,
+					displayCount,
+					commonProducts: Array.from(deviceProducts).slice(0, 5),
+					commonFormats: Array.from(deviceFormats).slice(0, 5),
+					sizes: deviceSizes
+				};
 			});
 
-			return {
-				id: mondayItem.id,
-				name: mondayItem.name,
-				width: columnValues.width,
-				height: columnValues.height,
-				device: columnValues.device || "",
-				standardCPM: columnValues.standardCPM || "",
-				gamNames: columnValues.gamNames || "",
-				adProducts: columnValues.adProducts || "",
-				adFormats: columnValues.adFormats || "",
-				deviceType: columnValues.deviceType || "",
-				specsUrl: columnValues.specsUrl || "",
-				averageCTR: columnValues.averageCTR || "",
-				averageViewability: columnValues.averageViewability || "",
-				averageEAPM: columnValues.averageEAPM || "",
-				description: columnValues.description || "",
-			};
-		});
+		// Calculate statistics
+		const totalSizes = sizes.length;
+		const videoSizes = sizes.filter(s => s.isVideo).length;
+		const displaySizes = totalSizes - videoSizes;
+		const sizesWithCPM = sizes.filter(s => s.standardCPM).length;
+		const sizesWithGAM = sizes.filter(s => s.gamNames).length;
 
-		// Sort sizes by Product first, then Format, then size
-		const sortedSizes = [...sizes].sort((a, b) => {
-			// First sort by product
-			const productCompare = ((a.adProducts as string) || "zzz").localeCompare(
-				(b.adProducts as string) || "zzz",
-			);
-			if (productCompare !== 0) return productCompare;
+		// Get top products and formats
+		const topProducts = Array.from(productCounts.entries())
+			.sort(([, a], [, b]) => b - a)
+			.slice(0, 10)
+			.map(([product, count]) => ({ product, count }));
 
-			// Then sort by format
-			const formatCompare = ((a.adFormats as string) || "zzz").localeCompare(
-				(b.adFormats as string) || "zzz",
-			);
-			if (formatCompare !== 0) return formatCompare;
+		const topFormats = Array.from(formatCounts.entries())
+			.sort(([, a], [, b]) => b - a)
+			.slice(0, 10)
+			.map(([format, count]) => ({ format, count }));
 
-			// Finally sort by size dimensions
-			const aIsVideo = (a.name as string).endsWith("v");
-			const bIsVideo = (b.name as string).endsWith("v");
-			if (aIsVideo !== bIsVideo) return aIsVideo ? 1 : -1;
-
-			const aParts = (a.name as string).replace("v", "").split("x").map(Number);
-			const bParts = (b.name as string).replace("v", "").split("x").map(Number);
-			if (aParts[0] !== bParts[0]) return bParts[0] - aParts[0];
-			return bParts[1] - aParts[1];
-		});
-
-		// Format sizes for JSON response
-		const formattedSizes = sortedSizes.map((size) => ({
-			id: size.id,
-			name: size.name,
-			width: size.width,
-			height: size.height,
-			dimensions: `${size.width}x${size.height}`,
-			device: size.device,
-			deviceType: size.deviceType,
-			adProducts: size.adProducts,
-			adFormats: size.adFormats,
-			standardCpm: size.standardCPM,
-			averageEapm: size.averageEAPM,
-			gamNames: size.gamNames,
-			averageCtr: size.averageCTR,
-			averageViewability: size.averageViewability,
-			description: size.description,
-			specsUrl: size.specsUrl,
-			isVideo: (size.name as string).endsWith("v")
-		}));
-
-		// Count by device type for statistics
-		const deviceCounts = sizes.reduce(
-			(acc, s) => {
-				const deviceType = String(s.deviceType) || "Other";
-				const existing = acc.find((item) => item.device === deviceType);
-				if (existing) {
-					existing.count++;
-				} else {
-					acc.push({ device: deviceType, count: 1 });
-				}
-				return acc;
-			},
-			[] as Array<{ device: string; count: number }>,
-		);
-
-		// Video sizes count
-		const videoSizes = sizes.filter((s) => (s.name as string).endsWith("v"));
-		
-		// GAM mapping for reference
-		const gamMapping = sortedSizes
-			.filter((s) => s.gamNames)
-			.reduce(
-				(acc, s) => {
-					acc[s.name as string] = s.gamNames as string;
-					return acc;
-				},
-				{} as Record<string, string>,
-			);
-
-		const metadata: Record<string, any> = {
+		// Build metadata
+		const metadata = {
 			boardId: AD_SIZES_BOARD_ID,
-			boardName: "Størrelser",
-			totalSizes: sizes.length,
-			videoSizes: videoSizes.length,
-			deviceBreakdown: deviceCounts,
-			gamMapping,
+			boardName: board.name,
+			totalSizes,
+			totalDeviceTypes: sizesByDevice.size,
+			uniqueDimensions: dimensionCounts.size,
+			sizeTypes: {
+				display: displaySizes,
+				video: videoSizes
+			},
+			dataAvailability: {
+				withCPM: sizesWithCPM,
+				withGAM: sizesWithGAM
+			},
+			deviceTypeCounts: Object.fromEntries(deviceTypeCounts),
+			topProducts,
+			topFormats
 		};
 
+		const summary = `Found ${totalSizes} ad size${totalSizes !== 1 ? 's' : ''} across ${sizesByDevice.size} device type${sizesByDevice.size !== 1 ? 's' : ''} (${displaySizes} display, ${videoSizes} video)`;
+
 		return JSON.stringify(
-			createListResponse(
-				"getAllSizes",
-				formattedSizes,
+			{
+				tool: "getAllSizes",
+				timestamp: new Date().toISOString(),
+				status: "success",
+				data: deviceGroups,
 				metadata,
-				{
-					summary: `Found ${sizes.length} ad size${sizes.length !== 1 ? 's' : ''} (${videoSizes.length} video sizes)`
-				}
-			),
+				options: { summary }
+			},
 			null,
 			2
 		);

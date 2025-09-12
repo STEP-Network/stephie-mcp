@@ -4,123 +4,255 @@ import {
 	mondayApi,
 } from "../../monday/client.js";
 import { getDynamicColumns } from "../dynamic-columns.js";
-import { createListResponse } from "../json-output.js";
+
+interface Person {
+	id: string;
+	name: string;
+	email?: string;
+	phone?: string;
+	role?: string;
+	department?: string;
+	team?: Array<{ id: string; name: string }>;
+	manager?: string;
+	status?: string;
+	startDate?: string;
+	location?: string;
+	createdAt: string;
+	updatedAt: string;
+	[key: string]: any; // For dynamic columns
+}
 
 export async function getPeople() {
-
 	// Fetch dynamic columns from Columns board
 	const BOARD_ID = "1612664689";
 	const dynamicColumns = await getDynamicColumns(BOARD_ID);
 
 	const query = `
-    query {
-      boards(ids: [1612664689]) {
-        id
-        name
-        items_page(limit: 100) {
-          items {
-            id
-            name
-            created_at
-            updated_at
-            column_values(ids: [${dynamicColumns.map((id) => `"${id}"`).join(", ")}]) {
-              id
-              text
-              value
-              ... on BoardRelationValue {
-                linked_items { id name }
-              }
-              column {
-                id
-                type
-              }
-            }
-          }
-        }
-      }
-    }
-  `;
+		query {
+			boards(ids: [${BOARD_ID}]) {
+				id
+				name
+				items_page(limit: 500) {
+					items {
+						id
+						name
+						created_at
+						updated_at
+						column_values(ids: [${dynamicColumns.map((id) => `"${id}"`).join(", ")}]) {
+							id
+							text
+							value
+							... on BoardRelationValue {
+								linked_items { id name }
+							}
+							column {
+								id
+								title
+								type
+							}
+						}
+					}
+				}
+			}
+		}
+	`;
 
 	try {
+		console.error("[getPeople] Fetching people...");
+		
 		const response = await mondayApi(query);
 		const board = response.data?.boards?.[0];
 		if (!board) throw new Error("Board not found");
 
-		let items = board.items_page?.items || [];
+		const items = board.items_page?.items || [];
 
-		// Format items for JSON response
-		const formattedItems = items.map((item: Record<string, unknown>) => {
-			const formatted: any = {
-				id: item.id,
-				name: item.name,
-				createdAt: item.created_at,
-				updatedAt: item.updated_at,
+		// Process people
+		const people: Person[] = [];
+		const roleCounts = new Map<string, number>();
+		const departmentCounts = new Map<string, number>();
+		const locationCounts = new Map<string, number>();
+		const statusCounts = new Map<string, number>();
+
+		for (const item of items as MondayItemResponse[]) {
+			const columnValues = item.column_values || [];
+
+			// Helper to find column value by type
+			const findColumnByType = (type: string) => {
+				return columnValues.find((col: MondayColumnValueResponse) => 
+					col.column?.type === type
+				);
 			};
 
-			// Process column values
-			(item as MondayItemResponse).column_values.forEach(
-				(col: Record<string, unknown>) => {
-					const column = col as MondayColumnValueResponse;
-					const fieldName = column.id;
-					
-					// Parse different column types
-					if (column.column?.type === 'status' || column.column?.type === 'dropdown') {
-						const parsedValue = column.value ? JSON.parse(column.value) : null;
-						formatted[fieldName] = {
-							index: parsedValue?.index,
-							label: column.text || null
-						};
-					} else if (column.column?.type === 'board_relation' || column.column?.type === 'link-to-item') {
-						// Use linked_items from GraphQL fragment if available, fallback to parsed value
-						const columnWithLinkedItems = column as MondayColumnValueResponse & { linked_items?: Array<{ id: string; name: string }> };
-						const linkedItems = columnWithLinkedItems.linked_items || [];
-						if (linkedItems.length > 0) {
-							formatted[fieldName] = linkedItems;
-						} else {
-							const parsedValue = column.value ? JSON.parse(column.value) : null;
-							formatted[fieldName] = parsedValue?.linkedItemIds || [];
-						}
-					} else if (column.column?.type === 'multiple-person') {
-						const parsedValue = column.value ? JSON.parse(column.value) : null;
-						formatted[fieldName] = parsedValue?.personsAndTeams || [];
-					} else if (column.column?.type === 'date') {
-						const parsedValue = column.value ? JSON.parse(column.value) : null;
-						formatted[fieldName] = parsedValue?.date || column.text || null;
-					} else if (column.column?.type === 'email') {
-						const parsedValue = column.value ? JSON.parse(column.value) : null;
-						formatted[fieldName] = parsedValue?.email || column.text || null;
-					} else if (column.column?.type === 'phone') {
-						const parsedValue = column.value ? JSON.parse(column.value) : null;
-						formatted[fieldName] = parsedValue?.phone || column.text || null;
-					} else {
-						formatted[fieldName] = column.text || null;
-					}
-				},
-			);
+			// Helper to find column by title keywords
+			const findColumnByTitle = (keywords: string[]) => {
+				return columnValues.find((col: MondayColumnValueResponse) => {
+					const title = col.column?.title?.toLowerCase() || '';
+					return keywords.some(keyword => title.includes(keyword.toLowerCase()));
+				});
+			};
 
-			return formatted;
+			// Try to identify key columns
+			const emailCol = findColumnByType("email");
+			const phoneCol = findColumnByType("phone");
+			const statusCol = findColumnByType("status");
+			const dateCol = findColumnByType("date");
+			const teamCol = findColumnByType("board_relation");
+			
+			// Try to find role/department by title
+			const roleCol = findColumnByTitle(["role", "position", "title"]);
+			const departmentCol = findColumnByTitle(["department", "dept", "team"]);
+			const locationCol = findColumnByTitle(["location", "office", "city"]);
+
+			// Parse values
+			const email = emailCol?.value ? JSON.parse(emailCol.value)?.email || emailCol.text : null;
+			const phone = phoneCol?.value ? JSON.parse(phoneCol.value)?.phone || phoneCol.text : null;
+			const status = statusCol?.text || "Active";
+			const startDate = dateCol?.value ? JSON.parse(dateCol.value)?.date || dateCol.text : null;
+			
+			// Extract role and department from various sources
+			const name = String(item.name);
+			let role = roleCol?.text || "Employee";
+			let department = departmentCol?.text || "General";
+			let location = locationCol?.text || "HQ";
+
+			// Try to extract from name if it follows patterns
+			if (name.includes(" - ")) {
+				const parts = name.split(" - ");
+				if (parts.length === 2) {
+					role = parts[1];
+				}
+			}
+
+			// Parse team relations
+			let team: Array<{ id: string; name: string }> = [];
+			if (teamCol) {
+				const col = teamCol as MondayColumnValueResponse & { 
+					linked_items?: Array<{ id: string; name: string }> 
+				};
+				team = col.linked_items || [];
+			}
+
+			const person: Person = {
+				id: String(item.id),
+				name,
+				email,
+				phone,
+				role,
+				department,
+				team,
+				status,
+				startDate,
+				location,
+				createdAt: String(item.created_at),
+				updatedAt: String(item.updated_at),
+			};
+
+			// Add remaining dynamic columns
+			for (const col of columnValues) {
+				const column = col as MondayColumnValueResponse;
+				if (!['email', 'phone', 'status', 'date', 'board_relation'].includes(column.column?.type || '')) {
+					if (!person[column.id]) {
+						person[column.id] = column.text || null;
+					}
+				}
+			}
+
+			people.push(person);
+
+			// Count statistics
+			roleCounts.set(role, (roleCounts.get(role) || 0) + 1);
+			departmentCounts.set(department, (departmentCounts.get(department) || 0) + 1);
+			locationCounts.set(location, (locationCounts.get(location) || 0) + 1);
+			statusCounts.set(status, (statusCounts.get(status) || 0) + 1);
+		}
+
+		// Sort people by department then name
+		people.sort((a, b) => {
+			if (a.department !== b.department) {
+				return (a.department || '').localeCompare(b.department || '');
+			}
+			return a.name.localeCompare(b.name);
 		});
 
+		// Group people by department
+		const peopleByDepartment = new Map<string, Person[]>();
+		for (const person of people) {
+			const dept = person.department || "General";
+			if (!peopleByDepartment.has(dept)) {
+				peopleByDepartment.set(dept, []);
+			}
+			peopleByDepartment.get(dept)?.push(person);
+		}
+
+		// Convert to hierarchical structure
+		const departmentGroups = Array.from(peopleByDepartment.entries())
+			.sort(([a], [b]) => a.localeCompare(b))
+			.map(([department, deptPeople]) => {
+				// Count roles in this department
+				const deptRoles = new Set(deptPeople.map(p => p.role));
+				const deptLocations = new Set(deptPeople.map(p => p.location));
+
+				return {
+					department,
+					peopleCount: deptPeople.length,
+					uniqueRoles: deptRoles.size,
+					locations: Array.from(deptLocations),
+					people: deptPeople
+				};
+			});
+
+		// Calculate statistics
+		const totalPeople = people.length;
+		const activeCount = statusCounts.get("Active") || 0;
+		const withEmail = people.filter(p => p.email).length;
+		const withPhone = people.filter(p => p.phone).length;
+		const withTeam = people.filter(p => p.team && p.team.length > 0).length;
+
+		// Get top roles
+		const topRoles = Array.from(roleCounts.entries())
+			.sort(([, a], [, b]) => b - a)
+			.slice(0, 10)
+			.map(([role, count]) => ({ role, count }));
+
 		// Build metadata
-		const metadata: Record<string, any> = {
+		const metadata = {
 			boardId: BOARD_ID,
-			boardName: "People",
+			boardName: board.name,
+			totalPeople,
+			totalDepartments: peopleByDepartment.size,
+			totalRoles: roleCounts.size,
+			totalLocations: locationCounts.size,
+			statusBreakdown: {
+				active: activeCount,
+				inactive: totalPeople - activeCount
+			},
+			dataCompleteness: {
+				withEmail,
+				withPhone,
+				withTeam
+			},
+			departmentCounts: Object.fromEntries(departmentCounts),
+			locationCounts: Object.fromEntries(locationCounts),
+			topRoles,
+			dynamicColumnsCount: dynamicColumns.length
 		};
 
+		const summary = `Found ${totalPeople} ${totalPeople === 1 ? 'person' : 'people'} across ${peopleByDepartment.size} department${peopleByDepartment.size !== 1 ? 's' : ''} (${activeCount} active, ${roleCounts.size} unique role${roleCounts.size !== 1 ? 's' : ''})`;
+
 		return JSON.stringify(
-			createListResponse(
-				"getPeople",
-				formattedItems,
+			{
+				tool: "getPeople",
+				timestamp: new Date().toISOString(),
+				status: "success",
+				data: departmentGroups,
 				metadata,
-				{
-					summary: `Found ${formattedItems.length} ${formattedItems.length === 1 ? 'person' : 'people'})`
-				}
-			),
+				options: { summary }
+			},
 			null,
 			2
 		);
 	} catch (error) {
-		console.error("Error fetching People items:", error);
+		console.error("Error fetching People:", error);
 		throw error;
 	}
 }

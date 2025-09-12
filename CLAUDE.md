@@ -130,9 +130,60 @@ if (teamId) {
 ### Output Format
 
 - Tools now return **JSON strings** (not objects) for better LLM consumption
-- Consistent structure: `tool`, `timestamp`, `status`, `data`, `metadata`, `summary`
+- Consistent structure: `tool`, `timestamp`, `status`, `data`, `metadata`, `options` (with summary)
 - Use `createListResponse`, `createSuccessResponse`, or `createErrorResponse` from `/lib/tools/json-output.js`
 - Include metadata (counts, filters, board info, dynamic columns)
+
+### Hierarchical Data Structures
+
+**Products**: 3-level hierarchy (ProductGroup → Product → Formats)
+
+```json
+{
+  "data": [
+    {
+      "productGroup": "Group Name",
+      "description": "Group Description", 
+      "productCount": 5,
+      "formatCount": 15,
+      "products": [
+        {
+          "name": "Product Name",
+          "description": "Product Description",
+          "formatCount": 3,
+          "formats": ["Format1", "Format2"]
+        }
+      ]
+    }
+  ]
+}
+```
+
+**Publishers**: 2-level hierarchy (Vertical → Publishers)
+
+```json
+{
+  "data": [
+    {
+      "vertical": "Vertical Name",
+      "publisherCount": 10,
+      "publishers": [
+        {
+          "name": "Publisher Name",
+          "group": "Publisher Group",
+          "gamId": "12345",
+          "approval": "Gambling"
+        }
+      ]
+    }
+  ]
+}
+```
+
+**Metadata**: Includes distinct counts
+
+- `totalPublishers`, `totalVerticals`, `totalPublisherGroups` (from board relations)
+- `totalProducts`, `totalProductGroups`, `totalFormats` (unique counts per level)
 
 ### Error Handling
 
@@ -188,7 +239,7 @@ new ResourceTemplate('monday://tasks/{board}?search={query}', {
 
 ### Recent Improvements
 
-1. ✅ **Fixed**: Removed non-standard `query` from resources/list 
+1. ✅ **Fixed**: Removed non-standard `query` from resources/list
 2. ✅ **Fixed**: Standardized all tool `search` params as strings with clear descriptions
 3. ✅ **Fixed**: Migrated mcp-server.ts to use McpServer class from SDK
 4. ✅ **Fixed**: Centralized tool implementations in `/lib/mcp/tool-implementations.ts`

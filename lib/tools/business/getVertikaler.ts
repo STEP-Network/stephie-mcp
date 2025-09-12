@@ -4,16 +4,44 @@ import {
 	mondayApi,
 } from "../../monday/client.js";
 import { getDynamicColumns } from "../dynamic-columns.js";
-import { createListResponse } from "../json-output.js";
-export async function getVertikaler() {
 
+interface Publisher {
+	id: string;
+	name: string;
+	gamId?: string;
+}
+
+interface Vertical {
+	id: string;
+	name: string;
+	description: string | null;
+	status: string;
+	publisherIds: string[];
+	publishers: Publisher[];
+	adUnitCount: number;
+	createdAt: string;
+	updatedAt: string;
+}
+
+export async function getVertikaler() {
 	// Fetch dynamic columns from Columns board
 	const BOARD_ID = "2054670440";
 	const dynamicColumns = await getDynamicColumns(BOARD_ID);
 
+	// Include static columns we know about
+	const staticColumns = [
+		"long_text_mksxysx", // Beskrivelse (Description)
+		"color_mksxpbk5", // Status (Active/Inactive/Archived)
+		"board_relation_mksxr042", // Publishers relation
+		"lookup_mktdz674", // Ad Unit IDs count
+	];
+
+	// Combine static and dynamic columns
+	const allColumns = [...new Set([...staticColumns, ...dynamicColumns])];
+
 	const query = `
     query {
-      boards(ids: [2054670440]) {
+      boards(ids: [${BOARD_ID}]) {
         id
         name
         items_page(limit: 500) {
@@ -22,15 +50,19 @@ export async function getVertikaler() {
             name
             created_at
             updated_at
-            column_values(ids: [${dynamicColumns.map((id) => `"${id}"`).join(", ")}]) {
+            column_values(ids: [${allColumns.map((id) => `"${id}"`).join(", ")}]) {
               id
               text
               value
               ... on BoardRelationValue {
-                linked_items { id name }
+                linked_items { 
+                  id 
+                  name 
+                }
               }
               column {
                 id
+                title
                 type
               }
             }
@@ -47,61 +79,146 @@ export async function getVertikaler() {
 
 		const items = board.items_page?.items || [];
 
-		// Format items for JSON response
-		const formattedItems = items.map((item: Record<string, unknown>) => {
-			const formatted: any = {
-				id: item.id,
-				name: item.name,
-				createdAt: item.created_at,
-				updatedAt: item.updated_at,
+		// Process verticals
+		const verticals: Vertical[] = [];
+		const statusCounts = new Map<string, number>();
+		let totalPublishers = 0;
+		let totalAdUnits = 0;
+
+		for (const item of items) {
+			const mondayItem = item as MondayItemResponse;
+			const columnValues = mondayItem.column_values || [];
+
+			// Helper to find column value by ID
+			const getColumnValue = (id: string) => {
+				return columnValues.find(
+					(col: Record<string, unknown>) => col.id === id,
+				) as MondayColumnValueResponse | undefined;
 			};
 
-			// Process column values
-			(item as MondayItemResponse).column_values.forEach(
-				(col: Record<string, unknown>) => {
-					const column = col as MondayColumnValueResponse;
-					const fieldName = column.id;
-					
-					// Parse different column types
-					if (column.column?.type === 'status' || column.column?.type === 'dropdown' || column.column?.type === 'color') {
-						const parsedValue = column.value ? JSON.parse(column.value) : null;
-						formatted[fieldName] = {
-							index: parsedValue?.index,
-							label: column.text || null,
-							type: column.column?.type
-						};
-					} else if (column.column?.type === 'board_relation') {
-						const parsedValue = column.value ? JSON.parse(column.value) : null;
-						formatted[fieldName] = parsedValue?.linkedItemIds || [];
-					} else {
-						formatted[fieldName] = column.text || null;
-					}
-				},
-			);
+			// Extract key fields
+			const descriptionCol = getColumnValue("long_text_mksxysx");
+			const statusCol = getColumnValue("color_mksxpbk5");
+			const publishersCol = getColumnValue("board_relation_mksxr042");
+			const adUnitCountCol = getColumnValue("lookup_mktdz674");
 
-			return formatted;
-		});
+			// Parse status
+			const statusLabel = statusCol?.text || "Unknown";
+			
+			// Parse publishers with GAM IDs
+			let publisherIds: string[] = [];
+			let publishers: Publisher[] = [];
+			if (publishersCol?.value) {
+				const parsedValue = JSON.parse(publishersCol.value);
+				publisherIds = parsedValue?.linkedItemIds || [];
+				if (publishersCol.linked_items) {
+					publishers = publishersCol.linked_items.map((linkedItem: any) => {
+						return {
+							id: linkedItem.id,
+							name: linkedItem.name
+						};
+					});
+				}
+			}
+
+			// Parse ad unit count
+			const adUnitCount = parseInt(adUnitCountCol?.text || "0", 10);
+
+			const vertical: Vertical = {
+				id: String(mondayItem.id),
+				name: String(mondayItem.name),
+				description: descriptionCol?.text || null,
+				status: statusLabel,
+				publisherIds,
+				publishers,
+				adUnitCount,
+				createdAt: String(mondayItem.created_at),
+				updatedAt: String(mondayItem.updated_at),
+			};
+
+			verticals.push(vertical);
+
+			// Count status
+			statusCounts.set(statusLabel, (statusCounts.get(statusLabel) || 0) + 1);
+			
+			// Count totals
+			totalPublishers += publishers.length;
+			totalAdUnits += adUnitCount;
+		}
+
+		// Sort verticals by name
+		verticals.sort((a, b) => 
+			a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+		);
+
+		// Group verticals by status for better organization
+		const verticalsByStatus = new Map<string, Vertical[]>();
+		for (const vertical of verticals) {
+			const status = vertical.status;
+			if (!verticalsByStatus.has(status)) {
+				verticalsByStatus.set(status, []);
+			}
+			verticalsByStatus.get(status)?.push(vertical);
+		}
+
+		// Convert to hierarchical structure with proper ordering
+		const statusOrder = ["Aktiv", "Inaktiv", "Arkiveret"];
+		const statusGroups = Array.from(verticalsByStatus.entries())
+			.sort(([a], [b]) => {
+				const aIndex = statusOrder.indexOf(a);
+				const bIndex = statusOrder.indexOf(b);
+				if (aIndex !== -1 && bIndex !== -1) {
+					return aIndex - bIndex;
+				}
+				if (aIndex !== -1) return -1;
+				if (bIndex !== -1) return 1;
+				return a.localeCompare(b);
+			})
+			.map(([status, statusVerticals]) => ({
+				status,
+				verticalCount: statusVerticals.length,
+				totalPublishers: statusVerticals.reduce((sum, v) => sum + v.publishers.length, 0),
+				totalAdUnits: statusVerticals.reduce((sum, v) => sum + v.adUnitCount, 0),
+				verticals: statusVerticals
+			}));
 
 		// Build metadata
-		const metadata: Record<string, any> = {
+		const totalVerticals = verticals.length;
+		const activeCount = statusCounts.get("Aktiv") || 0;
+		const inactiveCount = statusCounts.get("Inaktiv") || 0;
+		const archivedCount = statusCounts.get("Arkiveret") || 0;
+
+		const metadata = {
 			boardId: BOARD_ID,
 			boardName: "Vertikaler",
+			totalVerticals,
+			totalPublishers,
+			totalAdUnits,
+			statusBreakdown: {
+				active: activeCount,
+				inactive: inactiveCount,
+				archived: archivedCount
+			},
+			dynamicColumnsCount: dynamicColumns.length
 		};
-		
+
+		// Return formatted response
 		return JSON.stringify(
-			createListResponse(
-				"getVertikaler",
-				formattedItems,
+			{
+				tool: "getVertikaler",
+				timestamp: new Date().toISOString(),
+				status: "success",
+				data: statusGroups,
 				metadata,
-				{
-					summary: `Found ${formattedItems.length} vertical${formattedItems.length !== 1 ? 's' : ''} (${dynamicColumns.length} dynamic columns)`
+				options: {
+					summary: `Found ${totalVerticals} vertical${totalVerticals !== 1 ? 's' : ''}: ${activeCount} active, ${inactiveCount} inactive, ${archivedCount} archived (${totalPublishers} publisher${totalPublishers !== 1 ? 's' : ''}, ${totalAdUnits} ad unit${totalAdUnits !== 1 ? 's' : ''})`
 				}
-			),
+			},
 			null,
 			2
 		);
 	} catch (error) {
-		console.error("Error fetching Vertikaler items:", error);
+		console.error("Error fetching Vertikaler:", error);
 		throw error;
 	}
 }
