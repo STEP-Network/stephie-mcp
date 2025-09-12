@@ -152,7 +152,10 @@ export async function getAllPublishers() {
 		// Build metadata
 		const totalPublishers = publishers.length;
 		const totalVerticals = publishersByVertical.size;
-		const totalPublisherGroups = verticalGroups.length;
+		
+		// Count unique publisher groups from the board_relation_mkp69z9s column
+		const uniquePublisherGroups = new Set(publishers.map(p => p.group).filter(group => group !== "-"));
+		const totalPublisherGroups = uniquePublisherGroups.size;
 
 		const metadata = {
 			boardName: "Publishers",
