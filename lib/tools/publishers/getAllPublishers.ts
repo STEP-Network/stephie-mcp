@@ -6,7 +6,7 @@ import {
 import { createListResponse } from "../json-output.js";
 
 export async function getAllPublishers() {
-	// Always fetch all Live publishers - no parameters needed
+	// Always fetch all Live publishers - filtering done at query level
 	const limit = 500;
 
 	// Query with proper filtering for Live publishers (status8 index 1)
@@ -28,7 +28,7 @@ export async function getAllPublishers() {
           items {
             id
             name
-            column_values {
+            column_values(ids: ["text_mktdhmar", "board_relation_mksx8dny", "board_relation_mkp69z9s", "status32"]) {
               id
               text
               value
@@ -110,11 +110,8 @@ export async function getAllPublishers() {
 			return publisher;
 		});
 
-		// No filtering - always return all Live publishers
-		const filteredPublishers = publishers;
-
 		// Sort publishers by vertical, then by name
-		const sortedPublishers = filteredPublishers.sort((a, b) => {
+		const sortedPublishers = publishers.sort((a, b) => {
 			// First sort by vertical
 			const verticalCompare = a.vertical
 				.toLowerCase()
