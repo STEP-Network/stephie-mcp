@@ -4,17 +4,11 @@
  */
 
 import { availabilityForecast } from "../tools/availabilityForecast.js";
-import { getAllPublishers } from "../tools/publishers/getAllPublishers.js";
 import { getPublisherFormats } from "../tools/publishers/getPublisherFormats.js";
 import { getPublishersByFormats } from "../tools/publishers/getPublishersByFormats.js";
-import { getAllProducts } from "../tools/business/getAllProducts.js";
-import { getAllFormats } from "../tools/business/getAllFormats.js";
-import { getAllSizes } from "../tools/targeting/getAllSizes.js";
-import { getAllAdPrices } from "../tools/business/getAllAdPrices.js";
 import { findPublisherAdUnits } from "../tools/targeting/findPublisherAdUnits.js";
 import { getKeyValues } from "../tools/targeting/getKeyValues.js";
 import { getAudienceSegments } from "../tools/targeting/getAudienceSegments.js";
-import { getAllPlacements } from "../tools/targeting/getAllPlacements.js";
 import { getGeoLocations } from "../tools/targeting/getGeoLocations.js";
 import { getContextualTargeting } from "../tools/targeting/getContextualTargeting.js";
 import { getAccounts } from "../tools/crm/getAccounts.js";
@@ -29,8 +23,6 @@ import { updateLead } from "../tools/crm/updateLead.js";
 import { getBoardColumns } from "../tools/debug/getBoardColumns.js";
 import { getItems } from "../tools/debug/getItems.js";
 import { listAllBoards } from "../tools/debug/listBoards.js";
-import { getPeople } from "../tools/business/getPeople.js";
-import { getTeams } from "../tools/business/getTeams.js";
 import { getOpportunities } from "../tools/sales/getOpportunities.js";
 import { getSalesActivities } from "../tools/sales/getSalesActivities.js";
 import { getInternalAdSales } from "../tools/support/getInternalAdSales.js";
@@ -46,7 +38,6 @@ import { getTasksMarketing } from "../tools/tasks/getTasksMarketing.js";
 import { getTasksAdTech } from "../tools/tasks/getTasksAdTech.js";
 import { getTasksVideo } from "../tools/tasks/getTasksVideo.js";
 import { getTasksYieldGrowth } from "../tools/tasks/getTasksYieldGrowth.js";
-import { getTasksTechIntelligence } from "../tools/tasks/getTasksTechIntelligence.js";
 import { createTasksTechIntelligence } from "../tools/tasks/createTasksTechIntelligence.js";
 import { updateTasksTechIntelligence } from "../tools/tasks/updateTasksTechIntelligence.js";
 import { createTaskAdOps } from "../tools/tasks/createTaskAdOps.js";
@@ -82,17 +73,11 @@ import { updateTicket } from "../tools/support/updateTicket.js";
  */
 export const toolImplementations: Record<string, (args: any) => Promise<string | Record<string, unknown>>> = {
 	availabilityForecast: (args) => availabilityForecast(args),
-	getAllPublishers: (_args) => getAllPublishers(),
 	getPublisherFormats: (args) => getPublisherFormats(args),
 	getPublishersByFormats: (args) => getPublishersByFormats(args),
-	getAllProducts: (args) => getAllProducts(args),
-	getAllFormats: (args) => getAllFormats(args),
-	getAllSizes: (args) => getAllSizes(args),
-	getAllAdPrices: (args) => getAllAdPrices(args),
 	findPublisherAdUnits: (args) => findPublisherAdUnits(args),
 	getKeyValues: (args) => getKeyValues(args),
 	getAudienceSegments: (args) => getAudienceSegments(args),
-	getAllPlacements: (args) => getAllPlacements(args),
 	getGeoLocations: (args) => getGeoLocations(args),
 	getContextualTargeting: (args) => getContextualTargeting(args),
 	getAccounts: (args) => getAccounts(args),
@@ -108,8 +93,6 @@ export const toolImplementations: Record<string, (args: any) => Promise<string |
 	getItems: (args) => getItems(args),
 	listAllBoards: (_args) => listAllBoards(),
 	listBoards: (_args) => listAllBoards(), // Alias for compatibility
-	getPeople: (args) => getPeople(args),
-	getTeams: (args) => getTeams(args),
 	getOpportunities: (args) => getOpportunities(args),
 	getSalesActivities: (args) => getSalesActivities(args),
 	getInternalAdSales: (args) => getInternalAdSales(args),
@@ -125,7 +108,6 @@ export const toolImplementations: Record<string, (args: any) => Promise<string |
 	getTasksAdTech: (args) => getTasksAdTech(args),
 	getTasksVideo: (args) => getTasksVideo(args),
 	getTasksYieldGrowth: (args) => getTasksYieldGrowth(args),
-	getTasksTechIntelligence: (args) => getTasksTechIntelligence(args),
 	createTasksTechIntelligence: (args) => createTasksTechIntelligence(args as any),
 	updateTasksTechIntelligence: (args) => updateTasksTechIntelligence(args as any),
 	createTaskAdOps: (args) => createTaskAdOps(args as any),

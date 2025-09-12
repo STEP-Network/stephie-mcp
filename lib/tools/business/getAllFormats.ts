@@ -4,13 +4,11 @@ import type {
 	MondayItemResponse,
 } from "../../monday/types.js";
 
-export async function getAllFormats(args: { limit?: number }) {
-	const { limit = 100 } = args;
-
+export async function getAllFormats() {
 	try {
 		const query = `{
       boards(ids: ${BOARD_IDS.FORMATS}) {
-        items_page(limit: ${limit}) {
+        items_page(limit: 500) {
           items {
             name
             column_values {

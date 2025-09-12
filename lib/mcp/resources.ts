@@ -43,7 +43,7 @@ export const RESOURCE_DEFINITIONS: ResourceDefinition[] = [
 		mimeType: 'application/json',
 		fetcher: async () => {
 			const { getAllProducts } = await import('../tools/business/getAllProducts.js');
-			return getAllProducts({});
+			return getAllProducts();
 		}
 	},
 	{
@@ -53,7 +53,7 @@ export const RESOURCE_DEFINITIONS: ResourceDefinition[] = [
 		mimeType: 'application/json',
 		fetcher: async () => {
 			const { getAllFormats } = await import('../tools/business/getAllFormats.js');
-			return getAllFormats({});
+			return getAllFormats();
 		}
 	},
 	{
@@ -63,7 +63,7 @@ export const RESOURCE_DEFINITIONS: ResourceDefinition[] = [
 		mimeType: 'application/json',
 		fetcher: async () => {
 			const { getAllAdPrices } = await import('../tools/business/getAllAdPrices.js');
-			return getAllAdPrices({});
+			return getAllAdPrices();
 		}
 	},
 	{

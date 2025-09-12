@@ -28,15 +28,6 @@ export interface ToolDefinition {
 
 export const TOOL_DEFINITIONS: ToolDefinition[] = [
 	{
-		name: "getAllPublishers",
-		description:
-			"Get all Live publishers/sites from Monday.com Publishers board. Returns all Live publishers/sites with essential information: Publisher/Site name, GAM Ad Unit ID, Vertical, Publisher Group, and Approval status (Gambling/Finance). Results are sorted by Vertical, then alphabetically by name.",
-		inputSchema: {
-			type: "object",
-			properties: {},
-		},
-	},
-	{
 		name: "getPublisherFormats",
 		description:
 			"Get detailed matrix of publishers/sites and their available ad formats grouped by device type. Shows ONLY ACTIVE formats per publisher/site - if a format is not listed, the publisher/site does NOT support it. Device abbreviations: M=Mobile, D=Desktop, A=App. Useful for finding which publishers/sites support specific format combinations.",
@@ -62,7 +53,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			},
 		},
 	},
+
 	{
+
 		name: "getPublishersByFormats",
 		description:
 			"Find publishers/sites that support specific ad formats on specific devices. Each format has its own available device options based on Monday.com configuration.",
@@ -173,84 +166,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			},
 		},
 	},
+
 	{
-		name: "getAllProducts",
-		description:
-			"Get all ad products and product groups from Monday.com boards (Produktgrupper: 1611223368, Produkt: 1983692701). Shows product hierarchy with associated formats and ad unit sizes. Product groups contain multiple products (e.g., Display group contains Standard, High Impact products).",
-		inputSchema: {
-			type: "object",
-			properties: {
-				includeIds: {
-					type: "boolean",
-					description: "Include Monday.com item IDs in output",
-					default: false,
-				},
-			},
-		},
-	},
-	{
-		name: "getAllFormats",
-		description:
-			"Get all ad format specifications from Monday.com Formater board (1983719743). Shows format dimensions, devices, and technical specifications. Formats are grouped by device type (Desktop, Mobile, App).",
-		inputSchema: {
-			type: "object",
-			properties: {
-				device: {
-					type: "string",
-					enum: ["Desktop", "Mobile", "App", "All"],
-					description: "Filter by device type",
-				},
-				includeIds: {
-					type: "boolean",
-					description: "Include format IDs in output",
-					default: false,
-				},
-			},
-		},
-	},
-	{
-		name: "getAllSizes",
-		description:
-			"Get all ad unit sizes from Monday.com Sizes board (1558597958). Returns width, height, aspect ratio, and IAB standards compliance. Sizes are sorted by width then height.",
-		inputSchema: {
-			type: "object",
-			properties: {
-				minWidth: {
-					type: "number",
-					description: "Minimum width in pixels",
-				},
-				maxWidth: {
-					type: "number",
-					description: "Maximum width in pixels",
-				},
-				includeIds: {
-					type: "boolean",
-					description: "Include size IDs in output",
-					default: false,
-				},
-			},
-		},
-	},
-	{
-		name: "getAllAdPrices",
-		description:
-			"Get all ad pricing from Monday.com Priser board (1432155906). Shows CPM rates by format and market segment. Prices are in DKK (Danish Kroner).",
-		inputSchema: {
-			type: "object",
-			properties: {
-				format: {
-					type: "string",
-					description: "Filter by format name",
-				},
-				includeIds: {
-					type: "boolean",
-					description: "Include price IDs in output",
-					default: false,
-				},
-			},
-		},
-	},
-	{
+
 		name: "findPublisherAdUnits",
 		description:
 			"Find ad units for publishers/sites with complete 3-level hierarchy: Publisher Groups (Level 1) → Publishers/Sites (Level 2) → Child Ad Units (Level 3). Returns all GAM IDs needed for forecasting. Essential for availabilityForecast tool.",
@@ -267,7 +185,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			required: ["names"],
 		},
 	},
+
 	{
+
 		name: "getKeyValues",
 		description:
 			"Get custom targeting key-values from Monday.com Key Values board (1802371471). Contains 22,000+ targeting options for content, demographics, and behavior. Returns keys with their associated values for GAM custom targeting.",
@@ -300,7 +220,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			},
 		},
 	},
+
 	{
+
 		name: "getAudienceSegments",
 		description:
 			"Get demographic and behavioral audience segments from Monday.com Audience board (2051827669). Includes age, gender, interests, and third-party data segments. Returns segment IDs for GAM audience targeting.",
@@ -319,22 +241,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			},
 		},
 	},
+
 	{
-		name: "getAllPlacements",
-		description:
-			"Get all GAM placements and content verticals from Monday.com Ad Placements board (1935559241). Returns placement names and IDs for targeting. Note: RON, Gambling, Finance, and RE-AD are special placements, not content verticals.",
-		inputSchema: {
-			type: "object",
-			properties: {
-				includeIds: {
-					type: "boolean",
-					description: "Include GAM placement IDs in output",
-					default: false,
-				},
-			},
-		},
-	},
-	{
+
 		name: "getGeoLocations",
 		description:
 			"Search geographic locations for targeting in Denmark. Includes 1700+ cities, regions, postal codes, and municipalities. Returns location names with GAM criteria IDs for geographic targeting.",
@@ -355,7 +264,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			required: ["search"],
 		},
 	},
+
 	{
+
 		name: "getContextualTargeting",
 		description:
 			"Get Neuwo contextual targeting categories from Google Ad Manager REST API. Returns content categories like news, sports, entertainment with their GAM IDs. Requires GAM authentication.",
@@ -374,7 +285,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			},
 		},
 	},
+
 	{
+
 		name: "availabilityForecast",
 		description:
 			"Get availability forecast from Google Ad Manager. Returns impression availability for specified targeting and date range.",
@@ -499,7 +412,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			properties: {},
 		},
 	},
+
 	{
+
 		name: "getBoardColumns",
 		description:
 			"Get board columns with IDs, types, and status/dropdown options. Shows numeric index to label mappings for status/dropdown columns.",
@@ -515,7 +430,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			required: ["boardId"],
 		},
 	},
+
 	{
+
 		name: "getItems",
 		description: `Query Monday.com board items. Use getBoardColumns first to get column IDs and types. ALWAYS use columnIds parameter to avoid data overload (boards can have 50+ columns).`,
 		inputSchema: {
@@ -575,7 +492,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 									"notEmpty",
 									"me",
 									"checked",
-									"unchecked",
+									"unchecked"
 								],
 							},
 						},
@@ -631,7 +548,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			},
 		},
 	},
+
 	{
+
 		name: "getBookings",
 		description:
 			"Get items from Bookings board. Filter by status, dates, and campaign status.",
@@ -652,7 +571,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			},
 		},
 	},
+
 	{
+
 		name: "getBugs",
 		description:
 			"Get items from Bugs board. Filter by priority, status, and owner.",
@@ -673,178 +594,6 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					type: "number",
 					description:
 						"Status: 0=In Review, 1=Done, 2=Rejected, 3=Planned, 4=In Progress, 5=Missing Status, 6=Waiting On Others, 7=New, 8=On Hold",
-				},
-			},
-		},
-	},
-	{
-		name: "getTasksTechIntelligence",
-		description:
-			"Get tasks from Tech & Intelligence Tasks board (team members: Nate). Progress on technical and data projects such as STEPhie, make.com and monday.com developments. Carefully set the proper filters/parameters to find relevant tasks based on user's intent.",
-		inputSchema: {
-			type: "object",
-			properties: {
-				search: {
-					type: "string",
-					description: "Optional text search in task names (e.g., 'stephie', 'monday', 'bug')",
-				},
-				limit: { type: "number", default: 10 },
-				keyResultId: {
-					type: "string",
-					description:
-						"Filter by linked key result item ID (use OKR subitems tool to find IDs)",
-				},
-				stephieFeatureId: {
-					type: "string",
-					description:
-						"Filter by linked STEPhie feature item ID (use getStephieFeatures tool to find IDs)",
-				},
-				status: {
-					type: "array",
-					items: {
-						type: "string",
-						enum: [
-							"In Review",
-							"Done", 
-							"Rejected",
-							"Planned",
-							"In Progress",
-							"Missing Status",
-							"Waiting On Others",
-							"New",
-							"On Hold"
-						]
-					},
-					description:
-						"Filter by status values. Use status names like ['Done', 'In Progress'] or ['Rejected']",
-				},
-				statusOperator: {
-					type: "string",
-					enum: ["any_of", "not_any_of"],
-					default: "any_of",
-					description: "Operator for status filtering: 'any_of' to include, 'not_any_of' to exclude",
-				},
-				type: {
-					type: "array",
-					items: {
-						type: "string",
-						enum: [
-							"Support",
-							"Maintenance",
-							"Development",
-							"Not Labelled",
-							"Bugfix",
-							"Documentation",
-							"Meeting",
-							"Test"
-						]
-					},
-					description:
-						"Filter by type values. Use type names like ['Development', 'Bugfix'] or ['Meeting']",
-				},
-				typeOperator: {
-					type: "string",
-					enum: ["any_of", "not_any_of"],
-					default: "any_of",
-					description: "Operator for type filtering: 'any_of' to include, 'not_any_of' to exclude",
-				},
-				priority: {
-					type: "array",
-					items: {
-						type: "string",
-						enum: [
-							"Medium",
-							"Minimal",
-							"Low",
-							"Critical",
-							"High",
-							"Not Prioritized",
-							"Unknown"
-						]
-					},
-					description:
-						"Filter by priority values. Use priority names like ['High', 'Critical'] or ['Low']",
-				},
-				priorityOperator: {
-					type: "string",
-					enum: ["any_of", "not_any_of"],
-					default: "any_of",
-					description: "Operator for priority filtering: 'any_of' to include, 'not_any_of' to exclude",
-				},
-				dueDate: {
-					type: "string",
-					description:
-						"Due date: 'YYYY-MM-DD', 'TODAY', 'TOMORROW', 'NEXT_WEEK', 'NEXT_MONTH', 'YESTERDAY', 'ONE_WEEK_AGO', 'ONE_MONTH_AGO'",
-				},
-				dueDateOperator: {
-					type: "string",
-					enum: [
-						"any_of",
-						"not_any_of",
-						"greater_than",
-						"lower_than",
-					],
-					description: "Operator for due date comparison",
-				},
-				followUpDate: {
-					type: "string",
-					description:
-						"Follow up date: 'YYYY-MM-DD', 'TODAY', 'TOMORROW', 'NEXT_WEEK', 'NEXT_MONTH', 'YESTERDAY', 'ONE_WEEK_AGO', 'ONE_MONTH_AGO'",
-				},
-				followUpDateOperator: {
-					type: "string",
-					enum: [
-						"any_of",
-						"not_any_of",
-						"greater_than",
-						"lower_than",
-					],
-					description: "Operator for follow up date comparison",
-				},
-				createdDate: {
-					type: "string",
-					description:
-						"Created date: 'YYYY-MM-DD', 'TODAY', 'TOMORROW', 'NEXT_WEEK', 'NEXT_MONTH', 'YESTERDAY', 'ONE_WEEK_AGO', 'ONE_MONTH_AGO'",
-				},
-				createdDateOperator: {
-					type: "string",
-					enum: [
-						"any_of",
-						"not_any_of",
-						"greater_than",
-						"lower_than",
-					],
-					description: "Operator for created date comparison",
-				},
-				startedDate: {
-					type: "string",
-					description:
-						"Started date: 'YYYY-MM-DD', 'TODAY', 'TOMORROW', 'NEXT_WEEK', 'NEXT_MONTH', 'YESTERDAY', 'ONE_WEEK_AGO', 'ONE_MONTH_AGO'",
-				},
-				startedDateOperator: {
-					type: "string",
-					enum: [
-						"any_of",
-						"not_any_of",
-						"greater_than",
-						"lower_than",
-					],
-					description: "Operator for started date comparison",
-				},
-				doneDate: {
-					type: "string",
-					description:
-						"Done date: 'YYYY-MM-DD', 'TODAY', 'TOMORROW', 'NEXT_WEEK', 'NEXT_MONTH', 'YESTERDAY', 'ONE_WEEK_AGO', 'ONE_MONTH_AGO'",
-				},
-				doneDateOperator: {
-					type: "string",
-					enum: [
-						"any_of",
-						"not_any_of",
-						"greater_than",
-						"lower_than",
-					],
-					description: "Operator for done date comparison",
 				},
 			},
 		},
@@ -940,7 +689,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			required: ["tasks"],
 		},
 	},
+
 	{
+
 		name: "updateTasksTechIntelligence",
 		description:
 			"Update or delete multiple tasks in the Tasks - Tech & Intelligence board (team members: Nate). Use delete: true to delete tasks.",
@@ -1033,7 +784,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			required: ["tasks"],
 		},
 	},
+
 	{
+
 		name: "getOKR",
 		description:
 			"Get Objectives & Key Results with full hierarchy. Returns objectives with their associated key results. For team filtering, use getTeams first to find team IDs.",
@@ -1072,7 +825,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			},
 		},
 	},
+
 	{
+
 		name: "getMarketingBudgets",
 		description:
 			"Get items from Marketing Budgets board. Track marketing spend and budgets.",
@@ -1087,7 +842,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			},
 		},
 	},
+
 	{
+
 		name: "getDeals",
 		description:
 			"Get items from Deals board. Track sales opportunities and deal stages.",
@@ -1121,33 +878,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			},
 		},
 	},
+
 	{
-		name: "getTeams",
-		description: "Get items from Teams board. View team structure and members.",
-		inputSchema: {
-			type: "object",
-			properties: {
-				limit: { type: "number", default: 10 },
-				search: { 
-					type: "string",
-					description: "Optional text search in item names"
-				},
-				status: {
-					type: "number",
-					description: "Status: 0=Under-Ressourced, 1=Active, 2=Inactive",
-				},
-				peopleId: {
-					type: "string",
-					description: "Filter by person ID (use getPeople to find IDs)",
-				},
-				objectiveId: {
-					type: "string",
-					description: "Filter by objective ID (use getOKR to find IDs)",
-				},
-			},
-		},
-	},
-	{
+
 		name: "getTickets",
 		description:
 			"Get items from Support Tickets board. Track customer issues and resolutions.",
@@ -1214,7 +947,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			},
 		},
 	},
+
 	{
+
 		name: "getLeads",
 		description:
 			"Get items from Leads board. Track potential new publishers and opportunities.",
@@ -1244,26 +979,6 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 	},
 
 	// HR Tools
-	{
-		name: "getPeople",
-		description:
-			"Get items from People board. Access team member details and assignments.",
-		inputSchema: {
-			type: "object",
-			properties: {
-				limit: { type: "number", default: 10 },
-				teamId: {
-					type: "string",
-					description: "Filter by team (use getTeams to find IDs)",
-				},
-				search: { 
-					type: "string",
-					description: "Optional text search in item names"
-				},
-				role: { type: "number", description: "Role index" },
-			},
-		},
-	},
 
 	// Sales Tools
 	{
@@ -1308,7 +1023,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			},
 		},
 	},
+
 	{
+
 		name: "getSalesActivities",
 		description:
 			"Get items from Sales Activities board. Monitor outreach, meetings, and deal progress.",
@@ -1342,7 +1059,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			},
 		},
 	},
+
 	{
+
 		name: "getInternalAdSales",
 		description:
 			"Get items from Internal - Ad Sales board. Track internal sales processes and targets.",
@@ -1394,7 +1113,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			},
 		},
 	},
+
 	{
+
 		name: "getTasksMarketing",
 		description:
 			"Get items from Tasks - Marketing board. Track marketing campaigns and initiatives.",
@@ -1433,7 +1154,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			},
 		},
 	},
+
 	{
+
 		name: "getTasksAdTech",
 		description:
 			"Get items from Tasks - Ad Tech board. Monitor technical implementations and integrations.",
@@ -1467,7 +1190,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			},
 		},
 	},
+
 	{
+
 		name: "getTasksVideo",
 		description:
 			"Get items from Tasks - Video board. Track video content and production tasks.",
@@ -1496,7 +1221,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			},
 		},
 	},
+
 	{
+
 		name: "getTasksYieldGrowth",
 		description:
 			"Get items from Tasks - Yield/Growth board. Monitor revenue optimization initiatives.",
@@ -1552,7 +1279,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			},
 		},
 	},
+
 	{
+
 		name: "getTests",
 		description:
 			"Get items from Tests board. Track QA testing and quality assurance.",
@@ -1680,7 +1409,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			required: ["name"],
 		},
 	},
+
 	{
+
 		name: "updateAccount",
 		description: "Update an existing account in the CRM system",
 		inputSchema: {
@@ -1712,7 +1443,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			required: ["itemId"],
 		},
 	},
+
 	{
+
 		name: "createContact",
 		description: "Create a new contact in the CRM system",
 		inputSchema: {
@@ -1742,7 +1475,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			required: ["name"],
 		},
 	},
+
 	{
+
 		name: "updateContact",
 		description: "Update an existing contact in the CRM system",
 		inputSchema: {
@@ -1769,7 +1504,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			required: ["itemId"],
 		},
 	},
+
 	{
+
 		name: "createLead",
 		description: "Create a new lead in the CRM system",
 		inputSchema: {
@@ -1801,7 +1538,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			required: ["name"],
 		},
 	},
+
 	{
+
 		name: "updateLead",
 		description: "Update an existing lead in the CRM system",
 		inputSchema: {
@@ -1862,7 +1601,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			required: ["name"],
 		},
 	},
+
 	{
+
 		name: "updateOpportunity",
 		description: "Update an existing sales opportunity",
 		inputSchema: {
@@ -1889,7 +1630,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			required: ["itemId"],
 		},
 	},
+
 	{
+
 		name: "createSalesActivity",
 		description: "Create a new sales activity",
 		inputSchema: {
@@ -1921,7 +1664,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			required: ["name"],
 		},
 	},
+
 	{
+
 		name: "updateSalesActivity",
 		description: "Update an existing sales activity",
 		inputSchema: {
@@ -1953,7 +1698,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			required: ["itemId"],
 		},
 	},
+
 	{
+
 		name: "createDeal",
 		description: "Create a new sales deal",
 		inputSchema: {
@@ -1980,7 +1727,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			required: ["name"],
 		},
 	},
+
 	{
+
 		name: "updateDeal",
 		description: "Update an existing sales deal",
 		inputSchema: {
@@ -2039,7 +1788,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			required: ["name"],
 		},
 	},
+
 	{
+
 		name: "updateBug",
 		description: "Update an existing bug report",
 		inputSchema: {
@@ -2095,7 +1846,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			required: ["name"],
 		},
 	},
+
 	{
+
 		name: "updateTaskAdOps",
 		description: "Update an existing AdOps task",
 		inputSchema: {
@@ -2119,7 +1872,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			required: ["itemId"],
 		},
 	},
+
 	{
+
 		name: "createTaskMarketing",
 		description: "Create a new Marketing task",
 		inputSchema: {
@@ -2143,7 +1898,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			required: ["name"],
 		},
 	},
+
 	{
+
 		name: "updateTaskMarketing",
 		description: "Update an existing Marketing task",
 		inputSchema: {
@@ -2167,7 +1924,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			required: ["itemId"],
 		},
 	},
+
 	{
+
 		name: "createTaskAdTech",
 		description: "Create a new AdTech task",
 		inputSchema: {
@@ -2191,7 +1950,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			required: ["name"],
 		},
 	},
+
 	{
+
 		name: "updateTaskAdTech",
 		description: "Update an existing AdTech task",
 		inputSchema: {
@@ -2215,7 +1976,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			required: ["itemId"],
 		},
 	},
+
 	{
+
 		name: "createTaskVideo",
 		description: "Create a new Video task",
 		inputSchema: {
@@ -2239,7 +2002,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			required: ["name"],
 		},
 	},
+
 	{
+
 		name: "updateTaskVideo",
 		description: "Update an existing Video task",
 		inputSchema: {
@@ -2263,7 +2028,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			required: ["itemId"],
 		},
 	},
+
 	{
+
 		name: "createTaskYieldGrowth",
 		description: "Create a new Yield Growth task",
 		inputSchema: {
@@ -2287,7 +2054,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			required: ["name"],
 		},
 	},
+
 	{
+
 		name: "updateTaskYieldGrowth",
 		description: "Update an existing Yield Growth task",
 		inputSchema: {
@@ -2341,7 +2110,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			required: ["name"],
 		},
 	},
+
 	{
+
 		name: "updateOKR",
 		description: "Update an existing OKR (Objectives and Key Results)",
 		inputSchema: {
@@ -2394,7 +2165,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			required: ["name"],
 		},
 	},
+
 	{
+
 		name: "updateTicket",
 		description: "Update an existing support ticket",
 		inputSchema: {
@@ -2419,5 +2192,5 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			},
 			required: ["itemId"],
 		},
-	},
+	}
 ];

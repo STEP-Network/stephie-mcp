@@ -7,16 +7,14 @@ import {
 const PRODUCT_GROUPS_BOARD_ID = "1611223368";
 const PRODUCTS_BOARD_ID = "1983692701";
 
-export async function getAllProducts(args: { limit?: number }) {
-	const { limit = 100 } = args;
-
+export async function getAllProducts() {
 	try {
 		// Fetch from both boards in parallel
 		const queries = [
 			// Product Groups query
 			`{
         board1: boards(ids: ${PRODUCT_GROUPS_BOARD_ID}) {
-          items_page(limit: ${limit}) {
+          items_page(limit: 500) {
             items {
               name
               column_values {
@@ -37,7 +35,7 @@ export async function getAllProducts(args: { limit?: number }) {
 			// Products query
 			`{
         board2: boards(ids: ${PRODUCTS_BOARD_ID}) {
-          items_page(limit: ${limit}) {
+          items_page(limit: 500) {
             items {
               name
               column_values {

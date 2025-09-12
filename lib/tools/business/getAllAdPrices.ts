@@ -1,106 +1,93 @@
 import {
-	type MondayColumnValueResponse,
 	type MondayItemResponse,
 	mondayApi,
 } from "../../monday/client.js";
 
 const AD_PRICES_BOARD_ID = "1432155906";
 
-export async function getAllAdPrices(args: {
-	type?: "display" | "video" | "all";
-	limit?: number;
-}) {
-	const { type = "all", limit = 500 } = args;
+interface ColumnValue {
+	column?: {
+		title?: string;
+		type?: string;
+	};
+	text?: string | null;
+	display_value?: string;
+}
 
+export async function getAllAdPrices(type: "display" | "video" | "all" = "all") {
 	try {
-		// Determine which groups to query
-		const groupIds =
-			type === "display"
-				? ["topics"]
-				: type === "video"
-					? ["group_title"]
-					: ["topics", "group_title"];
+		const query = `{
+			boards(ids: ${AD_PRICES_BOARD_ID}) {
+				items_page(limit: 500) {
+					items {
+						id
+						name
+						column_values {
+							column {
+								title
+								type
+							}
+							text
+							... on BoardRelationValue {
+								display_value
+							}
+						}
+					}
+				}
+			}
+		}`;
 
-		const queries = groupIds.map(
-			(groupId) => `{
-      boards(ids: ${AD_PRICES_BOARD_ID}) {
-        groups(ids: ["${groupId}"]) {
-          title
-          items_page(limit: ${limit}) {
-            items {
-              name
-              column_values {
-                column {
-                  title
-                }
-                text
-                ... on NumbersValue {
-                  number
-                  symbol
-                }
-              }
-            }
-          }
-        }
-      }
-    }`,
-		);
+		console.error(`[getAllAdPrices] Fetching ad prices...`);
 
-		console.error(`[getAllAdPrices] Fetching ${type} ad prices...`);
-
-		// Execute queries
-		const responses = await Promise.all(
-			queries.map((query) => mondayApi(query)),
-		);
+		// Execute query
+		const response = await mondayApi(query);
 
 		const allPrices: Array<Record<string, unknown>> = [];
 
-		for (const response of responses) {
-			const groups = response.data?.boards?.[0]?.groups || [];
+		// Process the single response
+		const items = response.data?.boards?.[0]?.items_page?.items || [];
 
-			for (const group of groups) {
-				const groupType = group.title?.toLowerCase().includes("video")
-					? "video"
-					: "display";
-				const items = (group.items_page?.items || []) as MondayItemResponse[];
+		for (const item of items as MondayItemResponse[]) {
+			const columnValues: Record<string, unknown> = {};
+			let productType = "display"; // Default to display
 
-				for (const item of items) {
-					const columnValues: Record<string, unknown> = {};
+			item.column_values?.forEach((col: ColumnValue) => {
+				const title = col.column?.title || "";
 
-					(item as MondayItemResponse).column_values?.forEach(
-						(col: MondayColumnValueResponse) => {
-							const title = col.column?.title || "";
-
-							// Handle number columns
-							if (col.number !== undefined) {
-								columnValues[title] = col.number;
-							} else {
-								columnValues[title] = col.text || null;
-							}
-						},
-					);
-
-					const bruttoCPM = columnValues["Brutto CPM"];
-					const minimumCPM = columnValues["Minimum CPM"];
-					const bulk = columnValues.Bulk;
-					const cpc = columnValues.CPC;
-					const sspFloorprice = columnValues["SSP Floorprice"];
-					const platform = columnValues.Platform;
-					const link = columnValues.Link;
-
-					allPrices.push({
-						name: item.name,
-						type: groupType,
-						platform: platform || "Not specified",
-						bruttoCPM,
-						minimumCPM,
-						bulk,
-						cpc,
-						sspFloorprice,
-						link: link && link !== "" && link !== "-" ? link : null,
-					});
+				// Handle board relation column for product type
+				if (title === "*Produktgrupper" && col.display_value) {
+					productType = col.display_value.toLowerCase();
 				}
-			}
+				// Handle number columns (they come as text in the response)
+				else if (col.column?.type === "numbers") {
+					const numValue = col.text ? parseFloat(col.text) : null;
+					columnValues[title] = numValue;
+				}
+				// Handle other text columns
+				else {
+					columnValues[title] = col.text || null;
+				}
+			});
+
+			const bruttoCPM = columnValues["Brutto CPM"];
+			const minimumCPM = columnValues["Minimum CPM"];
+			const bulk = columnValues["Bulk"];
+			const cpc = columnValues["CPC"];
+			const sspFloorprice = columnValues["SSP Floorprice"];
+			const platform = columnValues["Platform"];
+			const link = columnValues["Link"];
+
+			allPrices.push({
+				name: item.name,
+				type: productType,
+				platform: platform || "Not specified",
+				bruttoCPM,
+				minimumCPM,
+				bulk,
+				cpc,
+				sspFloorprice,
+				link: link && link !== "" && link !== "-" ? link : null,
+			});
 		}
 
 		// Group by product name and type
