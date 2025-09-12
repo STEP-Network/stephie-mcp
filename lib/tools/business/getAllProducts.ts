@@ -53,6 +53,7 @@ export async function getAllProducts() {
 				name: string;
 				description: string;
 				formats: string[];
+				formatCount: number;
 			}>;
 		}>();
 
@@ -97,7 +98,8 @@ export async function getAllProducts() {
 					group.products.push({
 						name: item.name,
 						description: columnValues.productDescription as string || "",
-						formats: columnValues.formats as string[] || []
+						formats: columnValues.formats as string[] || [],
+						formatCount: (columnValues.formats as string[] || []).length
 					});
 				}
 			}
@@ -108,22 +110,26 @@ export async function getAllProducts() {
 			type: "product_group",
 			name: group.name,
 			description: group.description,
-			products: group.products
+			products: group.products,
+			productCount: group.products.length,
+			formatCount: group.products.reduce((sum, product) => sum + product.formatCount, 0)
 		}));
 
 		// Build metadata
 		const totalProducts = Array.from(productsByGroup.values())
 			.reduce((sum, group) => sum + group.products.length, 0);
+		
+		const totalFormats = Array.from(productsByGroup.values())
+			.reduce((sum, group) => sum + group.products.reduce((productSum, product) => productSum + product.formatCount, 0), 0);
 
 		const metadata = {
-			productsBoardId: PRODUCTS_BOARD_ID,
 			productGroupsCount: productsByGroup.size,
 			productsCount: totalProducts,
-			totalItems: hierarchicalData.length,
+			totalFormatCount: totalFormats,
 			structure: "hierarchical: product_group -> products -> formats (single query)"
 		};
 
-		const summary = `Found ${productsByGroup.size} product groups with ${totalProducts} products`;
+		const summary = `Found ${productsByGroup.size} product groups with ${totalProducts} products and ${totalFormats} total formats`;
 
 		return JSON.stringify(
 			createListResponse(
