@@ -25,7 +25,7 @@ export async function getAllProducts() {
                 text
                 ... on BoardRelationValue {
                   linked_items {
-                    display_name
+                    name
                   }
                 }
               }
@@ -46,7 +46,7 @@ export async function getAllProducts() {
                 text
                 ... on BoardRelationValue {
                   linked_items {
-                    display_name
+                    name
                   }
                 }
               }
