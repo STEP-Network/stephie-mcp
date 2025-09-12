@@ -95,10 +95,10 @@ export async function getAllPublishers() {
 			}
 
 			// Extract linked item names for board relations
-			const verticalName = vertikalCol?.linked_items?.[0]?.name || "-";
+			const verticalName = vertikalCol?.linked_items?.[0]?.name || "Other";
 			const groupName = publisherGroupCol?.linked_items?.[0]?.name || "-";
 
-			const publisher = {
+			return {
 				id: item.id,
 				name: item.name,
 				gamId: gamIdCol?.text || "-",
@@ -106,38 +106,68 @@ export async function getAllPublishers() {
 				group: groupName,
 				approval: approval || "-",
 			};
-
-			return publisher;
 		});
 
-		// Sort publishers by vertical, then by name
-		const sortedPublishers = publishers.sort((a, b) => {
-			// First sort by vertical
-			const verticalCompare = a.vertical
-				.toLowerCase()
-				.localeCompare(b.vertical.toLowerCase());
-			if (verticalCompare !== 0) return verticalCompare;
-			// Then sort by name within same vertical
-			return (a.name as string)
-				.toLowerCase()
-				.localeCompare((b.name as string).toLowerCase());
-		});
+		// Group publishers by vertical
+		const publishersByVertical = new Map<string, Array<{
+			id: unknown;
+			name: unknown;
+			gamId: string;
+			group: string;
+			approval: string;
+		}>>();
+
+		for (const publisher of publishers) {
+			const vertical = publisher.vertical;
+			if (!publishersByVertical.has(vertical)) {
+				publishersByVertical.set(vertical, []);
+			}
+			
+			// Add publisher without the vertical field since it's now the group key
+			publishersByVertical.get(vertical)?.push({
+				id: publisher.id,
+				name: publisher.name,
+				gamId: publisher.gamId,
+				group: publisher.group,
+				approval: publisher.approval
+			});
+		}
+
+		// Sort publishers within each vertical by name
+		for (const [, verticalPublishers] of publishersByVertical) {
+			verticalPublishers.sort((a, b) => 
+				(a.name as string).toLowerCase().localeCompare((b.name as string).toLowerCase())
+			);
+		}
+
+		// Convert to hierarchical structure
+		const verticalGroups = Array.from(publishersByVertical.entries())
+			.sort(([a], [b]) => a.toLowerCase().localeCompare(b.toLowerCase()))
+			.map(([vertical, verticalPublishers]) => ({
+				vertical,
+				publisherCount: verticalPublishers.length,
+				publishers: verticalPublishers
+			}));
 
 		// Build metadata
+		const totalPublishers = publishers.length;
+		const totalVerticals = publishersByVertical.size;
+		const totalPublisherGroups = verticalGroups.length;
+
 		const metadata = {
-			boardId: BOARD_IDS.PUBLISHERS,
 			boardName: "Publishers",
-			totalCount: sortedPublishers.length,
-			filter: "Live publishers only (status8 index 1)"
+			totalPublishers: totalPublishers,
+			totalPublisherGroups: totalPublisherGroups,
+			totalVerticals: totalVerticals
 		};
 
 		return JSON.stringify(
 			createListResponse(
 				"getAllPublishers",
-				sortedPublishers,
+				verticalGroups,
 				metadata,
 				{
-					summary: `Found ${sortedPublishers.length} Live publisher${sortedPublishers.length !== 1 ? 's' : ''}/site${sortedPublishers.length !== 1 ? 's' : ''}`
+					summary: `Found ${totalPublishers} Live publisher${totalPublishers !== 1 ? 's' : ''}/site${totalPublishers !== 1 ? 's' : ''} across ${totalVerticals} vertical${totalVerticals !== 1 ? 's' : ''}`
 				}
 			),
 			null,
