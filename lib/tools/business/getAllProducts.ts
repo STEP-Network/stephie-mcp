@@ -1,185 +1,134 @@
 import {
-	type MondayBoardResponse,
 	type MondayColumnValueResponse,
 	mondayApi,
 } from "../../monday/client.js";
 import { createListResponse } from "../json-output.js";
 
-const PRODUCT_GROUPS_BOARD_ID = "1611223368";
 const PRODUCTS_BOARD_ID = "1983692701";
 
 export async function getAllProducts() {
 	try {
-		// Fetch from both boards in parallel
-		const queries = [
-			// Product Groups query
-			`{
-        board1: boards(ids: ${PRODUCT_GROUPS_BOARD_ID}) {
-          items_page(limit: 500) {
-            items {
-              name
-              column_values {
-                column {
-                  id
-                }
-                text
-                ... on BoardRelationValue {
-                  linked_items {
-                    name
-                  }
-                }
-              }
-            }
-          }
-        }
-      }`,
-			// Products query
-			`{
-        board2: boards(ids: ${PRODUCTS_BOARD_ID}) {
-          items_page(limit: 500) {
-            items {
-              name
-              column_values {
-                column {
-                  id
-                }
-                text
-                ... on BoardRelationValue {
-                  linked_items {
-                    name
-                  }
-                }
-              }
-            }
-          }
-        }
-      }`,
-		];
-
-		console.error("[getAllProducts] Fetching product groups and products...");
-
-		const [groupsResponse, productsResponse] = await Promise.all(
-			queries.map((query) => mondayApi(query)),
-		);
-
-		// Process Product Groups
-		const productGroups = [];
-		if (groupsResponse.data?.board1) {
-			const board = groupsResponse.data.board1 as MondayBoardResponse[];
-			const items = board[0]?.items_page?.items || [];
-
-			for (const item of items) {
-				const columnValues: Record<string, unknown> = {};
-
-				item.column_values?.forEach((col: MondayColumnValueResponse) => {
-					const columnId = col.column?.id || "";
-					if (col.linked_items && col.linked_items.length > 0) {
-						columnValues[columnId] = col.linked_items.map((i) => i.name);
-					} else {
-						columnValues[columnId] = col.text || "";
+		// Single query to Products board with specific column IDs
+		const query = `{
+			board1: boards(ids: ${PRODUCTS_BOARD_ID}) {
+				items_page(limit: 500) {
+					items {
+						name
+						column_values(ids: ["long_text_mkrhybzy", "board_relation_mkrhw4r8", "board_relation_mkrh28wy", "lookup_mkvqga4"]) {
+							column {
+								id
+								title
+							}
+							text
+							... on BoardRelationValue {
+								linked_items {
+									name
+								}
+							}
+							... on MirrorValue {
+								display_value
+							}
+						}
 					}
-				});
+				}
+			}
+		}`;
 
-				productGroups.push({
-					name: item.name,
-					description: columnValues["long_text"] || "",
-					linkedProducts: columnValues["connect_boards"] || [],
-					linkedFormats: columnValues["connect_boards7"] || [],
-					linkedSizes: columnValues["connect_boards4"] || [],
+		console.error("[getAllProducts] Fetching products with hierarchical data...");
+
+		const response = await mondayApi(query);
+
+		if (!response.data?.board1) {
+			throw new Error("No board found in response");
+		}
+
+		const board = response.data.board1[0];
+		const items = board?.items_page?.items || [];
+
+		// Process products and build hierarchical structure
+		const productsByGroup = new Map<string, {
+			name: string;
+			description: string;
+			products: Array<{
+				name: string;
+				description: string;
+				formats: string[];
+			}>;
+		}>();
+
+		for (const item of items) {
+			const columnValues: Record<string, unknown> = {};
+
+			// Extract column values
+			item.column_values?.forEach((col: MondayColumnValueResponse) => {
+				const columnId = col.column?.id || "";
+				
+				if (columnId === "board_relation_mkrhw4r8") {
+					// Product Group (*Produktgrupper)
+					columnValues.productGroup = col.linked_items?.[0]?.name || "";
+				} else if (columnId === "lookup_mkvqga4") {
+					// Product Group Description (Produktgruppe Beskrivelse - mirror field)
+					const mirrorCol = col as MondayColumnValueResponse & { display_value?: string };
+					columnValues.productGroupDescription = mirrorCol.display_value || "";
+				} else if (columnId === "long_text_mkrhybzy") {
+					// Product Description (Produkt Beskrivelse)
+					columnValues.productDescription = col.text || "";
+				} else if (columnId === "board_relation_mkrh28wy") {
+					// Formats (Annonce Formater)
+					columnValues.formats = col.linked_items?.map(item => item.name) || [];
+				}
+			});
+
+			const productGroupName = columnValues.productGroup as string;
+			
+			// Initialize product group if not exists
+			if (productGroupName && !productsByGroup.has(productGroupName)) {
+				productsByGroup.set(productGroupName, {
+					name: productGroupName,
+					description: columnValues.productGroupDescription as string || "",
+					products: []
 				});
+			}
+
+			// Add product to its group
+			if (productGroupName && productsByGroup.has(productGroupName)) {
+				const group = productsByGroup.get(productGroupName);
+				if (group) {
+					group.products.push({
+						name: item.name,
+						description: columnValues.productDescription as string || "",
+						formats: columnValues.formats as string[] || []
+					});
+				}
 			}
 		}
 
-		// Process Products
-		const products = [];
-		if (productsResponse.data?.board2) {
-			const board = productsResponse.data.board2 as MondayBoardResponse[];
-			const items = board[0]?.items_page?.items || [];
-
-			for (const item of items) {
-				const columnValues: Record<string, unknown> = {};
-
-				item.column_values?.forEach((col: MondayColumnValueResponse) => {
-					const columnId = col.column?.id || "";
-					if (col.linked_items && col.linked_items.length > 0) {
-						columnValues[columnId] = col.linked_items.map((i) => i.name);
-					} else {
-						columnValues[columnId] = col.text || "";
-					}
-				});
-
-				products.push({
-					name: item.name,
-					productGroup: columnValues["connect_boards8"]
-						? (columnValues["connect_boards8"] as string[])[0]
-						: "",
-					description: columnValues["long_text"] || "",
-					linkedFormats: columnValues["connect_boards7"] || [],
-					linkedSizes: columnValues["connect_boards4"] || [],
-				});
-			}
-		}
-
-		// Create hierarchical structure: ProductGroup -> Products -> Formats
-		const hierarchicalData = productGroups.map(group => {
-			// Find products that belong to this group
-			const groupProducts = products.filter(product => 
-				product.productGroup === group.name
-			).map(product => ({
-				name: product.name,
-				description: product.description,
-				formats: product.linkedFormats || [],
-				sizes: product.linkedSizes || []
-			}));
-
-			return {
-				type: "product_group",
-				name: group.name,
-				description: group.description,
-				products: groupProducts,
-				// Include group-level formats and sizes as well
-				groupFormats: group.linkedFormats || [],
-				groupSizes: group.linkedSizes || []
-			};
-		});
-
-		// Also include orphaned products (products not assigned to any group)
-		const orphanedProducts = products.filter(product => 
-			!product.productGroup || 
-			!productGroups.some(group => group.name === product.productGroup)
-		).map(product => ({
-			type: "orphaned_product",
-			name: product.name,
-			description: product.description,
-			formats: product.linkedFormats || [],
-			sizes: product.linkedSizes || [],
-			note: "Product not assigned to any product group"
+		// Convert to hierarchical array structure
+		const hierarchicalData = Array.from(productsByGroup.values()).map(group => ({
+			type: "product_group",
+			name: group.name,
+			description: group.description,
+			products: group.products
 		}));
 
-		// Combine hierarchical data with orphaned products
-		const allProductsData = [
-			...hierarchicalData,
-			...orphanedProducts
-		];
-
 		// Build metadata
+		const totalProducts = Array.from(productsByGroup.values())
+			.reduce((sum, group) => sum + group.products.length, 0);
+
 		const metadata = {
-			productGroupsBoardId: PRODUCT_GROUPS_BOARD_ID,
 			productsBoardId: PRODUCTS_BOARD_ID,
-			productGroupsCount: productGroups.length,
-			productsCount: products.length,
-			orphanedProductsCount: orphanedProducts.length,
-			totalItems: allProductsData.length,
-			structure: "hierarchical: product_group -> products -> formats"
+			productGroupsCount: productsByGroup.size,
+			productsCount: totalProducts,
+			totalItems: hierarchicalData.length,
+			structure: "hierarchical: product_group -> products -> formats (single query)"
 		};
 
-		const totalAssignedProducts = products.length - orphanedProducts.length;
-		const summary = `Found ${productGroups.length} product groups with ${totalAssignedProducts} assigned products and ${orphanedProducts.length} orphaned products`;
+		const summary = `Found ${productsByGroup.size} product groups with ${totalProducts} products`;
 
 		return JSON.stringify(
 			createListResponse(
 				"getAllProducts",
-				allProductsData,
+				hierarchicalData,
 				metadata,
 				{ summary }
 			),
