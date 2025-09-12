@@ -31,7 +31,6 @@ export const RESOURCE_DEFINITIONS: ResourceDefinition[] = [
 		description: 'Complete list of all publishers in the system',
 		mimeType: 'application/json',
 		fetcher: async () => {
-			// This would call the same logic as getAllPublishers
 			const { getAllPublishers } = await import('../tools/publishers/getAllPublishers.js');
 			return getAllPublishers();
 		}
@@ -73,7 +72,7 @@ export const RESOURCE_DEFINITIONS: ResourceDefinition[] = [
 		mimeType: 'application/json',
 		fetcher: async () => {
 			const { getAllPlacements } = await import('../tools/targeting/getAllPlacements.js');
-			return getAllPlacements({});
+			return getAllPlacements();
 		}
 	},
 	{
@@ -83,7 +82,7 @@ export const RESOURCE_DEFINITIONS: ResourceDefinition[] = [
 		mimeType: 'application/json',
 		fetcher: async () => {
 			const { getAllSizes } = await import('../tools/targeting/getAllSizes.js');
-			return getAllSizes({});
+			return getAllSizes();
 		}
 	},
 	{
@@ -93,7 +92,7 @@ export const RESOURCE_DEFINITIONS: ResourceDefinition[] = [
 		mimeType: 'application/json',
 		fetcher: async () => {
 			const { getTeams } = await import('../tools/business/getTeams.js');
-			return getTeams({});
+			return getTeams();
 		}
 	},
 	{
@@ -103,7 +102,7 @@ export const RESOURCE_DEFINITIONS: ResourceDefinition[] = [
 		mimeType: 'application/json',
 		fetcher: async () => {
 			const { getPeople } = await import('../tools/business/getPeople.js');
-			return getPeople({});
+			return getPeople();
 		}
 	},
 	{
@@ -113,7 +112,7 @@ export const RESOURCE_DEFINITIONS: ResourceDefinition[] = [
 		mimeType: 'application/json',
 		fetcher: async () => {
 			const { getTasksTechIntelligence } = await import('../tools/tasks/getTasksTechIntelligence.js');
-			return getTasksTechIntelligence({ limit: 20 });
+			return getTasksTechIntelligence();
 		}
 	},
 	{
@@ -123,8 +122,7 @@ export const RESOURCE_DEFINITIONS: ResourceDefinition[] = [
 		mimeType: 'application/json',
 		fetcher: async () => {
 			const { getOTTPublishers } = await import('../tools/publishers/getOTTPublishers.js');
-			// Get all OTT publishers without any filters
-			return getOTTPublishers({ limit: 100 });
+			return getOTTPublishers();
 		}
 	},
 	{
@@ -134,8 +132,7 @@ export const RESOURCE_DEFINITIONS: ResourceDefinition[] = [
 		mimeType: 'application/json',
 		fetcher: async () => {
 			const { getStrategies } = await import('../tools/business/getStrategies.js');
-			// Get strategies, filtering will be done in the modified function
-			return getStrategies({ limit: 100 });
+			return getStrategies();
 		}
 	},
 	{
@@ -145,8 +142,7 @@ export const RESOURCE_DEFINITIONS: ResourceDefinition[] = [
 		mimeType: 'application/json',
 		fetcher: async () => {
 			const { getVertikaler } = await import('../tools/business/getVertikaler.js');
-			// Get all verticals with all columns
-			return getVertikaler({ limit: 100 });
+			return getVertikaler();
 		}
 	},
 	{
@@ -156,8 +152,7 @@ export const RESOURCE_DEFINITIONS: ResourceDefinition[] = [
 		mimeType: 'application/json',
 		fetcher: async (search?: string) => {
 			const { getChangelog } = await import('../tools/development/getChangelog.js');
-			// Get 20 latest changelogs, with optional search
-			return getChangelog({ limit: 20, search });
+			return getChangelog({ search });
 		}
 	}
 	// Note: getPublisherFAQ is intentionally not included yet

@@ -3,47 +3,43 @@ import {
 	type MondayItemResponse,
 	mondayApi,
 } from "../../monday/client.js";
+import { createListResponse } from "../json-output.js";
 
 const AD_SIZES_BOARD_ID = "1558597958";
 
-export async function getAllSizes(args: {
-	device?: "Desktop" | "Mobile" | "Tablet" | "App";
-	limit?: number;
-}) {
-	const { device, limit = 500 } = args;
-
+export async function getAllSizes() {
 	try {
-		// Build query with optional device filter
-		const queryParams = device
-			? `, query_params: { rules: [{ column_id: "dropdown_mkqszqya", compare_value: ["${device}"], operator: contains_text }] }`
-			: "";
-
-		const query = `{
+		// Get all ad sizes from the Ad Sizes board
+		const query = `
+    query {
       boards(ids: ${AD_SIZES_BOARD_ID}) {
-        items_page(
-          limit: ${limit}${queryParams}
-        ) {
+        items_page(limit: 500) {
+          cursor
           items {
+            id
             name
             column_values {
               id
               text
-              ... on BoardRelationValue {
-                display_value
-                linked_items {
-                  name
-                }
-              }
+              value
               ... on NumbersValue {
                 number
                 symbol
               }
-              ... on LinkValue {
-                url
+              ... on DropdownValue {
+                display_value
                 text
               }
-              ... on LongTextValue {
-                text
+              ... on BoardRelationValue {
+                display_value
+                linked_items {
+                  id
+                  name
+                }
+              }
+              column {
+                title
+                type
               }
             }
           }
@@ -51,90 +47,101 @@ export async function getAllSizes(args: {
       }
     }`;
 
-		console.error(
-			`[getAllSizes] Fetching ad unit sizes${device ? ` for ${device}` : ""}...`,
-		);
-
 		const response = await mondayApi(query);
+		const items = response?.data?.boards?.[0]?.items_page?.items || [];
 
-		if (!response.data?.boards || response.data.boards.length === 0) {
-			return "No ad sizes board found";
-		}
-
-		const items = response.data.boards[0].items_page?.items || [];
-
-		if (items.length === 0) {
-			return device ? `No ${device} sizes found` : "No sizes found";
-		}
-
-		// Process sizes
+		// Map the raw data to structured objects
 		const sizes = items.map((item: Record<string, unknown>) => {
-			const columnValues: Record<string, unknown> = {};
+			const mondayItem = item as MondayItemResponse;
+			const columnValues = {
+				width: "",
+				height: "",
+				device: "",
+				standardCPM: "",
+				averageEAPM: "",
+				gamNames: "",
+				deviceType: "",
+				adFormats: "",
+				adProducts: "",
+				specsUrl: "",
+				averageCTR: "",
+				averageViewability: "",
+				description: "",
+			};
 
-			(item as MondayItemResponse).column_values?.forEach(
-				(col: MondayColumnValueResponse) => {
-					const id = col.id;
-
-					// Map column IDs to values
-					switch (id) {
-						case "long_text_mkqsa10e":
-							columnValues.description = col.text || "";
-							break;
-						case "link_mkqscdn8":
-							columnValues.specsUrl = col.url || col.text || "";
-							break;
-						case "numeric_mkqs8wx4":
-							columnValues.averageCTR =
-								col.number !== undefined
-									? col.symbol
-										? `${col.number}${col.symbol}`
-										: `${col.number}`
-									: "";
-							break;
-						case "numeric_mkqspyt0":
-							columnValues.averageViewability =
-								col.number !== undefined
-									? col.symbol
-										? `${col.number}${col.symbol}`
-										: `${col.number}`
-									: "";
-							break;
-						case "numeric_mkqsqecq":
-							columnValues.averageEAPM =
-								col.number !== undefined
-									? col.symbol
-										? `${col.number}${col.symbol}`
-										: `${col.number}`
-									: "";
-							break;
-						case "text_mksgcrz8":
-							columnValues.gamNames = col.text || "";
-							break;
-						case "dropdown_mkqszqya":
-							columnValues.deviceType = col.text || "";
-							break;
-						case "board_relation_mkrhhdrx":
-							// Extract names from linked items for formats
-							columnValues.adFormats =
-								col.linked_items && col.linked_items.length > 0
-									? col.linked_items.map((item) => item.name).join(", ")
-									: col.display_value || col.text || "";
-							break;
-						case "board_relation_mkrhckxh":
-							// Extract names from linked items for products
-							columnValues.adProducts =
-								col.linked_items && col.linked_items.length > 0
-									? col.linked_items.map((item) => item.name).join(", ")
-									: col.display_value || col.text || "";
-							break;
-					}
-				},
-			);
+			// Process column values
+			mondayItem.column_values.forEach((col: MondayColumnValueResponse) => {
+				switch (col.id) {
+					case "text_mkqsh5w7":
+						// Width
+						columnValues.width = col.text || "";
+						break;
+					case "text_mkqrxz0z":
+						// Height
+						columnValues.height = col.text || "";
+						break;
+					case "dropdown_mks0xdmd":
+						columnValues.device = col.text || "";
+						break;
+					case "numeric_mkrhdmee":
+						columnValues.standardCPM =
+							col.number !== undefined
+								? col.symbol
+									? `${col.number}${col.symbol}`
+									: `${col.number}`
+								: "";
+						break;
+					case "numeric_mkqsqecq":
+						columnValues.averageEAPM =
+							col.number !== undefined
+								? col.symbol
+									? `${col.number}${col.symbol}`
+									: `${col.number}`
+								: "";
+						break;
+					case "text_mksgcrz8":
+						columnValues.gamNames = col.text || "";
+						break;
+					case "dropdown_mkqszqya":
+						columnValues.deviceType = col.text || "";
+						break;
+					case "board_relation_mkrhhdrx":
+						// Extract names from linked items for formats
+						columnValues.adFormats =
+							col.linked_items && col.linked_items.length > 0
+								? col.linked_items.map((item) => item.name).join(", ")
+								: col.display_value || col.text || "";
+						break;
+					case "board_relation_mkrhckxh":
+						// Extract names from linked items for products
+						columnValues.adProducts =
+							col.linked_items && col.linked_items.length > 0
+								? col.linked_items.map((item) => item.name).join(", ")
+								: col.display_value || col.text || "";
+						break;
+					case "text_mkj8a83s":
+						columnValues.specsUrl = col.text || "";
+						break;
+					case "text_mktj2qng":
+						columnValues.averageCTR = col.text || "";
+						break;
+					case "text_mkqse9p4":
+						columnValues.averageViewability = col.text || "";
+						break;
+					case "text_mknyx7mj":
+						columnValues.description = col.text || "";
+						break;
+				}
+			});
 
 			return {
-				name: item.name,
+				id: mondayItem.id,
+				name: mondayItem.name,
+				width: columnValues.width,
+				height: columnValues.height,
+				device: columnValues.device || "",
+				standardCPM: columnValues.standardCPM || "",
 				gamNames: columnValues.gamNames || "",
-				description: columnValues.description || "",
 				adProducts: columnValues.adProducts || "",
 				adFormats: columnValues.adFormats || "",
 				deviceType: columnValues.deviceType || "",
@@ -142,38 +149,9 @@ export async function getAllSizes(args: {
 				averageCTR: columnValues.averageCTR || "",
 				averageViewability: columnValues.averageViewability || "",
 				averageEAPM: columnValues.averageEAPM || "",
+				description: columnValues.description || "",
 			};
 		});
-
-		// Group sizes by device type if not filtered
-		const sizesByDevice = new Map<string, any[]>();
-		for (const size of sizes) {
-			const deviceType = (size.deviceType as string) || "Other";
-			if (!sizesByDevice.has(deviceType)) {
-				sizesByDevice.set(deviceType, []);
-			}
-			sizesByDevice.get(deviceType)?.push(size);
-		}
-
-		// Format as markdown table
-		const textLines: string[] = [];
-		textLines.push(`# Ad Unit Sizes`);
-		textLines.push("");
-		textLines.push(`**Total:** ${sizes.length} sizes`);
-		if (device) {
-			textLines.push(`**Device Filter:** ${device}`);
-		}
-		textLines.push("");
-
-		// Main table with essential info
-		textLines.push("## Size Overview");
-		textLines.push("");
-		textLines.push(
-			"*Device abbreviations: D=Desktop, M=Mobile, T=Tablet, A=App*",
-		);
-		textLines.push("");
-		textLines.push("| Size | Devices | Products | Formats |");
-		textLines.push("|------|---------|----------|---------|");
 
 		// Sort sizes by Product first, then Format, then size
 		const sortedSizes = [...sizes].sort((a, b) => {
@@ -200,153 +178,46 @@ export async function getAllSizes(args: {
 			return bParts[1] - aParts[1];
 		});
 
-		for (const size of sortedSizes) {
-			// Clean up device type display
-			const devices = (size.deviceType as string) || "Other";
-			const cleanDevices = (devices as string)
-				.split(",")
-				.map((d: string) => d.trim())
-				.map((d: string) => {
-					// Abbreviate device names
-					switch (d.toLowerCase()) {
-						case "desktop":
-							return "D";
-						case "mobile":
-							return "M";
-						case "tablet":
-							return "T";
-						case "app":
-							return "A";
-						default:
-							return d.charAt(0);
-					}
-				})
-				.join(",");
+		// Format sizes for JSON response
+		const formattedSizes = sortedSizes.map((size) => ({
+			id: size.id,
+			name: size.name,
+			width: size.width,
+			height: size.height,
+			dimensions: `${size.width}x${size.height}`,
+			device: size.device,
+			deviceType: size.deviceType,
+			adProducts: size.adProducts,
+			adFormats: size.adFormats,
+			standardCpm: size.standardCPM,
+			averageEapm: size.averageEAPM,
+			gamNames: size.gamNames,
+			averageCtr: size.averageCTR,
+			averageViewability: size.averageViewability,
+			description: size.description,
+			specsUrl: size.specsUrl,
+			isVideo: (size.name as string).endsWith("v")
+		}));
 
-			// Format products and formats columns (no truncation)
-			const products = size.adProducts || "-";
-			const formats = size.adFormats || "-";
-
-			// Add row with bold size
-			textLines.push(
-				`| **${size.name}** | ${cleanDevices} | ${products} | ${formats} |`,
-			);
-		}
-
-		textLines.push("");
-
-		// Add detailed info for sizes with benchmarks, descriptions or specs
-		const sizesWithDetails = sortedSizes.filter(
-			(s) =>
-				s.description ||
-				s.specsUrl ||
-				s.gamNames ||
-				s.averageCTR ||
-				s.averageViewability ||
-				s.averageEAPM,
+		// Count by device type for statistics
+		const deviceCounts = sizes.reduce(
+			(acc, s) => {
+				const deviceType = String(s.deviceType) || "Other";
+				const existing = acc.find((item) => item.device === deviceType);
+				if (existing) {
+					existing.count++;
+				} else {
+					acc.push({ device: deviceType, count: 1 });
+				}
+				return acc;
+			},
+			[] as Array<{ device: string; count: number }>,
 		);
 
-		if (sizesWithDetails.length > 0) {
-			textLines.push("## Size Details & Benchmarks");
-			textLines.push("");
-
-			for (const size of sizesWithDetails) {
-				textLines.push(`### ${size.name}`);
-
-				if (size.gamNames) {
-					textLines.push(`**GAM Ad Unit Names:** ${size.gamNames}`);
-				}
-
-				if (size.adProducts) {
-					textLines.push(`**Products:** ${size.adProducts}`);
-				}
-
-				// Add benchmarks if available
-				const benchmarks = [];
-				if (size.averageCTR && size.averageCTR !== "null%") {
-					benchmarks.push(`CTR: ${size.averageCTR}`);
-				}
-				if (size.averageViewability && size.averageViewability !== "null%") {
-					benchmarks.push(`Viewability: ${size.averageViewability}`);
-				}
-				if (size.averageEAPM && size.averageEAPM !== "null") {
-					benchmarks.push(`eAPM: ${size.averageEAPM}`);
-				}
-
-				if (benchmarks.length > 0) {
-					textLines.push(`**Benchmarks:** ${benchmarks.join(" | ")}`);
-				}
-
-				if (size.description) {
-					textLines.push(`**Description:** ${size.description}`);
-				}
-
-				if (size.specsUrl) {
-					textLines.push(`**Specs:** [View Specifications](${size.specsUrl})`);
-				}
-
-				textLines.push("");
-			}
-		}
-
-		// Add summary by device type
-		textLines.push("## Device Distribution");
-		textLines.push("");
-
-		const deviceCounts = new Map<string, number>();
-		for (const size of sizes) {
-			const devices = ((size.deviceType as string) || "Other")
-				.split(",")
-				.map((d: string) => d.trim());
-			for (const device of devices) {
-				deviceCounts.set(device, (deviceCounts.get(device) || 0) + 1);
-			}
-		}
-
-		const sortedDeviceCounts = Array.from(deviceCounts.entries()).sort(
-			(a, b) => b[1] - a[1],
-		); // Sort by count descending
-
-		textLines.push("| Device | Count | Legend |");
-		textLines.push("|--------|-------|--------|");
-		for (const [device, count] of sortedDeviceCounts) {
-			let legend = "";
-			switch (device.toLowerCase()) {
-				case "desktop":
-					legend = "D = Desktop";
-					break;
-				case "mobile":
-					legend = "M = Mobile";
-					break;
-				case "tablet":
-					legend = "T = Tablet";
-					break;
-				case "app":
-					legend = "A = App";
-					break;
-				default:
-					legend = device;
-					break;
-			}
-			textLines.push(`| ${device} | ${count} | ${legend} |`);
-		}
-
-		textLines.push("");
-
-		// Add note about video sizes
+		// Video sizes count
 		const videoSizes = sizes.filter((s) => (s.name as string).endsWith("v"));
-		if (videoSizes.length > 0) {
-			textLines.push("### Video Sizes");
-			textLines.push(
-				`*${videoSizes.length} video sizes marked with 'v' suffix*`,
-			);
-			textLines.push("");
-		}
-
-		// Add GAM names mapping for easy reference
-		textLines.push("### GAM Size Mapping");
-		textLines.push("");
-		textLines.push("```json");
+		
+		// GAM mapping for reference
 		const gamMapping = sortedSizes
 			.filter((s) => s.gamNames)
 			.reduce(
@@ -356,10 +227,28 @@ export async function getAllSizes(args: {
 				},
 				{} as Record<string, string>,
 			);
-		textLines.push(JSON.stringify(gamMapping, null, 2));
-		textLines.push("```");
 
-		return textLines.join("\n");
+		const metadata: Record<string, any> = {
+			boardId: AD_SIZES_BOARD_ID,
+			boardName: "Størrelser",
+			totalSizes: sizes.length,
+			videoSizes: videoSizes.length,
+			deviceBreakdown: deviceCounts,
+			gamMapping,
+		};
+
+		return JSON.stringify(
+			createListResponse(
+				"getAllSizes",
+				formattedSizes,
+				metadata,
+				{
+					summary: `Found ${sizes.length} ad size${sizes.length !== 1 ? 's' : ''} (${videoSizes.length} video sizes)`
+				}
+			),
+			null,
+			2
+		);
 	} catch (error) {
 		console.error("Error fetching ad sizes:", error);
 		throw new Error(

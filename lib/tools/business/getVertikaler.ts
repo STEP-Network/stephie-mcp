@@ -5,54 +5,18 @@ import {
 } from "../../monday/client.js";
 import { getDynamicColumns } from "../dynamic-columns.js";
 import { createListResponse } from "../json-output.js";
-export async function getVertikaler(
-	params: {
-		limit?: number;
-		search?: string;
-		color_mksxpbk5?: number; // Status (numeric index)
-	} = {},
-) {
-	const { limit = 100, search, color_mksxpbk5 } = params;
+export async function getVertikaler() {
 
 	// Fetch dynamic columns from Columns board
 	const BOARD_ID = "2054670440";
 	const dynamicColumns = await getDynamicColumns(BOARD_ID);
-
-	// Build filters
-	const filters: Array<Record<string, unknown>> = [];
-	if (search) {
-		filters.push({
-			column_id: "name",
-			compare_value: search,
-			operator: "contains_text",
-		});
-	}
-	if (color_mksxpbk5 !== undefined)
-		filters.push({
-			column_id: "color_mksxpbk5",
-			compare_value: [color_mksxpbk5],
-			operator: "any_of",
-		});
-
-	const queryParams =
-		filters.length > 0
-			? `, query_params: { rules: [${filters
-					.map(
-						(f) => `{
-        column_id: "${f.column_id}",
-        compare_value: ${Array.isArray(f.compare_value) ? `[${f.compare_value}]` : typeof f.compare_value === "string" ? `"${f.compare_value}"` : f.compare_value},
-        operator: ${f.operator}
-      }`,
-					)
-					.join(",")}]}`
-			: "";
 
 	const query = `
     query {
       boards(ids: [2054670440]) {
         id
         name
-        items_page(limit: ${limit}${queryParams}) {
+        items_page(limit: 500) {
           items {
             id
             name
@@ -66,7 +30,7 @@ export async function getVertikaler(
                 linked_items { id name }
               }
               column {
-                title
+                id
                 type
               }
             }
@@ -96,7 +60,7 @@ export async function getVertikaler(
 			(item as MondayItemResponse).column_values.forEach(
 				(col: Record<string, unknown>) => {
 					const column = col as MondayColumnValueResponse;
-					const fieldName = column.column?.title?.toLowerCase().replace(/\s+/g, '_') || column.id;
+					const fieldName = column.id;
 					
 					// Parse different column types
 					if (column.column?.type === 'status' || column.column?.type === 'dropdown' || column.column?.type === 'color') {
@@ -122,14 +86,8 @@ export async function getVertikaler(
 		const metadata: Record<string, any> = {
 			boardId: BOARD_ID,
 			boardName: "Vertikaler",
-			limit,
-			dynamicColumns: dynamicColumns.length,
-			filters: {}
 		};
-
-		if (search) metadata.filters.search = search;
-		if (color_mksxpbk5 !== undefined) metadata.filters.status = color_mksxpbk5;
-
+		
 		return JSON.stringify(
 			createListResponse(
 				"getVertikaler",

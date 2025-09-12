@@ -3,6 +3,7 @@ import {
 	type MondayColumnValueResponse,
 	mondayApi,
 } from "../../monday/client.js";
+import { createListResponse } from "../json-output.js";
 
 const PRODUCT_GROUPS_BOARD_ID = "1611223368";
 const PRODUCTS_BOARD_ID = "1983692701";
@@ -71,21 +72,21 @@ export async function getAllProducts() {
 				const columnValues: Record<string, unknown> = {};
 
 				item.column_values?.forEach((col: MondayColumnValueResponse) => {
-					const title = col.column?.title || "";
+					const columnId = col.column?.id || "";
 					if (col.linked_items && col.linked_items.length > 0) {
-						columnValues[title] = col.linked_items.map((i) => i.name);
+						columnValues[columnId] = col.linked_items.map((i) => i.name);
 					} else {
-						columnValues[title] = col.text || "";
+						columnValues[columnId] = col.text || "";
 					}
 				});
 
 				productGroups.push({
 					type: "group",
 					name: item.name,
-					description: columnValues["Produkt Beskrivelse"] || "",
-					products: columnValues["Annonce Produkter"] || [],
-					formats: columnValues["Annonce Formater"] || [],
-					sizes: columnValues["Placeringer / Ad Unit Størrelser"] || [],
+					description: columnValues["long_text"] || "",
+					products: columnValues["connect_boards"] || [],
+					formats: columnValues["connect_boards7"] || [],
+					sizes: columnValues["connect_boards4"] || [],
 				});
 			}
 		}
@@ -100,119 +101,62 @@ export async function getAllProducts() {
 				const columnValues: Record<string, unknown> = {};
 
 				item.column_values?.forEach((col: MondayColumnValueResponse) => {
-					const title = col.column?.title || "";
+					const columnId = col.column?.id || "";
 					if (col.linked_items && col.linked_items.length > 0) {
-						columnValues[title] = col.linked_items.map((i) => i.name);
+						columnValues[columnId] = col.linked_items.map((i) => i.name);
 					} else {
-						columnValues[title] = col.text || "";
+						columnValues[columnId] = col.text || "";
 					}
 				});
 
 				products.push({
 					type: "product",
 					name: item.name,
-					productGroup: columnValues["*Produktgrupper"]
-						? (columnValues["*Produktgrupper"] as string[])[0]
+					productGroup: columnValues["connect_boards8"]
+						? (columnValues["connect_boards8"] as string[])[0]
 						: "",
-					description: columnValues["Produkt Beskrivelse"] || "",
-					formats: columnValues["Annonce Formater"] || [],
-					sizes: columnValues["Placeringer / Ad Unit Størrelser"] || [],
+					description: columnValues["long_text"] || "",
+					formats: columnValues["connect_boards7"] || [],
+					sizes: columnValues["connect_boards4"] || [],
 				});
 			}
 		}
 
-		// Format as text output
-		const textLines: string[] = [];
-		textLines.push(`PRODUKTER OG PRODUKTGRUPPER`);
-		textLines.push("═".repeat(50));
-		textLines.push("");
 
-		// Display Product Groups
-		if (productGroups.length > 0) {
-			textLines.push(`PRODUKTGRUPPER (${productGroups.length})`);
-			textLines.push("─".repeat(40));
 
-			for (const group of productGroups) {
-				textLines.push(`▸ ${group.name}`);
+		// Combine all products data
+		const allProductsData = [
+			...productGroups.map(group => ({
+				...group,
+				type: 'product_group'
+			})),
+			...products.map(product => ({
+				...product,
+				type: 'product'
+			}))
+		];
 
-				const products = group.products as string[];
-				if (products.length > 0) {
-					textLines.push(`  Produkter: ${products.join(", ")}`);
-				}
+		// Build metadata
+		const metadata = {
+			productGroupsBoardId: PRODUCT_GROUPS_BOARD_ID,
+			productsBoardId: PRODUCTS_BOARD_ID,
+			productGroupsCount: productGroups.length,
+			productsCount: products.length,
+			totalItems: allProductsData.length
+		};
 
-				const formats = group.formats as string[];
-				if (formats.length > 0) {
-					const formatList = formats.slice(0, 5).join(", ");
-					const more =
-						formats.length > 5 ? ` (+${formats.length - 5} flere)` : "";
-					textLines.push(`  Formater: ${formatList}${more}`);
-				}
+		const summary = `Found ${productGroups.length} product groups and ${products.length} products`;
 
-				if (group.description) {
-					const description = group.description as string;
-					textLines.push(
-						`  ${description.substring(0, 100)}${description.length > 100 ? "..." : ""}`,
-					);
-				}
-				textLines.push("");
-			}
-		}
-
-		// Display Products
-		if (products.length > 0) {
-			textLines.push(`PRODUKTER (${products.length})`);
-			textLines.push("─".repeat(40));
-
-			// Group products by product group
-			const productsByGroup: Record<
-				string,
-				Array<Record<string, unknown>>
-			> = {};
-			for (const product of products) {
-				const group = product.productGroup || "Uncategorized";
-				if (!productsByGroup[group]) {
-					productsByGroup[group] = [];
-				}
-				productsByGroup[group].push(product);
-			}
-
-			for (const [groupName, groupProducts] of Object.entries(
-				productsByGroup,
-			)) {
-				textLines.push(`${groupName}:`);
-
-				for (const product of groupProducts) {
-					textLines.push(`  • ${product.name}`);
-
-					if ((product.formats as string[]).length > 0) {
-						const formatList = (product.formats as string[])
-							.slice(0, 3)
-							.join(", ");
-						const more =
-							(product.formats as string[]).length > 3
-								? ` (+${(product.formats as string[]).length - 3})`
-								: "";
-						textLines.push(`    Formater: ${formatList}${more}`);
-					}
-
-					if ((product.sizes as string[]).length > 0) {
-						const sizeList = (product.sizes as string[]).slice(0, 5).join(", ");
-						const more =
-							(product.sizes as string[]).length > 5
-								? ` (+${(product.sizes as string[]).length - 5})`
-								: "";
-						textLines.push(`    Størrelser: ${sizeList}${more}`);
-					}
-				}
-				textLines.push("");
-			}
-		}
-
-		textLines.push(
-			`Total: ${productGroups.length} produktgrupper, ${products.length} produkter`,
+		return JSON.stringify(
+			createListResponse(
+				"getAllProducts",
+				allProductsData,
+				metadata,
+				{ summary }
+			),
+			null,
+			2
 		);
-
-		return textLines.join("\n");
 	} catch (error) {
 		console.error("Error fetching products:", error);
 		throw new Error(

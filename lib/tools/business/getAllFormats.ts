@@ -3,6 +3,7 @@ import type {
 	MondayColumnValueResponse,
 	MondayItemResponse,
 } from "../../monday/types.js";
+import { createListResponse } from "../json-output.js";
 
 export async function getAllFormats() {
 	try {
@@ -13,7 +14,7 @@ export async function getAllFormats() {
             name
             column_values {
               column {
-                title
+                id
               }
               text
               ... on BoardRelationValue {
@@ -47,32 +48,29 @@ export async function getAllFormats() {
 			const columnValues: Record<string, unknown> = {};
 
 			item.column_values?.forEach((col: MondayColumnValueResponse) => {
-				const title = col.column?.title || "";
+				const columnId = col.column?.id || "";
 				if (col.linked_items && col.linked_items.length > 0) {
-					columnValues[title] = col.linked_items.map((i) => i.name).join(", ");
+					columnValues[columnId] = col.linked_items.map((i) => i.name).join(", ");
 				} else if (col.display_value) {
-					columnValues[title] = col.display_value;
+					columnValues[columnId] = col.display_value;
 				} else {
-					columnValues[title] = col.text || "";
+					columnValues[columnId] = col.text || "";
 				}
 			});
 
 			return {
 				name: item.name,
-				deviceType: columnValues["Device Type"] || "",
-				description: columnValues["Format Beskrivelse"] || "",
-				bookingDescription: columnValues["Booking Beskrivelse"] || "",
-				sizes: columnValues["Ad Unit Størrelser"] || "",
-				products: columnValues["Annonce Produkter"] || "",
-				productGroups: columnValues.Produktgrupper || "",
-				aliases:
-					columnValues[
-						'Kaldenavne - brug kun til intern forståelse, brug i stedet navnet under kolonnen "Annonce Formater"'
-					] || "",
+				deviceType: columnValues["dropdown"] || "",
+				description: columnValues["long_text"] || "",
+				bookingDescription: columnValues["long_text0"] || "",
+				sizes: columnValues["connect_boards"] || "",
+				products: columnValues["connect_boards2"] || "",
+				productGroups: columnValues["connect_boards9"] || "",
+				aliases: columnValues["long_text9"] || "",
 			};
 		});
 
-		// Group formats by device type
+		// Group formats by device type for metadata
 		const formatsByDevice = new Map<string, Array<Record<string, unknown>>>();
 		for (const format of formats) {
 			const deviceType = (format.deviceType as string) || "Other";
@@ -82,49 +80,32 @@ export async function getAllFormats() {
 			formatsByDevice.get(deviceType)?.push(format);
 		}
 
-		// Format as text output
-		const textLines: string[] = [];
-		textLines.push(`AD FORMATER (${formats.length} formater)`);
-		textLines.push("");
-
-		// Sort device types alphabetically
-		const sortedDevices = Array.from(formatsByDevice.keys()).sort();
-
-		for (const device of sortedDevices) {
-			const deviceFormats = formatsByDevice.get(device) || [];
-			textLines.push(`${device.toUpperCase()} (${deviceFormats.length})`);
-			textLines.push("─".repeat(40));
-
-			for (const format of deviceFormats) {
-				textLines.push(`- ${format.name}`);
-
-				if (format.sizes) {
-					textLines.push(`  Størrelser: ${format.sizes}`);
-				}
-
-				if (format.products) {
-					textLines.push(`  Produkter: ${format.products}`);
-				}
-
-				if (format.productGroups) {
-					textLines.push(`  Produktgrupper: ${format.productGroups}`);
-				}
-
-				if (format.aliases) {
-					textLines.push(`  Aliases: ${format.aliases}`);
-				}
-
-				if (format.description) {
-					const desc = String(format.description);
-					textLines.push(
-						`  ${desc.substring(0, 100)}${desc.length > 100 ? "..." : ""}`,
-					);
-				}
-			}
-			textLines.push("");
+		// Build metadata
+		const deviceCounts: Record<string, number> = {};
+		for (const [device, deviceFormats] of formatsByDevice.entries()) {
+			deviceCounts[device] = deviceFormats.length;
 		}
 
-		return textLines.join("\n");
+		const metadata = {
+			boardId: BOARD_IDS.FORMATS,
+			boardName: "Ad Formats",
+			totalCount: formats.length,
+			deviceCounts,
+			deviceTypes: Array.from(formatsByDevice.keys()).sort()
+		};
+
+		const summary = `Found ${formats.length} ad formats across ${formatsByDevice.size} device types`;
+
+		return JSON.stringify(
+			createListResponse(
+				"getAllFormats",
+				formats,
+				metadata,
+				{ summary }
+			),
+			null,
+			2
+		);
 	} catch (error) {
 		console.error("Error fetching formats:", error);
 		throw new Error(

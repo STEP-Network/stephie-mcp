@@ -299,7 +299,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getAllProducts"),
 		buildZodSchema("getAllProducts"),
 		async () => {
-			const result = await getAllProducts({});
+			   const result = await getAllProducts();
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -309,7 +309,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getAllFormats"),
 		buildZodSchema("getAllFormats"),
 		async () => {
-			const result = await getAllFormats({});
+			   const result = await getAllFormats();
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -319,7 +319,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getAllSizes"),
 		buildZodSchema("getAllSizes"),
 		async () => {
-			const result = await getAllSizes({});
+			   const result = await getAllSizes();
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -329,7 +329,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getAllAdPrices"),
 		buildZodSchema("getAllAdPrices"),
 		async () => {
-			const result = await getAllAdPrices({});
+			   const result = await getAllAdPrices();
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -360,7 +360,7 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getAllPlacements"),
 		buildZodSchema("getAllPlacements"),
 		async () => {
-			const result = await getAllPlacements({});
+			   const result = await getAllPlacements();
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -535,8 +535,8 @@ const handler = createMcpHandler((server) => {
 		"getTasksTechIntelligence",
 		getToolDescription("getTasksTechIntelligence"),
 		buildZodSchema("getTasksTechIntelligence"),
-		async (input = {}) => {
-			const result = await getTasksTechIntelligence(input);
+		async () => {
+			   const result = await getTasksTechIntelligence();
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -649,8 +649,8 @@ const handler = createMcpHandler((server) => {
 		"getTeams",
 		getToolDescription("getTeams"),
 		buildZodSchema("getTeams"),
-		async (input) => {
-			const result = await getTeams(input);
+		async () => {
+			   const result = await getTeams();
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -659,8 +659,8 @@ const handler = createMcpHandler((server) => {
 		"getPeople",
 		getToolDescription("getPeople"),
 		buildZodSchema("getPeople"),
-		async (input) => {
-			const result = await getPeople(input);
+		async () => {
+			   const result = await getPeople();
 			return { content: [{ type: "text", text: result }] };
 		},
 	);

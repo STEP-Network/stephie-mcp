@@ -6,54 +6,18 @@ import {
 import { getDynamicColumns } from "../dynamic-columns.js";
 import { createListResponse } from "../json-output.js";
 
-export async function getOTTPublishers(
-	params: {
-		limit?: number;
-		search?: string;
-		status?: number; // Status (numeric index)
-	} = {},
-) {
-	const { limit = 10, search, status } = params;
+export async function getOTTPublishers() {
 
 	// Fetch dynamic columns from Columns board
 	const BOARD_ID = "1741257731";
 	const dynamicColumns = await getDynamicColumns(BOARD_ID);
-
-	// Build filters
-	const filters: Array<Record<string, unknown>> = [];
-	if (search) {
-		filters.push({
-			column_id: "name",
-			compare_value: search,
-			operator: "contains_text",
-		});
-	}
-	if (status !== undefined)
-		filters.push({
-			column_id: "status",
-			compare_value: [status],
-			operator: "any_of",
-		});
-
-	const queryParams =
-		filters.length > 0
-			? `, query_params: { rules: [${filters
-					.map(
-						(f) => `{
-        column_id: "${f.column_id}",
-        compare_value: ${Array.isArray(f.compare_value) ? `[${f.compare_value}]` : typeof f.compare_value === "string" ? `"${f.compare_value}"` : f.compare_value},
-        operator: ${f.operator}
-      }`,
-					)
-					.join(",")}]}`
-			: "";
 
 	const query = `
     query {
       boards(ids: [1741257731]) {
         id
         name
-        items_page(limit: ${limit}${queryParams}) {
+        items_page(limit: 100) {
           items {
             id
             name
@@ -67,7 +31,7 @@ export async function getOTTPublishers(
                 linked_items { id name }
               }
               column {
-                title
+                id
                 type
               }
             }
@@ -97,7 +61,7 @@ export async function getOTTPublishers(
 			(item as MondayItemResponse).column_values.forEach(
 				(col: Record<string, unknown>) => {
 					const column = col as MondayColumnValueResponse;
-					const fieldName = column.column?.title?.toLowerCase().replace(/\s+/g, '_') || column.id;
+					const fieldName = column.id;
 					
 					// Parse different column types
 					if (column.column?.type === 'status' || column.column?.type === 'dropdown') {
@@ -125,14 +89,8 @@ export async function getOTTPublishers(
 		const metadata: Record<string, any> = {
 			boardId: BOARD_ID,
 			boardName: "OTT Publishers",
-			limit,
-			dynamicColumns: dynamicColumns.length,
-			filters: {}
 		};
-
-		if (search) metadata.filters.search = search;
-		if (status !== undefined) metadata.filters.status = status;
-
+		
 		return JSON.stringify(
 			createListResponse(
 				"getOTTPublishers",

@@ -2,11 +2,13 @@ import {
 	type MondayItemResponse,
 	mondayApi,
 } from "../../monday/client.js";
+import { createListResponse } from "../json-output.js";
 
 const AD_PRICES_BOARD_ID = "1432155906";
 
 interface ColumnValue {
 	column?: {
+		id?: string;
 		title?: string;
 		type?: string;
 	};
@@ -14,7 +16,7 @@ interface ColumnValue {
 	display_value?: string;
 }
 
-export async function getAllAdPrices(type: "display" | "video" | "all" = "all") {
+export async function getAllAdPrices() {
 	try {
 		const query = `{
 			boards(ids: ${AD_PRICES_BOARD_ID}) {
@@ -24,6 +26,7 @@ export async function getAllAdPrices(type: "display" | "video" | "all" = "all") 
 						name
 						column_values {
 							column {
+								id
 								title
 								type
 							}
@@ -52,41 +55,61 @@ export async function getAllAdPrices(type: "display" | "video" | "all" = "all") 
 			let productType = "display"; // Default to display
 
 			item.column_values?.forEach((col: ColumnValue) => {
-				const title = col.column?.title || "";
+				const columnId = col.column?.id || "";
 
-				// Handle board relation column for product type
-				if (title === "*Produktgrupper" && col.display_value) {
+				// Handle board relation column for product type (using ID)
+				if (columnId === "board_relation_mkvq72fm" && col.display_value) {
 					productType = col.display_value.toLowerCase();
 				}
 				// Handle number columns (they come as text in the response)
 				else if (col.column?.type === "numbers") {
 					const numValue = col.text ? parseFloat(col.text) : null;
-					columnValues[title] = numValue;
+					// Map column IDs to semantic keys
+					switch (columnId) {
+						case "numbers": // Brutto CPM
+							columnValues["bruttoCPM"] = numValue;
+							break;
+						case "numbers0": // Minimum CPM
+							columnValues["minimumCPM"] = numValue;
+							break;
+						case "numbers7": // Bulk
+							columnValues["bulk"] = numValue;
+							break;
+						case "numbers4": // CPC
+							columnValues["cpc"] = numValue;
+							break;
+						case "numbers5": // SSP Floorprice
+							columnValues["sspFloorprice"] = numValue;
+							break;
+						case "numeric_mktawenh": // Pris pr. kvartal
+							columnValues["prisPerKvartal"] = numValue;
+							break;
+					}
 				}
-				// Handle other text columns
-				else {
-					columnValues[title] = col.text || null;
+				// Handle text columns
+				else if (col.column?.type === "text") {
+					switch (columnId) {
+						case "text": // Platform
+							columnValues["platform"] = col.text || null;
+							break;
+						case "text3": // Link
+							columnValues["link"] = col.text || null;
+							break;
+					}
 				}
 			});
-
-			const bruttoCPM = columnValues["Brutto CPM"];
-			const minimumCPM = columnValues["Minimum CPM"];
-			const bulk = columnValues["Bulk"];
-			const cpc = columnValues["CPC"];
-			const sspFloorprice = columnValues["SSP Floorprice"];
-			const platform = columnValues["Platform"];
-			const link = columnValues["Link"];
 
 			allPrices.push({
 				name: item.name,
 				type: productType,
-				platform: platform || "Not specified",
-				bruttoCPM,
-				minimumCPM,
-				bulk,
-				cpc,
-				sspFloorprice,
-				link: link && link !== "" && link !== "-" ? link : null,
+				platform: columnValues["platform"] || "Not specified",
+				bruttoCPM: columnValues["bruttoCPM"],
+				minimumCPM: columnValues["minimumCPM"],
+				bulk: columnValues["bulk"],
+				cpc: columnValues["cpc"],
+				sspFloorprice: columnValues["sspFloorprice"],
+				prisPerKvartal: columnValues["prisPerKvartal"],
+				link: columnValues["link"] && columnValues["link"] !== "" && columnValues["link"] !== "-" ? columnValues["link"] : null,
 			});
 		}
 
@@ -106,139 +129,35 @@ export async function getAllAdPrices(type: "display" | "video" | "all" = "all") 
 			typeMap.get(price.name as string)?.push(price);
 		}
 
-		// Calculate price ranges
-		const _getPriceRange = (
-			prices: Array<Record<string, unknown>>,
-			field: string,
-		) => {
-			const values = prices
-				.map((p) => p[field])
-				.filter((v) => v !== null && v !== undefined)
-				.map((v) => Number(v));
+		// Count prices by type for metadata
+		const displayCount = allPrices.filter(p => p.type === "display").length;
+		const videoCount = allPrices.filter(p => p.type === "video").length;
+		const otherCount = allPrices.length - displayCount - videoCount;
 
-			if (values.length === 0) return null;
-
-			const min = Math.min(...values);
-			const max = Math.max(...values);
-			return min === max ? min : { min, max };
+		// Build metadata
+		const metadata = {
+			boardId: AD_PRICES_BOARD_ID,
+			boardName: "Ad Prices",
+			totalCount: allPrices.length,
+			displayCount,
+			videoCount,
+			otherCount,
+			currency: "DKK",
+			priceTypes: ["Brutto CPM", "Minimum CPM", "Bulk", "CPC", "SSP Floorprice", "Pris pr. kvartal"]
 		};
 
-		// Format as markdown output
-		const textLines: string[] = [];
-		textLines.push(`# Ad Prices`);
-		textLines.push("");
-		textLines.push(`**Type:** ${type}`);
-		textLines.push(`**Currency:** DKK`);
-		textLines.push("");
+		const summary = `Found ${allPrices.length} ad prices (${displayCount} display, ${videoCount} video, ${otherCount} other) in DKK`;
 
-		// Display prices
-		if (type === "display" || type === "all") {
-			const displayMap = pricesByTypeAndProduct.get("display");
-			if (displayMap && displayMap.size > 0) {
-				textLines.push(`DISPLAY PRISER (${displayMap.size} produkter)`);
-				textLines.push("─".repeat(40));
-
-				for (const [productName, variants] of displayMap.entries()) {
-					textLines.push(`▸ ${productName}`);
-
-					if (variants.length === 1) {
-						const p = variants[0];
-						const prices = [];
-						if (p.bruttoCPM !== null) prices.push(`Brutto: ${p.bruttoCPM} DKK`);
-						if (p.minimumCPM !== null) prices.push(`Min: ${p.minimumCPM} DKK`);
-						if (p.bulk !== null) prices.push(`Bulk: ${p.bulk} DKK`);
-						if (p.cpc !== null) prices.push(`CPC: ${p.cpc} DKK`);
-						if (p.sspFloorprice !== null)
-							prices.push(`Floor: ${p.sspFloorprice} DKK`);
-
-						if (prices.length > 0) {
-							textLines.push(`  ${prices.join(", ")}`);
-						}
-					} else {
-						// Multiple platforms
-						for (const variant of variants) {
-							textLines.push(`  ${variant.platform}:`);
-							const prices = [];
-							if (variant.bruttoCPM !== null)
-								prices.push(`Brutto: ${variant.bruttoCPM} DKK`);
-							if (variant.minimumCPM !== null)
-								prices.push(`Min: ${variant.minimumCPM} DKK`);
-							if (variant.bulk !== null)
-								prices.push(`Bulk: ${variant.bulk} DKK`);
-							if (variant.cpc !== null) prices.push(`CPC: ${variant.cpc} DKK`);
-							if (variant.sspFloorprice !== null)
-								prices.push(`Floor: ${variant.sspFloorprice} DKK`);
-
-							if (prices.length > 0) {
-								textLines.push(`    ${prices.join(", ")}`);
-							}
-						}
-					}
-					textLines.push("");
-				}
-			}
-		}
-
-		// Video prices
-		if (type === "video" || type === "all") {
-			const videoMap = pricesByTypeAndProduct.get("video");
-			if (videoMap && videoMap.size > 0) {
-				textLines.push(`VIDEO PRISER (${videoMap.size} produkter)`);
-				textLines.push("─".repeat(40));
-
-				for (const [productName, variants] of videoMap.entries()) {
-					textLines.push(`▸ ${productName}`);
-
-					if (variants.length === 1) {
-						const p = variants[0];
-						const prices = [];
-						if (p.bruttoCPM !== null) prices.push(`Brutto: ${p.bruttoCPM} DKK`);
-						if (p.minimumCPM !== null) prices.push(`Min: ${p.minimumCPM} DKK`);
-						if (p.bulk !== null) prices.push(`Bulk: ${p.bulk} DKK`);
-						if (p.cpc !== null) prices.push(`CPC: ${p.cpc} DKK`);
-
-						if (prices.length > 0) {
-							textLines.push(`  ${prices.join(", ")}`);
-						}
-					} else {
-						// Multiple platforms
-						for (const variant of variants) {
-							textLines.push(`  ${variant.platform}:`);
-							const prices = [];
-							if (variant.bruttoCPM !== null)
-								prices.push(`Brutto: ${variant.bruttoCPM} DKK`);
-							if (variant.minimumCPM !== null)
-								prices.push(`Min: ${variant.minimumCPM} DKK`);
-							if (variant.bulk !== null)
-								prices.push(`Bulk: ${variant.bulk} DKK`);
-							if (variant.cpc !== null) prices.push(`CPC: ${variant.cpc} DKK`);
-
-							if (prices.length > 0) {
-								textLines.push(`    ${prices.join(", ")}`);
-							}
-						}
-					}
-					textLines.push("");
-				}
-			}
-		}
-
-		// Summary
-		textLines.push("OVERSIGT");
-		textLines.push("─".repeat(40));
-
-		const displayCount = pricesByTypeAndProduct.get("display")?.size || 0;
-		const videoCount = pricesByTypeAndProduct.get("video")?.size || 0;
-
-		textLines.push(`Total produkter: ${displayCount + videoCount}`);
-		if (displayCount > 0) textLines.push(`Display produkter: ${displayCount}`);
-		if (videoCount > 0) textLines.push(`Video produkter: ${videoCount}`);
-		textLines.push(`Valuta: DKK`);
-		textLines.push(
-			`Pristyper: Brutto CPM, Minimum CPM, Bulk, CPC, SSP Floorprice`,
+		return JSON.stringify(
+			createListResponse(
+				"getAllAdPrices",
+				allPrices,
+				metadata,
+				{ summary }
+			),
+			null,
+			2
 		);
-
-		return textLines.join("\n");
 	} catch (error) {
 		console.error("Error fetching ad prices:", error);
 		throw new Error(

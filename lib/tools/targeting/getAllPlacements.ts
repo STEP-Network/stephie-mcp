@@ -5,9 +5,7 @@ import {
 } from "../../monday/client.js";
 import { createListResponse } from "../json-output.js";
 
-export async function getAllPlacements(args: { includeIds?: boolean }) {
-	const { includeIds = true } = args;
-
+export async function getAllPlacements() {
 	try {
 		// Query for placements from the Ad Units board
 		const query = `{
@@ -17,7 +15,7 @@ export async function getAllPlacements(args: { includeIds?: boolean }) {
             name
             column_values(ids: ["text_mkqpdy9d"]) {
               column {
-                title
+                id
               }
               ... on TextValue {
                 text
@@ -41,7 +39,7 @@ export async function getAllPlacements(args: { includeIds?: boolean }) {
 				placementId:
 					(item as MondayItemResponse).column_values?.find(
 						(cv: Record<string, unknown>) =>
-							(cv.column as Record<string, unknown>)?.title === "Placement ID",
+							(cv.column as Record<string, unknown>)?.id === "text_mkqpdy9d",
 					)?.text || "",
 			}))
 			.filter(
@@ -70,7 +68,7 @@ export async function getAllPlacements(args: { includeIds?: boolean }) {
 
 			const placement = {
 				name: placementName,
-				placementId: includeIds ? p.placementId : null,
+				placementId: p.placementId,
 				category: isSpecial ? "special" : "vertical"
 			};
 
@@ -90,11 +88,10 @@ export async function getAllPlacements(args: { includeIds?: boolean }) {
 
 		const metadata: Record<string, any> = {
 			boardId: BOARD_IDS.AD_UNITS,
-			boardName: "Ad Units",
+			boardName: "Placements",
 			totalPlacements: placements.length,
 			verticals: verticals.length,
 			specialCategories: special.length,
-			includeIds,
 			notes: {
 				important: "Everything in this list is a vertical (content category) EXCEPT:",
 				specialCategories: [

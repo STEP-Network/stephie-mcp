@@ -5,14 +5,8 @@ import {
 } from "../../monday/client.js";
 import { getDynamicColumns } from "../dynamic-columns.js";
 import { createListResponse } from "../json-output.js";
-export async function getChangelog(
-	params: {
-		limit?: number;
-		search?: string;
-		date1?: string; // Date (YYYY-MM-DD)
-	} = {},
-) {
-	const { limit = 20, search, date1 } = params;
+export async function getChangelog(params: { search?: string } = {}) {
+	const { search } = params;
 
 	// Fetch dynamic columns from Columns board
 	const BOARD_ID = "1222800670";
@@ -27,13 +21,8 @@ export async function getChangelog(
 			operator: "contains_text",
 		});
 	}
-	if (date1)
-		filters.push({
-			column_id: "date1",
-			compare_value: date1,
-			operator: "contains_text",
-		});
-
+	// No date filtering for resource usage
+	
 	const queryParams =
 		filters.length > 0
 			? `, query_params: { rules: [${filters
@@ -52,7 +41,7 @@ export async function getChangelog(
       boards(ids: [1222800670]) {
         id
         name
-        items_page(limit: ${limit}${queryParams}) {
+        items_page(limit: 100${queryParams}) {
           items {
             id
             name
@@ -118,13 +107,9 @@ export async function getChangelog(
 		const metadata: Record<string, any> = {
 			boardId: BOARD_ID,
 			boardName: "Changelog",
-			limit,
-			dynamicColumns: dynamicColumns.length,
-			filters: {}
 		};
 
 		if (search) metadata.filters.search = search;
-		if (date1) metadata.filters.date = date1;
 
 		return JSON.stringify(
 			createListResponse(
