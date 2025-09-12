@@ -20,12 +20,12 @@ export async function getAllProducts() {
               name
               column_values {
                 column {
-                  title
+                  id
                 }
                 text
                 ... on BoardRelationValue {
                   linked_items {
-                    name
+                    display_name
                   }
                 }
               }
@@ -41,12 +41,12 @@ export async function getAllProducts() {
               name
               column_values {
                 column {
-                  title
+                  id
                 }
                 text
                 ... on BoardRelationValue {
                   linked_items {
-                    name
+                    display_name
                   }
                 }
               }
@@ -81,12 +81,11 @@ export async function getAllProducts() {
 				});
 
 				productGroups.push({
-					type: "group",
 					name: item.name,
 					description: columnValues["long_text"] || "",
-					products: columnValues["connect_boards"] || [],
-					formats: columnValues["connect_boards7"] || [],
-					sizes: columnValues["connect_boards4"] || [],
+					linkedProducts: columnValues["connect_boards"] || [],
+					linkedFormats: columnValues["connect_boards7"] || [],
+					linkedSizes: columnValues["connect_boards4"] || [],
 				});
 			}
 		}
@@ -110,30 +109,57 @@ export async function getAllProducts() {
 				});
 
 				products.push({
-					type: "product",
 					name: item.name,
 					productGroup: columnValues["connect_boards8"]
 						? (columnValues["connect_boards8"] as string[])[0]
 						: "",
 					description: columnValues["long_text"] || "",
-					formats: columnValues["connect_boards7"] || [],
-					sizes: columnValues["connect_boards4"] || [],
+					linkedFormats: columnValues["connect_boards7"] || [],
+					linkedSizes: columnValues["connect_boards4"] || [],
 				});
 			}
 		}
 
+		// Create hierarchical structure: ProductGroup -> Products -> Formats
+		const hierarchicalData = productGroups.map(group => {
+			// Find products that belong to this group
+			const groupProducts = products.filter(product => 
+				product.productGroup === group.name
+			).map(product => ({
+				name: product.name,
+				description: product.description,
+				formats: product.linkedFormats || [],
+				sizes: product.linkedSizes || []
+			}));
 
+			return {
+				type: "product_group",
+				name: group.name,
+				description: group.description,
+				products: groupProducts,
+				// Include group-level formats and sizes as well
+				groupFormats: group.linkedFormats || [],
+				groupSizes: group.linkedSizes || []
+			};
+		});
 
-		// Combine all products data
+		// Also include orphaned products (products not assigned to any group)
+		const orphanedProducts = products.filter(product => 
+			!product.productGroup || 
+			!productGroups.some(group => group.name === product.productGroup)
+		).map(product => ({
+			type: "orphaned_product",
+			name: product.name,
+			description: product.description,
+			formats: product.linkedFormats || [],
+			sizes: product.linkedSizes || [],
+			note: "Product not assigned to any product group"
+		}));
+
+		// Combine hierarchical data with orphaned products
 		const allProductsData = [
-			...productGroups.map(group => ({
-				...group,
-				type: 'product_group'
-			})),
-			...products.map(product => ({
-				...product,
-				type: 'product'
-			}))
+			...hierarchicalData,
+			...orphanedProducts
 		];
 
 		// Build metadata
@@ -142,10 +168,13 @@ export async function getAllProducts() {
 			productsBoardId: PRODUCTS_BOARD_ID,
 			productGroupsCount: productGroups.length,
 			productsCount: products.length,
-			totalItems: allProductsData.length
+			orphanedProductsCount: orphanedProducts.length,
+			totalItems: allProductsData.length,
+			structure: "hierarchical: product_group -> products -> formats"
 		};
 
-		const summary = `Found ${productGroups.length} product groups and ${products.length} products`;
+		const totalAssignedProducts = products.length - orphanedProducts.length;
+		const summary = `Found ${productGroups.length} product groups with ${totalAssignedProducts} assigned products and ${orphanedProducts.length} orphaned products`;
 
 		return JSON.stringify(
 			createListResponse(
