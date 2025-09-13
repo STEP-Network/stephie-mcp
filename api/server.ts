@@ -9,7 +9,6 @@ import { getAllAdPrices } from "../lib/tools/business/getAllAdPrices.js";
 import { getAllFormats } from "../lib/tools/business/getAllFormats.js";
 import { getAllProducts } from "../lib/tools/business/getAllProducts.js";
 import { getOKR } from "../lib/tools/business/getOKR.js";
-import { getPartners } from "../lib/tools/business/getPartners.js";
 import { getPeople } from "../lib/tools/business/getPeople.js";
 import { getStrategies } from "../lib/tools/business/getStrategies.js";
 import { getTeams } from "../lib/tools/business/getTeams.js";
@@ -424,15 +423,6 @@ const handler = createMcpHandler((server) => {
 		}
 	);
 
-	server.tool(
-		"getPartners",
-		getToolDescription("getPartners"),
-		buildZodSchema("getPartners"),
-		async (input) => {
-			const result = await getPartners(input);
-			return { content: [{ type: "text", text: result }] };
-		}
-	);
 
 	server.tool(
 		"getStrategies",

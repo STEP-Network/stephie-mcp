@@ -500,40 +500,6 @@
 		}
 	},
 	{
-		"name": "getPartners",
-		"description": "Get items from Partners board. 6 total items.",
-		"inputSchema": {
-			"type": "object",
-			"properties": {
-				"limit": {
-					"type": "number",
-					"default": 10,
-					"description": "Maximum items to return"
-				},
-				"search": {
-					"type": "string",
-					"description": "Search in item names"
-				},
-				"person": {
-					"type": "string",
-					"description": "Owner"
-				},
-				"status": {
-					"type": "number",
-					"description": "Status (numeric index)"
-				},
-				"date4": {
-					"type": "string",
-					"description": "Start Date (YYYY-MM-DD)"
-				},
-				"date__1": {
-					"type": "string",
-					"description": "End Date (YYYY-MM-DD)"
-				}
-			}
-		}
-	},
-	{
 		"name": "getPeople",
 		"description": "Get items from People board. 18 total items.",
 		"inputSchema": {

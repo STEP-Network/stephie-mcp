@@ -11,7 +11,6 @@ import { getAllSizes } from "../tools/targeting/getAllSizes.js";
 import { getAllAdPrices } from "../tools/business/getAllAdPrices.js";
 import { getAllPlacements } from "../tools/targeting/getAllPlacements.js";
 import { getPeople } from "../tools/business/getPeople.js";
-import { getPartners } from "../tools/business/getPartners.js";
 import { getStrategies } from "../tools/business/getStrategies.js";
 import { getTeams } from "../tools/business/getTeams.js";
 import { getVertikaler } from "../tools/business/getVertikaler.js";
@@ -100,7 +99,6 @@ export const toolImplementations: Record<string, (args: any) => Promise<string |
 	getAllAdPrices: () => getAllAdPrices(),
 	getAllPlacements: () => getAllPlacements(),
 	getPeople: () => getPeople(),
-	getPartners: (args) => getPartners(args),
 	getStrategies: () => getStrategies(),
 	getTeams: () => getTeams(),
 	getVertikaler: () => getVertikaler(),

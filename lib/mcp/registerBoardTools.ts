@@ -7,7 +7,6 @@ const boardToolDefinitions = JSON.parse(
 	fs.readFileSync(path.join(__dirname, "boardToolDefinitions.json"), "utf-8"),
 );
 
-import { getPartners } from "../tools/business/getPartners.js";
 import { getPeople } from "../tools/business/getPeople.js";
 import { getAllProducts } from "../tools/business/getAllProducts.js";
 import { getAllFormats } from "../tools/business/getAllFormats.js";
@@ -96,7 +95,6 @@ const BOARD_TOOL_IMPLEMENTATIONS: Record<string, Function> = {
 	getAllAdPrices,
 	getPeople,
 	getTeams,
-	getPartners,
 	getStrategies,
 	getVertikaler,
 	getOKR,
