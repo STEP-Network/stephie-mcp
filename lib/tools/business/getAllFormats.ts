@@ -14,8 +14,6 @@ interface AdFormat {
 	sizeNames: string[];
 	products: string[];
 	productNames: string[];
-	productGroups: string[];
-	productGroupNames: string[];
 	aliases: string | null;
 	createdAt: string;
 	updatedAt: string;
@@ -37,16 +35,16 @@ export async function getAllFormats() {
               id
               text
               value
-              column {
-                id
-                title
-                type
-              }
               ... on BoardRelationValue {
                 linked_items {
                   id
                   name
                 }
+              }
+              column {
+                id
+                title
+                type
               }
             }
           }
@@ -86,7 +84,7 @@ export async function getAllFormats() {
 		const formats: AdFormat[] = [];
 		const deviceTypeCounts = new Map<string, number>();
 		const productCounts = new Map<string, number>();
-		const productGroupCounts = new Map<string, number>();
+		const sizeCounts = new Map<string, number>();
 
 		for (const item of items) {
 			const mondayItem = item as MondayItemResponse;
@@ -105,7 +103,6 @@ export async function getAllFormats() {
 			const bookingDescCol = getColumnValue("long_text_mksgy4v3");
 			const sizesCol = getColumnValue("board_relation_mkrhtwv7");
 			const productsCol = getColumnValue("board_relation_mkrh7451");
-			const productGroupsCol = getColumnValue("board_relation_mkrh4gjc");
 			const aliasesCol = getColumnValue("lookup_mksga9pm");
 
 			// Parse device type
@@ -117,33 +114,28 @@ export async function getAllFormats() {
 			// Parse board relations
 			let sizeIds: string[] = [];
 			let sizeNames: string[] = [];
-			if (sizesCol?.value) {
-				const parsedValue = JSON.parse(sizesCol.value);
-				sizeIds = parsedValue?.linkedItemIds || [];
-				if (sizesCol.linked_items) {
+			if (sizesCol) {
+				if (sizesCol.linked_items && sizesCol.linked_items.length > 0) {
+					sizeIds = sizesCol.linked_items.map((item: any) => item.id);
 					sizeNames = sizesCol.linked_items.map((item: any) => item.name);
+				} else if (sizesCol.value) {
+					const parsedValue = JSON.parse(sizesCol.value);
+					sizeIds = parsedValue?.linkedItemIds || [];
 				}
 			}
 
 			let productIds: string[] = [];
 			let productNames: string[] = [];
-			if (productsCol?.value) {
-				const parsedValue = JSON.parse(productsCol.value);
-				productIds = parsedValue?.linkedItemIds || [];
-				if (productsCol.linked_items) {
+			if (productsCol) {
+				if (productsCol.linked_items && productsCol.linked_items.length > 0) {
+					productIds = productsCol.linked_items.map((item: any) => item.id);
 					productNames = productsCol.linked_items.map((item: any) => item.name);
+				} else if (productsCol.value) {
+					const parsedValue = JSON.parse(productsCol.value);
+					productIds = parsedValue?.linkedItemIds || [];
 				}
 			}
 
-			let productGroupIds: string[] = [];
-			let productGroupNames: string[] = [];
-			if (productGroupsCol?.value) {
-				const parsedValue = JSON.parse(productGroupsCol.value);
-				productGroupIds = parsedValue?.linkedItemIds || [];
-				if (productGroupsCol.linked_items) {
-					productGroupNames = productGroupsCol.linked_items.map((item: any) => item.name);
-				}
-			}
 
 			const format: AdFormat = {
 				id: String(mondayItem.id),
@@ -155,8 +147,6 @@ export async function getAllFormats() {
 				sizeNames,
 				products: productIds,
 				productNames,
-				productGroups: productGroupIds,
-				productGroupNames,
 				aliases: aliasesCol?.text || null,
 				createdAt: String(mondayItem.created_at),
 				updatedAt: String(mondayItem.updated_at),
@@ -167,12 +157,12 @@ export async function getAllFormats() {
 			// Count device types
 			deviceTypeCounts.set(deviceType, (deviceTypeCounts.get(deviceType) || 0) + 1);
 
-			// Count products and groups
+			// Count products and sizes
 			for (const product of productNames) {
 				productCounts.set(product, (productCounts.get(product) || 0) + 1);
 			}
-			for (const group of productGroupNames) {
-				productGroupCounts.set(group, (productGroupCounts.get(group) || 0) + 1);
+			for (const size of sizeNames) {
+				sizeCounts.set(size, (sizeCounts.get(size) || 0) + 1);
 			}
 		}
 
@@ -218,7 +208,7 @@ export async function getAllFormats() {
 		const totalSizes = formats.reduce((sum, f) => sum + f.sizeNames.length, 0);
 		const totalProducts = formats.reduce((sum, f) => sum + f.productNames.length, 0);
 		const uniqueProducts = new Set(formats.flatMap(f => f.productNames)).size;
-		const uniqueProductGroups = new Set(formats.flatMap(f => f.productGroupNames)).size;
+		const uniqueSizes = new Set(formats.flatMap(f => f.sizeNames)).size;
 
 		const metadata = {
 			boardId: BOARD_IDS.FORMATS,
@@ -228,12 +218,16 @@ export async function getAllFormats() {
 			totalSizes,
 			totalProducts,
 			uniqueProducts,
-			uniqueProductGroups,
+			uniqueSizes,
 			deviceTypeCounts: Object.fromEntries(deviceTypeCounts),
 			topProducts: Array.from(productCounts.entries())
 				.sort(([, a], [, b]) => b - a)
 				.slice(0, 5)
-				.map(([product, count]) => ({ product, count }))
+				.map(([product, count]) => ({ product, count })),
+			topSizes: Array.from(sizeCounts.entries())
+				.sort(([, a], [, b]) => b - a)
+				.slice(0, 5)
+				.map(([size, count]) => ({ size, count }))
 		};
 
 		const summary = `Found ${totalFormats} ad format${totalFormats !== 1 ? 's' : ''} across ${formatsByDevice.size} device type${formatsByDevice.size !== 1 ? 's' : ''} (${uniqueProducts} unique product${uniqueProducts !== 1 ? 's' : ''}, ${totalSizes} size${totalSizes !== 1 ? 's' : ''})`;
