@@ -55,8 +55,8 @@ function parseDevices(value: string | undefined): string[] | null {
 interface CompactPublisher {
 	id: string; // mondayItemId
 	publisher: string; // name
-	s?: string[]; // statusFormats (omit if empty)
-	d?: Array<[string, string[]]>; // deviceFormats as tuples [format, devices[]] (omit if empty)
+	statusFormats?: string[]; // statusFormats (omit if empty)
+	deviceFormats?: Array<[string, string[]]>; // deviceFormats as tuples [format, devices[]] (omit if empty)
 }
 
 export async function getPublisherFormats(args: {
@@ -236,7 +236,7 @@ export async function getPublisherFormats(args: {
 					const format = formatNames[key] || key;
 					const devices = value as string[];
 					allUniqueFormats.add(format);
-					devices.forEach(d => allUniqueDevices.add(d));
+					devices.forEach(d => { allUniqueDevices.add(d); });
 					return [format, devices];
 				});
 
@@ -250,10 +250,10 @@ export async function getPublisherFormats(args: {
 
 				// Only add non-empty arrays
 				if (statusFormats.length > 0) {
-					compactPublisher.s = statusFormats;
+					compactPublisher.statusFormats = statusFormats;
 				}
 				if (deviceFormats.length > 0) {
-					compactPublisher.d = deviceFormats;
+					compactPublisher.deviceFormats = deviceFormats;
 				}
 
 				// Add to group
@@ -287,9 +287,9 @@ export async function getPublisherFormats(args: {
 		let totalLivePublishers = 0;
 		const liveGroups = new Set<string>();
 		
-		items.forEach((item: any) => {
+		items.forEach((item: MondayItemResponse) => {
 			const columnValues: Record<string, unknown> = {};
-			(item as MondayItemResponse).column_values?.forEach(
+			item.column_values?.forEach(
 				(col: Record<string, unknown>) => {
 					columnValues[col.id as string] = col;
 				},
@@ -315,8 +315,8 @@ export async function getPublisherFormats(args: {
 		if (data) {
 			data.forEach(group => {
 				group.publishers.forEach((pub: CompactPublisher) => {
-					if (pub.s) statusCount += pub.s.length;
-					if (pub.d) deviceCount += pub.d.length;
+					if (pub.statusFormats) statusCount += pub.statusFormats.length;
+					if (pub.deviceFormats) deviceCount += pub.deviceFormats.length;
 				});
 			});
 		}
