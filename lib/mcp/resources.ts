@@ -117,12 +117,12 @@ export const RESOURCE_DEFINITIONS: ResourceDefinition[] = [
 	},
 	{
 		uri: 'monday://publishers/ott',
-		name: 'OTT Publishers',
-		description: 'Complete list of all OTT (Over-The-Top) publishers',
+		name: 'OTT Publisher Details',
+		description: 'Complete list of all OTT (Over-The-Top) publisher details',
 		mimeType: 'application/json',
 		fetcher: async () => {
-			const { getOTTPublishers } = await import('../tools/publishers/getOTTPublishers.js');
-			return getOTTPublishers();
+			const { getOTTPublisherDetails } = await import('../tools/publishers/getOTTPublisherDetails.js');
+			return getOTTPublisherDetails();
 		}
 	},
 	{

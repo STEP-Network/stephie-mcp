@@ -39,7 +39,7 @@ import { getMarketingBudgets } from "../lib/tools/marketing/getMarketingBudgets.
 import { getMarketingExpenses } from "../lib/tools/marketing/getMarketingExpenses.js";
 // Import all tools
 import { getAllPublishers } from "../lib/tools/publishers/getAllPublishers.js";
-import { getOTTPublishers } from "../lib/tools/publishers/getOTTPublishers.js";
+import { getOTTPublisherDetails } from "../lib/tools/publishers/getOTTPublisherDetails.js";
 import { getPublisherFormats } from "../lib/tools/publishers/getPublisherFormats.js";
 import { getPublishersByFormats } from "../lib/tools/publishers/getPublishersByFormats.js";
 import { createDeal } from "../lib/tools/sales/createDeal.js";
@@ -273,11 +273,11 @@ const handler = createMcpHandler((server) => {
 	);
 
 	server.tool(
-		"getOTTPublishers",
-		getToolDescription("getOTTPublishers"),
-		buildZodSchema("getOTTPublishers"),
+		"getOTTPublisherDetails",
+		getToolDescription("getOTTPublisherDetails"),
+		buildZodSchema("getOTTPublisherDetails"),
 		async () => {
-			const result = await getOTTPublishers();
+			const result = await getOTTPublisherDetails();
 			return { content: [{ type: "text", text: result }] };
 		}
 	);

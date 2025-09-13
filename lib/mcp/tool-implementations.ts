@@ -4,7 +4,7 @@
  */
 
 import { getAllPublishers } from "../tools/publishers/getAllPublishers.js";
-import { getOTTPublishers } from "../tools/publishers/getOTTPublishers.js";
+import { getOTTPublisherDetails } from "../tools/publishers/getOTTPublisherDetails.js";
 import { getAllProducts } from "../tools/business/getAllProducts.js";
 import { getAllFormats } from "../tools/business/getAllFormats.js";
 import { getAllSizes } from "../tools/targeting/getAllSizes.js";
@@ -93,7 +93,7 @@ export const toolImplementations: Record<string, (args: any) => Promise<string |
 	fetch: (args) => fetch(args),
 	// Standard tools
 	getAllPublishers: () => getAllPublishers(),
-	getOTTPublishers: () => getOTTPublishers(),
+	getOTTPublisherDetails: () => getOTTPublisherDetails(),
 	getAllProducts: () => getAllProducts(),
 	getAllFormats: () => getAllFormats(),
 	getAllSizes: () => getAllSizes(),

@@ -24,7 +24,7 @@ import { getFeatures } from "../tools/development/getFeatures.js";
 import { getTests } from "../tools/development/getTests.js";
 import { createBug } from "../tools/development/createBug.js";
 import { updateBug } from "../tools/development/updateBug.js";
-import { getOTTPublishers } from "../tools/publishers/getOTTPublishers.js";
+import { getOTTPublisherDetails } from "../tools/publishers/getOTTPublisherDetails.js";
 import { getAllPublishers } from "../tools/publishers/getAllPublishers.js";
 import { getPublisherFormats } from "../tools/publishers/getPublisherFormats.js";
 import { getPublishersByFormats } from "../tools/publishers/getPublishersByFormats.js";
@@ -111,7 +111,7 @@ const BOARD_TOOL_IMPLEMENTATIONS: Record<string, Function> = {
 	updateBug,
 	// Publisher tools
 	getAllPublishers,
-	getOTTPublishers,
+	getOTTPublisherDetails,
 	getPublisherFormats,
 	getPublishersByFormats,
 	// CRM tools

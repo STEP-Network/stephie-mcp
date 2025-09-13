@@ -16,7 +16,7 @@ interface OTTPublisher {
 	follower: string | null;
 }
 
-export async function getOTTPublishers() {
+export async function getOTTPublisherDetails() {
 	// Fetch dynamic columns from Columns board
 	const BOARD_ID = "1741257731";
 	const dynamicColumns = await getDynamicColumns(BOARD_ID);
@@ -176,7 +176,7 @@ export async function getOTTPublishers() {
 		// Use createToolResponse instead of createListResponse to preserve our metadata
 		return JSON.stringify(
 			{
-				tool: "getOTTPublishers",
+				tool: "getOTTPublisherDetails",
 				timestamp: new Date().toISOString(),
 				status: "success",
 				data: statusGroups,
