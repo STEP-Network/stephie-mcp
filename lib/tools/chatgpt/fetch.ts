@@ -10,11 +10,11 @@ export async function fetch(params: { uri: string }): Promise<string> {
 	const { uri } = params;
 	
 	if (!uri) {
-		return createErrorResponse(
+		return JSON.stringify(createErrorResponse(
 			'fetch',
 			'No URI provided',
 			{ uri }
-		);
+		));
 	}
 	
 	// Check if it's a resource URI
@@ -24,11 +24,11 @@ export async function fetch(params: { uri: string }): Promise<string> {
 			const content = await resource.fetcher();
 			return typeof content === 'string' ? content : JSON.stringify(content);
 		} catch (error) {
-			return createErrorResponse(
+			return JSON.stringify(createErrorResponse(
 				'fetch',
 				`Failed to fetch resource: ${error instanceof Error ? error.message : 'Unknown error'}`,
 				{ uri }
-			);
+			));
 		}
 	}
 	
@@ -57,28 +57,29 @@ export async function fetch(params: { uri: string }): Promise<string> {
 					});
 					const parsed = JSON.parse(result);
 					if (parsed.data && parsed.data.length > 0) {
-						return createSuccessResponse(
+						return JSON.stringify(createSuccessResponse(
 							'fetch',
+							'fetched',
 							parsed.data[0],
 							{ uri, boardId, itemId }
-						);
+						));
 					}
 				} catch (e) {
 					// Try next board
 				}
 			}
 			
-			return createErrorResponse(
+			return JSON.stringify(createErrorResponse(
 				'fetch',
 				`Item ${itemId} not found in any board`,
 				{ uri, itemId }
-			);
+			));
 		} catch (error) {
-			return createErrorResponse(
+			return JSON.stringify(createErrorResponse(
 				'fetch',
 				`Failed to fetch item: ${error instanceof Error ? error.message : 'Unknown error'}`,
 				{ uri }
-			);
+			));
 		}
 	}
 	
@@ -88,20 +89,20 @@ export async function fetch(params: { uri: string }): Promise<string> {
 		const boardId = boardMatch[1];
 		try {
 			const { getBoardColumns } = await import('../debug/getBoardColumns.js');
-			const result = await getBoardColumns({ boardId });
+			const result = await getBoardColumns({ boardId: boardId });
 			return result;
 		} catch (error) {
-			return createErrorResponse(
+			return JSON.stringify(createErrorResponse(
 				'fetch',
 				`Failed to fetch board: ${error instanceof Error ? error.message : 'Unknown error'}`,
 				{ uri, boardId }
-			);
+			));
 		}
 	}
 	
-	return createErrorResponse(
+	return JSON.stringify(createErrorResponse(
 		'fetch',
 		`Unknown URI scheme: ${uri}`,
 		{ uri }
-	);
+	));
 }

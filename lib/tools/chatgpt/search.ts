@@ -12,7 +12,7 @@ export async function search(params: { query: string; limit?: number }): Promise
 	const { query, limit = 20 } = params;
 	
 	if (!query || query.trim().length === 0) {
-		return createListResponse(
+		return JSON.stringify(createListResponse(
 			'search',
 			[],
 			{
@@ -21,7 +21,7 @@ export async function search(params: { query: string; limit?: number }): Promise
 				searchType: 'empty'
 			},
 			{ summary: 'No search query provided' }
-		);
+		));
 	}
 	
 	const lowerQuery = query.toLowerCase();
@@ -81,7 +81,6 @@ export async function search(params: { query: string; limit?: number }): Promise
 					const itemData = await getItems({
 						boardId: board.id,
 						columnIds: ['name'],
-						search: query,
 						limit: Math.min(limit, 5)
 					});
 					const parsed = JSON.parse(itemData);
@@ -102,7 +101,7 @@ export async function search(params: { query: string; limit?: number }): Promise
 		}
 	}
 	
-	return createListResponse(
+	return JSON.stringify(createListResponse(
 		'search',
 		results,
 		{
@@ -115,5 +114,5 @@ export async function search(params: { query: string; limit?: number }): Promise
 				? `Found ${results.reduce((sum, r) => sum + (r.matches || 0), 0)} results across ${results.length} categories`
 				: `No results found for "${query}"`
 		}
-	);
+	));
 }
