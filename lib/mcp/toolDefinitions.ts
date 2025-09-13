@@ -65,7 +65,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 	{
 		name: "getAllPublishers",
 		description:
-			"Get all Live publishers/sites from Monday.com Publishers board. Returns all Live publishers/sites with essential information: Publisher/Site name, GAM Ad Unit ID, Vertical, Publisher Group, and Approval status (Gambling/Finance). Results are sorted by Vertical, then alphabetically by name.",
+			"Get all Live publishers/sites from Monday.com Publishers board (1222800432). Returns all Live publishers/sites with essential information: Publisher/Site name, GAM Ad Unit ID, Vertical, Publisher Group, and Approval status (Gambling/Finance). Results are sorted by Vertical, then alphabetically by name.",
 		inputSchema: {
 			type: "object",
 			properties: {},
@@ -74,99 +74,52 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 	{
 		name: "getAllPlacements",
 		description:
-			"Get all GAM placements and content verticals from Monday.com Ad Placements board (1935559241). Returns placement names and IDs for targeting. Note: RON, Gambling, Finance, and RE-AD are special placements, not content verticals.",
+			"Get all Google Ad Manager (GAM) placements and content verticals from Monday.com Placements board (1935559241). Returns placement names and IDs for targeting. Note: RON, Gambling, Finance, and RE-AD (Responsible Advertisement) are special placements, not content verticals.",
 		inputSchema: {
 			type: "object",
-			properties: {
-				includeIds: {
-					type: "boolean",
-					description: "Include GAM placement IDs in output",
-					default: false,
-				},
-			},
+			properties: {},
 		},
 	},
 	{
 		name: "getAllProducts",
 		description:
-			"Get all ad products and product groups from Monday.com boards (Produktgrupper: 1611223368, Produkt: 1983692701). Shows product hierarchy with associated formats and ad unit sizes. Product groups contain multiple products (e.g., Display group contains Standard, High Impact products).",
+			"Get all ad products and product groups from Monday.com boards (Produktgrupper: 1611223368, Produkt: 1983692701). Shows product hierarchy with associated formats. Product groups contain multiple products (e.g., Display group contains Standard, High Impact products).",
 		inputSchema: {
 			type: "object",
-			properties: {
-				includeIds: {
-					type: "boolean",
-					description: "Include Monday.com item IDs in output",
-					default: false,
-				},
-			},
+			properties: {},
 		},
 	},
 	{
 		name: "getAllFormats",
 		description:
-			"Get all ad format specifications from Monday.com Formater board (1983719743). Shows format dimensions, devices, and technical specifications. Formats are grouped by device type (Desktop, Mobile, App).",
+			"Get all ad format specifications from Monday.com Formater board (1983719743). Shows format dimensions, devices, and technical specifications with associated sizes and products. Formats are grouped by device type (Desktop, Mobile, App).",
 		inputSchema: {
 			type: "object",
-			properties: {
-				device: {
-					type: "string",
-					enum: ["Desktop", "Mobile", "App", "All"],
-					description: "Filter by device type",
-				},
-				includeIds: {
-					type: "boolean",
-					description: "Include format IDs in output",
-					default: false,
-				},
-			},
+			properties: {},
 		},
 	},
 	{
 		name: "getAllSizes",
 		description:
-			"Get all ad unit sizes from Monday.com Sizes board (1558597958). Returns width, height, aspect ratio, and IAB standards compliance. Sizes are sorted by width then height.",
+			"Get all ad unit sizes from Monday.com Sizes board (1558597958). Returns device types, nicknames, descriptions and benchmarks with associated formats and products. Sizes are grouped by device types.",
 		inputSchema: {
 			type: "object",
-			properties: {
-				minWidth: {
-					type: "number",
-					description: "Minimum width in pixels",
-				},
-				maxWidth: {
-					type: "number",
-					description: "Maximum width in pixels",
-				},
-				includeIds: {
-					type: "boolean",
-					description: "Include size IDs in output",
-					default: false,
-				},
-			},
+			properties: {},
 		},
 	},
 	{
 		name: "getAllAdPrices",
 		description:
-			"Get all ad pricing from Monday.com Priser board (1432155906). Shows CPM rates by format and market segment. Prices are in DKK (Danish Kroner).",
+			"Get all ad pricing from Monday.com Priser board (1432155906). Shows CPM rates by format. Prices are in DKK (Danish Kroner).",
 		inputSchema: {
 			type: "object",
-			properties: {
-				format: {
-					type: "string",
-					description: "Filter by format name",
-				},
-				includeIds: {
-					type: "boolean",
-					description: "Include price IDs in output",
-					default: false,
-				},
-			},
+			properties: {},
 		},
 	},
 	{
 		name: "getPublisherFormats",
 		description:
-			"Get detailed matrix of publishers/sites and their available ad formats grouped by device type. Shows ONLY ACTIVE formats per publisher/site - if a format is not listed, the publisher/site does NOT support it. Returns metadata only by default, full data when filtering by names.",
+			"Get detailed matrix of publishers/sites and their available ad formats grouped by device type. Shows only active formats per publisher/site - if a format is not listed, the publisher/site does not support it. Returns metadata only by default, full data when filtering by names.",
 		inputSchema: {
 			type: "object",
 			properties: {
@@ -177,12 +130,6 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					},
 					description:
 						"Array of names to search for in both publisher/site names and publisher group names (partial match, case-insensitive). Searches with OR logic across all names and both columns.",
-				},
-				limit: {
-					type: "number",
-					description:
-						"Maximum number of publishers/sites to return (1-500, default: 100)",
-					default: 100,
 				},
 			},
 		},
@@ -305,7 +252,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 
 		name: "findPublisherAdUnits",
 		description:
-			"Find ad units for publishers/sites with complete 3-level hierarchy: Publisher Groups (Level 1) → Publishers/Sites (Level 2) → Child Ad Units (Level 3). Returns all GAM IDs needed for forecasting. Essential for availabilityForecast tool.",
+			"Find ad units for publishers/sites with 3 hierarchies: Publisher Groups → Publishers/Sites → Child Ad Units. Returns all Google Ad Manager (GAM) ad unit IDs needed for forecasting. Essential for availabilityForecast tool.",
 		inputSchema: {
 			type: "object",
 			properties: {
@@ -734,47 +681,64 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 	},
 	{
 		name: "getTeams",
-		description: "Get items from Teams board. View team structure and members.",
+		description: "Get items from Teams board (1631927696). View team structure and members.",
 		inputSchema: {
 			type: "object",
-			properties: {
-				limit: { type: "number", default: 10 },
-				search: { 
-					type: "string",
-					description: "Optional text search in item names"
-				},
-				status: {
-					type: "number",
-					description: "Status: 0=Under-Ressourced, 1=Active, 2=Inactive",
-				},
-				peopleId: {
-					type: "string",
-					description: "Filter by person ID (use getPeople to find IDs)",
-				},
-				objectiveId: {
-					type: "string",
-					description: "Filter by objective ID (use getOKR to find IDs)",
-				},
-			},
+			properties: {},
 		},
 	},
 	{
 		name: "getPeople",
 		description:
-			"Get items from People board. Access team member details and assignments.",
+			"Get items from People board (1612664689). Access team member details and assignments.",
+		inputSchema: {
+			type: "object",
+			properties: {},
+		},
+	},
+	{
+		name: "getStrategies",
+		description:
+			"Get strategy items from Monday.com board (1637264041). Returns strategic initiatives and their current status.",
+		inputSchema: {
+			type: "object",
+			properties: {},
+		},
+	},
+	{
+		name: "getVertikaler",
+		description:
+			"Get vertical categories and their associated publishers from Monday.com Vertikaler board (2054670440). Returns hierarchical structure of verticals with publisher counts and ad unit information.",
+		inputSchema: {
+			type: "object",
+			properties: {},
+		},
+	},
+	{
+		name: "getOTTPublisherDetails",
+		description:
+			"Get detailed OTT (Over-The-Top) publisher information and worksheet from Monday.com OTT Publishers board (1741257731). Returns publishers grouped by status (Live, Waiting, Stuck) with test URLs and assignment details.",
+		inputSchema: {
+			type: "object",
+			properties: {},
+		},
+	},
+	{
+		name: "getChangelog",
+		description:
+			"Get changelog entries from Monday.com Changelog board (1222800670). Returns system changes, updates, and modifications with dates, publishers, topics, and status information.",
 		inputSchema: {
 			type: "object",
 			properties: {
-				limit: { type: "number", default: 10 },
-				teamId: {
+				search: {
 					type: "string",
-					description: "Filter by team (use getTeams to find IDs)",
+					description: "Optional text search in changelog entry names",
 				},
-				search: { 
-					type: "string",
-					description: "Optional text search in item names"
+				limit: {
+					type: "number",
+					default: 100,
+					description: "Maximum number of entries to return (default: 100)",
 				},
-				role: { type: "number", description: "Role index" },
 			},
 		},
 	},
@@ -1330,8 +1294,6 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 		},
 	},
 
-	// HR Tools
-
 	// Sales Tools
 	{
 		name: "getOpportunities",
@@ -1655,8 +1617,6 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 		},
 	},
 
-	// Business Tools
-
 	// Marketing Tools
 	{
 		name: "getMarketingExpenses",
@@ -1718,8 +1678,6 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			},
 		},
 	},
-
-	// Publishers Tools
 
 	// Create/Update Tools - CRM
 	{
