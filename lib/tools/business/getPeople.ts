@@ -3,30 +3,40 @@ import {
 	type MondayItemResponse,
 	mondayApi,
 } from "../../monday/client.js";
-import { getDynamicColumns } from "../dynamic-columns.js";
 
 interface Person {
 	mondayItemId: string;
 	name: string;
-	email?: string;
-	phone?: string;
-	role?: string;
-	team?: Array<{ id: string; name: string }>;
-	manager?: string;
-	status?: string;
-	startDate?: string;
-	[key: string]: any; // For dynamic columns
+	jobTitle?: string; // text__1
+	person?: string; // person column
+	leader?: string; // people__1
+	startDate?: string; // date__1
+	email?: string; // email__1
+	taskBoardId?: string; // lookup_mkqn1bdr
+	teams?: Array<{ id: string; name: string }>; // link_to_teams__1
+	objectives?: Array<{ id: string; name: string }>; // link_to_objectives__1
+}
+
+interface LeaderGroup {
+	leaderId: string;
+	leaderName: string;
+	people: Person[];
 }
 
 export async function getPeople() {
-	// Fetch dynamic columns from Columns board
 	const BOARD_ID = "1612664689";
-	const dynamicColumns = await getDynamicColumns(BOARD_ID);
 	
-	// Ensure email__1 is included
-	if (!dynamicColumns.includes("email__1")) {
-		dynamicColumns.push("email__1");
-	}
+	// Hardcoded column IDs based on the provided structure
+	const COLUMN_IDS = [
+		"text__1", // Job Title
+		"person", // Person
+		"people__1", // Leader
+		"date__1", // Start Date
+		"email__1", // Email
+		"lookup_mkqn1bdr", // Task Board ID
+		"link_to_teams__1", // Teams
+		"link_to_objectives__1" // link to Objectives
+	];
 
 	const query = `
 		query {
@@ -37,7 +47,7 @@ export async function getPeople() {
 					items {
 						id
 						name
-						column_values(ids: [${dynamicColumns.map((id) => `"${id}"`).join(", ")}]) {
+						column_values(ids: [${COLUMN_IDS.map((id) => `"${id}"`).join(", ")}]) {
 							id
 							text
 							value
@@ -65,141 +75,130 @@ export async function getPeople() {
 
 		const items = board.items_page?.items || [];
 
-		// Process people
-		const people: Person[] = [];
-		const roleCounts = new Map<string, number>();
-		const departmentCounts = new Map<string, number>();
-		const statusCounts = new Map<string, number>();
+		// Process people and group by leaders
+		const leaderGroups: Map<string, LeaderGroup> = new Map();
+		const unassignedPeople: Person[] = [];
+		const totalStats = {
+			totalPeople: 0,
+			withEmail: 0,
+			withJobTitle: 0,
+			withLeader: 0,
+			withStartDate: 0
+		};
 
 		for (const item of items as MondayItemResponse[]) {
 			const columnValues = item.column_values || [];
-
-			// Helper to find column value by type
-			const findColumnByType = (type: string) => {
-				return columnValues.find((col: MondayColumnValueResponse) => 
-					col.column?.type === type
-				);
-			};
-
-			// Helper to find column by title keywords
-			const findColumnByTitle = (keywords: string[]) => {
-				return columnValues.find((col: MondayColumnValueResponse) => {
-					const title = col.column?.title?.toLowerCase() || '';
-					return keywords.some(keyword => title.includes(keyword.toLowerCase()));
-				});
-			};
 
 			// Helper to find column by ID
 			const findColumnById = (id: string) => {
 				return columnValues.find((col: MondayColumnValueResponse) => col.id === id);
 			};
 
-			// Try to identify key columns
-			const emailCol = findColumnById("email__1") || findColumnByType("email");
-			const phoneCol = findColumnByType("phone");
-			const statusCol = findColumnByType("status");
-			const dateCol = findColumnByType("date");
-			const teamCol = findColumnByType("board_relation");
-			
-			// Try to find role/department by title
-			const roleCol = findColumnByTitle(["role", "position", "title"]);
+			// Get column values by specific IDs
+			const jobTitleCol = findColumnById("text__1");
+			const personCol = findColumnById("person");
+			const leaderCol = findColumnById("people__1");
+			const startDateCol = findColumnById("date__1");
+			const emailCol = findColumnById("email__1");
+			const taskBoardIdCol = findColumnById("lookup_mkqn1bdr");
+			const teamsCol = findColumnById("link_to_teams__1");
+			const objectivesCol = findColumnById("link_to_objectives__1");
 
-			// Parse values - for email__1, use text directly
-			const email = emailCol?.id === "email__1" ? emailCol.text : 
-				(emailCol?.value ? JSON.parse(emailCol.value)?.email || emailCol.text : null);
-			const phone = phoneCol?.value ? JSON.parse(phoneCol.value)?.phone || phoneCol.text : null;
-			const status = statusCol?.text || "Active";
-			const startDate = dateCol?.value ? JSON.parse(dateCol.value)?.date || dateCol.text : null;
-			
-			// Extract role and department from various sources
-			const name = String(item.name);
-			let role = roleCol?.text || "Employee";
-
-			// Try to extract from name if it follows patterns
-			if (name.includes(" - ")) {
-				const parts = name.split(" - ");
-				if (parts.length === 2) {
-					role = parts[1];
-				}
-			}
+			// Parse values
+			const jobTitle = jobTitleCol?.text || null;
+			const personValue = personCol?.text || null;
+			const leader = leaderCol?.text || null;
+			const startDate = startDateCol?.text || null;
+			const email = emailCol?.text || null;
+			const taskBoardId = taskBoardIdCol?.text || null;
 
 			// Parse team relations
-			let team: Array<{ id: string; name: string }> = [];
-			if (teamCol) {
-				const col = teamCol as MondayColumnValueResponse & { 
+			let teams: Array<{ id: string; name: string }> = [];
+			if (teamsCol) {
+				const col = teamsCol as MondayColumnValueResponse & { 
 					linked_items?: Array<{ id: string; name: string }> 
 				};
-				team = col.linked_items || [];
+				teams = col.linked_items || [];
+			}
+
+			// Parse objectives relations
+			let objectives: Array<{ id: string; name: string }> = [];
+			if (objectivesCol) {
+				const col = objectivesCol as MondayColumnValueResponse & { 
+					linked_items?: Array<{ id: string; name: string }> 
+				};
+				objectives = col.linked_items || [];
 			}
 
 			const person: Person = {
 				mondayItemId: String(item.id),
-				name,
-				email,
-				phone,
-				role,
-				team,
-				status,
+				name: String(item.name),
+				jobTitle,
+				person: personValue,
+				leader,
 				startDate,
+				email,
+				taskBoardId,
+				teams,
+				objectives
 			};
 
-			// Add remaining dynamic columns
-			for (const col of columnValues) {
-				const column = col as MondayColumnValueResponse;
-				if (!['email', 'phone', 'status', 'date', 'board_relation'].includes(column.column?.type || '')) {
-					if (!person[column.id]) {
-						person[column.id] = column.text || null;
-					}
+			// Update statistics
+			totalStats.totalPeople++;
+			if (email) totalStats.withEmail++;
+			if (jobTitle) totalStats.withJobTitle++;
+			if (leader) totalStats.withLeader++;
+			if (startDate) totalStats.withStartDate++;
+			if (leader) totalStats.withLeader++;
+
+			// Group by leader
+			if (leader) {
+				// Use leader name as both ID and name since we only have the text value
+				const leaderKey = leader;
+				if (!leaderGroups.has(leaderKey)) {
+					leaderGroups.set(leaderKey, {
+						leaderId: leaderKey,
+						leaderName: leader,
+						people: []
+					});
 				}
+				const leaderGroup = leaderGroups.get(leaderKey);
+				if (leaderGroup) {
+					leaderGroup.people.push(person);
+				}
+			} else {
+				unassignedPeople.push(person);
 			}
-
-			people.push(person);
-
-			// Count statistics
-			roleCounts.set(role, (roleCounts.get(role) || 0) + 1);
-			statusCounts.set(status, (statusCounts.get(status) || 0) + 1);
 		}
 
-		// Calculate statistics
-		const totalPeople = people.length;
-		const activeCount = statusCounts.get("Active") || 0;
-		const withEmail = people.filter(p => p.email).length;
-		const withPhone = people.filter(p => p.phone).length;
-		const withTeam = people.filter(p => p.team && p.team.length > 0).length;
-
-		// Get top roles
-		const topRoles = Array.from(roleCounts.entries())
-			.sort(([, a], [, b]) => b - a)
-			.slice(0, 10)
-			.map(([role, count]) => ({ role, count }));
+		// Convert map to array and sort by leader name
+		const leaderGroupsArray = Array.from(leaderGroups.values())
+			.sort((a, b) => a.leaderName.localeCompare(b.leaderName));
 
 		// Build metadata
 		const metadata = {
 			boardId: BOARD_ID,
 			boardName: board.name,
-			totalPeople,
-			totalRoles: roleCounts.size,
-			statusBreakdown: {
-				active: activeCount,
-				inactive: totalPeople - activeCount
-			},
-			dataCompleteness: {
-				withEmail,
-				withPhone,
-				withTeam
-			},
-			topRoles,
-			dynamicColumnsCount: dynamicColumns.length
+			totalLeaders: leaderGroupsArray.length,
+			unassignedCount: unassignedPeople.length,
+			...totalStats,
+			columnsUsed: COLUMN_IDS
 		};
 
-		const summary = `Found ${totalPeople} ${totalPeople === 1 ? 'person' : 'people'} (${activeCount} active, ${roleCounts.size} unique role${roleCounts.size !== 1 ? 's' : ''})`;
+		const summary = `Found ${totalStats.totalPeople} people across ${leaderGroupsArray.length} leaders (${unassignedPeople.length} unassigned)`;
+
+		// Prepare final data structure
+		const data = {
+			leaderGroups: leaderGroupsArray,
+			unassignedPeople
+		};
 
 		return JSON.stringify(
 			{
 				tool: "getPeople",
 				timestamp: new Date().toISOString(),
 				status: "success",
-				data: departmentGroups,
+				data,
 				metadata,
 				options: { summary }
 			},
