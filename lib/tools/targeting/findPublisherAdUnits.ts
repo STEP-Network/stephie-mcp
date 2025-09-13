@@ -480,7 +480,7 @@ export async function findPublisherAdUnits(args: {
 		// Group by type for better organization
 		const publisherGroups = allPublisherGroups;
 		const regularPublishers = publishers.filter((p) => p.type === "Publisher");
-		const childAdUnitItems = childAdUnits.filter((c) => c.type === "Ad Unit");
+		// childAdUnits already contains the child ad units, no need to filter by type
 
 		// Build hierarchical structure
 		const hierarchicalData = [];
@@ -555,7 +555,7 @@ export async function findPublisherAdUnits(args: {
 			counts: {
 				publisherGroups: publisherGroups.length,
 				publishers: regularPublishers.length,
-				childAdUnits: childAdUnitItems.length
+				childAdUnits: childAdUnits.length
 			},
 			searchCriteria: {
 				names: names || [],
