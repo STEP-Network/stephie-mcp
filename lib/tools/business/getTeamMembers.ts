@@ -125,8 +125,21 @@ export async function getTeamMembers() {
 				peopleId = String(item.id);
 			}
 			
-			// Extract leader for grouping (but don't include in person object)
-			const leader = leaderCol?.text || null;
+			// Extract leader for grouping
+			let leaderId: string | null = null;
+			let leaderName: string | null = null;
+			if (leaderCol?.value) {
+				try {
+					const parsedValue = JSON.parse(leaderCol.value);
+					if (parsedValue?.personsAndTeams?.[0]) {
+						leaderId = String(parsedValue.personsAndTeams[0].id);
+						leaderName = leaderCol.text || null;
+					}
+				} catch (e) {
+					// If parsing fails, use text as fallback
+					leaderName = leaderCol?.text || null;
+				}
+			}
 			const startDate = startDateCol?.text || null;
 			const email = emailCol?.text || null;
 			
@@ -167,22 +180,20 @@ export async function getTeamMembers() {
 			totalStats.totalPeople++;
 			if (email) totalStats.withEmail++;
 			if (jobTitle) totalStats.withJobTitle++;
-			if (leader) totalStats.withLeader++;
+			if (leaderId) totalStats.withLeader++;
 			if (startDate) totalStats.withStartDate++;
-			if (leader) totalStats.withLeader++;
 
 			// Group by leader
-			if (leader) {
-				// Use leader name as both ID and name since we only have the text value
-				const leaderKey = leader;
-				if (!leaderGroups.has(leaderKey)) {
-					leaderGroups.set(leaderKey, {
-						leaderId: leaderKey,
-						leaderName: leader,
+			if (leaderId && leaderName) {
+				// Use the peopleId as the key for grouping
+				if (!leaderGroups.has(leaderId)) {
+					leaderGroups.set(leaderId, {
+						leaderId: leaderId,
+						leaderName: leaderName,
 						people: []
 					});
 				}
-				const leaderGroup = leaderGroups.get(leaderKey);
+				const leaderGroup = leaderGroups.get(leaderId);
 				if (leaderGroup) {
 					leaderGroup.people.push(person);
 				}
