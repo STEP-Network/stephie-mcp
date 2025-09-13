@@ -6,9 +6,9 @@ import {
 import { getDynamicColumns } from "../dynamic-columns.js";
 
 interface Publisher {
-	id: string;
+	mondayItemId: string;
 	name: string;
-	gamId?: string;
+	adUnitId: string;
 }
 
 interface Vertical {
@@ -16,7 +16,6 @@ interface Vertical {
 	name: string;
 	description: string | null;
 	status: string;
-	publisherIds: string[];
 	publishers: Publisher[];
 	adUnitCount: number;
 }
@@ -105,42 +104,55 @@ export async function getVertikaler() {
 			const statusLabel = statusCol?.text || "Unknown";
 			
 			// Parse publishers from board relation
-			let publisherIds: string[] = [];
 			let publishers: Publisher[] = [];
+			
+			// Parse GAM Ad Unit IDs from the lookup field (comma-separated)
+			let adUnitIds: string[] = [];
+			if (adUnitCountCol?.display_value) {
+				// The display_value contains comma-separated GAM Ad Unit IDs
+				adUnitIds = String(adUnitCountCol.display_value)
+					.split(',')
+					.map(id => id.trim())
+					.filter(id => id.length > 0);
+			} else if (adUnitCountCol?.text) {
+				adUnitIds = String(adUnitCountCol.text)
+					.split(',')
+					.map(id => id.trim())
+					.filter(id => id.length > 0);
+			}
 			
 			// Use linked_items if available (from GraphQL response)
 			if (publishersCol?.linked_items && publishersCol.linked_items.length > 0) {
-				publishers = publishersCol.linked_items.map((linkedItem: any) => ({
-					id: String(linkedItem.id),
-					name: String(linkedItem.name)
+				publishers = publishersCol.linked_items.map((linkedItem: any, index: number) => ({
+					mondayItemId: String(linkedItem.id),
+					name: String(linkedItem.name),
+					adUnitId: adUnitIds[index] || "" // Map corresponding GAM Ad Unit ID
 				}));
-				publisherIds = publishers.map(p => p.id);
 			} 
 			// Fallback to parsing value if linked_items not available
 			else if (publishersCol?.value) {
 				try {
 					const parsedValue = JSON.parse(publishersCol.value);
-					publisherIds = parsedValue?.linkedItemIds || [];
+					const publisherIds = parsedValue?.linkedItemIds || [];
 					// Note: Without linked_items, we only have IDs, not names
+					publishers = publisherIds.map((id: string, index: number) => ({
+						mondayItemId: String(id),
+						name: "Unknown",
+						adUnitId: adUnitIds[index] || ""
+					}));
 				} catch (e) {
 					console.error("Failed to parse publishers value:", e);
 				}
 			}
 
-			// Parse ad unit count from mirror/lookup field
-			let adUnitCount = 0;
-			if (adUnitCountCol?.display_value) {
-				adUnitCount = parseInt(adUnitCountCol.display_value, 10) || 0;
-			} else if (adUnitCountCol?.text) {
-				adUnitCount = parseInt(adUnitCountCol.text, 10) || 0;
-			}
+			// The ad unit count is the number of GAM Ad Unit IDs
+			const adUnitCount = adUnitIds.length;
 
 			const vertical: Vertical = {
 				mondayItemId: String(mondayItem.id),
 				name: String(mondayItem.name),
 				description: descriptionCol?.text || null,
 				status: statusLabel,
-				publisherIds,
 				publishers,
 				adUnitCount
 			};
