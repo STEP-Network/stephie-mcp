@@ -135,8 +135,8 @@ export async function getPublisherFormats(args: {
 			doubleMidscrollAdnami: "Double Midscroll Adnami",
 			midscrollAdnami: "Midscroll Adnami",
 			adnamiNative: "Adnami Native",
-			topscrollHighImpact: "Topscroll HI",
-			midscrollHighImpact: "Midscroll HI",
+			topscrollHighImpact: "Topscroll high-impact.js (hi.js)",
+			midscrollHighImpact: "Midscroll high-impact.js (hi.js)",
 			wallpaper: "Wallpaper",
 			anchor: "Anchor",
 			trueNative: "True Native",
@@ -278,7 +278,7 @@ export async function getPublisherFormats(args: {
 			data = Array.from(publishersByGroup.entries())
 				.sort(([a], [b]) => a.toLowerCase().localeCompare(b.toLowerCase()))
 				.map(([group, pubs]) => ({
-					group: group,
+					publisherGroup: group,
 					publishers: pubs
 				}));
 		}
