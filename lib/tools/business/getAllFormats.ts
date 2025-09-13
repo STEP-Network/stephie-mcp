@@ -35,6 +35,9 @@ export async function getAllFormats() {
                   name
                 }
               }
+              ... on MirrorValue {
+                display_value
+              }
               column {
                 id
                 title
@@ -135,7 +138,7 @@ export async function getAllFormats() {
 				bookingDescription: bookingDescCol?.text || null,
 				sizeNames,
 				productNames,
-				aliases: aliasesCol?.text || null,
+				aliases: aliasesCol?.display_value || aliasesCol?.text || null,
 			};
 
 			formats.push(format);

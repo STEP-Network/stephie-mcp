@@ -99,9 +99,9 @@ export async function getAllPublishers() {
 			const groupName = publisherGroupCol?.linked_items?.[0]?.name || "-";
 
 			return {
-				id: item.id,
+				mondayItemId: item.id,
 				name: item.name,
-				gamId: gamIdCol?.text || "-",
+				adUnitId: gamIdCol?.text || "-",
 				vertical: verticalName,
 				group: groupName,
 				approval: approval || "-",
@@ -110,9 +110,9 @@ export async function getAllPublishers() {
 
 		// Group publishers by vertical
 		const publishersByVertical = new Map<string, Array<{
-			id: unknown;
+			mondayItemId: unknown;
 			name: unknown;
-			gamId: string;
+			adUnitId: string;
 			group: string;
 			approval: string;
 		}>>();
@@ -125,9 +125,9 @@ export async function getAllPublishers() {
 			
 			// Add publisher without the vertical field since it's now the group key
 			publishersByVertical.get(vertical)?.push({
-				id: publisher.id,
+				mondayItemId: publisher.mondayItemId,
 				name: publisher.name,
-				gamId: publisher.gamId,
+				adUnitId: publisher.adUnitId,
 				group: publisher.group,
 				approval: publisher.approval
 			});
