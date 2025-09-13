@@ -481,9 +481,6 @@ export async function findPublisherAdUnits(args: {
 		const publisherGroups = allPublisherGroups;
 		const regularPublishers = publishers.filter((p) => p.type === "Publisher");
 		const childAdUnitItems = childAdUnits.filter((c) => c.type === "Ad Unit");
-		const childAdPlacements = childAdUnits.filter(
-			(c) => c.type === "Ad Placement",
-		);
 
 		// Build hierarchical structure
 		const hierarchicalData = [];
@@ -551,13 +548,6 @@ export async function findPublisherAdUnits(args: {
 			hierarchicalData.push(pubEntry);
 		}
 
-		// Extract all IDs for easy use
-		const allAdUnitIds = [
-			...publisherGroups.map(p => p.adUnitId).filter(id => id !== null),
-			...regularPublishers.map(p => p.adUnitId).filter(id => id !== null),
-			...childAdUnits.map(c => c.adUnitId).filter(id => id !== null),
-		];
-
 		// Build metadata
 		const metadata = {
 			source,
@@ -565,22 +555,22 @@ export async function findPublisherAdUnits(args: {
 			counts: {
 				publisherGroups: publisherGroups.length,
 				publishers: regularPublishers.length,
-				adUnits: childAdUnitItems.length,
-				adPlacements: childAdPlacements.length
+				childAdUnits: childAdUnitItems.length
 			},
 			searchCriteria: {
 				names: names || [],
 				verticals: verticals || []
 			},
 			forecastUsage: {
-				hierarchy: "Publisher Group → Publisher → Ad Unit",
+				hierarchy: "Publisher Group → Publisher → Child Ad Units",
 				guidelines: [
 					"Never include more than one hierarchy level when forecasting with targetedAdUnitIds",
 					"Can include publisher group in targetedAdUnits and exclude specific publisher(s) in excludedAdUnitIds",
 					"Can target publisher and exclude specific ad unit(s)",
-					"Only use IDs for forecasting, not names"
-				],
-				allAdUnitIds
+					"Only use IDs for forecasting, not names",
+					"If you target a publisher group, all publishers and their ad units will automatically get targeted",
+					"Always strive to target highest hierarchy level and exclude ad units, unless only specific child ad units are requested by user"
+				]
 			}
 		};
 
@@ -591,7 +581,7 @@ export async function findPublisherAdUnits(args: {
 			metadata,
 			data: hierarchicalData,
 			options: {
-				summary: `Found ${metadata.counts.publisherGroups} publisher groups, ${metadata.counts.publishers} publishers, and ${metadata.counts.adUnits + metadata.counts.adPlacements} ad units`
+				summary: `Found ${metadata.counts.publisherGroups} publisher groups, ${metadata.counts.publishers} publishers, and ${metadata.counts.childAdUnits} child ad units`
 			}
 		}, null, 2);
 	} catch (error) {
