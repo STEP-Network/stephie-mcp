@@ -6,6 +6,10 @@
 			"maxDuration": 300,
 			"memory": 1024
 		},
+		"api/chatgpt.ts": {
+			"maxDuration": 300,
+			"memory": 1024
+		},
 		"api/health.ts": {
 			"maxDuration": 30
 		}
@@ -22,6 +26,18 @@
 		{
 			"source": "/message",
 			"destination": "/api/server"
+		},
+		{
+			"source": "/chatgpt",
+			"destination": "/api/chatgpt"
+		},
+		{
+			"source": "/chatgpt/sse",
+			"destination": "/api/chatgpt"
+		},
+		{
+			"source": "/chatgpt/message",
+			"destination": "/api/chatgpt"
 		}
 	],
 	"headers": [

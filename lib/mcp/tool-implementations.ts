@@ -66,12 +66,18 @@ import { getTickets } from "../tools/support/getTickets.js";
 import { getPublisherFAQ } from "../tools/support/getPublisherFAQ.js";
 import { createTicket } from "../tools/support/createTicket.js";
 import { updateTicket } from "../tools/support/updateTicket.js";
+import { search } from "../tools/chatgpt/search.js";
+import { fetch } from "../tools/chatgpt/fetch.js";
 
 /**
  * Centralized tool implementations map
  * Used by both mcp-server.ts (McpServer) and api/server.ts (mcp-handler)
  */
 export const toolImplementations: Record<string, (args: any) => Promise<string | Record<string, unknown>>> = {
+	// ChatGPT required tools
+	search: (args) => search(args),
+	fetch: (args) => fetch(args),
+	// Standard tools
 	availabilityForecast: (args) => availabilityForecast(args),
 	getPublisherFormats: (args) => getPublisherFormats(args),
 	getPublishersByFormats: (args) => getPublishersByFormats(args),

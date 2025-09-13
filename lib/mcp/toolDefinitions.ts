@@ -27,6 +27,41 @@ export interface ToolDefinition {
 }
 
 export const TOOL_DEFINITIONS: ToolDefinition[] = [
+	// Required tools for ChatGPT MCP compatibility
+	{
+		name: "search",
+		description: "Search across publishers, accounts, key values, and other data sources. Required tool for ChatGPT MCP compatibility.",
+		inputSchema: {
+			type: "object",
+			properties: {
+				query: {
+					type: "string",
+					description: "Search query string"
+				},
+				limit: {
+					type: "number",
+					description: "Maximum number of results to return (default: 20)",
+					default: 20
+				}
+			},
+			required: ["query"]
+		}
+	},
+	{
+		name: "fetch",
+		description: "Fetch data from a specific URI or resource. Supports monday:// URIs and resource URIs. Required tool for ChatGPT MCP compatibility.",
+		inputSchema: {
+			type: "object",
+			properties: {
+				uri: {
+					type: "string",
+					description: "URI to fetch data from (e.g., 'monday://publishers/all', 'monday://item/1234567890')"
+				}
+			},
+			required: ["uri"]
+		}
+	},
+	// Original tools
 	{
 		name: "getPublisherFormats",
 		description:
