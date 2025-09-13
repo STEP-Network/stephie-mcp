@@ -187,4 +187,59 @@ const mcpHandler = createMcpHandler(
 	},
 );
 
-export default mcpHandler;
+export default async function chatgptHandler(
+	req: VercelRequest,
+	res: VercelResponse,
+) {
+	// Handle CORS for ChatGPT
+	res.setHeader("Access-Control-Allow-Origin", "*");
+	res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+	res.setHeader(
+		"Access-Control-Allow-Headers",
+		"Content-Type, Authorization, Accept, X-Requested-With",
+	);
+
+	if (req.method === "OPTIONS") {
+		return res.status(200).end();
+	}
+
+	try {
+		// No authentication check - open endpoint for ChatGPT
+		console.log(`ChatGPT MCP request: ${req.method} ${req.url}`);
+		
+		// Convert VercelRequest to standard Request
+		const url = `https://stephie-mcp.vercel.app${req.url}`;
+		const request = new Request(url, {
+			method: req.method || "POST",
+			headers: req.headers as any,
+			body: req.method === "GET" || req.method === "HEAD" ? undefined : JSON.stringify(req.body),
+		});
+		
+		// Call the MCP handler
+		const response = await mcpHandler(request);
+		
+		// Stream the response back
+		if (response.body) {
+			const reader = response.body.getReader();
+			const decoder = new TextDecoder();
+			
+			// Set response headers
+			response.headers.forEach((value, key) => {
+				res.setHeader(key, value);
+			});
+			
+			// Stream the body
+			while (true) {
+				const { done, value } = await reader.read();
+				if (done) break;
+				res.write(decoder.decode(value, { stream: true }));
+			}
+			res.end();
+		} else {
+			res.status(response.status).send(await response.text());
+		}
+	} catch (error) {
+		console.error("ChatGPT handler error:", error);
+		res.status(500).json({ error: "Internal server error" });
+	}
+}
