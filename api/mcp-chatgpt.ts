@@ -208,15 +208,43 @@ export default async function handler(
 				},
 			});
 		} else if (body.method === "tools/list") {
+			// ChatGPT requires exactly these two tools with specific signatures
+			const chatGPTTools = [
+				{
+					name: "search",
+					description: "Search for records matching a query",
+					inputSchema: {
+						type: "object",
+						properties: {
+							query: {
+								type: "string",
+								description: "Search query string"
+							}
+						},
+						required: ["query"]
+					}
+				},
+				{
+					name: "fetch",
+					description: "Fetch a record by ID or URI",
+					inputSchema: {
+						type: "object",
+						properties: {
+							id: {
+								type: "string",
+								description: "Record ID or URI to fetch"
+							}
+						},
+						required: ["id"]
+					}
+				}
+			];
+			
 			res.json({
 				jsonrpc: "2.0",
 				id: body.id,
 				result: {
-					tools: TOOL_DEFINITIONS.map(t => ({
-						name: t.name,
-						description: t.description,
-						inputSchema: t.inputSchema,
-					})),
+					tools: chatGPTTools,
 				},
 			});
 		} else if (body.method === "resources/list") {
@@ -234,9 +262,93 @@ export default async function handler(
 			});
 		} else if (body.method === "tools/call") {
 			const toolName = body.params.name;
-			const implementation = toolImplementations[toolName];
 			
-			if (!implementation) {
+			// Handle ChatGPT's specific tool signatures
+			if (toolName === "search") {
+				const searchImpl = toolImplementations.search;
+				if (!searchImpl) {
+					res.json({
+						jsonrpc: "2.0",
+						id: body.id,
+						error: {
+							code: -32601,
+							message: "Search tool not found",
+						},
+					});
+					return;
+				}
+				
+				try {
+					// ChatGPT passes "query" directly, not in a params object
+					const query = body.params.arguments?.query || "";
+					const result = await searchImpl({ query, limit: 20 });
+					res.json({
+						jsonrpc: "2.0",
+						id: body.id,
+						result: {
+							content: [
+								{
+									type: "text",
+									text: typeof result === "string" 
+										? result 
+										: JSON.stringify(result, null, 2),
+								},
+							],
+						},
+					});
+				} catch (error) {
+					res.json({
+						jsonrpc: "2.0",
+						id: body.id,
+						error: {
+							code: -32603,
+							message: error instanceof Error ? error.message : "Unknown error",
+						},
+					});
+				}
+			} else if (toolName === "fetch") {
+				const fetchImpl = toolImplementations.fetch;
+				if (!fetchImpl) {
+					res.json({
+						jsonrpc: "2.0",
+						id: body.id,
+						error: {
+							code: -32601,
+							message: "Fetch tool not found",
+						},
+					});
+					return;
+				}
+				
+				try {
+					// ChatGPT passes "id" but our implementation expects "uri"
+					const id = body.params.arguments?.id || "";
+					const result = await fetchImpl({ uri: id });
+					res.json({
+						jsonrpc: "2.0",
+						id: body.id,
+						result: {
+							content: [
+								{
+									type: "text",
+									text: typeof result === "string" 
+										? result 
+										: JSON.stringify(result, null, 2),
+								},
+							],
+						},
+					});
+				} catch (error) {
+					res.json({
+						jsonrpc: "2.0",
+						id: body.id,
+						error: {
+							code: -32603,
+							message: error instanceof Error ? error.message : "Unknown error",
+						},
+					});
+				}
+			} else {
 				res.json({
 					jsonrpc: "2.0",
 					id: body.id,
@@ -245,23 +357,45 @@ export default async function handler(
 						message: `Tool not found: ${toolName}`,
 					},
 				});
+			}
+		} else if (body.method === "resources/read") {
+			const uri = body.params?.uri;
+			if (!uri) {
+				res.json({
+					jsonrpc: "2.0",
+					id: body.id,
+					error: {
+						code: -32602,
+						message: "Missing URI parameter",
+					},
+				});
+				return;
+			}
+			
+			const resource = RESOURCE_DEFINITIONS.find(r => r.uri === uri);
+			if (!resource) {
+				res.json({
+					jsonrpc: "2.0",
+					id: body.id,
+					error: {
+						code: -32602,
+						message: `Resource not found: ${uri}`,
+					},
+				});
 				return;
 			}
 			
 			try {
-				const result = await implementation(body.params.arguments || {});
+				const content = await resource.fetcher();
 				res.json({
 					jsonrpc: "2.0",
 					id: body.id,
 					result: {
-						content: [
-							{
-								type: "text",
-								text: typeof result === "string" 
-									? result 
-									: JSON.stringify(result, null, 2),
-							},
-						],
+						contents: [{
+							uri: resource.uri,
+							mimeType: resource.mimeType,
+							text: typeof content === 'string' ? content : JSON.stringify(content)
+						}]
 					},
 				});
 			} catch (error) {
