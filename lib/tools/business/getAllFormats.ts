@@ -10,9 +10,7 @@ interface AdFormat {
 	deviceType: string;
 	description: string | null;
 	bookingDescription: string | null;
-	sizes: string[];
 	sizeNames: string[];
-	products: string[];
 	productNames: string[];
 	aliases: string | null;
 }
@@ -108,27 +106,23 @@ export async function getAllFormats() {
 			}
 
 			// Parse board relations
-			let sizeIds: string[] = [];
 			let sizeNames: string[] = [];
 			if (sizesCol) {
 				if (sizesCol.linked_items && sizesCol.linked_items.length > 0) {
-					sizeIds = sizesCol.linked_items.map((item: any) => item.id);
 					sizeNames = sizesCol.linked_items.map((item: any) => item.name);
 				} else if (sizesCol.value) {
 					const parsedValue = JSON.parse(sizesCol.value);
-					sizeIds = parsedValue?.linkedItemIds || [];
+					sizeNames = parsedValue?.linkedItemNames || [];
 				}
 			}
 
-			let productIds: string[] = [];
 			let productNames: string[] = [];
 			if (productsCol) {
 				if (productsCol.linked_items && productsCol.linked_items.length > 0) {
-					productIds = productsCol.linked_items.map((item: any) => item.id);
 					productNames = productsCol.linked_items.map((item: any) => item.name);
 				} else if (productsCol.value) {
 					const parsedValue = JSON.parse(productsCol.value);
-					productIds = parsedValue?.linkedItemIds || [];
+					productNames = parsedValue?.linkedItemNames || [];
 				}
 			}
 
@@ -139,9 +133,7 @@ export async function getAllFormats() {
 				deviceType,
 				description: descriptionCol?.text || null,
 				bookingDescription: bookingDescCol?.text || null,
-				sizes: sizeIds,
 				sizeNames,
-				products: productIds,
 				productNames,
 				aliases: aliasesCol?.text || null,
 			};
