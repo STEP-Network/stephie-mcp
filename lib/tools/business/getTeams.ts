@@ -17,37 +17,16 @@ export async function getTeams() {
 	const BOARD_ID = "1631927696";
 	
 	// Specific columns to fetch
-	// Lead: person column (need to find by type)
+	// Lead: person (column ID for Lead with type "people")
 	// Team Members: multiple_person_mkvrqa7z
 	// Board ID: board_id_mkn336m7
 	// Objectives: link_to_okrs__1
 	const specificColumns = [
+		"person", // Lead
 		"multiple_person_mkvrqa7z", // Team Members
 		"board_id_mkn336m7", // Board ID
 		"link_to_okrs__1" // Objectives
 	];
-
-	// First query to get all columns and identify the person column for Lead
-	const columnsQuery = `
-		query {
-			boards(ids: [${BOARD_ID}]) {
-				columns {
-					id
-					title
-					type
-				}
-			}
-		}
-	`;
-
-	const columnsResponse = await mondayApi(columnsQuery);
-	const columns = columnsResponse.data?.boards?.[0]?.columns || [];
-	
-	// Find the person column (Lead)
-	const personColumn = columns.find((col: any) => col.type === "person");
-	if (personColumn) {
-		specificColumns.push(personColumn.id);
-	}
 
 	const query = `
 		query {
@@ -101,9 +80,9 @@ export async function getTeams() {
 				);
 			};
 
-			// Parse Lead (person column)
+			// Parse Lead (person column with type "people")
 			let lead: { id: string; name: string } | undefined;
-			const leadCol = personColumn ? findColumnById(personColumn.id) : null;
+			const leadCol = findColumnById("person");
 			if (leadCol?.text && leadCol?.value) {
 				// Name is in the text field, ID is in the value field
 				const parsedValue = JSON.parse(leadCol.value);
@@ -184,7 +163,7 @@ export async function getTeams() {
 			teamsWithObjectives,
 			averageTeamSize,
 			columnsQueried: [
-				personColumn ? `Lead (${personColumn.id})` : "Lead (not found)",
+				"Lead (person)",
 				"Team Members (multiple_person_mkvrqa7z)",
 				"Board ID (board_id_mkn336m7)",
 				"Objectives (link_to_okrs__1)"
