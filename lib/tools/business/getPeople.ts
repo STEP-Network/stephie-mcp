@@ -24,6 +24,11 @@ export async function getPeople() {
 	// Fetch dynamic columns from Columns board
 	const BOARD_ID = "1612664689";
 	const dynamicColumns = await getDynamicColumns(BOARD_ID);
+	
+	// Ensure email__1 is included
+	if (!dynamicColumns.includes("email__1")) {
+		dynamicColumns.push("email__1");
+	}
 
 	const query = `
 		query {
@@ -87,8 +92,13 @@ export async function getPeople() {
 				});
 			};
 
+			// Helper to find column by ID
+			const findColumnById = (id: string) => {
+				return columnValues.find((col: MondayColumnValueResponse) => col.id === id);
+			};
+
 			// Try to identify key columns
-			const emailCol = findColumnByType("email");
+			const emailCol = findColumnById("email__1") || findColumnByType("email");
 			const phoneCol = findColumnByType("phone");
 			const statusCol = findColumnByType("status");
 			const dateCol = findColumnByType("date");
@@ -99,8 +109,9 @@ export async function getPeople() {
 			const departmentCol = findColumnByTitle(["department", "dept", "team"]);
 			const locationCol = findColumnByTitle(["location", "office", "city"]);
 
-			// Parse values
-			const email = emailCol?.value ? JSON.parse(emailCol.value)?.email || emailCol.text : null;
+			// Parse values - for email__1, use text directly
+			const email = emailCol?.id === "email__1" ? emailCol.text : 
+				(emailCol?.value ? JSON.parse(emailCol.value)?.email || emailCol.text : null);
 			const phone = phoneCol?.value ? JSON.parse(phoneCol.value)?.phone || phoneCol.text : null;
 			const status = statusCol?.text || "Active";
 			const startDate = dateCol?.value ? JSON.parse(dateCol.value)?.date || dateCol.text : null;

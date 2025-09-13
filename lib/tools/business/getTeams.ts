@@ -3,23 +3,51 @@ import {
 	type MondayItemResponse,
 	mondayApi,
 } from "../../monday/client.js";
-import { getDynamicColumns } from "../dynamic-columns.js";
 
 interface Team {
 	mondayItemId: string;
 	name: string;
-	department?: string;
-	teamLead?: string;
-	members?: Array<{ id: string; name: string }>;
-	projects?: Array<{ id: string; name: string }>;
-	status?: string;
-	[key: string]: any; // For dynamic columns
+	lead?: { id: string; name: string };
+	teamMembers?: Array<{ id: string; name: string }>;
+	boardId?: string;
+	objectives?: Array<{ id: string; name: string }>;
 }
 
 export async function getTeams() {
-	// Fetch dynamic columns from Columns board
 	const BOARD_ID = "1631927696";
-	const dynamicColumns = await getDynamicColumns(BOARD_ID);
+	
+	// Specific columns to fetch
+	// Lead: person column (need to find by type)
+	// Team Members: multiple_person_mkvrqa7z
+	// Board ID: board_id_mkn336m7
+	// Objectives: link_to_okrs__1
+	const specificColumns = [
+		"multiple_person_mkvrqa7z", // Team Members
+		"board_id_mkn336m7", // Board ID
+		"link_to_okrs__1" // Objectives
+	];
+
+	// First query to get all columns and identify the person column for Lead
+	const columnsQuery = `
+		query {
+			boards(ids: [${BOARD_ID}]) {
+				columns {
+					id
+					title
+					type
+				}
+			}
+		}
+	`;
+
+	const columnsResponse = await mondayApi(columnsQuery);
+	const columns = columnsResponse.data?.boards?.[0]?.columns || [];
+	
+	// Find the person column (Lead)
+	const personColumn = columns.find((col: any) => col.type === "person");
+	if (personColumn) {
+		specificColumns.push(personColumn.id);
+	}
 
 	const query = `
 		query {
@@ -30,7 +58,7 @@ export async function getTeams() {
 					items {
 						id
 						name
-						column_values(ids: [${dynamicColumns.map((id) => `"${id}"`).join(", ")}]) {
+						column_values(ids: [${specificColumns.map((id) => `"${id}"`).join(", ")}]) {
 							id
 							text
 							value
@@ -50,7 +78,7 @@ export async function getTeams() {
 	`;
 
 	try {
-		console.error("[getTeams] Fetching teams...");
+		console.error("[getTeams] Fetching teams with specific columns...");
 		
 		const response = await mondayApi(query);
 		const board = response.data?.boards?.[0];
@@ -60,144 +88,112 @@ export async function getTeams() {
 
 		// Process teams
 		const teams: Team[] = [];
-		const departmentCounts = new Map<string, number>();
-		const statusCounts = new Map<string, number>();
-		let totalMembers = 0;
-		let totalProjects = 0;
+		let totalTeamMembers = 0;
+		let totalObjectives = 0;
 
 		for (const item of items as MondayItemResponse[]) {
 			const columnValues = item.column_values || [];
 
-			// Helper to find column value by type
-			const findColumnByType = (type: string) => {
+			// Helper to find column value by ID
+			const findColumnById = (id: string) => {
 				return columnValues.find((col: MondayColumnValueResponse) => 
-					col.column?.type === type
+					col.id === id
 				);
 			};
 
-			// Try to identify key columns based on type and title
-			const statusCol = findColumnByType("status");
-			const peopleCol = findColumnByType("multiple-person");
-			const relationsCol = columnValues.filter((col: MondayColumnValueResponse) => 
-				col.column?.type === "board_relation"
-			);
-
-			// Extract department from name if it follows a pattern
-			const name = String(item.name);
-			let department = "General";
-			if (name.includes(" - ")) {
-				department = name.split(" - ")[0];
-			} else if (name.includes("Team")) {
-				department = "Operations";
+			// Parse Lead (person column)
+			let lead: { id: string; name: string } | undefined;
+			const leadCol = personColumn ? findColumnById(personColumn.id) : null;
+			if (leadCol?.value) {
+				const parsedValue = JSON.parse(leadCol.value);
+				if (parsedValue?.personsAndTeams?.[0]) {
+					lead = {
+						id: String(parsedValue.personsAndTeams[0].id),
+						name: parsedValue.personsAndTeams[0].name
+					};
+				}
 			}
 
-			// Parse status
-			const status = statusCol?.text || "Active";
-
-			// Parse members
-			let members: Array<{ id: string; name: string }> = [];
-			if (peopleCol?.value) {
-				const parsedValue = JSON.parse(peopleCol.value);
-				members = parsedValue?.personsAndTeams || [];
+			// Parse Team Members
+			let teamMembers: Array<{ id: string; name: string }> = [];
+			const membersCol = findColumnById("multiple_person_mkvrqa7z");
+			if (membersCol?.value) {
+				const parsedValue = JSON.parse(membersCol.value);
+				teamMembers = (parsedValue?.personsAndTeams || []).map((person: any) => ({
+					id: String(person.id),
+					name: person.name
+				}));
 			}
 
-			// Parse related projects/items
-			let projects: Array<{ id: string; name: string }> = [];
-			for (const relationCol of relationsCol) {
-				const col = relationCol as MondayColumnValueResponse & { 
+			// Parse Board ID
+			const boardIdCol = findColumnById("board_id_mkn336m7");
+			const boardId = boardIdCol?.text || undefined;
+
+			// Parse Objectives (board relation)
+			let objectives: Array<{ id: string; name: string }> = [];
+			const objectivesCol = findColumnById("link_to_okrs__1");
+			if (objectivesCol) {
+				const col = objectivesCol as MondayColumnValueResponse & { 
 					linked_items?: Array<{ id: string; name: string }> 
 				};
 				if (col.linked_items && col.linked_items.length > 0) {
-					projects.push(...col.linked_items);
+					objectives = col.linked_items.map(item => ({
+						id: String(item.id),
+						name: item.name
+					}));
 				}
 			}
 
 			const team: Team = {
 				mondayItemId: String(item.id),
-				name,
-				department,
-				status,
-				members,
-				projects
+				name: String(item.name),
+				lead,
+				teamMembers,
+				boardId,
+				objectives
 			};
-
-			// Add remaining dynamic columns
-			for (const col of columnValues) {
-				const column = col as MondayColumnValueResponse;
-				if (!['status', 'multiple-person', 'board_relation'].includes(column.column?.type || '')) {
-					team[column.id] = column.text || null;
-				}
-			}
 
 			teams.push(team);
 
 			// Count statistics
-			departmentCounts.set(department, (departmentCounts.get(department) || 0) + 1);
-			statusCounts.set(status, (statusCounts.get(status) || 0) + 1);
-			totalMembers += members.length;
-			totalProjects += projects.length;
+			totalTeamMembers += teamMembers.length;
+			totalObjectives += objectives.length;
 		}
 
-		// Sort teams by department then name
-		teams.sort((a, b) => {
-			if (a.department !== b.department) {
-				return (a.department || '').localeCompare(b.department || '');
-			}
-			return a.name.localeCompare(b.name);
-		});
-
-		// Group teams by department
-		const teamsByDepartment = new Map<string, Team[]>();
-		for (const team of teams) {
-			const dept = team.department || "General";
-			if (!teamsByDepartment.has(dept)) {
-				teamsByDepartment.set(dept, []);
-			}
-			teamsByDepartment.get(dept)?.push(team);
-		}
-
-		// Convert to hierarchical structure
-		const departmentGroups = Array.from(teamsByDepartment.entries())
-			.sort(([a], [b]) => a.localeCompare(b))
-			.map(([department, deptTeams]) => {
-				const totalDeptMembers = deptTeams.reduce((sum, t) => sum + (t.members?.length || 0), 0);
-				const totalDeptProjects = deptTeams.reduce((sum, t) => sum + (t.projects?.length || 0), 0);
-
-				return {
-					department,
-					teamCount: deptTeams.length,
-					totalMembers: totalDeptMembers,
-					totalProjects: totalDeptProjects,
-					teams: deptTeams
-				};
-			});
+		// Sort teams by name
+		teams.sort((a, b) => a.name.localeCompare(b.name));
 
 		// Build metadata
 		const totalTeams = teams.length;
-		const activeTeams = statusCounts.get("Active") || 0;
-		const averageTeamSize = totalTeams > 0 ? Math.round(totalMembers / totalTeams) : 0;
+		const teamsWithLead = teams.filter(t => t.lead).length;
+		const teamsWithObjectives = teams.filter(t => t.objectives && t.objectives.length > 0).length;
+		const averageTeamSize = totalTeams > 0 ? Math.round(totalTeamMembers / totalTeams) : 0;
 
 		const metadata = {
 			boardId: BOARD_ID,
 			boardName: board.name,
 			totalTeams,
-			totalDepartments: teamsByDepartment.size,
-			totalMembers,
-			totalProjects,
+			totalTeamMembers,
+			totalObjectives,
+			teamsWithLead,
+			teamsWithObjectives,
 			averageTeamSize,
-			statusBreakdown: Object.fromEntries(statusCounts),
-			departmentCounts: Object.fromEntries(departmentCounts),
-			dynamicColumnsCount: dynamicColumns.length
+			columnsQueried: [
+				personColumn ? `Lead (${personColumn.id})` : "Lead (not found)",
+				"Team Members (multiple_person_mkvrqa7z)",
+				"Board ID (board_id_mkn336m7)",
+				"Objectives (link_to_okrs__1)"
+			]
 		};
 
-		const summary = `Found ${totalTeams} team${totalTeams !== 1 ? 's' : ''} across ${teamsByDepartment.size} department${teamsByDepartment.size !== 1 ? 's' : ''} (${totalMembers} member${totalMembers !== 1 ? 's' : ''}, ${totalProjects} project${totalProjects !== 1 ? 's' : ''})`;
+		const summary = `Found ${totalTeams} team${totalTeams !== 1 ? 's' : ''} (${teamsWithLead} with lead, ${totalTeamMembers} total member${totalTeamMembers !== 1 ? 's' : ''}, ${totalObjectives} objective${totalObjectives !== 1 ? 's' : ''})`;
 
 		return JSON.stringify(
 			{
 				tool: "getTeams",
 				timestamp: new Date().toISOString(),
 				status: "success",
-				data: departmentGroups,
+				data: teams,
 				metadata,
 				options: { summary }
 			},
