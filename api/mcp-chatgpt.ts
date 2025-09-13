@@ -84,6 +84,14 @@ export default async function handler(
 	if (req.method === "OPTIONS") {
 		return res.status(200).end();
 	}
+	
+	// Log request for debugging
+	console.log("ChatGPT MCP request:", {
+		method: req.method,
+		headers: req.headers,
+		body: req.body,
+		url: req.url
+	});
 
 	// For SSE transport
 	if (req.headers.accept?.includes("text/event-stream")) {
