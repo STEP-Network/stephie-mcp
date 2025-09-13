@@ -247,11 +247,6 @@ const activeRequests = new Map<string, { tool: string; startTime: number }>();
 
 // Create the MCP handler with all tools
 const handler = createMcpHandler((server) => {
-	// Note: mcp-handler doesn't expose the server.resource() method
-	// from the underlying MCP SDK. If it did, we would register resources here.
-	// For now, resources would need to be implemented as a custom handler
-	// or we need to wait for mcp-handler to expose this functionality.
-	
 	// Publisher tools
 	server.tool(
 		"getPublisherFormats",
@@ -260,7 +255,7 @@ const handler = createMcpHandler((server) => {
 		async (input) => {
 			const result = await getPublisherFormats(input);
 			return { content: [{ type: "text", text: result }] };
-		},
+		}
 	);
 
 	server.tool(
@@ -370,10 +365,15 @@ const handler = createMcpHandler((server) => {
 	);
 
 	// Debug tools
-	server.tool("listBoards", getToolDescription("listBoards"), buildZodSchema("listBoards"), async () => {
-		const result = await listAllBoards();
-		return { content: [{ type: "text", text: result }] };
-	});
+	server.tool(
+		"listBoards",
+		getToolDescription("listBoards"),
+		buildZodSchema("listBoards"),
+		async () => {
+			const result = await listAllBoards();
+			return { content: [{ type: "text", text: result }] };
+		}
+	);
 
 	server.tool(
 		"getBoardColumns",
@@ -877,6 +877,28 @@ const handler = createMcpHandler((server) => {
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
+
+	// Register all resources from RESOURCE_DEFINITIONS
+	RESOURCE_DEFINITIONS.forEach((resource) => {
+		server.resource(
+			resource.name,
+			resource.uri,
+			{
+				description: resource.description,
+				mimeType: resource.mimeType as "application/json"
+			},
+			async () => {
+				const content = await resource.fetcher();
+				return {
+					contents: [{
+						uri: resource.uri,
+						mimeType: resource.mimeType as "application/json",
+						text: content
+					}]
+				};
+			}
+		);
+	});
 });
 
 /**

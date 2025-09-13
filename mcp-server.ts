@@ -3,10 +3,53 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
+import { z } from "zod";
 import { AuthValidator } from "./lib/auth/auth-validator.js";
 import { TOOL_DEFINITIONS } from "./lib/mcp/toolDefinitions.js";
 import { RESOURCE_DEFINITIONS } from "./lib/mcp/resources.js";
 import { toolImplementations } from "./lib/mcp/tool-implementations.js";
+
+// Helper to build Zod schema from tool definition
+const buildZodSchema = (name: string): Record<string, any> => {
+	const tool = TOOL_DEFINITIONS.find((t) => t.name === name);
+	if (!tool || !tool.inputSchema) return {};
+	
+	const schemaProperties: Record<string, any> = {};
+	
+	Object.entries(tool.inputSchema.properties || {}).forEach(([key, prop]: [string, any]) => {
+		// Build the Zod schema based on type
+		let zodType;
+		if (prop.type === "number" || prop.type === "integer") {
+			zodType = z.number();
+		} else if (prop.type === "boolean") {
+			zodType = z.boolean();
+		} else if (prop.type === "array") {
+			zodType = z.array(z.string());
+		} else {
+			zodType = z.string();
+		}
+		
+		// Add description if available
+		if (prop.description) {
+			zodType = zodType.describe(prop.description);
+		}
+		
+		// Add default if available
+		if (prop.default !== undefined) {
+			zodType = zodType.default(prop.default);
+		}
+		
+		// Make optional if not required
+		const requiredFields = tool.inputSchema.required || [];
+		if (!requiredFields.includes(key)) {
+			zodType = zodType.optional();
+		}
+		
+		schemaProperties[key] = zodType;
+	});
+	
+	return schemaProperties;
+};
 
 // Create auth validator
 const authValidator = new AuthValidator();
@@ -39,7 +82,8 @@ for (const toolDef of TOOL_DEFINITIONS) {
 	mcpServer.tool(
 		toolDef.name,
 		toolDef.description || "",
-		async (args, extra) => {
+		buildZodSchema(toolDef.name),
+		async (args) => {
 			try {
 				// Validate authentication for non-test environments
 				if (process.env.NODE_ENV !== "test" && !process.env.TEST_AUTH_TOKEN) {
@@ -94,20 +138,20 @@ for (const resourceDef of RESOURCE_DEFINITIONS) {
 		resourceDef.uri,
 		{
 			description: resourceDef.description,
-			mimeType: resourceDef.mimeType,
+			mimeType: resourceDef.mimeType as "application/json",
 		},
-		async (uri, extra) => {
+		async () => {
 			try {
 				const content = await resourceDef.fetcher();
 				return {
 					contents: [{
 						uri: resourceDef.uri,
-						mimeType: resourceDef.mimeType,
+						mimeType: resourceDef.mimeType as "application/json",
 						text: typeof content === 'string' ? content : JSON.stringify(content)
 					}]
 				};
 			} catch (error) {
-				throw new Error(`Failed to fetch resource ${uri}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+				throw new Error(`Failed to fetch resource ${resourceDef.uri}: ${error instanceof Error ? error.message : 'Unknown error'}`);
 			}
 		}
 	);
