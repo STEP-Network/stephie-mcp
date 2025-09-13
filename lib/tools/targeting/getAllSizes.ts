@@ -220,6 +220,11 @@ export async function getAllSizes() {
 				video: videoSizes
 			},
 			deviceTypeCounts: Object.fromEntries(deviceTypeCounts),
+			abbreviations: {
+				"eAPM": "effective Attention Per Mille",
+				"CPM": "Cost Per Mille (thousand impressions)",
+				"CTR": "Click-Through Rate"
+			}
 		};
 
 		const summary = `Found ${totalSizes} ad size${totalSizes !== 1 ? 's' : ''} across ${uniqueDeviceTypes.size} unique device type${uniqueDeviceTypes.size !== 1 ? 's' : ''} (${displaySizes} display, ${videoSizes} video)`;
