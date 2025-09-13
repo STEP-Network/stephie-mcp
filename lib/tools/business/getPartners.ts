@@ -78,8 +78,6 @@ export async function getPartners(
           items {
             id
             name
-            created_at
-            updated_at
             column_values(ids: [${dynamicColumns.map((id) => `"${id}"`).join(", ")}]) {
               id
               text
@@ -108,7 +106,7 @@ export async function getPartners(
 		// Format items for JSON response
 		const formattedItems = items.map((item: Record<string, unknown>) => {
 			const formatted: any = {
-				id: item.id,
+				mondayItemId: item.id,
 				name: item.name,
 				createdAt: item.created_at,
 				updatedAt: item.updated_at,

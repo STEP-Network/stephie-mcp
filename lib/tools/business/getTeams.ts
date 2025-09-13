@@ -6,15 +6,13 @@ import {
 import { getDynamicColumns } from "../dynamic-columns.js";
 
 interface Team {
-	id: string;
+	mondayItemId: string;
 	name: string;
 	department?: string;
 	teamLead?: string;
 	members?: Array<{ id: string; name: string }>;
 	projects?: Array<{ id: string; name: string }>;
 	status?: string;
-	createdAt: string;
-	updatedAt: string;
 	[key: string]: any; // For dynamic columns
 }
 
@@ -32,8 +30,6 @@ export async function getTeams() {
 					items {
 						id
 						name
-						created_at
-						updated_at
 						column_values(ids: [${dynamicColumns.map((id) => `"${id}"`).join(", ")}]) {
 							id
 							text
@@ -117,14 +113,12 @@ export async function getTeams() {
 			}
 
 			const team: Team = {
-				id: String(item.id),
+				mondayItemId: String(item.id),
 				name,
 				department,
 				status,
 				members,
-				projects,
-				createdAt: String(item.created_at),
-				updatedAt: String(item.updated_at),
+				projects
 			};
 
 			// Add remaining dynamic columns

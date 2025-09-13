@@ -6,14 +6,13 @@ import {
 import { getDynamicColumns } from "../dynamic-columns.js";
 
 interface ChangelogEntry {
-	id: string;
+	mondayItemId: string;
 	name: string;
 	date: string | null;
 	publisher: string[];
 	topic: string[];
 	yieldStatus: string | null;
 	createdBy: string | null;
-	createdAt: string;
 	lastUpdatedBy: string | null;
 	lastUpdatedAt: string;
 	boardCreatedAt: string;
@@ -72,8 +71,6 @@ export async function getChangelog(params: { search?: string; limit?: number } =
           items {
             id
             name
-            created_at
-            updated_at
             column_values(ids: [${allColumns.map((id) => `"${id}"`).join(", ")}]) {
               id
               text
@@ -178,14 +175,13 @@ export async function getChangelog(params: { search?: string; limit?: number } =
 			}
 
 			const entry: ChangelogEntry = {
-				id: String(mondayItem.id),
+				mondayItemId: String(mondayItem.id),
 				name: String(mondayItem.name),
 				date,
 				publisher: publishers,
 				topic: topics,
 				yieldStatus: yieldCol?.text || null,
 				createdBy,
-				createdAt: createdAtTime || String(mondayItem.created_at),
 				lastUpdatedBy,
 				lastUpdatedAt: lastUpdatedAtTime || String(mondayItem.updated_at),
 				boardCreatedAt: String(mondayItem.created_at),

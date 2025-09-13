@@ -7,15 +7,13 @@ import { getDynamicColumns } from "../dynamic-columns.js";
 import { createListResponse } from "../json-output.js";
 
 interface OTTPublisher {
-	id: string;
+	mondayItemId: string;
 	name: string;
 	status: string;
 	testUrl: string | null;
 	linkInTargetVideo: string | null;
 	assignedTo: string | null;
 	follower: string | null;
-	createdAt: string;
-	updatedAt: string;
 }
 
 export async function getOTTPublishers() {
@@ -45,8 +43,6 @@ export async function getOTTPublishers() {
           items {
             id
             name
-            created_at
-            updated_at
             column_values(ids: [${allColumns.map((id) => `"${id}"`).join(", ")}]) {
               id
               text
@@ -107,15 +103,13 @@ export async function getOTTPublishers() {
 			const follower = followerCol?.text || null;
 
 			const publisher: OTTPublisher = {
-				id: String(mondayItem.id),
+				mondayItemId: String(mondayItem.id),
 				name: String(mondayItem.name),
 				status: statusLabel,
 				testUrl: testUrlCol?.text || null,
 				linkInTargetVideo: linkInTargetVideoCol?.text || null,
 				assignedTo,
-				follower,
-				createdAt: String(mondayItem.created_at),
-				updatedAt: String(mondayItem.updated_at),
+				follower
 			};
 
 			// Add to status grouping

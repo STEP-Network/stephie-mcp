@@ -12,15 +12,13 @@ interface Publisher {
 }
 
 interface Vertical {
-	id: string;
+	mondayItemId: string;
 	name: string;
 	description: string | null;
 	status: string;
 	publisherIds: string[];
 	publishers: Publisher[];
 	adUnitCount: number;
-	createdAt: string;
-	updatedAt: string;
 }
 
 export async function getVertikaler() {
@@ -48,8 +46,6 @@ export async function getVertikaler() {
           items {
             id
             name
-            created_at
-            updated_at
             column_values(ids: [${allColumns.map((id) => `"${id}"`).join(", ")}]) {
               id
               text
@@ -125,15 +121,13 @@ export async function getVertikaler() {
 			const adUnitCount = parseInt(adUnitCountCol?.text || "0", 10);
 
 			const vertical: Vertical = {
-				id: String(mondayItem.id),
+				mondayItemId: String(mondayItem.id),
 				name: String(mondayItem.name),
 				description: descriptionCol?.text || null,
 				status: statusLabel,
 				publisherIds,
 				publishers,
-				adUnitCount,
-				createdAt: String(mondayItem.created_at),
-				updatedAt: String(mondayItem.updated_at),
+				adUnitCount
 			};
 
 			verticals.push(vertical);

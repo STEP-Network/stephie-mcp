@@ -5,7 +5,7 @@ import type {
 } from "../../monday/types.js";
 
 interface AdFormat {
-	id: string;
+	mondayItemId: string;
 	name: string;
 	deviceType: string;
 	description: string | null;
@@ -15,8 +15,6 @@ interface AdFormat {
 	products: string[];
 	productNames: string[];
 	aliases: string | null;
-	createdAt: string;
-	updatedAt: string;
 }
 
 export async function getAllFormats() {
@@ -29,8 +27,6 @@ export async function getAllFormats() {
           items {
             id
             name
-            created_at
-            updated_at
             column_values {
               id
               text
@@ -138,7 +134,7 @@ export async function getAllFormats() {
 
 
 			const format: AdFormat = {
-				id: String(mondayItem.id),
+				mondayItemId: String(mondayItem.id),
 				name: String(mondayItem.name),
 				deviceType,
 				description: descriptionCol?.text || null,
@@ -148,8 +144,6 @@ export async function getAllFormats() {
 				products: productIds,
 				productNames,
 				aliases: aliasesCol?.text || null,
-				createdAt: String(mondayItem.created_at),
-				updatedAt: String(mondayItem.updated_at),
 			};
 
 			formats.push(format);

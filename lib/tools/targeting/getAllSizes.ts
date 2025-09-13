@@ -7,7 +7,7 @@ import {
 const AD_SIZES_BOARD_ID = "1558597958";
 
 interface AdSize {
-	id: string;
+	mondayItemId: string;
 	name: string;
 	width: string;
 	height: string;
@@ -24,8 +24,6 @@ interface AdSize {
 	description: string | null;
 	specsUrl: string | null;
 	isVideo: boolean;
-	createdAt: string;
-	updatedAt: string;
 }
 
 export async function getAllSizes() {
@@ -41,8 +39,6 @@ export async function getAllSizes() {
 					items {
 						id
 						name
-						created_at
-						updated_at
 						column_values {
 							id
 							text
@@ -127,7 +123,7 @@ export async function getAllSizes() {
 			};
 
 			const size: AdSize = {
-				id: String(item.id),
+				mondayItemId: String(item.id),
 				name: String(item.name),
 				width,
 				height,
@@ -144,8 +140,6 @@ export async function getAllSizes() {
 				description: descriptionCol?.text || null,
 				specsUrl: specsUrlCol?.text || null,
 				isVideo,
-				createdAt: String(item.created_at),
-				updatedAt: String(item.updated_at),
 			};
 
 			sizes.push(size);

@@ -6,7 +6,7 @@ import {
 import { getDynamicColumns } from "../dynamic-columns.js";
 
 interface Strategy {
-	id: string;
+	mondayItemId: string;
 	name: string;
 	status: string | null;
 	aiSync: string | null;
@@ -15,8 +15,6 @@ interface Strategy {
 	objectiveNames: string[];
 	effect: string | null;
 	effort: string | null;
-	createdAt: string;
-	updatedAt: string;
 }
 
 export async function getStrategies() {
@@ -47,8 +45,6 @@ export async function getStrategies() {
           items {
             id
             name
-            created_at
-            updated_at
             column_values(ids: [${allColumns.map((id) => `"${id}"`).join(", ")}]) {
               id
               text
@@ -118,7 +114,7 @@ export async function getStrategies() {
 			}
 
 			const strategy: Strategy = {
-				id: String(mondayItem.id),
+				mondayItemId: String(mondayItem.id),
 				name: String(mondayItem.name),
 				status: statusLabel,
 				aiSync: aiSyncCol?.text || null,
@@ -126,9 +122,7 @@ export async function getStrategies() {
 				objectives: objectiveIds,
 				objectiveNames: objectiveNames,
 				effect: effectCol?.text || null,
-				effort: effortCol?.text || null,
-				createdAt: String(mondayItem.created_at),
-				updatedAt: String(mondayItem.updated_at),
+				effort: effortCol?.text || null
 			};
 
 			strategies.push(strategy);

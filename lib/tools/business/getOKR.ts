@@ -93,8 +93,6 @@ export async function getOKR(
           items {
             id
             name
-            created_at
-            updated_at
             column_values(ids: ["color_mkpksp3f", "people__1", "lookup_mkpkjxjy", "date4", "description_mkmp3w28", "connect_boards__1", "link_to_strategies__1", "connect_boards35__1"]) {
               id
               text
@@ -180,7 +178,7 @@ export async function getOKR(
 		// Format items for JSON response
 		const formattedItems = items.map((item: Record<string, unknown>) => {
 			const formatted: any = {
-				id: item.id,
+				mondayItemId: item.id,
 				name: item.name,
 				createdAt: item.created_at,
 				updatedAt: item.updated_at,

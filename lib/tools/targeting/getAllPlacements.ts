@@ -5,14 +5,12 @@ import {
 } from "../../monday/client.js";
 
 interface Placement {
-	id: string;
+	mondayItemId: string;
 	name: string;
 	placementId: string;
 	type: string;
 	position?: string;
 	device?: string;
-	createdAt: string;
-	updatedAt: string;
 }
 
 export async function getAllPlacements() {
@@ -26,8 +24,6 @@ export async function getAllPlacements() {
 					items {
 						id
 						name
-						created_at
-						updated_at
 						column_values {
 							id
 							text
@@ -109,14 +105,12 @@ export async function getAllPlacements() {
 			if (name.includes("Footer")) position = position || "Footer";
 
 			const placement: Placement = {
-				id: String(item.id),
+				mondayItemId: String(item.id),
 				name,
 				placementId,
 				type,
 				...(position && { position }),
-				...(device && { device }),
-				createdAt: String(item.created_at),
-				updatedAt: String(item.updated_at),
+				...(device && { device })
 			};
 
 			placements.push(placement);

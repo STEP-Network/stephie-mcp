@@ -6,7 +6,7 @@ import {
 import { getDynamicColumns } from "../dynamic-columns.js";
 
 interface TechTask {
-	id: string;
+	mondayItemId: string;
 	name: string;
 	status?: string;
 	priority?: string;
@@ -17,8 +17,6 @@ interface TechTask {
 	effort?: string;
 	impact?: string;
 	category?: string;
-	createdAt: string;
-	updatedAt: string;
 	[key: string]: any; // For dynamic columns
 }
 
@@ -36,8 +34,6 @@ export async function getTasksTechIntelligence() {
 					items {
 						id
 						name
-						created_at
-						updated_at
 						column_values(ids: [${dynamicColumns.map((id) => `"${id}"`).join(", ")}]) {
 							id
 							text
@@ -145,7 +141,7 @@ export async function getTasksTechIntelligence() {
 			}
 
 			const task: TechTask = {
-				id: String(item.id),
+				mondayItemId: String(item.id),
 				name: String(item.name),
 				status,
 				priority,
@@ -155,9 +151,7 @@ export async function getTasksTechIntelligence() {
 				stephieFeature,
 				effort,
 				impact,
-				category,
-				createdAt: String(item.created_at),
-				updatedAt: String(item.updated_at),
+				category
 			};
 
 			// Add remaining dynamic columns

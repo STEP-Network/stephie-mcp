@@ -6,7 +6,7 @@ import {
 import { getDynamicColumns } from "../dynamic-columns.js";
 
 interface Person {
-	id: string;
+	mondayItemId: string;
 	name: string;
 	email?: string;
 	phone?: string;
@@ -17,8 +17,6 @@ interface Person {
 	status?: string;
 	startDate?: string;
 	location?: string;
-	createdAt: string;
-	updatedAt: string;
 	[key: string]: any; // For dynamic columns
 }
 
@@ -36,8 +34,6 @@ export async function getPeople() {
 					items {
 						id
 						name
-						created_at
-						updated_at
 						column_values(ids: [${dynamicColumns.map((id) => `"${id}"`).join(", ")}]) {
 							id
 							text
@@ -133,7 +129,7 @@ export async function getPeople() {
 			}
 
 			const person: Person = {
-				id: String(item.id),
+				mondayItemId: String(item.id),
 				name,
 				email,
 				phone,
@@ -142,9 +138,7 @@ export async function getPeople() {
 				team,
 				status,
 				startDate,
-				location,
-				createdAt: String(item.created_at),
-				updatedAt: String(item.updated_at),
+				location
 			};
 
 			// Add remaining dynamic columns
