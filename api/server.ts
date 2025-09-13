@@ -9,7 +9,7 @@ import { getAllAdPrices } from "../lib/tools/business/getAllAdPrices.js";
 import { getAllFormats } from "../lib/tools/business/getAllFormats.js";
 import { getAllProducts } from "../lib/tools/business/getAllProducts.js";
 import { getOKR } from "../lib/tools/business/getOKR.js";
-import { getPeople } from "../lib/tools/business/getPeople.js";
+import { getTeamMembers } from "../lib/tools/business/getTeamMembers.js";
 import { getStrategies } from "../lib/tools/business/getStrategies.js";
 import { getTeams } from "../lib/tools/business/getTeams.js";
 import { getVertikaler } from "../lib/tools/business/getVertikaler.js";
@@ -52,9 +52,6 @@ import { updateDeal } from "../lib/tools/sales/updateDeal.js";
 import { updateOpportunity } from "../lib/tools/sales/updateOpportunity.js";
 import { updateSalesActivity } from "../lib/tools/sales/updateSalesActivity.js";
 import { createTicket } from "../lib/tools/support/createTicket.js";
-import { getInternalAdOpsAdTech } from "../lib/tools/support/getInternalAdOpsAdTech.js";
-import { getInternalAdSales } from "../lib/tools/support/getInternalAdSales.js";
-import { getPublisherFAQ } from "../lib/tools/support/getPublisherFAQ.js";
 import { getTickets } from "../lib/tools/support/getTickets.js";
 import { updateTicket } from "../lib/tools/support/updateTicket.js";
 // ChatGPT tools
@@ -404,11 +401,11 @@ const handler = createMcpHandler((server) => {
 	);
 
 	server.tool(
-		"getPeople",
-		getToolDescription("getPeople"),
-		buildZodSchema("getPeople"),
+		"getTeamMembers",
+		getToolDescription("getTeamMembers"),
+		buildZodSchema("getTeamMembers"),
 		async () => {
-			const result = await getPeople();
+			const result = await getTeamMembers();
 			return { content: [{ type: "text", text: result }] };
 		}
 	);
@@ -1033,36 +1030,6 @@ const handler = createMcpHandler((server) => {
 	);
 
 	// Create/Update tools - Tickets
-	server.tool(
-		"getInternalAdSales",
-		getToolDescription("getInternalAdSales"),
-		buildZodSchema("getInternalAdSales"),
-		async (input) => {
-			const result = await getInternalAdSales(input);
-			return { content: [{ type: "text", text: result }] };
-		}
-	);
-
-	server.tool(
-		"getInternalAdOpsAdTech",
-		getToolDescription("getInternalAdOpsAdTech"),
-		buildZodSchema("getInternalAdOpsAdTech"),
-		async (input) => {
-			const result = await getInternalAdOpsAdTech(input);
-			return { content: [{ type: "text", text: result }] };
-		}
-	);
-
-	server.tool(
-		"getPublisherFAQ",
-		getToolDescription("getPublisherFAQ"),
-		buildZodSchema("getPublisherFAQ"),
-		async (input) => {
-			const result = await getPublisherFAQ(input);
-			return { content: [{ type: "text", text: result }] };
-		}
-	);
-
 	server.tool(
 		"createTicket",
 		getToolDescription("createTicket"),

@@ -688,9 +688,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 		},
 	},
 	{
-		name: "getPeople",
+		name: "getTeamMembers",
 		description:
-			"Get items from People board (1612664689). Access team member details and assignments.",
+			"Get team members from People board (1612664689). Access team member details and assignments.",
 		inputSchema: {
 			type: "object",
 			properties: {},
@@ -1117,7 +1117,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 				},
 				peopleId: {
 					type: "string",
-					description: "Filter by linked people (use getPeople to find IDs)",
+					description: "Filter by linked people (use getTeamMembers to find IDs)",
 				},
 				search: { 
 					type: "string",
@@ -1210,7 +1210,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 				},
 				assignedId: {
 					type: "string",
-					description: "Filter by assigned person (use getPeople to find IDs)",
+					description: "Filter by assigned person (use getTeamMembers to find IDs)",
 				},
 				publisherId: {
 					type: "string",
@@ -1275,7 +1275,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 				limit: { type: "number", default: 10 },
 				assignedId: {
 					type: "string",
-					description: "Filter by assigned person (use getPeople to find IDs)",
+					description: "Filter by assigned person (use getTeamMembers to find IDs)",
 				},
 				search: { 
 					type: "string",
@@ -1313,7 +1313,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 				},
 				assignedId: {
 					type: "string",
-					description: "Filter by assigned person (use getPeople to find IDs)",
+					description: "Filter by assigned person (use getTeamMembers to find IDs)",
 				},
 				search: { 
 					type: "string",
@@ -1354,7 +1354,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 				},
 				assignedId: {
 					type: "string",
-					description: "Filter by assigned person (use getPeople to find IDs)",
+					description: "Filter by assigned person (use getTeamMembers to find IDs)",
 				},
 				search: { 
 					type: "string",
@@ -1374,24 +1374,6 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 		},
 	},
 
-	{
-
-		name: "getInternalAdSales",
-		description:
-			"Get items from Internal - Ad Sales board. Track internal sales processes and targets.",
-		inputSchema: {
-			type: "object",
-			properties: {
-				limit: { type: "number", default: 10 },
-				search: { 
-					type: "string",
-					description: "Optional text search in item names"
-				},
-				status: { type: "number", description: "Sales Status index" },
-			},
-		},
-	},
-
 	// Tasks Tools
 	{
 		name: "getTasksAdOps",
@@ -1403,7 +1385,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 				limit: { type: "number", default: 10 },
 				assignedId: {
 					type: "string",
-					description: "Filter by assigned person (use getPeople to find IDs)",
+					description: "Filter by assigned person (use getTeamMembers to find IDs)",
 				},
 				search: { 
 					type: "string",
@@ -1439,7 +1421,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 				limit: { type: "number", default: 10 },
 				assignedId: {
 					type: "string",
-					description: "Filter by assigned person (use getPeople to find IDs)",
+					description: "Filter by assigned person (use getTeamMembers to find IDs)",
 				},
 				search: { 
 					type: "string",
@@ -1480,7 +1462,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 				limit: { type: "number", default: 10 },
 				assignedId: {
 					type: "string",
-					description: "Filter by assigned person (use getPeople to find IDs)",
+					description: "Filter by assigned person (use getTeamMembers to find IDs)",
 				},
 				search: { 
 					type: "string",
@@ -1516,7 +1498,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 				limit: { type: "number", default: 10 },
 				assignedId: {
 					type: "string",
-					description: "Filter by assigned person (use getPeople to find IDs)",
+					description: "Filter by assigned person (use getTeamMembers to find IDs)",
 				},
 				search: { 
 					type: "string",
@@ -1547,7 +1529,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 				limit: { type: "number", default: 10 },
 				assignedId: {
 					type: "string",
-					description: "Filter by assigned person (use getPeople to find IDs)",
+					description: "Filter by assigned person (use getTeamMembers to find IDs)",
 				},
 				search: { 
 					type: "string",
@@ -1574,7 +1556,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 				limit: { type: "number", default: 10 },
 				assignedId: {
 					type: "string",
-					description: "Filter by assigned person (use getPeople to find IDs)",
+					description: "Filter by assigned person (use getTeamMembers to find IDs)",
 				},
 				search: { 
 					type: "string",
@@ -1637,44 +1619,6 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 				},
 				category: { type: "number", description: "Expense Category index" },
 				status: { type: "number", description: "Expense Status index" },
-			},
-		},
-	},
-
-	// Operations Tools
-	{
-		name: "getInternalAdOpsAdTech",
-		description:
-			"Get items from Internal - Ad Ops/AdTech board. Monitor internal operations processes.",
-		inputSchema: {
-			type: "object",
-			properties: {
-				limit: { type: "number", default: 10 },
-				search: { 
-					type: "string",
-					description: "Optional text search in item names"
-				},
-				type: { type: "number", description: "Process Type index" },
-				status: { type: "number", description: "Process Status index" },
-			},
-		},
-	},
-
-	// Support Tools
-	{
-		name: "getPublisherFAQ",
-		description:
-			"Get items from Publisher FAQ board. Access frequently asked questions and answers.",
-		inputSchema: {
-			type: "object",
-			properties: {
-				limit: { type: "number", default: 10 },
-				search: { 
-					type: "string",
-					description: "Optional text search in item names"
-				},
-				category: { type: "number", description: "FAQ Category index" },
-				status: { type: "number", description: "FAQ Status index" },
 			},
 		},
 	},

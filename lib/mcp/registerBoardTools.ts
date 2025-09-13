@@ -7,7 +7,7 @@ const boardToolDefinitions = JSON.parse(
 	fs.readFileSync(path.join(__dirname, "boardToolDefinitions.json"), "utf-8"),
 );
 
-import { getPeople } from "../tools/business/getPeople.js";
+import { getTeamMembers } from "../tools/business/getTeamMembers.js";
 import { getAllProducts } from "../tools/business/getAllProducts.js";
 import { getAllFormats } from "../tools/business/getAllFormats.js";
 import { getAllAdPrices } from "../tools/business/getAllAdPrices.js";
@@ -48,9 +48,6 @@ import { createSalesActivity } from "../tools/sales/createSalesActivity.js";
 import { updateSalesActivity } from "../tools/sales/updateSalesActivity.js";
 import { createDeal } from "../tools/sales/createDeal.js";
 import { updateDeal } from "../tools/sales/updateDeal.js";
-import { getInternalAdOpsAdTech } from "../tools/support/getInternalAdOpsAdTech.js";
-import { getInternalAdSales } from "../tools/support/getInternalAdSales.js";
-import { getPublisherFAQ } from "../tools/support/getPublisherFAQ.js";
 import { getTickets } from "../tools/support/getTickets.js";
 import { createTicket } from "../tools/support/createTicket.js";
 import { updateTicket } from "../tools/support/updateTicket.js";
@@ -93,7 +90,7 @@ const BOARD_TOOL_IMPLEMENTATIONS: Record<string, Function> = {
 	getAllProducts,
 	getAllFormats,
 	getAllAdPrices,
-	getPeople,
+	getTeamMembers,
 	getTeams,
 	getStrategies,
 	getVertikaler,
@@ -137,9 +134,6 @@ const BOARD_TOOL_IMPLEMENTATIONS: Record<string, Function> = {
 	getMarketingBudgets,
 	getMarketingExpenses,
 	// Support tools
-	getInternalAdOpsAdTech,
-	getInternalAdSales,
-	getPublisherFAQ,
 	getTickets,
 	createTicket,
 	updateTicket,

@@ -101,8 +101,8 @@ export const RESOURCE_DEFINITIONS: ResourceDefinition[] = [
 		description: 'Company personnel directory',
 		mimeType: 'application/json',
 		fetcher: async () => {
-			const { getPeople } = await import('../tools/business/getPeople.js');
-			return getPeople();
+			const { getTeamMembers } = await import('../tools/business/getTeamMembers.js');
+			return getTeamMembers();
 		}
 	},
 	{

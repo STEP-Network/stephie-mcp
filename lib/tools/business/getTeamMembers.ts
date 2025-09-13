@@ -22,7 +22,7 @@ interface LeaderGroup {
 	people: Person[];
 }
 
-export async function getPeople() {
+export async function getTeamMembers() {
 	const BOARD_ID = "1612664689";
 	
 	// Hardcoded column IDs based on the provided structure
@@ -69,7 +69,7 @@ export async function getPeople() {
 	`;
 
 	try {
-		console.error("[getPeople] Fetching people...");
+		console.error("[getTeamMembers] Fetching team members...");
 		
 		const response = await mondayApi(query);
 		const board = response.data?.boards?.[0];
@@ -215,7 +215,7 @@ export async function getPeople() {
 
 		return JSON.stringify(
 			{
-				tool: "getPeople",
+				tool: "getTeamMembers",
 				timestamp: new Date().toISOString(),
 				status: "success",
 				data,

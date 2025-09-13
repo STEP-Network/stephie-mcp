@@ -246,62 +246,6 @@
 		}
 	},
 	{
-		"name": "getInternalAdOpsAdTech",
-		"description": "Get items from Internal AdOps FAQ board. 127 total items.",
-		"inputSchema": {
-			"type": "object",
-			"properties": {
-				"limit": {
-					"type": "number",
-					"default": 10,
-					"description": "Maximum items to return"
-				},
-				"search": {
-					"type": "string",
-					"description": "Search in item names"
-				},
-				"status": {
-					"type": "number",
-					"description": "Status (numeric index)"
-				},
-				"date4": {
-					"type": "string",
-					"description": "Created Date (YYYY-MM-DD)"
-				},
-				"date_mkn0mkj1": {
-					"type": "string",
-					"description": "Document Last Updated (YYYY-MM-DD)"
-				}
-			}
-		}
-	},
-	{
-		"name": "getInternalAdSales",
-		"description": "Get items from Internal AdSales board. 39 total items.",
-		"inputSchema": {
-			"type": "object",
-			"properties": {
-				"limit": {
-					"type": "number",
-					"default": 10,
-					"description": "Maximum items to return"
-				},
-				"search": {
-					"type": "string",
-					"description": "Search in item names"
-				},
-				"status": {
-					"type": "number",
-					"description": "Status (numeric index)"
-				},
-				"date4": {
-					"type": "string",
-					"description": "Created Date (YYYY-MM-DD)"
-				}
-			}
-		}
-	},
-	{
 		"name": "getLeads",
 		"description": "Get items from Leads board. 78 total items.",
 		"inputSchema": {
@@ -422,7 +366,7 @@
 				},
 				"peopleId": {
 					"type": "string",
-					"description": "Filter by linked people (use getPeople to find IDs)"
+					"description": "Filter by linked people (use getTeamMembers to find IDs)"
 				}
 			}
 		}
@@ -500,7 +444,7 @@
 		}
 	},
 	{
-		"name": "getPeople",
+		"name": "getTeamMembers",
 		"description": "Get items from People board. 18 total items.",
 		"inputSchema": {
 			"type": "object",
@@ -525,32 +469,6 @@
 				"date6__1": {
 					"type": "string",
 					"description": "End Date (YYYY-MM-DD)"
-				}
-			}
-		}
-	},
-	{
-		"name": "getPublisherFAQ",
-		"description": "Get items from Publisher FAQ board. 34 total items.",
-		"inputSchema": {
-			"type": "object",
-			"properties": {
-				"limit": {
-					"type": "number",
-					"default": 10,
-					"description": "Maximum items to return"
-				},
-				"search": {
-					"type": "string",
-					"description": "Search in item names"
-				},
-				"status": {
-					"type": "number",
-					"description": "Status (numeric index)"
-				},
-				"date4": {
-					"type": "string",
-					"description": "Created Date (YYYY-MM-DD)"
 				}
 			}
 		}
@@ -944,7 +862,7 @@
 				},
 				"assignedId": {
 					"type": "string",
-					"description": "Filter by assigned person (use getPeople to find IDs)"
+					"description": "Filter by assigned person (use getTeamMembers to find IDs)"
 				},
 				"publisherId": {
 					"type": "string",

@@ -10,7 +10,7 @@ import { getAllFormats } from "../tools/business/getAllFormats.js";
 import { getAllSizes } from "../tools/targeting/getAllSizes.js";
 import { getAllAdPrices } from "../tools/business/getAllAdPrices.js";
 import { getAllPlacements } from "../tools/targeting/getAllPlacements.js";
-import { getPeople } from "../tools/business/getPeople.js";
+import { getTeamMembers } from "../tools/business/getTeamMembers.js";
 import { getStrategies } from "../tools/business/getStrategies.js";
 import { getTeams } from "../tools/business/getTeams.js";
 import { getVertikaler } from "../tools/business/getVertikaler.js";
@@ -36,7 +36,6 @@ import { getItems } from "../tools/debug/getItems.js";
 import { listAllBoards } from "../tools/debug/listBoards.js";
 import { getOpportunities } from "../tools/sales/getOpportunities.js";
 import { getSalesActivities } from "../tools/sales/getSalesActivities.js";
-import { getInternalAdSales } from "../tools/support/getInternalAdSales.js";
 import { getDeals } from "../tools/sales/getDeals.js";
 import { createOpportunity } from "../tools/sales/createOpportunity.js";
 import { updateOpportunity } from "../tools/sales/updateOpportunity.js";
@@ -74,9 +73,7 @@ import { getOKR } from "../tools/business/getOKR.js";
 import { createOKR } from "../tools/business/createOKR.js";
 import { updateOKR } from "../tools/business/updateOKR.js";
 import { getBookings } from "../tools/sales/getBookings.js";
-import { getInternalAdOpsAdTech } from "../tools/support/getInternalAdOpsAdTech.js";
 import { getTickets } from "../tools/support/getTickets.js";
-import { getPublisherFAQ } from "../tools/support/getPublisherFAQ.js";
 import { createTicket } from "../tools/support/createTicket.js";
 import { updateTicket } from "../tools/support/updateTicket.js";
 import { search } from "../tools/chatgpt/search.js";
@@ -98,7 +95,7 @@ export const toolImplementations: Record<string, (args: any) => Promise<string |
 	getAllSizes: () => getAllSizes(),
 	getAllAdPrices: () => getAllAdPrices(),
 	getAllPlacements: () => getAllPlacements(),
-	getPeople: () => getPeople(),
+	getTeamMembers: () => getTeamMembers(),
 	getStrategies: () => getStrategies(),
 	getTeams: () => getTeams(),
 	getVertikaler: () => getVertikaler(),
@@ -126,7 +123,6 @@ export const toolImplementations: Record<string, (args: any) => Promise<string |
 	listBoards: (_args) => listAllBoards(), // Alias for compatibility
 	getOpportunities: (args) => getOpportunities(args),
 	getSalesActivities: (args) => getSalesActivities(args),
-	getInternalAdSales: (args) => getInternalAdSales(args),
 	getDeals: (args) => getDeals(args),
 	createOpportunity: (args) => createOpportunity(args as any),
 	updateOpportunity: (args) => updateOpportunity(args as any),
@@ -163,9 +159,7 @@ export const toolImplementations: Record<string, (args: any) => Promise<string |
 	createOKR: (args) => createOKR(args as any),
 	updateOKR: (args) => updateOKR(args as any),
 	getBookings: (args) => getBookings(args),
-	getInternalAdOpsAdTech: (args) => getInternalAdOpsAdTech(args),
 	getTickets: (args) => getTickets(args),
-	getPublisherFAQ: (args) => getPublisherFAQ(args),
 	createTicket: (args) => createTicket(args as any),
 	updateTicket: (args) => updateTicket(args as any),
 };
