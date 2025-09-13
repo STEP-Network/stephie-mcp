@@ -9,12 +9,8 @@ interface Strategy {
 	mondayItemId: string;
 	name: string;
 	status: string | null;
-	aiSync: string | null;
-	aiType: string | null;
-	objectives: string[];
-	objectiveNames: string[];
-	effect: string | null;
-	effort: string | null;
+	objectives: Array<{ id: string; name: string }>;
+	statuses: string | null;
 }
 
 export async function getStrategies() {
@@ -25,12 +21,8 @@ export async function getStrategies() {
 	// Include static columns we know about
 	const staticColumns = [
 		"color_mkpkghqq", // Status (Active/Inactive/Archived)
-		"color_mknyd5gk", // AI Sync
-		"color_mknycf0d", // AI Type
 		"connect_boards__1", // Objectives
 		"lookup_mkpknbv0", // Status mirror
-		"lookup_mkpkact5", // Effect mirror
-		"lookup_mkpk9z7j", // Effort mirror
 	];
 
 	// Combine static and dynamic columns
@@ -51,6 +43,9 @@ export async function getStrategies() {
               value
               ... on BoardRelationValue {
                 linked_items { id name }
+              }
+              ... on MirrorValue {
+                display_value
               }
               column {
                 id
@@ -88,11 +83,8 @@ export async function getStrategies() {
 
 			// Extract key fields
 			const statusCol = getColumnValue("color_mkpkghqq");
-			const aiSyncCol = getColumnValue("color_mknyd5gk");
-			const aiTypeCol = getColumnValue("color_mknycf0d");
 			const objectivesCol = getColumnValue("connect_boards__1");
-			const effectCol = getColumnValue("lookup_mkpkact5");
-			const effortCol = getColumnValue("lookup_mkpk9z7j");
+			const statusesCol = getColumnValue("lookup_mkpknbv0") as MondayColumnValueResponse & { display_value?: string };
 
 			// Parse status
 			const statusLabel = statusCol?.text || "Unknown";
@@ -102,27 +94,26 @@ export async function getStrategies() {
 				continue;
 			}
 
-			// Parse objectives
-			let objectiveIds: string[] = [];
-			let objectiveNames: string[] = [];
-			if (objectivesCol?.value) {
-				const parsedValue = JSON.parse(objectivesCol.value);
-				objectiveIds = parsedValue?.linkedItemIds || [];
-				if (objectivesCol.linked_items) {
-					objectiveNames = objectivesCol.linked_items.map(item => item.name);
+			// Parse objectives with proper board relation data
+			let objectives: Array<{ id: string; name: string }> = [];
+			if (objectivesCol) {
+				const col = objectivesCol as MondayColumnValueResponse & { 
+					linked_items?: Array<{ id: string; name: string }> 
+				};
+				if (col.linked_items) {
+					objectives = col.linked_items;
 				}
 			}
+
+			// Get statuses from mirror column
+			const statuses = statusesCol?.display_value || statusesCol?.text || null;
 
 			const strategy: Strategy = {
 				mondayItemId: String(mondayItem.id),
 				name: String(mondayItem.name),
 				status: statusLabel,
-				aiSync: aiSyncCol?.text || null,
-				aiType: aiTypeCol?.text || null,
-				objectives: objectiveIds,
-				objectiveNames: objectiveNames,
-				effect: effectCol?.text || null,
-				effort: effortCol?.text || null
+				objectives,
+				statuses
 			};
 
 			strategies.push(strategy);
@@ -136,47 +127,42 @@ export async function getStrategies() {
 			a.name.toLowerCase().localeCompare(b.name.toLowerCase())
 		);
 
-		// Group strategies by AI Type for better organization
-		const strategiesByType = new Map<string, Strategy[]>();
+		// Group strategies by status for better organization
+		const strategiesByStatus = new Map<string, Strategy[]>();
 		for (const strategy of strategies) {
-			const type = strategy.aiType || "Unclassified";
-			if (!strategiesByType.has(type)) {
-				strategiesByType.set(type, []);
+			const statusKey = strategy.status || "Unknown";
+			if (!strategiesByStatus.has(statusKey)) {
+				strategiesByStatus.set(statusKey, []);
 			}
-			strategiesByType.get(type)?.push(strategy);
+			strategiesByStatus.get(statusKey)?.push(strategy);
 		}
 
 		// Convert to hierarchical structure
-		const typeGroups = Array.from(strategiesByType.entries())
+		const statusGroups = Array.from(strategiesByStatus.entries())
 			.sort(([a], [b]) => {
-				// Put unclassified last
-				if (a === "Unclassified") return 1;
-				if (b === "Unclassified") return -1;
+				// Put unknown last
+				if (a === "Unknown") return 1;
+				if (b === "Unknown") return -1;
 				return a.localeCompare(b);
 			})
-			.map(([aiType, typeStrategies]) => ({
-				aiType,
-				strategyCount: typeStrategies.length,
-				strategies: typeStrategies
+			.map(([status, statusStrategies]) => ({
+				status,
+				strategyCount: statusStrategies.length,
+				strategies: statusStrategies
 			}));
 
 		// Build metadata
 		const totalStrategies = strategies.length;
 		const activeCount = statusCounts.get("Aktiv") || 0;
-		const syncedCount = strategies.filter(s => s.aiSync === "Synced with AI").length;
 		const withObjectivesCount = strategies.filter(s => s.objectives.length > 0).length;
 
 		const metadata = {
 			boardId: BOARD_ID,
 			boardName: "Strategies",
 			totalStrategies,
-			totalAITypes: strategiesByType.size,
+			totalStatusGroups: strategiesByStatus.size,
 			statusBreakdown: {
 				active: activeCount
-			},
-			aiSyncBreakdown: {
-				synced: syncedCount,
-				notSynced: totalStrategies - syncedCount
 			},
 			withObjectives: withObjectivesCount,
 			dynamicColumnsCount: dynamicColumns.length
@@ -188,10 +174,10 @@ export async function getStrategies() {
 				tool: "getStrategies",
 				timestamp: new Date().toISOString(),
 				status: "success",
-				data: typeGroups,
+				data: statusGroups,
 				metadata,
 				options: {
-					summary: `Found ${totalStrategies} active ${totalStrategies === 1 ? 'strategy' : 'strategies'} across ${strategiesByType.size} AI type${strategiesByType.size !== 1 ? 's' : ''}, ${syncedCount} synced with AI`
+					summary: `Found ${totalStrategies} active ${totalStrategies === 1 ? 'strategy' : 'strategies'} across ${strategiesByStatus.size} status group${strategiesByStatus.size !== 1 ? 's' : ''}, ${withObjectivesCount} with objectives`
 				}
 			},
 			null,
