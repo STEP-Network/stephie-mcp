@@ -74,6 +74,7 @@ export async function getAllSizes() {
 
 		// Process sizes
 		const sizes: AdSize[] = [];
+		const uniqueDeviceTypes = new Set<string>();
 		const deviceTypeCounts = new Map<string, number>();
 		const productCounts = new Map<string, number>();
 		const formatCounts = new Map<string, number>();
@@ -102,19 +103,25 @@ export async function getAllSizes() {
 			const isVideo = String(item.name).endsWith("v");
 
 			// Parse board relations
-			const products = productsCol?.linked_items?.map((item: any) => item.name) || [];
-			const formats = formatsCol?.linked_items?.map((item: any) => item.name) || [];
+			const products = productsCol?.linked_items?.map((item: { id: string; name: string }) => item.name) || [];
+			const formats = formatsCol?.linked_items?.map((item: { id: string; name: string }) => item.name) || [];
+
+			// Parse device types - split by comma and trim
+			const deviceTypeText = deviceTypeCol?.text || "Unknown";
+			const deviceTypes = deviceTypeText.split(',').map(type => type.trim());
 
 			// Parse numeric values
-			const parseNumber = (col: any): number | null => {
-				if (!col?.number) return null;
-				return Number(col.number);
+			const parseNumber = (col: MondayColumnValueResponse | undefined): number | null => {
+				if (!col || typeof col !== 'object' || !('number' in col)) return null;
+				const numberCol = col as { number?: number };
+				if (!numberCol.number) return null;
+				return Number(numberCol.number);
 			};
 
 			const size: AdSize = {
 				mondayItemId: String(item.id),
 				name: String(item.name),
-				deviceType: deviceTypeCol?.text || "Unknown",
+				deviceType: deviceTypeText, // Keep original for display
 				adProducts: products,
 				adFormats: formats,
 				standardCPM: parseNumber(standardCPMCol),
@@ -129,8 +136,11 @@ export async function getAllSizes() {
 
 			sizes.push(size);
 
-			// Count device types
-			deviceTypeCounts.set(size.deviceType, (deviceTypeCounts.get(size.deviceType) || 0) + 1);
+			// Count unique device types
+			for (const deviceType of deviceTypes) {
+				uniqueDeviceTypes.add(deviceType);
+				deviceTypeCounts.set(deviceType, (deviceTypeCounts.get(deviceType) || 0) + 1);
+			}
 
 			// Count products and formats
 			for (const product of products) {
@@ -198,40 +208,21 @@ export async function getAllSizes() {
 		const totalSizes = sizes.length;
 		const videoSizes = sizes.filter(s => s.isVideo).length;
 		const displaySizes = totalSizes - videoSizes;
-		const sizesWithCPM = sizes.filter(s => s.standardCPM).length;
-		const sizesWithAdUnits = sizes.filter(s => s.adUnitNames).length;
-
-		// Get top products and formats
-		const topProducts = Array.from(productCounts.entries())
-			.sort(([, a], [, b]) => b - a)
-			.slice(0, 10)
-			.map(([product, count]) => ({ product, count }));
-
-		const topFormats = Array.from(formatCounts.entries())
-			.sort(([, a], [, b]) => b - a)
-			.slice(0, 10)
-			.map(([format, count]) => ({ format, count }));
 
 		// Build metadata
 		const metadata = {
 			boardId: AD_SIZES_BOARD_ID,
 			boardName: board.name,
 			totalSizes,
-			totalDeviceTypes: sizesByDevice.size,
+			totalDeviceTypes: uniqueDeviceTypes.size,
 			sizeTypes: {
 				display: displaySizes,
 				video: videoSizes
 			},
-			dataAvailability: {
-				withCPM: sizesWithCPM,
-				withAdUnits: sizesWithAdUnits
-			},
 			deviceTypeCounts: Object.fromEntries(deviceTypeCounts),
-			topProducts,
-			topFormats
 		};
 
-		const summary = `Found ${totalSizes} ad size${totalSizes !== 1 ? 's' : ''} across ${sizesByDevice.size} device type${sizesByDevice.size !== 1 ? 's' : ''} (${displaySizes} display, ${videoSizes} video)`;
+		const summary = `Found ${totalSizes} ad size${totalSizes !== 1 ? 's' : ''} across ${uniqueDeviceTypes.size} unique device type${uniqueDeviceTypes.size !== 1 ? 's' : ''} (${displaySizes} display, ${videoSizes} video)`;
 
 		return JSON.stringify(
 			{
