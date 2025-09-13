@@ -85,16 +85,17 @@ export default async function handler(
 		return res.status(200).end();
 	}
 	
-	// Log request for debugging
+	// Log request for debugging (but not full body to avoid clutter)
 	console.log("ChatGPT MCP request:", {
 		method: req.method,
-		headers: req.headers,
-		body: req.body,
-		url: req.url
+		accept: req.headers.accept,
+		contentType: req.headers["content-type"],
+		url: req.url,
+		bodyMethod: req.body?.method
 	});
 
-	// For SSE transport
-	if (req.headers.accept?.includes("text/event-stream")) {
+	// Skip SSE for now - ChatGPT seems to work better with JSON-RPC
+	if (false && req.headers.accept?.includes("text/event-stream")) {
 		try {
 			res.setHeader("Content-Type", "text/event-stream");
 			res.setHeader("Cache-Control", "no-cache");
@@ -222,23 +223,34 @@ export default async function handler(
 		}
 	} else {
 		// Regular JSON-RPC request
-		res.setHeader("Content-Type", "application/json");
-		
-		const server = new McpServer(
-			{
-				name: "stephie-chatgpt",
-				version: "1.0.0",
-			},
-			{
-				capabilities: {
-					tools: {},
-					resources: {},
-				},
+		try {
+			res.setHeader("Content-Type", "application/json");
+			
+			// Validate request body
+			if (!req.body || typeof req.body !== 'object') {
+				return res.status(400).json({
+					jsonrpc: "2.0",
+					error: {
+						code: -32700,
+						message: "Parse error: Invalid JSON"
+					},
+					id: null
+				});
 			}
-		);
-
-		// Simple JSON-RPC handler
-		const body = req.body;
+			
+			const body = req.body;
+			
+			// Validate JSON-RPC structure
+			if (!body.method || typeof body.method !== 'string') {
+				return res.status(400).json({
+					jsonrpc: "2.0",
+					error: {
+						code: -32600,
+						message: "Invalid Request: Missing method"
+					},
+					id: body.id || null
+				});
+			}
 		
 		if (body.method === "initialize") {
 			res.json({
@@ -465,6 +477,18 @@ export default async function handler(
 					code: -32601,
 					message: `Method not found: ${body.method}`,
 				},
+			});
+		}
+		} catch (error) {
+			console.error("JSON-RPC handler error:", error);
+			res.status(500).json({
+				jsonrpc: "2.0",
+				error: {
+					code: -32603,
+					message: "Internal error",
+					data: error instanceof Error ? error.message : "Unknown error"
+				},
+				id: req.body?.id || null
 			});
 		}
 	}
