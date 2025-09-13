@@ -69,6 +69,6 @@ export const BOARD_IDS = {
 	AUDIENCE_SEGMENTS: "2051827669",
 	AD_PLACEMENTS: "1935559241",
 	FORMATS: "1983719743", // Updated to correct Formater board ID
-	PRODUCTS: "1901343536",
+	PRODUCTS: "1983692701", // Updated to correct *Produkter board ID
 	AD_PRICES: "1919479291",
 } as const;

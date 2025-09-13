@@ -42,7 +42,8 @@ export async function getAllProducts() {
 			throw new Error("No board found in response");
 		}
 
-		const board = response.data.board1 as any;
+		const boards = response.data.board1 as any[];
+		const board = boards[0];
 		const items = board?.items_page?.items || [];
 
 		// Process products and build hierarchical structure
