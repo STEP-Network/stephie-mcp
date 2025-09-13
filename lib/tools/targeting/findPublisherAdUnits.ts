@@ -446,7 +446,26 @@ export async function findPublisherAdUnits(args: {
 		if (countOnly) {
 			const _totalCount =
 				parentGroups.length + publishers.length + childAdUnits.length;
-			return `Found ${parentGroups.length} publisher groups, ${publishers.length} publishers${childAdUnits.length > 0 ? `, and ${childAdUnits.length} child ad units` : ""}`;
+			return JSON.stringify({
+				tool: "findPublisherAdUnits",
+				timestamp: new Date().toISOString(),
+				status: "success",
+				data: {
+					counts: {
+						publisherGroups: parentGroups.length,
+						publishers: publishers.length,
+						childAdUnits: childAdUnits.length,
+						total: parentGroups.length + publishers.length + childAdUnits.length
+					}
+				},
+				metadata: {
+					source,
+					searchCriteria: {
+						names: names || [],
+						verticals: verticals || []
+					}
+				}
+			}, null, 2);
 		}
 
 		// Combine parent groups with those found directly
@@ -455,7 +474,7 @@ export async function findPublisherAdUnits(args: {
 			...publishers.filter((p) => p.type === "Publisher Group"),
 		].filter(
 			(group, index, self) =>
-				index === self.findIndex((g) => (g as any).id === (group as any).id), // unique by id
+				index === self.findIndex((g) => (g as any).adUnitId === (group as any).adUnitId), // unique by adUnitId
 		);
 
 		// Group by type for better organization
@@ -466,151 +485,115 @@ export async function findPublisherAdUnits(args: {
 			(c) => c.type === "Ad Placement",
 		);
 
-		// Format as markdown output
-		const textLines: string[] = [];
-		const totalItems =
-			publisherGroups.length + regularPublishers.length + childAdUnits.length;
-		textLines.push("# Publisher Ad Units");
-		textLines.push("");
-		textLines.push(`**Total Items:** ${totalItems}`);
-		textLines.push("");
+		// Build hierarchical structure
+		const hierarchicalData = [];
 
-		// Add search info
-		const searchInfo = [];
-		if (names && names.length > 0) {
-			searchInfo.push(`Names: ${names.join(", ")}`);
-		}
-		if (verticals && verticals.length > 0) {
-			searchInfo.push(`Verticals: ${verticals.join(", ")}`);
-		}
-		if (searchInfo.length > 0) {
-			searchInfo.forEach((info) => {
-				textLines.push(`**${info}**`);
-			});
-			textLines.push("");
-		}
+		// Add publisher groups with their children
+		for (const pg of publisherGroups) {
+			const groupEntry: any = {
+				name: pg.name,
+				type: "Publisher Group",
+				adUnitId: pg.adUnitId || null,
+				children: []
+			};
 
-		// Publisher Groups
-		if (publisherGroups.length > 0) {
-			textLines.push(`## Level 1: Publisher Groups`);
-			textLines.push(`*${publisherGroups.length} groups*`);
-			textLines.push("");
+			// Find publishers belonging to this group
+			const groupPublishers = regularPublishers.filter(p => p.parentAdUnitId === pg.adUnitId);
+			
+			for (const pub of groupPublishers) {
+				const pubEntry: any = {
+					name: pub.name,
+					type: "Publisher",
+					adUnitId: pub.adUnitId || null,
+					children: []
+				};
 
-			for (const pg of publisherGroups) {
-				textLines.push(`### ${pg.name}`);
-				textLines.push(`- **Ad Unit ID:** \`${pg.adUnitId || "N/A"}\``);
-				if (pg.parentPublisher) {
-					textLines.push(`- **Parent:** ${pg.parentPublisher}`);
+				// Find ad units belonging to this publisher
+				const pubChildren = childAdUnits.filter((c) => c.parentAdUnitId === pub.adUnitId);
+				for (const child of pubChildren) {
+					pubEntry.children.push({
+						name: child.name,
+						type: child.type,
+						adUnitId: child.adUnitId || null
+					});
 				}
-				textLines.push("");
+
+				groupEntry.children.push(pubEntry);
 			}
-			textLines.push("");
+
+			hierarchicalData.push(groupEntry);
 		}
 
-		// Regular Publishers
-		if (regularPublishers.length > 0) {
-			textLines.push(`## Level 2: Publishers`);
-			textLines.push(`*${regularPublishers.length} publishers*`);
-			textLines.push("");
-
-			for (const pub of regularPublishers) {
-				textLines.push(`### ${pub.name}`);
-				textLines.push(`- **Ad Unit ID:** \`${pub.adUnitId || "N/A"}\``);
-				if (pub.parentPublisher) {
-					textLines.push(`- **Parent:** ${pub.parentPublisher}`);
-				}
-
-				// Show child ad units for this publisher
-				if (childAdUnits.length > 0) {
-					const pubChildren = childAdUnits.filter((c) => c.parent === pub.name);
-					if (pubChildren.length > 0) {
-						textLines.push(`- **Children:** ${pubChildren.length} units`);
-						textLines.push("");
-						textLines.push("| Child Unit | Ad Unit ID |");
-						textLines.push("|------------|------------|");
-						for (const child of pubChildren) {
-							textLines.push(
-								`| ${child.name} | \`${child.adUnitId || "N/A"}\` |`,
-							);
-						}
-					}
-				}
-				textLines.push("");
-			}
-			textLines.push("");
-		}
-
-		// Child Ad Units section (if we have them and they weren't shown inline)
-		if (childAdUnitItems.length > 0 && !regularPublishers.length) {
-			textLines.push(`## Level 3: Ad Units`);
-			textLines.push(`*${childAdUnitItems.length} ad units*`);
-			textLines.push("");
-
-			for (const unit of childAdUnitItems) {
-				textLines.push(`▸ ${unit.name}`);
-				textLines.push(`  Ad Unit ID: ${unit.adUnitId || "N/A"}`);
-				if (unit.parent) {
-					textLines.push(`  Parent: ${unit.parent}`);
-				}
-				if (unit.impressions) {
-					textLines.push(
-						`  Impressions (30d): ${unit.impressions.toLocaleString()}`,
-					);
-				}
-			}
-			textLines.push("");
-		}
-
-		// Ad Placements
-		if (childAdPlacements.length > 0) {
-			textLines.push(`AD PLACEMENTS (${childAdPlacements.length})`);
-			textLines.push("─".repeat(40));
-
-			for (const placement of childAdPlacements) {
-				textLines.push(`▸ ${placement.name}`);
-				textLines.push(`  Ad Unit ID: ${placement.adUnitId || "N/A"}`);
-				if (placement.parent) {
-					textLines.push(`  Parent: ${placement.parent}`);
-				}
-				if (placement.impressions) {
-					textLines.push(
-						`  Impressions (30d): ${placement.impressions.toLocaleString()}`,
-					);
-				}
-			}
-			textLines.push("");
-		}
-
-		// Summary for forecasting
-		textLines.push("## Forecast Usage");
-		textLines.push("");
-		textLines.push(
-			"• Use Publisher Group IDs (Level 1) for group-level forecasts",
+		// Add standalone publishers (those without parent groups in our results)
+		const standalonePublishers = regularPublishers.filter(p => 
+			!publisherGroups.some(pg => pg.adUnitId === p.parentAdUnitId)
 		);
-		textLines.push(
-			"• Use Publisher IDs (Level 2) for specific publisher forecasts",
-		);
-		if (childAdUnits.length > 0) {
-			textLines.push(
-				"• Child Ad Units (Level 3) included for detailed targeting",
-			);
+
+		for (const pub of standalonePublishers) {
+			const pubEntry: any = {
+				name: pub.name,
+				type: "Publisher", 
+				adUnitId: pub.adUnitId || null,
+				parentAdUnitId: pub.parentAdUnitId || null,
+				children: []
+			};
+
+			// Find ad units belonging to this publisher
+			const pubChildren = childAdUnits.filter((c) => c.parentAdUnitId === pub.adUnitId);
+			for (const child of pubChildren) {
+				pubEntry.children.push({
+					name: child.name,
+					type: child.type,
+					adUnitId: child.adUnitId || null
+				});
+			}
+
+			hierarchicalData.push(pubEntry);
 		}
 
 		// Extract all IDs for easy use
 		const allAdUnitIds = [
-			...publishers.filter((p) => p.adUnitId !== null).map((p) => p.adUnitId),
-			...childAdUnits.filter((c) => c.adUnitId !== null).map((c) => c.adUnitId),
+			...publisherGroups.map(p => p.adUnitId).filter(id => id !== null),
+			...regularPublishers.map(p => p.adUnitId).filter(id => id !== null),
+			...childAdUnits.map(c => c.adUnitId).filter(id => id !== null),
 		];
 
-		if (allAdUnitIds.length > 0) {
-			textLines.push("");
-			textLines.push("### Ad Unit IDs for Forecasting");
-			textLines.push("```json");
-			textLines.push(JSON.stringify(allAdUnitIds, null, 2));
-			textLines.push("```");
-		}
+		// Build metadata
+		const metadata = {
+			source,
+			totalItems: publisherGroups.length + regularPublishers.length + childAdUnits.length,
+			counts: {
+				publisherGroups: publisherGroups.length,
+				publishers: regularPublishers.length,
+				adUnits: childAdUnitItems.length,
+				adPlacements: childAdPlacements.length
+			},
+			searchCriteria: {
+				names: names || [],
+				verticals: verticals || []
+			},
+			forecastUsage: {
+				hierarchy: "Publisher Group → Publisher → Ad Unit",
+				guidelines: [
+					"Never include more than one hierarchy level when forecasting with targetedAdUnitIds",
+					"Can include publisher group in targetedAdUnits and exclude specific publisher(s) in excludedAdUnitIds",
+					"Can target publisher and exclude specific ad unit(s)",
+					"Only use IDs for forecasting, not names"
+				],
+				allAdUnitIds
+			}
+		};
 
-		return textLines.join("\n");
+		return JSON.stringify({
+			tool: "findPublisherAdUnits",
+			timestamp: new Date().toISOString(),
+			status: "success",
+			metadata,
+			data: hierarchicalData,
+			options: {
+				summary: `Found ${metadata.counts.publisherGroups} publisher groups, ${metadata.counts.publishers} publishers, and ${metadata.counts.adUnits + metadata.counts.adPlacements} ad units`
+			}
+		}, null, 2);
 	} catch (error) {
 		console.error("Error finding publisher ad units:", error);
 		throw new Error(
