@@ -54,7 +54,7 @@ function parseDevices(value: string | undefined): string[] | null {
 
 interface CompactPublisher {
 	mondayItemId: string; // Monday.com item ID
-	adUnitId: string; // GAM Ad Unit ID
+	adUnitId: string; // GAM Ad Unit ID for the publisher
 	publisher: string; // Publisher name
 	statusFormats?: string[]; // statusFormats (omit if empty)
 	deviceFormats?: Array<[string, string[]]>; // deviceFormats as tuples [format, devices[]] (omit if empty)
@@ -111,6 +111,9 @@ export async function getPublisherFormats(args: {
             ... on TextValue {
               text
             }
+            ... on MirrorValue {
+              display_value
+            }
           }
         }
       }
@@ -149,6 +152,7 @@ export async function getPublisherFormats(args: {
 
 		// Process and format the results - already filtered for Live publishers
 		const publishersByGroup = new Map<string, CompactPublisher[]>();
+		const groupAdUnitIds = new Map<string, string>(); // Track publisher group ad unit IDs
 		const allUniqueFormats = new Set<string>();
 		const allUniqueDevices = new Set<string>();
 
@@ -180,6 +184,10 @@ export async function getPublisherFormats(args: {
 			// Get GAM Ad Unit ID
 			const gamAdUnitIdCol = columnValues.text_mktdhmar as Record<string, unknown>;
 			const gamAdUnitId = gamAdUnitIdCol?.value as string || "";
+
+			// Get Publisher Group GAM Ad Unit ID from lookup/mirror column
+			const publisherGroupAdUnitIdCol = columnValues.lookup_mkvrjaa9 as Record<string, unknown>;
+			const publisherGroupAdUnitId = publisherGroupAdUnitIdCol?.value as string || "";
 
 			// Determine available formats and devices
 			const formats = {
@@ -262,9 +270,13 @@ export async function getPublisherFormats(args: {
 					compactPublisher.deviceFormats = deviceFormats;
 				}
 
-				// Add to group
+				// Add to group and track group ad unit ID
 				if (!publishersByGroup.has(publisherGroup)) {
 					publishersByGroup.set(publisherGroup, []);
+					// Store the group ad unit ID (same for all publishers in the group)
+					if (publisherGroupAdUnitId) {
+						groupAdUnitIds.set(publisherGroup, publisherGroupAdUnitId);
+					}
 				}
 				publishersByGroup.get(publisherGroup)?.push(compactPublisher);
 			}
@@ -285,6 +297,7 @@ export async function getPublisherFormats(args: {
 				.sort(([a], [b]) => a.toLowerCase().localeCompare(b.toLowerCase()))
 				.map(([group, pubs]) => ({
 					publisherGroup: group,
+					publisherGroupAdUnitId: groupAdUnitIds.get(group) || "",
 					publishers: pubs
 				}));
 		}
@@ -314,15 +327,18 @@ export async function getPublisherFormats(args: {
 		const totalPublishers = totalLivePublishers;
 		const totalGroups = liveGroups.size;
 
-		// Count formats from filtered data if available, otherwise from all
-		let statusCount = 0;
-		let deviceCount = 0;
+		// Count unique formats from filtered data if available
+		const matchedUniqueFormats = new Set<string>();
 		
 		if (data) {
 			data.forEach(group => {
 				group.publishers.forEach((pub: CompactPublisher) => {
-					if (pub.statusFormats) statusCount += pub.statusFormats.length;
-					if (pub.deviceFormats) deviceCount += pub.deviceFormats.length;
+					if (pub.statusFormats) {
+						pub.statusFormats.forEach(format => matchedUniqueFormats.add(format));
+					}
+					if (pub.deviceFormats) {
+						pub.deviceFormats.forEach(([format]) => matchedUniqueFormats.add(format));
+					}
 				});
 			});
 		}
@@ -337,7 +353,7 @@ export async function getPublisherFormats(args: {
 			...(names && names.length > 0 && { 
 				filters: names,
 				matchedPublishers: data ? data.reduce((sum, g) => sum + g.publishers.length, 0) : 0,
-				matchedFormats: statusCount + deviceCount
+				matchedUniqueFormats: matchedUniqueFormats.size
 			})
 		};
 
