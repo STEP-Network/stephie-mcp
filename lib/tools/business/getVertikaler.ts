@@ -193,9 +193,6 @@ export async function getVertikaler() {
 
 		// Build metadata
 		const totalVerticals = verticals.length;
-		const activeCount = statusCounts.get("Aktiv") || 0;
-		const inactiveCount = statusCounts.get("Inaktiv") || 0;
-		const archivedCount = statusCounts.get("Arkiveret") || 0;
 
 		const metadata = {
 			boardId: BOARD_ID,
@@ -203,12 +200,6 @@ export async function getVertikaler() {
 			totalVerticals,
 			totalPublishers,
 			totalAdUnits,
-			statusBreakdown: {
-				active: activeCount,
-				inactive: inactiveCount,
-				archived: archivedCount
-			},
-			dynamicColumnsCount: dynamicColumns.length
 		};
 
 		// Return formatted response
@@ -220,7 +211,7 @@ export async function getVertikaler() {
 				metadata,
 				data: statusGroups,
 				options: {
-					summary: `Found ${totalVerticals} vertical${totalVerticals !== 1 ? 's' : ''}: ${activeCount} active, ${inactiveCount} inactive, ${archivedCount} archived (${totalPublishers} publisher${totalPublishers !== 1 ? 's' : ''}, ${totalAdUnits} ad unit${totalAdUnits !== 1 ? 's' : ''})`
+					summary: `Found ${totalVerticals} vertical${totalVerticals !== 1 ? 's' : ''} publisher${totalPublishers !== 1 ? 's' : ''}, ${totalAdUnits} ad unit${totalAdUnits !== 1 ? 's' : ''})`
 				}
 			},
 			null,
