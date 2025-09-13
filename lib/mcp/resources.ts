@@ -162,6 +162,7 @@ export const RESOURCE_DEFINITIONS: ResourceDefinition[] = [
  * Guidelines for choosing between Resources and Tools:
  * 
  * Use RESOURCES for:
+ * - Data that HAS to be selected to be used
  * - Reference data (catalogs, directories, specifications)
  * - Configuration information
  * - Static or semi-static content

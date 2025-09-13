@@ -7,49 +7,181 @@ const boardToolDefinitions = JSON.parse(
 	fs.readFileSync(path.join(__dirname, "boardToolDefinitions.json"), "utf-8"),
 );
 
+import { getPartners } from "../tools/business/getPartners.js";
+import { getPeople } from "../tools/business/getPeople.js";
+import { getAllProducts } from "../tools/business/getAllProducts.js";
+import { getAllFormats } from "../tools/business/getAllFormats.js";
+import { getAllAdPrices } from "../tools/business/getAllAdPrices.js";
+import { getStrategies } from "../tools/business/getStrategies.js";
+import { getTeams } from "../tools/business/getTeams.js";
+import { getVertikaler } from "../tools/business/getVertikaler.js";
 import { getOKR } from "../tools/business/getOKR.js";
+import { createOKR } from "../tools/business/createOKR.js";
+import { updateOKR } from "../tools/business/updateOKR.js";
+import { getBugs } from "../tools/development/getBugs.js";
+import { getChangelog } from "../tools/development/getChangelog.js";
+import { getFeatures } from "../tools/development/getFeatures.js";
+import { getTests } from "../tools/development/getTests.js";
+import { createBug } from "../tools/development/createBug.js";
+import { updateBug } from "../tools/development/updateBug.js";
+import { getOTTPublishers } from "../tools/publishers/getOTTPublishers.js";
+import { getAllPublishers } from "../tools/publishers/getAllPublishers.js";
+import { getPublisherFormats } from "../tools/publishers/getPublisherFormats.js";
+import { getPublishersByFormats } from "../tools/publishers/getPublishersByFormats.js";
 import { getAccounts } from "../tools/crm/getAccounts.js";
 import { getContacts } from "../tools/crm/getContacts.js";
 import { getLeads } from "../tools/crm/getLeads.js";
+import { createAccount } from "../tools/crm/createAccount.js";
+import { updateAccount } from "../tools/crm/updateAccount.js";
+import { createContact } from "../tools/crm/createContact.js";
+import { updateContact } from "../tools/crm/updateContact.js";
+import { createLead } from "../tools/crm/createLead.js";
+import { updateLead } from "../tools/crm/updateLead.js";
 import { getMarketingBudgets } from "../tools/marketing/getMarketingBudgets.js";
 import { getMarketingExpenses } from "../tools/marketing/getMarketingExpenses.js";
 import { getBookings } from "../tools/sales/getBookings.js";
 import { getDeals } from "../tools/sales/getDeals.js";
 import { getOpportunities } from "../tools/sales/getOpportunities.js";
 import { getSalesActivities } from "../tools/sales/getSalesActivities.js";
+import { createOpportunity } from "../tools/sales/createOpportunity.js";
+import { updateOpportunity } from "../tools/sales/updateOpportunity.js";
+import { createSalesActivity } from "../tools/sales/createSalesActivity.js";
+import { updateSalesActivity } from "../tools/sales/updateSalesActivity.js";
+import { createDeal } from "../tools/sales/createDeal.js";
+import { updateDeal } from "../tools/sales/updateDeal.js";
 import { getInternalAdOpsAdTech } from "../tools/support/getInternalAdOpsAdTech.js";
 import { getInternalAdSales } from "../tools/support/getInternalAdSales.js";
 import { getPublisherFAQ } from "../tools/support/getPublisherFAQ.js";
 import { getTickets } from "../tools/support/getTickets.js";
+import { createTicket } from "../tools/support/createTicket.js";
+import { updateTicket } from "../tools/support/updateTicket.js";
 import { getTasksAdOps } from "../tools/tasks/getTasksAdOps.js";
 import { getTasksAdTech } from "../tools/tasks/getTasksAdTech.js";
 import { getTasksMarketing } from "../tools/tasks/getTasksMarketing.js";
 import { getTasksTechIntelligence } from "../tools/tasks/getTasksTechIntelligence.js";
 import { getTasksVideo } from "../tools/tasks/getTasksVideo.js";
 import { getTasksYieldGrowth } from "../tools/tasks/getTasksYieldGrowth.js";
+import { createTaskAdOps } from "../tools/tasks/createTaskAdOps.js";
+import { updateTaskAdOps } from "../tools/tasks/updateTaskAdOps.js";
+import { createTaskMarketing } from "../tools/tasks/createTaskMarketing.js";
+import { updateTaskMarketing } from "../tools/tasks/updateTaskMarketing.js";
+import { createTaskAdTech } from "../tools/tasks/createTaskAdTech.js";
+import { updateTaskAdTech } from "../tools/tasks/updateTaskAdTech.js";
+import { createTaskVideo } from "../tools/tasks/createTaskVideo.js";
+import { updateTaskVideo } from "../tools/tasks/updateTaskVideo.js";
+import { createTaskYieldGrowth } from "../tools/tasks/createTaskYieldGrowth.js";
+import { updateTaskYieldGrowth } from "../tools/tasks/updateTaskYieldGrowth.js";
+import { createTasksTechIntelligence } from "../tools/tasks/createTasksTechIntelligence.js";
+import { updateTasksTechIntelligence } from "../tools/tasks/updateTasksTechIntelligence.js";
+// Additional imports for missing tools
+import { availabilityForecast } from "../tools/availabilityForecast.js";
+import { getAllSizes } from "../tools/targeting/getAllSizes.js";
+import { getAllPlacements } from "../tools/targeting/getAllPlacements.js";
+import { getKeyValues } from "../tools/targeting/getKeyValues.js";
+import { getAudienceSegments } from "../tools/targeting/getAudienceSegments.js";
+import { getGeoLocations } from "../tools/targeting/getGeoLocations.js";
+import { getContextualTargeting } from "../tools/targeting/getContextualTargeting.js";
+import { findPublisherAdUnits } from "../tools/targeting/findPublisherAdUnits.js";
+import { getBoardColumns } from "../tools/debug/getBoardColumns.js";
+import { getItems } from "../tools/debug/getItems.js";
+import { listAllBoards } from "../tools/debug/listBoards.js";
+import { search } from "../tools/chatgpt/search.js";
+import { fetch } from "../tools/chatgpt/fetch.js";
 
 // Map tool names to their implementations
 const BOARD_TOOL_IMPLEMENTATIONS: Record<string, Function> = {
+	// Business tools
+	getAllProducts,
+	getAllFormats,
+	getAllAdPrices,
+	getPeople,
+	getTeams,
+	getPartners,
+	getStrategies,
+	getVertikaler,
+	getOKR,
+	createOKR,
+	updateOKR,
+	// Development tools
+	getBugs,
+	getChangelog,
+	getFeatures,
+	getTests,
+	createBug,
+	updateBug,
+	// Publisher tools
+	getAllPublishers,
+	getOTTPublishers,
+	getPublisherFormats,
+	getPublishersByFormats,
+	// CRM tools
 	getAccounts,
-	getBookings,
 	getContacts,
-	getDeals,
-	getInternalAdOpsAdTech,
-	getInternalAdSales,
 	getLeads,
+	createAccount,
+	updateAccount,
+	createContact,
+	updateContact,
+	createLead,
+	updateLead,
+	// Sales tools
+	getBookings,
+	getDeals,
+	getOpportunities,
+	getSalesActivities,
+	createOpportunity,
+	updateOpportunity,
+	createSalesActivity,
+	updateSalesActivity,
+	createDeal,
+	updateDeal,
+	// Marketing tools
 	getMarketingBudgets,
 	getMarketingExpenses,
-	getOKR,
-	getOpportunities,
+	// Support tools
+	getInternalAdOpsAdTech,
+	getInternalAdSales,
 	getPublisherFAQ,
-	getSalesActivities,
+	getTickets,
+	createTicket,
+	updateTicket,
+	// Task tools
 	getTasksAdOps,
 	getTasksAdTech,
 	getTasksMarketing,
 	getTasksTechIntelligence,
 	getTasksVideo,
 	getTasksYieldGrowth,
-	getTickets,
+	createTaskAdOps,
+	updateTaskAdOps,
+	createTaskMarketing,
+	updateTaskMarketing,
+	createTaskAdTech,
+	updateTaskAdTech,
+	createTaskVideo,
+	updateTaskVideo,
+	createTaskYieldGrowth,
+	updateTaskYieldGrowth,
+	createTasksTechIntelligence,
+	updateTasksTechIntelligence,
+	// Targeting tools
+	getAllSizes,
+	getAllPlacements,
+	getKeyValues,
+	getAudienceSegments,
+	getGeoLocations,
+	getContextualTargeting,
+	findPublisherAdUnits,
+	// Forecast tools
+	availabilityForecast,
+	// Debug tools
+	getBoardColumns,
+	getItems,
+	listAllBoards,
+	listBoards: listAllBoards, // Alias for compatibility
+	// ChatGPT tools
+	search,
+	fetch,
 };
 
 /**

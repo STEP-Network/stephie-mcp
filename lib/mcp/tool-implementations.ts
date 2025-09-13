@@ -3,6 +3,18 @@
  * This ensures consistency between local MCP and Vercel deployments
  */
 
+import { getAllPublishers } from "../tools/publishers/getAllPublishers.js";
+import { getOTTPublishers } from "../tools/publishers/getOTTPublishers.js";
+import { getAllProducts } from "../tools/business/getAllProducts.js";
+import { getAllFormats } from "../tools/business/getAllFormats.js";
+import { getAllSizes } from "../tools/targeting/getAllSizes.js";
+import { getAllAdPrices } from "../tools/business/getAllAdPrices.js";
+import { getAllPlacements } from "../tools/targeting/getAllPlacements.js";
+import { getPeople } from "../tools/business/getPeople.js";
+import { getPartners } from "../tools/business/getPartners.js";
+import { getStrategies } from "../tools/business/getStrategies.js";
+import { getTeams } from "../tools/business/getTeams.js";
+import { getVertikaler } from "../tools/business/getVertikaler.js";
 import { availabilityForecast } from "../tools/availabilityForecast.js";
 import { getPublisherFormats } from "../tools/publishers/getPublisherFormats.js";
 import { getPublishersByFormats } from "../tools/publishers/getPublishersByFormats.js";
@@ -38,6 +50,7 @@ import { getTasksMarketing } from "../tools/tasks/getTasksMarketing.js";
 import { getTasksAdTech } from "../tools/tasks/getTasksAdTech.js";
 import { getTasksVideo } from "../tools/tasks/getTasksVideo.js";
 import { getTasksYieldGrowth } from "../tools/tasks/getTasksYieldGrowth.js";
+import { getTasksTechIntelligence } from "../tools/tasks/getTasksTechIntelligence.js";
 import { createTasksTechIntelligence } from "../tools/tasks/createTasksTechIntelligence.js";
 import { updateTasksTechIntelligence } from "../tools/tasks/updateTasksTechIntelligence.js";
 import { createTaskAdOps } from "../tools/tasks/createTaskAdOps.js";
@@ -51,6 +64,7 @@ import { updateTaskVideo } from "../tools/tasks/updateTaskVideo.js";
 import { createTaskYieldGrowth } from "../tools/tasks/createTaskYieldGrowth.js";
 import { updateTaskYieldGrowth } from "../tools/tasks/updateTaskYieldGrowth.js";
 import { getBugs } from "../tools/development/getBugs.js";
+import { getChangelog } from "../tools/development/getChangelog.js";
 import { getFeatures } from "../tools/development/getFeatures.js";
 import { getTests } from "../tools/development/getTests.js";
 import { createBug } from "../tools/development/createBug.js";
@@ -78,6 +92,19 @@ export const toolImplementations: Record<string, (args: any) => Promise<string |
 	search: (args) => search(args),
 	fetch: (args) => fetch(args),
 	// Standard tools
+	getAllPublishers: () => getAllPublishers(),
+	getOTTPublishers: () => getOTTPublishers(),
+	getAllProducts: () => getAllProducts(),
+	getAllFormats: () => getAllFormats(),
+	getAllSizes: () => getAllSizes(),
+	getAllAdPrices: () => getAllAdPrices(),
+	getAllPlacements: () => getAllPlacements(),
+	getPeople: () => getPeople(),
+	getPartners: (args) => getPartners(args),
+	getStrategies: () => getStrategies(),
+	getTeams: () => getTeams(),
+	getVertikaler: () => getVertikaler(),
+	getTasksTechIntelligence: () => getTasksTechIntelligence(),
 	availabilityForecast: (args) => availabilityForecast(args),
 	getPublisherFormats: (args) => getPublisherFormats(args),
 	getPublishersByFormats: (args) => getPublishersByFormats(args),
@@ -127,6 +154,7 @@ export const toolImplementations: Record<string, (args: any) => Promise<string |
 	createTaskYieldGrowth: (args) => createTaskYieldGrowth(args as any),
 	updateTaskYieldGrowth: (args) => updateTaskYieldGrowth(args as any),
 	getBugs: (args) => getBugs(args),
+	getChangelog: (args) => getChangelog(args),
 	getFeatures: (args) => getFeatures(args),
 	getTests: (args) => getTests(args),
 	createBug: (args) => createBug(args as any),

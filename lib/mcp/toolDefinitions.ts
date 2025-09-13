@@ -63,6 +63,107 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 	},
 	// Original tools
 	{
+		name: "getAllPublishers",
+		description:
+			"Get all Live publishers/sites from Monday.com Publishers board. Returns all Live publishers/sites with essential information: Publisher/Site name, GAM Ad Unit ID, Vertical, Publisher Group, and Approval status (Gambling/Finance). Results are sorted by Vertical, then alphabetically by name.",
+		inputSchema: {
+			type: "object",
+			properties: {},
+		},
+	},
+	{
+		name: "getAllPlacements",
+		description:
+			"Get all GAM placements and content verticals from Monday.com Ad Placements board (1935559241). Returns placement names and IDs for targeting. Note: RON, Gambling, Finance, and RE-AD are special placements, not content verticals.",
+		inputSchema: {
+			type: "object",
+			properties: {
+				includeIds: {
+					type: "boolean",
+					description: "Include GAM placement IDs in output",
+					default: false,
+				},
+			},
+		},
+	},
+	{
+		name: "getAllProducts",
+		description:
+			"Get all ad products and product groups from Monday.com boards (Produktgrupper: 1611223368, Produkt: 1983692701). Shows product hierarchy with associated formats and ad unit sizes. Product groups contain multiple products (e.g., Display group contains Standard, High Impact products).",
+		inputSchema: {
+			type: "object",
+			properties: {
+				includeIds: {
+					type: "boolean",
+					description: "Include Monday.com item IDs in output",
+					default: false,
+				},
+			},
+		},
+	},
+	{
+		name: "getAllFormats",
+		description:
+			"Get all ad format specifications from Monday.com Formater board (1983719743). Shows format dimensions, devices, and technical specifications. Formats are grouped by device type (Desktop, Mobile, App).",
+		inputSchema: {
+			type: "object",
+			properties: {
+				device: {
+					type: "string",
+					enum: ["Desktop", "Mobile", "App", "All"],
+					description: "Filter by device type",
+				},
+				includeIds: {
+					type: "boolean",
+					description: "Include format IDs in output",
+					default: false,
+				},
+			},
+		},
+	},
+	{
+		name: "getAllSizes",
+		description:
+			"Get all ad unit sizes from Monday.com Sizes board (1558597958). Returns width, height, aspect ratio, and IAB standards compliance. Sizes are sorted by width then height.",
+		inputSchema: {
+			type: "object",
+			properties: {
+				minWidth: {
+					type: "number",
+					description: "Minimum width in pixels",
+				},
+				maxWidth: {
+					type: "number",
+					description: "Maximum width in pixels",
+				},
+				includeIds: {
+					type: "boolean",
+					description: "Include size IDs in output",
+					default: false,
+				},
+			},
+		},
+	},
+	{
+		name: "getAllAdPrices",
+		description:
+			"Get all ad pricing from Monday.com Priser board (1432155906). Shows CPM rates by format and market segment. Prices are in DKK (Danish Kroner).",
+		inputSchema: {
+			type: "object",
+			properties: {
+				format: {
+					type: "string",
+					description: "Filter by format name",
+				},
+				includeIds: {
+					type: "boolean",
+					description: "Include price IDs in output",
+					default: false,
+				},
+			},
+		},
+	},
+	{
 		name: "getPublisherFormats",
 		description:
 			"Get detailed matrix of publishers/sites and their available ad formats grouped by device type. Shows ONLY ACTIVE formats per publisher/site - if a format is not listed, the publisher/site does NOT support it. Device abbreviations: M=Mobile, D=Desktop, A=App. Useful for finding which publishers/sites support specific format combinations.",
@@ -633,8 +734,226 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			},
 		},
 	},
+	{
+		name: "getTeams",
+		description: "Get items from Teams board. View team structure and members.",
+		inputSchema: {
+			type: "object",
+			properties: {
+				limit: { type: "number", default: 10 },
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
+				status: {
+					type: "number",
+					description: "Status: 0=Under-Ressourced, 1=Active, 2=Inactive",
+				},
+				peopleId: {
+					type: "string",
+					description: "Filter by person ID (use getPeople to find IDs)",
+				},
+				objectiveId: {
+					type: "string",
+					description: "Filter by objective ID (use getOKR to find IDs)",
+				},
+			},
+		},
+	},
+	{
+		name: "getPeople",
+		description:
+			"Get items from People board. Access team member details and assignments.",
+		inputSchema: {
+			type: "object",
+			properties: {
+				limit: { type: "number", default: 10 },
+				teamId: {
+					type: "string",
+					description: "Filter by team (use getTeams to find IDs)",
+				},
+				search: { 
+					type: "string",
+					description: "Optional text search in item names"
+				},
+				role: { type: "number", description: "Role index" },
+			},
+		},
+	},
 
 	// Tasks - Tech & Intelligence Mutation Tools
+	{
+		name: "getTasksTechIntelligence",
+		description:
+			"Get tasks from Tech & Intelligence Tasks board (team members: Nate). Progress on technical and data projects such as STEPhie, make.com and monday.com developments. Carefully set the proper filters/parameters to find relevant tasks based on user's intent.",
+		inputSchema: {
+			type: "object",
+			properties: {
+				search: {
+					type: "string",
+					description: "Optional text search in task names (e.g., 'stephie', 'monday', 'bug')",
+				},
+				limit: { type: "number", default: 10 },
+				keyResultId: {
+					type: "string",
+					description:
+						"Filter by linked key result item ID (use OKR subitems tool to find IDs)",
+				},
+				stephieFeatureId: {
+					type: "string",
+					description:
+						"Filter by linked STEPhie feature item ID (use getStephieFeatures tool to find IDs)",
+				},
+				status: {
+					type: "array",
+					items: {
+						type: "string",
+						enum: [
+							"In Review",
+							"Done", 
+							"Rejected",
+							"Planned",
+							"In Progress",
+							"Missing Status",
+							"Waiting On Others",
+							"New",
+							"On Hold"
+						]
+					},
+					description:
+						"Filter by status values. Use status names like ['Done', 'In Progress'] or ['Rejected']",
+				},
+				statusOperator: {
+					type: "string",
+					enum: ["any_of", "not_any_of"],
+					default: "any_of",
+					description: "Operator for status filtering: 'any_of' to include, 'not_any_of' to exclude",
+				},
+				type: {
+					type: "array",
+					items: {
+						type: "string",
+						enum: [
+							"Support",
+							"Maintenance",
+							"Development",
+							"Not Labelled",
+							"Bugfix",
+							"Documentation",
+							"Meeting",
+							"Test"
+						]
+					},
+					description:
+						"Filter by type values. Use type names like ['Development', 'Bugfix'] or ['Meeting']",
+				},
+				typeOperator: {
+					type: "string",
+					enum: ["any_of", "not_any_of"],
+					default: "any_of",
+					description: "Operator for type filtering: 'any_of' to include, 'not_any_of' to exclude",
+				},
+				priority: {
+					type: "array",
+					items: {
+						type: "string",
+						enum: [
+							"Medium",
+							"Minimal",
+							"Low",
+							"Critical",
+							"High",
+							"Not Prioritized",
+							"Unknown"
+						]
+					},
+					description:
+						"Filter by priority values. Use priority names like ['High', 'Critical'] or ['Low']",
+				},
+				priorityOperator: {
+					type: "string",
+					enum: ["any_of", "not_any_of"],
+					default: "any_of",
+					description: "Operator for priority filtering: 'any_of' to include, 'not_any_of' to exclude",
+				},
+				dueDate: {
+					type: "string",
+					description:
+						"Due date: 'YYYY-MM-DD', 'TODAY', 'TOMORROW', 'NEXT_WEEK', 'NEXT_MONTH', 'YESTERDAY', 'ONE_WEEK_AGO', 'ONE_MONTH_AGO'",
+				},
+				dueDateOperator: {
+					type: "string",
+					enum: [
+						"any_of",
+						"not_any_of",
+						"greater_than",
+						"lower_than",
+					],
+					description: "Operator for due date comparison",
+				},
+				followUpDate: {
+					type: "string",
+					description:
+						"Follow up date: 'YYYY-MM-DD', 'TODAY', 'TOMORROW', 'NEXT_WEEK', 'NEXT_MONTH', 'YESTERDAY', 'ONE_WEEK_AGO', 'ONE_MONTH_AGO'",
+				},
+				followUpDateOperator: {
+					type: "string",
+					enum: [
+						"any_of",
+						"not_any_of",
+						"greater_than",
+						"lower_than",
+					],
+					description: "Operator for follow up date comparison",
+				},
+				createdDate: {
+					type: "string",
+					description:
+						"Created date: 'YYYY-MM-DD', 'TODAY', 'TOMORROW', 'NEXT_WEEK', 'NEXT_MONTH', 'YESTERDAY', 'ONE_WEEK_AGO', 'ONE_MONTH_AGO'",
+				},
+				createdDateOperator: {
+					type: "string",
+					enum: [
+						"any_of",
+						"not_any_of",
+						"greater_than",
+						"lower_than",
+					],
+					description: "Operator for created date comparison",
+				},
+				startedDate: {
+					type: "string",
+					description:
+						"Started date: 'YYYY-MM-DD', 'TODAY', 'TOMORROW', 'NEXT_WEEK', 'NEXT_MONTH', 'YESTERDAY', 'ONE_WEEK_AGO', 'ONE_MONTH_AGO'",
+				},
+				startedDateOperator: {
+					type: "string",
+					enum: [
+						"any_of",
+						"not_any_of",
+						"greater_than",
+						"lower_than",
+					],
+					description: "Operator for started date comparison",
+				},
+				doneDate: {
+					type: "string",
+					description:
+						"Done date: 'YYYY-MM-DD', 'TODAY', 'TOMORROW', 'NEXT_WEEK', 'NEXT_MONTH', 'YESTERDAY', 'ONE_WEEK_AGO', 'ONE_MONTH_AGO'",
+				},
+				doneDateOperator: {
+					type: "string",
+					enum: [
+						"any_of",
+						"not_any_of",
+						"greater_than",
+						"lower_than",
+					],
+					description: "Operator for done date comparison",
+				},
+			},
+		},
+	},
 	{
 		name: "createTasksTechIntelligence",
 		description: "Create one or more tasks in the Tasks - Tech & Intelligence board (team members: Nate).",

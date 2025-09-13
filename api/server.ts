@@ -9,8 +9,11 @@ import { getAllAdPrices } from "../lib/tools/business/getAllAdPrices.js";
 import { getAllFormats } from "../lib/tools/business/getAllFormats.js";
 import { getAllProducts } from "../lib/tools/business/getAllProducts.js";
 import { getOKR } from "../lib/tools/business/getOKR.js";
+import { getPartners } from "../lib/tools/business/getPartners.js";
 import { getPeople } from "../lib/tools/business/getPeople.js";
+import { getStrategies } from "../lib/tools/business/getStrategies.js";
 import { getTeams } from "../lib/tools/business/getTeams.js";
+import { getVertikaler } from "../lib/tools/business/getVertikaler.js";
 import { updateOKR } from "../lib/tools/business/updateOKR.js";
 // Import create/update tools
 import { createAccount } from "../lib/tools/crm/createAccount.js";
@@ -24,14 +27,19 @@ import { updateAccount } from "../lib/tools/crm/updateAccount.js";
 import { updateContact } from "../lib/tools/crm/updateContact.js";
 import { updateLead } from "../lib/tools/crm/updateLead.js";
 import { getBoardColumns } from "../lib/tools/debug/getBoardColumns.js";
-import { type ColumnFilter, getItems } from "../lib/tools/debug/getItems.js";
+import { getItems } from "../lib/tools/debug/getItems.js";
 import { listAllBoards } from "../lib/tools/debug/listBoards.js";
 import { createBug } from "../lib/tools/development/createBug.js";
 import { getBugs } from "../lib/tools/development/getBugs.js";
+import { getChangelog } from "../lib/tools/development/getChangelog.js";
+import { getFeatures } from "../lib/tools/development/getFeatures.js";
+import { getTests } from "../lib/tools/development/getTests.js";
 import { updateBug } from "../lib/tools/development/updateBug.js";
 import { getMarketingBudgets } from "../lib/tools/marketing/getMarketingBudgets.js";
+import { getMarketingExpenses } from "../lib/tools/marketing/getMarketingExpenses.js";
 // Import all tools
 import { getAllPublishers } from "../lib/tools/publishers/getAllPublishers.js";
+import { getOTTPublishers } from "../lib/tools/publishers/getOTTPublishers.js";
 import { getPublisherFormats } from "../lib/tools/publishers/getPublisherFormats.js";
 import { getPublishersByFormats } from "../lib/tools/publishers/getPublishersByFormats.js";
 import { createDeal } from "../lib/tools/sales/createDeal.js";
@@ -45,8 +53,14 @@ import { updateDeal } from "../lib/tools/sales/updateDeal.js";
 import { updateOpportunity } from "../lib/tools/sales/updateOpportunity.js";
 import { updateSalesActivity } from "../lib/tools/sales/updateSalesActivity.js";
 import { createTicket } from "../lib/tools/support/createTicket.js";
+import { getInternalAdOpsAdTech } from "../lib/tools/support/getInternalAdOpsAdTech.js";
+import { getInternalAdSales } from "../lib/tools/support/getInternalAdSales.js";
+import { getPublisherFAQ } from "../lib/tools/support/getPublisherFAQ.js";
 import { getTickets } from "../lib/tools/support/getTickets.js";
 import { updateTicket } from "../lib/tools/support/updateTicket.js";
+// ChatGPT tools
+import { search } from "../lib/tools/chatgpt/search.js";
+import { fetch } from "../lib/tools/chatgpt/fetch.js";
 import { findPublisherAdUnits } from "../lib/tools/targeting/findPublisherAdUnits.js";
 import { getAllPlacements } from "../lib/tools/targeting/getAllPlacements.js";
 import { getAllSizes } from "../lib/tools/targeting/getAllSizes.js";
@@ -249,6 +263,26 @@ const activeRequests = new Map<string, { tool: string; startTime: number }>();
 const handler = createMcpHandler((server) => {
 	// Publisher tools
 	server.tool(
+		"getAllPublishers",
+		getToolDescription("getAllPublishers"),
+		buildZodSchema("getAllPublishers"),
+		async () => {
+			const result = await getAllPublishers();
+			return { content: [{ type: "text", text: result }] };
+		}
+	);
+
+	server.tool(
+		"getOTTPublishers",
+		getToolDescription("getOTTPublishers"),
+		buildZodSchema("getOTTPublishers"),
+		async () => {
+			const result = await getOTTPublishers();
+			return { content: [{ type: "text", text: result }] };
+		}
+	);
+
+	server.tool(
 		"getPublisherFormats",
 		getToolDescription("getPublisherFormats"),
 		buildZodSchema("getPublisherFormats"),
@@ -279,6 +313,26 @@ const handler = createMcpHandler((server) => {
 	);
 
 	// Targeting tools
+	server.tool(
+		"getAllSizes",
+		getToolDescription("getAllSizes"),
+		buildZodSchema("getAllSizes"),
+		async () => {
+			const result = await getAllSizes();
+			return { content: [{ type: "text", text: result }] };
+		}
+	);
+
+	server.tool(
+		"getAllPlacements",
+		getToolDescription("getAllPlacements"),
+		buildZodSchema("getAllPlacements"),
+		async () => {
+			const result = await getAllPlacements();
+			return { content: [{ type: "text", text: result }] };
+		}
+	);
+
 	server.tool(
 		"getKeyValues",
 		getToolDescription("getKeyValues"),
@@ -317,6 +371,87 @@ const handler = createMcpHandler((server) => {
 			const result = await getContextualTargeting(input);
 			return { content: [{ type: "text", text: result }] };
 		},
+	);
+
+	// Business tools
+	server.tool(
+		"getAllProducts",
+		getToolDescription("getAllProducts"),
+		buildZodSchema("getAllProducts"),
+		async () => {
+			const result = await getAllProducts();
+			return { content: [{ type: "text", text: result }] };
+		}
+	);
+
+	server.tool(
+		"getAllFormats",
+		getToolDescription("getAllFormats"),
+		buildZodSchema("getAllFormats"),
+		async () => {
+			const result = await getAllFormats();
+			return { content: [{ type: "text", text: result }] };
+		}
+	);
+
+	server.tool(
+		"getAllAdPrices",
+		getToolDescription("getAllAdPrices"),
+		buildZodSchema("getAllAdPrices"),
+		async () => {
+			const result = await getAllAdPrices();
+			return { content: [{ type: "text", text: result }] };
+		}
+	);
+
+	server.tool(
+		"getPeople",
+		getToolDescription("getPeople"),
+		buildZodSchema("getPeople"),
+		async () => {
+			const result = await getPeople();
+			return { content: [{ type: "text", text: result }] };
+		}
+	);
+
+	server.tool(
+		"getTeams",
+		getToolDescription("getTeams"),
+		buildZodSchema("getTeams"),
+		async () => {
+			const result = await getTeams();
+			return { content: [{ type: "text", text: result }] };
+		}
+	);
+
+	server.tool(
+		"getPartners",
+		getToolDescription("getPartners"),
+		buildZodSchema("getPartners"),
+		async (input) => {
+			const result = await getPartners(input);
+			return { content: [{ type: "text", text: result }] };
+		}
+	);
+
+	server.tool(
+		"getStrategies",
+		getToolDescription("getStrategies"),
+		buildZodSchema("getStrategies"),
+		async () => {
+			const result = await getStrategies();
+			return { content: [{ type: "text", text: result }] };
+		}
+	);
+
+	server.tool(
+		"getVertikaler",
+		getToolDescription("getVertikaler"),
+		buildZodSchema("getVertikaler"),
+		async () => {
+			const result = await getVertikaler();
+			return { content: [{ type: "text", text: result }] };
+		}
 	);
 
 	// Forecasting tool
@@ -565,6 +700,16 @@ const handler = createMcpHandler((server) => {
 	);
 
 	server.tool(
+		"getMarketingExpenses",
+		getToolDescription("getMarketingExpenses"),
+		buildZodSchema("getMarketingExpenses"),
+		async (input) => {
+			const result = await getMarketingExpenses(input);
+			return { content: [{ type: "text", text: result }] };
+		}
+	);
+
+	server.tool(
 		"getDeals",
 		getToolDescription("getDeals"),
 		buildZodSchema("getDeals"),
@@ -690,6 +835,46 @@ const handler = createMcpHandler((server) => {
 	);
 
 	// Create/Update tools - Bugs
+	server.tool(
+		"getBugs",
+		getToolDescription("getBugs"),
+		buildZodSchema("getBugs"),
+		async (input) => {
+			const result = await getBugs(input);
+			return { content: [{ type: "text", text: result }] };
+		}
+	);
+
+	server.tool(
+		"getFeatures",
+		getToolDescription("getFeatures"),
+		buildZodSchema("getFeatures"),
+		async (input) => {
+			const result = await getFeatures(input);
+			return { content: [{ type: "text", text: result }] };
+		}
+	);
+
+	server.tool(
+		"getTests",
+		getToolDescription("getTests"),
+		buildZodSchema("getTests"),
+		async (input) => {
+			const result = await getTests(input);
+			return { content: [{ type: "text", text: result }] };
+		}
+	);
+
+	server.tool(
+		"getChangelog",
+		getToolDescription("getChangelog"),
+		buildZodSchema("getChangelog"),
+		async (input) => {
+			const result = await getChangelog(input);
+			return { content: [{ type: "text", text: result }] };
+		}
+	);
+
 	server.tool(
 		"createBug",
 		getToolDescription("createBug"),
@@ -859,6 +1044,36 @@ const handler = createMcpHandler((server) => {
 
 	// Create/Update tools - Tickets
 	server.tool(
+		"getInternalAdSales",
+		getToolDescription("getInternalAdSales"),
+		buildZodSchema("getInternalAdSales"),
+		async (input) => {
+			const result = await getInternalAdSales(input);
+			return { content: [{ type: "text", text: result }] };
+		}
+	);
+
+	server.tool(
+		"getInternalAdOpsAdTech",
+		getToolDescription("getInternalAdOpsAdTech"),
+		buildZodSchema("getInternalAdOpsAdTech"),
+		async (input) => {
+			const result = await getInternalAdOpsAdTech(input);
+			return { content: [{ type: "text", text: result }] };
+		}
+	);
+
+	server.tool(
+		"getPublisherFAQ",
+		getToolDescription("getPublisherFAQ"),
+		buildZodSchema("getPublisherFAQ"),
+		async (input) => {
+			const result = await getPublisherFAQ(input);
+			return { content: [{ type: "text", text: result }] };
+		}
+	);
+
+	server.tool(
 		"createTicket",
 		getToolDescription("createTicket"),
 		buildZodSchema("createTicket"),
@@ -876,6 +1091,27 @@ const handler = createMcpHandler((server) => {
 			const result = await updateTicket(input as Parameters<typeof updateTicket>[0]);
 			return { content: [{ type: "text", text: result }] };
 		},
+	);
+
+		// ChatGPT tools
+	server.tool(
+		"search",
+		getToolDescription("search"),
+		buildZodSchema("search"),
+		async (input) => {
+			const result = await search(input as Parameters<typeof search>[0]);
+			return { content: [{ type: "text", text: result }] };
+		}
+	);
+
+	server.tool(
+		"fetch",
+		getToolDescription("fetch"),
+		buildZodSchema("fetch"),
+		async (input) => {
+			const result = await fetch(input as Parameters<typeof fetch>[0]);
+			return { content: [{ type: "text", text: result }] };
+		}
 	);
 
 	// Register all resources from RESOURCE_DEFINITIONS

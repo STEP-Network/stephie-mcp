@@ -224,7 +224,7 @@ console.log(result);
 server.tool('search', { search: z.string() }, async (params) => {})
 ```
 
-**Resources (GET)**: Read-only data, cacheable. Two types:
+**Resources (GET)**: Read-only data, cacheable, but manually selectable (not triggered through prompt). Two types:
 - Static: `server.resource('data', 'monday://data', async () => {})`  
 - Templates: URI with variables `monday://tasks/{board}?search={query}`
 
