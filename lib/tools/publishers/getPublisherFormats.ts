@@ -11,18 +11,18 @@ function parseDevices(value: string | undefined): string[] | null {
 		return null;
 	}
 
-	// Map Monday.com values to standardized device names
+	// Map Monday.com values to standardized device names (using abbreviations)
 	const deviceMap: Record<string, string> = {
-		Mobil: "Mobile",
-		Mobile: "Mobile",
-		Desktop: "Desktop",
-		App: "App",
-		"Kun desktop": "Desktop",
-		"Desktop - ikke programmatisk": "Desktop (non-programmatic)",
-		"Mobile - ikke programmatisk": "Mobile (non-programmatic)",
-		"Mobil, Desktop": "Mobile,Desktop",
-		"Desktop, Mobil": "Desktop,Mobile",
-		"Desktop, Mobile": "Desktop,Mobile",
+		Mobil: "M",
+		Mobile: "M",
+		Desktop: "D",
+		App: "A",
+		"Kun desktop": "D",
+		"Desktop - ikke programmatisk": "D*",
+		"Mobile - ikke programmatisk": "M*",
+		"Mobil, Desktop": "M,D",
+		"Desktop, Mobil": "D,M",
+		"Desktop, Mobile": "D,M",
 	};
 
 	// Check if it's a direct match
@@ -41,27 +41,22 @@ function parseDevices(value: string | undefined): string[] | null {
 			part.toLowerCase().includes("mobil") ||
 			part.toLowerCase().includes("mobile")
 		) {
-			devices.push("Mobile");
+			devices.push("M");
 		} else if (part.toLowerCase().includes("desktop")) {
-			devices.push("Desktop");
+			devices.push("D");
 		} else if (part.toLowerCase().includes("app")) {
-			devices.push("App");
+			devices.push("A");
 		}
 	});
 
 	return devices.length > 0 ? [...new Set(devices)] : null;
 }
 
-interface PublisherFormat {
-	mondayItemId: string;
-	name: string;
-	publisherGroup: string;
-	statusFormats: string[];
-	deviceFormats: Array<{
-		format: string;
-		devices: string[];
-	}>;
-	totalFormats: number;
+interface CompactPublisher {
+	id: string; // mondayItemId
+	n: string; // name
+	s?: string[]; // statusFormats (omit if empty)
+	d?: Array<[string, string[]]>; // deviceFormats as tuples [format, devices[]] (omit if empty)
 }
 
 export async function getPublisherFormats(args: {
@@ -146,8 +141,31 @@ export async function getPublisherFormats(args: {
 
 		const items = response.data.boards[0]?.items_page?.items || [];
 
+		// Use abbreviated format names
+		const formatAbbrev: Record<string, string> = {
+			videoFunction: "VF",
+			ott: "OTT",
+			readStatus: "READ",
+			topscrollAdnami: "TSA",
+			topscrollExpandAdnami: "TSE",
+			doubleMidscrollAdnami: "DMA",
+			midscrollAdnami: "MSA",
+			adnamiNative: "AN",
+			topscrollHighImpact: "TSHI",
+			midscrollHighImpact: "MSHI",
+			wallpaper: "WP",
+			anchor: "ANC",
+			trueNative: "TN",
+			googleInterstitial: "INT",
+			outstream: "OUT",
+			video: "VID",
+			vertikalVideo: "VV",
+		};
+
 		// Process and format the results - already filtered for Live publishers
-		const publishers: PublisherFormat[] = items.map((item: Record<string, unknown>) => {
+		const publishersByGroup = new Map<string, CompactPublisher[]>();
+
+		items.forEach((item: Record<string, unknown>) => {
 			const columnValues: Record<string, unknown> = {};
 
 			(item as MondayItemResponse).column_values?.forEach(
@@ -164,26 +182,10 @@ export async function getPublisherFormats(args: {
 			const publisherGroupCol = columnValues.board_relation_mkp69z9s as Record<string, unknown>;
 			const publisherGroup = publisherGroupCol?.linked_items?.[0]?.name || "No Group";
 
-			// Format names mappings
-			const formatNames: Record<string, string> = {
-				videoFunction: "Video Function",
-				ott: "OTT",
-				readStatus: "RE-AD",
-				topscrollAdnami: "Topscroll Adnami",
-				topscrollExpandAdnami: "Topscroll Expand Adnami",
-				doubleMidscrollAdnami: "Double Midscroll Adnami",
-				midscrollAdnami: "Midscroll Adnami",
-				adnamiNative: "Adnami Native",
-				topscrollHighImpact: "Topscroll HI",
-				midscrollHighImpact: "Midscroll HI",
-				wallpaper: "Wallpaper",
-				anchor: "Anchor",
-				trueNative: "True Native",
-				googleInterstitial: "Interstitial",
-				outstream: "Outstream",
-				video: "Video",
-				vertikalVideo: "Vertikal Video",
-			};
+			// Skip if filtering by group and doesn't match
+			if (publisherGroupName && !publisherGroup.toLowerCase().includes(publisherGroupName.toLowerCase())) {
+				return;
+			}
 
 			// Determine available formats and devices
 			const formats = {
@@ -208,14 +210,12 @@ export async function getPublisherFormats(args: {
 				adnamiNative: parseDevices(
 					(columnValues.dropdown_mksdb150 as Record<string, unknown>)?.value as string,
 				),
-
 				topscrollHighImpact: parseDevices(
 					(columnValues.dropdown_mksdcgvj as Record<string, unknown>)?.value as string,
 				),
 				midscrollHighImpact: parseDevices(
 					(columnValues.dropdown_mksdjpqx as Record<string, unknown>)?.value as string,
 				),
-
 				wallpaper: parseDevices((columnValues.dropdown_mksdytf0 as Record<string, unknown>)?.value as string),
 				anchor: parseDevices((columnValues.dropdown_mksdr0q2 as Record<string, unknown>)?.value as string),
 				trueNative: parseDevices(
@@ -231,102 +231,104 @@ export async function getPublisherFormats(args: {
 				),
 			};
 
-			// Extract status formats
+			// Extract status formats (abbreviated)
 			const statusFormats = Object.entries(formats)
 				.filter(([_key, value]) => typeof value === "boolean" && value)
-				.map(([key]) => formatNames[key] || key);
+				.map(([key]) => formatAbbrev[key] || key);
 
-			// Extract device formats
-			const deviceFormats = Object.entries(formats)
+			// Extract device formats as tuples
+			const deviceFormats: Array<[string, string[]]> = Object.entries(formats)
 				.filter(([_key, value]) => value && typeof value === "object")
-				.map(([key, value]) => ({
-					format: formatNames[key] || key,
-					devices: value as string[],
-				}));
+				.map(([key, value]) => [
+					formatAbbrev[key] || key,
+					value as string[]
+				]);
 
-			return {
-				mondayItemId: String(item.id),
-				name: String(item.name),
-				publisherGroup,
-				statusFormats,
-				deviceFormats,
-				totalFormats: statusFormats.length + deviceFormats.length,
+			// Create compact publisher object
+			const compactPublisher: CompactPublisher = {
+				id: String(item.id),
+				n: String(item.name),
 			};
-		});
 
-		// Filter by publisher group if specified
-		let filteredPublishers = publishers;
-		if (publisherGroupName) {
-			filteredPublishers = publishers.filter((p) =>
-				p.publisherGroup.toLowerCase().includes(publisherGroupName.toLowerCase()),
-			);
-		}
-
-		// Group publishers by their publisher groups for better organization
-		const publishersByGroup = new Map<string, PublisherFormat[]>();
-		
-		for (const publisher of filteredPublishers) {
-			const groupName = publisher.publisherGroup || "No Group";
-			if (!publishersByGroup.has(groupName)) {
-				publishersByGroup.set(groupName, []);
+			// Only add non-empty arrays
+			if (statusFormats.length > 0) {
+				compactPublisher.s = statusFormats;
 			}
-			publishersByGroup.get(groupName)?.push(publisher);
-		}
+			if (deviceFormats.length > 0) {
+				compactPublisher.d = deviceFormats;
+			}
+
+			// Add to group
+			if (!publishersByGroup.has(publisherGroup)) {
+				publishersByGroup.set(publisherGroup, []);
+			}
+			publishersByGroup.get(publisherGroup)?.push(compactPublisher);
+		});
 
 		// Sort publishers within each group by name
 		for (const [, groupPublishers] of publishersByGroup) {
 			groupPublishers.sort((a, b) => 
-				a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+				a.n.toLowerCase().localeCompare(b.n.toLowerCase())
 			);
 		}
 
-		// Convert to hierarchical structure
-		const publisherGroups = Array.from(publishersByGroup.entries())
+		// Convert to compact hierarchical structure
+		const data = Array.from(publishersByGroup.entries())
 			.sort(([a], [b]) => a.toLowerCase().localeCompare(b.toLowerCase()))
-			.map(([group, groupPublishers]) => ({
-				publisherGroup: group,
-				publisherCount: groupPublishers.length,
-				totalFormats: groupPublishers.reduce((sum, p) => sum + p.totalFormats, 0),
-				publishers: groupPublishers
+			.map(([group, pubs]) => ({
+				group: group,
+				publishers: pubs
 			}));
 
 		// Calculate statistics
-		const totalPublishers = filteredPublishers.length;
-		const totalGroups = publishersByGroup.size;
-		const totalStatusFormats = filteredPublishers.reduce((sum, p) => sum + p.statusFormats.length, 0);
-		const totalDeviceFormats = filteredPublishers.reduce((sum, p) => sum + p.deviceFormats.length, 0);
+		const totalPublishers = data.reduce((sum, g) => sum + g.publishers.length, 0);
+		const totalGroups = data.length;
 		
-		// Count unique format types
-		const uniqueStatusFormats = new Set(filteredPublishers.flatMap(p => p.statusFormats));
-		const uniqueDeviceFormats = new Set(filteredPublishers.flatMap(p => p.deviceFormats.map(f => f.format)));
+		// Count formats
+		let statusCount = 0;
+		let deviceCount = 0;
+		const uniqueStatus = new Set<string>();
+		const uniqueDevice = new Set<string>();
+		
+		data.forEach(group => {
+			group.publishers.forEach(pub => {
+				if (pub.s) {
+					statusCount += pub.s.length;
+					pub.s.forEach(s => uniqueStatus.add(s));
+				}
+				if (pub.d) {
+					deviceCount += pub.d.length;
+					pub.d.forEach(([format]) => uniqueDevice.add(format));
+				}
+			});
+		});
 
-		// Build metadata
+		// Build compact metadata
 		const metadata = {
-			boardId: BOARD_IDS.PUBLISHERS,
-			boardName: "Publishers",
-			totalPublishers,
-			totalGroups,
-			totalFormats: totalStatusFormats + totalDeviceFormats,
-			formatBreakdown: {
-				statusFormats: totalStatusFormats,
-				deviceFormats: totalDeviceFormats,
-				uniqueStatusFormats: uniqueStatusFormats.size,
-				uniqueDeviceFormats: uniqueDeviceFormats.size
+			board: BOARD_IDS.PUBLISHERS,
+			stats: {
+				publishers: totalPublishers,
+				groups: totalGroups,
+				formats: statusCount + deviceCount,
+				unique: {
+					status: uniqueStatus.size,
+					device: uniqueDevice.size
+				}
 			},
-			filters: {
-				status: "Live publishers only",
-				...(publisherName && { publisherName }),
-				...(publisherGroupName && { publisherGroupName })
+			legend: {
+				devices: { M: "Mobile", D: "Desktop", A: "App", "D*": "Desktop (non-prog)", "M*": "Mobile (non-prog)" },
+				formats: {
+					VF: "Video Function", OTT: "OTT", READ: "RE-AD",
+					TSA: "Topscroll Adnami", TSE: "Topscroll Expand", DMA: "Double Midscroll",
+					MSA: "Midscroll Adnami", AN: "Adnami Native",
+					TSHI: "Topscroll HI", MSHI: "Midscroll HI",
+					WP: "Wallpaper", ANC: "Anchor", TN: "True Native",
+					INT: "Interstitial", OUT: "Outstream", VID: "Video", VV: "Vertikal Video"
+				}
 			},
-			deviceAbbreviations: {
-				"M": "Mobile",
-				"D": "Desktop",
-				"A": "App"
-			},
-			notes: "Only ACTIVE formats shown. If a format is not listed = NOT available."
+			...(publisherName && { filter: { name: publisherName }}),
+			...(publisherGroupName && { filter: { group: publisherGroupName }})
 		};
-
-		const summary = `Found ${totalPublishers} Live publisher${totalPublishers !== 1 ? 's' : ''} across ${totalGroups} group${totalGroups !== 1 ? 's' : ''} with ${totalStatusFormats + totalDeviceFormats} total format${(totalStatusFormats + totalDeviceFormats) !== 1 ? 's' : ''}`;
 
 		return JSON.stringify(
 			{
@@ -334,8 +336,10 @@ export async function getPublisherFormats(args: {
 				timestamp: new Date().toISOString(),
 				status: "success",
 				metadata,
-				data: publisherGroups,
-				options: { summary }
+				data,
+				options: {
+					summary: `${totalPublishers} publishers, ${totalGroups} groups, ${statusCount + deviceCount} formats`
+				}
 			},
 			null,
 			2
