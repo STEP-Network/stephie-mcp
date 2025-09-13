@@ -31,7 +31,7 @@ export async function getVertikaler() {
 		"long_text_mksxysx", // Beskrivelse (Description)
 		"color_mksxpbk5", // Status (Active/Inactive/Archived)
 		"board_relation_mksxr042", // Publishers relation
-		"lookup_mktdz674", // Ad Unit IDs count
+		"lookup_mktdz674", // Ad Unit IDs count (mirror/lookup field)
 	];
 
 	// Combine static and dynamic columns
@@ -55,6 +55,9 @@ export async function getVertikaler() {
                   id 
                   name 
                 }
+              }
+              ... on MirrorValue {
+                display_value
               }
               column {
                 id
@@ -101,24 +104,36 @@ export async function getVertikaler() {
 			// Parse status
 			const statusLabel = statusCol?.text || "Unknown";
 			
-			// Parse publishers with GAM IDs
+			// Parse publishers from board relation
 			let publisherIds: string[] = [];
 			let publishers: Publisher[] = [];
-			if (publishersCol?.value) {
-				const parsedValue = JSON.parse(publishersCol.value);
-				publisherIds = parsedValue?.linkedItemIds || [];
-				if (publishersCol.linked_items) {
-					publishers = publishersCol.linked_items.map((linkedItem: any) => {
-						return {
-							id: linkedItem.id,
-							name: linkedItem.name
-						};
-					});
+			
+			// Use linked_items if available (from GraphQL response)
+			if (publishersCol?.linked_items && publishersCol.linked_items.length > 0) {
+				publishers = publishersCol.linked_items.map((linkedItem: any) => ({
+					id: String(linkedItem.id),
+					name: String(linkedItem.name)
+				}));
+				publisherIds = publishers.map(p => p.id);
+			} 
+			// Fallback to parsing value if linked_items not available
+			else if (publishersCol?.value) {
+				try {
+					const parsedValue = JSON.parse(publishersCol.value);
+					publisherIds = parsedValue?.linkedItemIds || [];
+					// Note: Without linked_items, we only have IDs, not names
+				} catch (e) {
+					console.error("Failed to parse publishers value:", e);
 				}
 			}
 
-			// Parse ad unit count
-			const adUnitCount = parseInt(adUnitCountCol?.text || "0", 10);
+			// Parse ad unit count from mirror/lookup field
+			let adUnitCount = 0;
+			if (adUnitCountCol?.display_value) {
+				adUnitCount = parseInt(adUnitCountCol.display_value, 10) || 0;
+			} else if (adUnitCountCol?.text) {
+				adUnitCount = parseInt(adUnitCountCol.text, 10) || 0;
+			}
 
 			const vertical: Vertical = {
 				mondayItemId: String(mondayItem.id),
@@ -202,8 +217,8 @@ export async function getVertikaler() {
 				tool: "getVertikaler",
 				timestamp: new Date().toISOString(),
 				status: "success",
-				data: statusGroups,
 				metadata,
+				data: statusGroups,
 				options: {
 					summary: `Found ${totalVerticals} vertical${totalVerticals !== 1 ? 's' : ''}: ${activeCount} active, ${inactiveCount} inactive, ${archivedCount} archived (${totalPublishers} publisher${totalPublishers !== 1 ? 's' : ''}, ${totalAdUnits} ad unit${totalAdUnits !== 1 ? 's' : ''})`
 				}
