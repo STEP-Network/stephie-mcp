@@ -95,12 +95,13 @@ export default async function handler(
 
 	// For SSE transport
 	if (req.headers.accept?.includes("text/event-stream")) {
-		res.setHeader("Content-Type", "text/event-stream");
-		res.setHeader("Cache-Control", "no-cache");
-		res.setHeader("Connection", "keep-alive");
-		res.setHeader("X-Accel-Buffering", "no");
+		try {
+			res.setHeader("Content-Type", "text/event-stream");
+			res.setHeader("Cache-Control", "no-cache");
+			res.setHeader("Connection", "keep-alive");
+			res.setHeader("X-Accel-Buffering", "no");
 
-		const transport = new SSEServerTransport("/api/mcp-chatgpt", res);
+			const transport = new SSEServerTransport("/api/mcp-chatgpt", res);
 		
 		const server = new McpServer(
 			{
@@ -115,40 +116,73 @@ export default async function handler(
 			}
 		);
 
-		// Register tools
-		for (const toolDef of TOOL_DEFINITIONS) {
-			const implementation = toolImplementations[toolDef.name];
+		// Register only ChatGPT-required tools
+		const chatGPTTools = ['search', 'fetch'];
+		for (const toolName of chatGPTTools) {
+			const implementation = toolImplementations[toolName];
 			if (!implementation) continue;
 
-			server.tool(
-				toolDef.name,
-				toolDef.description || "",
-				buildZodSchema(toolDef.name),
-				async (input) => {
-					try {
-						const result = await implementation(input);
-						return {
-							content: [
-								{
-									type: "text",
-									text: typeof result === "string" 
-										? result 
-										: JSON.stringify(result, null, 2),
-								},
-							],
-						};
-					} catch (error) {
-						return {
-							content: [
-								{
-									type: "text",
-									text: `Error: ${error instanceof Error ? error.message : "Unknown error"}`,
-								},
-							],
-						};
-					}
-				},
-			);
+			if (toolName === 'search') {
+				server.tool(
+					'search',
+					'Search for records matching a query',
+					{ query: z.string().describe('Search query string') },
+					async (input) => {
+						try {
+							const result = await implementation({ query: input.query, limit: 20 });
+							return {
+								content: [
+									{
+										type: "text",
+										text: typeof result === "string" 
+											? result 
+											: JSON.stringify(result, null, 2),
+									},
+								],
+							};
+						} catch (error) {
+							return {
+								content: [
+									{
+										type: "text",
+										text: `Error: ${error instanceof Error ? error.message : "Unknown error"}`,
+									},
+								],
+							};
+						}
+					},
+				);
+			} else if (toolName === 'fetch') {
+				server.tool(
+					'fetch',
+					'Fetch a record by ID or URI',
+					{ id: z.string().describe('Record ID or URI to fetch') },
+					async (input) => {
+						try {
+							const result = await implementation({ uri: input.id });
+							return {
+								content: [
+									{
+										type: "text",
+										text: typeof result === "string" 
+											? result 
+											: JSON.stringify(result, null, 2),
+									},
+								],
+							};
+						} catch (error) {
+							return {
+								content: [
+									{
+										type: "text",
+										text: `Error: ${error instanceof Error ? error.message : "Unknown error"}`,
+									},
+								],
+							};
+						}
+					},
+				);
+			}
 		}
 
 		// Register resources
@@ -173,12 +207,19 @@ export default async function handler(
 			);
 		}
 
-		await server.connect(transport);
-		
-		// Keep connection alive
-		req.on("close", () => {
-			transport.close();
-		});
+			await server.connect(transport);
+			
+			// Keep connection alive
+			req.on("close", () => {
+				transport.close();
+			});
+		} catch (error) {
+			console.error("SSE transport error:", error);
+			res.status(500).json({ 
+				error: "Failed to establish SSE connection",
+				details: error instanceof Error ? error.message : "Unknown error"
+			});
+		}
 	} else {
 		// Regular JSON-RPC request
 		res.setHeader("Content-Type", "application/json");
