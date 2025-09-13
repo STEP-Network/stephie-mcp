@@ -317,14 +317,6 @@ export async function getPublishersByFormats(args: FormatFilters) {
 		);
 
 		// Format output for JSON response
-		const formattedPublishers = matchingPublishers.map(pub => ({
-			name: pub.name,
-			supportedFormats: (pub.supportedFormats as Array<[string, string]>).map(([format, device]) => ({
-				format: formatLabels[format] || format,
-				device
-			}))
-		}));
-
 		// Format labels - explicitly show technology vendor
 		const formatLabels: Record<string, string> = {
 			video: "Video",
@@ -345,6 +337,15 @@ export async function getPublishersByFormats(args: FormatFilters) {
 			"adnami-native": "Adnami Native",
 			"re-ad": "RE-AD (Responsible Ad)",
 		};
+
+		// Format the publishers with labeled formats
+		const formattedPublishers = matchingPublishers.map(pub => ({
+			name: pub.name,
+			supportedFormats: (pub.supportedFormats as Array<[string, string]>).map(([format, device]) => ({
+				format: formatLabels[format] || format,
+				device
+			}))
+		}));
 
 		// Build metadata
 		const appliedFilters: Array<{ format: string; device: string }> = [];
