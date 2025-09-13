@@ -12,11 +12,10 @@ interface ChangelogEntry {
 	publisher: string[];
 	topic: string[];
 	yieldStatus: string | null;
+	createdAt: string | null;
 	createdBy: string | null;
+	lastUpdatedAt: string | null;
 	lastUpdatedBy: string | null;
-	lastUpdatedAt: string;
-	boardCreatedAt: string;
-	boardUpdatedAt: string;
 }
 
 export async function getChangelog(params: { search?: string; limit?: number } = {}) {
@@ -75,6 +74,20 @@ export async function getChangelog(params: { search?: string; limit?: number } =
               id
               text
               value
+              ... on LastUpdatedValue {
+                updated_at
+                updater {
+                  id
+                  name
+                }
+              }
+              ... on CreationLogValue {
+                created_at
+                creator {
+                  id
+                  name
+                }
+              }
               column {
                 id
                 title
@@ -152,26 +165,27 @@ export async function getChangelog(params: { search?: string; limit?: number } =
 				}
 			}
 
-			// Parse creation and update logs
+			// Parse creation and update logs using GraphQL fields
+			let createdAt: string | null = null;
 			let createdBy: string | null = null;
-			let createdAtTime: string | null = null;
-			if (creationLogCol?.text) {
-				// Format: "Sep 12 by Nathaniel Refslund"
-				const match = creationLogCol.text.match(/(.+) by (.+)/);
-				if (match) {
-					createdAtTime = match[1];
-					createdBy = match[2];
-				}
+			if (creationLogCol) {
+				const col = creationLogCol as MondayColumnValueResponse & {
+					created_at?: string;
+					creator?: { id: string; name: string };
+				};
+				createdAt = col.created_at || null;
+				createdBy = col.creator?.name || null;
 			}
 
+			let lastUpdatedAt: string | null = null;
 			let lastUpdatedBy: string | null = null;
-			let lastUpdatedAtTime: string | null = null;
-			if (lastUpdatedCol?.text) {
-				const match = lastUpdatedCol.text.match(/(.+) by (.+)/);
-				if (match) {
-					lastUpdatedAtTime = match[1];
-					lastUpdatedBy = match[2];
-				}
+			if (lastUpdatedCol) {
+				const col = lastUpdatedCol as MondayColumnValueResponse & {
+					updated_at?: string;
+					updater?: { id: string; name: string };
+				};
+				lastUpdatedAt = col.updated_at || null;
+				lastUpdatedBy = col.updater?.name || null;
 			}
 
 			const entry: ChangelogEntry = {
@@ -181,11 +195,10 @@ export async function getChangelog(params: { search?: string; limit?: number } =
 				publisher: publishers,
 				topic: topics,
 				yieldStatus: yieldCol?.text || null,
+				createdAt,
 				createdBy,
+				lastUpdatedAt,
 				lastUpdatedBy,
-				lastUpdatedAt: lastUpdatedAtTime || String(mondayItem.updated_at),
-				boardCreatedAt: String(mondayItem.created_at),
-				boardUpdatedAt: String(mondayItem.updated_at),
 			};
 
 			changelogEntries.push(entry);
@@ -204,14 +217,17 @@ export async function getChangelog(params: { search?: string; limit?: number } =
 			if (a.date && b.date) {
 				return new Date(b.date).getTime() - new Date(a.date).getTime();
 			}
-			// Fall back to board creation date if no date
-			return new Date(b.boardCreatedAt).getTime() - new Date(a.boardCreatedAt).getTime();
+			// Fall back to creation date if no date
+			if (a.createdAt && b.createdAt) {
+				return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+			}
+			return 0;
 		});
 
 		// Group entries by month for better organization
 		const entriesByMonth = new Map<string, ChangelogEntry[]>();
 		for (const entry of changelogEntries) {
-			const date = entry.date ? new Date(entry.date) : new Date(entry.boardCreatedAt);
+			const date = entry.date ? new Date(entry.date) : (entry.createdAt ? new Date(entry.createdAt) : new Date());
 			const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
 			
 			if (!entriesByMonth.has(monthKey)) {
