@@ -91,7 +91,7 @@ export async function getAllSizes() {
 			const averageEAPMCol = getColumnValue("numeric_mkqsqecq");
 			const gamNamesCol = getColumnValue("text_mksgcrz8");
 			const deviceTypeCol = getColumnValue("dropdown_mkqszqya");
-			const formatsCol = getColumnValue("board_relation_mkrhhdrx");
+			const formatsCol = getColumnValue("board_relation_mkrhergk");
 			const productsCol = getColumnValue("board_relation_mkrhckxh");
 			const specsUrlCol = getColumnValue("text_mkj8a83s");
 			const averageCTRCol = getColumnValue("text_mktj2qng");
