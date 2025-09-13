@@ -38,7 +38,7 @@ export async function fetch(params: { uri: string }): Promise<string> {
 		const itemId = itemMatch[1];
 		try {
 			// Import dynamically to avoid circular dependencies
-			const { getItems } = await import('../monday/getItems.js');
+			const { getItems } = await import('../debug/getItems.js');
 			
 			// Try common boards where items might exist
 			const boards = [
@@ -87,7 +87,7 @@ export async function fetch(params: { uri: string }): Promise<string> {
 	if (boardMatch) {
 		const boardId = boardMatch[1];
 		try {
-			const { getBoardColumns } = await import('../monday/getBoardColumns.js');
+			const { getBoardColumns } = await import('../debug/getBoardColumns.js');
 			const result = await getBoardColumns({ boardId });
 			return result;
 		} catch (error) {

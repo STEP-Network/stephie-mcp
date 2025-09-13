@@ -98,7 +98,7 @@ const buildZodSchema = (name: string): z.ZodObject<any> => {
 };
 
 // Create the MCP handler with open authentication for ChatGPT
-const handler = createMcpHandler(
+const mcpHandler = createMcpHandler(
 	async (server) => {
 		// Register all tools
 		TOOL_DEFINITIONS.forEach((toolDef) => {
@@ -111,7 +111,7 @@ const handler = createMcpHandler(
 			server.tool(
 				toolDef.name,
 				toolDef.description || "",
-				buildZodSchema(toolDef.name),
+				buildZodSchema(toolDef.name).shape,
 				async (input) => {
 					try {
 						// No authentication required for ChatGPT endpoint
@@ -182,17 +182,6 @@ const handler = createMcpHandler(
 		);
 	},
 	{
-		serverInfo: {
-			name: "stephie-chatgpt-mcp",
-			version: "1.0.0",
-		},
-		capabilities: {
-			tools: { listChanged: true },
-			resources: { listChanged: true },
-			completions: {},
-		},
-	},
-	{
 		basePath: "/chatgpt",
 		streamableHttpEndpoint: "/chatgpt",
 		sseEndpoint: "/chatgpt/sse",
@@ -220,5 +209,5 @@ export default async function chatgptHandler(
 	// No authentication check - open endpoint for ChatGPT
 	console.log(`ChatGPT MCP request: ${req.method} ${req.url}`);
 	
-	return handler(req, res);
+	return mcpHandler(req, res);
 }

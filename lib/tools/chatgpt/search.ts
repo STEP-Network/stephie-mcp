@@ -3,7 +3,7 @@
  * This tool is required by ChatGPT's MCP implementation
  */
 
-import { getItems } from '../monday/getItems.js';
+import { getItems } from '../debug/getItems.js';
 import { getPublisherFormats } from '../publishers/getPublisherFormats.js';
 import { getKeyValues } from '../targeting/getKeyValues.js';
 import { createListResponse } from '../json-output.js';
@@ -31,8 +31,7 @@ export async function search(params: { query: string; limit?: number }): Promise
 	if (lowerQuery.includes('publisher') || lowerQuery.includes('site')) {
 		try {
 			const publisherData = await getPublisherFormats({ 
-				publisherName: query,
-				limit: Math.min(limit, 10)
+				publisherName: query
 			});
 			const parsed = JSON.parse(publisherData);
 			if (parsed.data && parsed.data.length > 0) {
@@ -51,7 +50,7 @@ export async function search(params: { query: string; limit?: number }): Promise
 	if (lowerQuery.includes('key') || lowerQuery.includes('value') || lowerQuery.includes('target')) {
 		try {
 			const keyData = await getKeyValues({
-				keySearch: query,
+				search: query,
 				limit: Math.min(limit, 10)
 			});
 			const parsed = JSON.parse(keyData);
