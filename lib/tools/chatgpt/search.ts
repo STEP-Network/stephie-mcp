@@ -31,7 +31,7 @@ export async function search(params: { query: string; limit?: number }): Promise
 	if (lowerQuery.includes('publisher') || lowerQuery.includes('site')) {
 		try {
 			const publisherData = await getPublisherFormats({ 
-				publisherName: query
+				name: query
 			});
 			const parsed = JSON.parse(publisherData);
 			if (parsed.data && parsed.data.length > 0) {
