@@ -254,16 +254,6 @@ const handler = createMcpHandler((server) => {
 	
 	// Publisher tools
 	server.tool(
-		"getAllPublishers",
-		getToolDescription("getAllPublishers"),
-		buildZodSchema("getAllPublishers"),
-		async () => {
-			const result = await getAllPublishers();
-			return { content: [{ type: "text", text: result }] };
-		},
-	);
-
-	server.tool(
 		"getPublisherFormats",
 		getToolDescription("getPublisherFormats"),
 		buildZodSchema("getPublisherFormats"),
@@ -293,47 +283,6 @@ const handler = createMcpHandler((server) => {
 		},
 	);
 
-	// Product & pricing tools
-	server.tool(
-		"getAllProducts",
-		getToolDescription("getAllProducts"),
-		buildZodSchema("getAllProducts"),
-		async () => {
-			   const result = await getAllProducts();
-			return { content: [{ type: "text", text: result }] };
-		},
-	);
-
-	server.tool(
-		"getAllFormats",
-		getToolDescription("getAllFormats"),
-		buildZodSchema("getAllFormats"),
-		async () => {
-			   const result = await getAllFormats();
-			return { content: [{ type: "text", text: result }] };
-		},
-	);
-
-	server.tool(
-		"getAllSizes",
-		getToolDescription("getAllSizes"),
-		buildZodSchema("getAllSizes"),
-		async () => {
-			   const result = await getAllSizes();
-			return { content: [{ type: "text", text: result }] };
-		},
-	);
-
-	server.tool(
-		"getAllAdPrices",
-		getToolDescription("getAllAdPrices"),
-		buildZodSchema("getAllAdPrices"),
-		async () => {
-			   const result = await getAllAdPrices();
-			return { content: [{ type: "text", text: result }] };
-		},
-	);
-
 	// Targeting tools
 	server.tool(
 		"getKeyValues",
@@ -351,16 +300,6 @@ const handler = createMcpHandler((server) => {
 		buildZodSchema("getAudienceSegments"),
 		async (input) => {
 			const result = await getAudienceSegments(input);
-			return { content: [{ type: "text", text: result }] };
-		},
-	);
-
-	server.tool(
-		"getAllPlacements",
-		getToolDescription("getAllPlacements"),
-		buildZodSchema("getAllPlacements"),
-		async () => {
-			   const result = await getAllPlacements();
 			return { content: [{ type: "text", text: result }] };
 		},
 	);
@@ -522,16 +461,6 @@ const handler = createMcpHandler((server) => {
 	);
 
 	server.tool(
-		"getBugs",
-		getToolDescription("getBugs"),
-		buildZodSchema("getBugs"),
-		async (input) => {
-			const result = await getBugs(input);
-			return { content: [{ type: "text", text: result }] };
-		},
-	);
-
-	server.tool(
 		"getTasksTechIntelligence",
 		getToolDescription("getTasksTechIntelligence"),
 		buildZodSchema("getTasksTechIntelligence"),
@@ -641,26 +570,6 @@ const handler = createMcpHandler((server) => {
 		buildZodSchema("getDeals"),
 		async (input) => {
 			const result = await getDeals(input);
-			return { content: [{ type: "text", text: result }] };
-		},
-	);
-
-	server.tool(
-		"getTeams",
-		getToolDescription("getTeams"),
-		buildZodSchema("getTeams"),
-		async () => {
-			   const result = await getTeams();
-			return { content: [{ type: "text", text: result }] };
-		},
-	);
-
-	server.tool(
-		"getPeople",
-		getToolDescription("getPeople"),
-		buildZodSchema("getPeople"),
-		async () => {
-			   const result = await getPeople();
 			return { content: [{ type: "text", text: result }] };
 		},
 	);

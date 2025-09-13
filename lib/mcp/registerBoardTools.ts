@@ -8,22 +8,11 @@ const boardToolDefinitions = JSON.parse(
 );
 
 import { getOKR } from "../tools/business/getOKR.js";
-import { getPartners } from "../tools/business/getPartners.js";
-import { getPeople } from "../tools/business/getPeople.js";
-import { getStrategies } from "../tools/business/getStrategies.js";
-import { getTeams } from "../tools/business/getTeams.js";
-import { getVertikaler } from "../tools/business/getVertikaler.js";
-// Import all generated board tools
 import { getAccounts } from "../tools/crm/getAccounts.js";
 import { getContacts } from "../tools/crm/getContacts.js";
 import { getLeads } from "../tools/crm/getLeads.js";
-import { getBugs } from "../tools/development/getBugs.js";
-import { getChangelog } from "../tools/development/getChangelog.js";
-import { getFeatures } from "../tools/development/getFeatures.js";
-import { getTests } from "../tools/development/getTests.js";
 import { getMarketingBudgets } from "../tools/marketing/getMarketingBudgets.js";
 import { getMarketingExpenses } from "../tools/marketing/getMarketingExpenses.js";
-import { getOTTPublishers } from "../tools/publishers/getOTTPublishers.js";
 import { getBookings } from "../tools/sales/getBookings.js";
 import { getDeals } from "../tools/sales/getDeals.js";
 import { getOpportunities } from "../tools/sales/getOpportunities.js";
@@ -43,11 +32,8 @@ import { getTasksYieldGrowth } from "../tools/tasks/getTasksYieldGrowth.js";
 const BOARD_TOOL_IMPLEMENTATIONS: Record<string, Function> = {
 	getAccounts,
 	getBookings,
-	getBugs,
-	getChangelog,
 	getContacts,
 	getDeals,
-	getFeatures,
 	getInternalAdOpsAdTech,
 	getInternalAdSales,
 	getLeads,
@@ -55,22 +41,15 @@ const BOARD_TOOL_IMPLEMENTATIONS: Record<string, Function> = {
 	getMarketingExpenses,
 	getOKR,
 	getOpportunities,
-	getOTTPublishers,
-	getPartners,
-	getPeople,
 	getPublisherFAQ,
 	getSalesActivities,
-	getStrategies,
 	getTasksAdOps,
 	getTasksAdTech,
 	getTasksMarketing,
 	getTasksTechIntelligence,
 	getTasksVideo,
 	getTasksYieldGrowth,
-	getTeams,
-	getTests,
 	getTickets,
-	getVertikaler,
 };
 
 /**
