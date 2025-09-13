@@ -104,12 +104,13 @@ export async function getTeams() {
 			// Parse Lead (person column)
 			let lead: { id: string; name: string } | undefined;
 			const leadCol = personColumn ? findColumnById(personColumn.id) : null;
-			if (leadCol?.value) {
+			if (leadCol?.text && leadCol?.value) {
+				// Name is in the text field, ID is in the value field
 				const parsedValue = JSON.parse(leadCol.value);
 				if (parsedValue?.personsAndTeams?.[0]) {
 					lead = {
 						id: String(parsedValue.personsAndTeams[0].id),
-						name: parsedValue.personsAndTeams[0].name
+						name: leadCol.text
 					};
 				}
 			}
@@ -117,11 +118,15 @@ export async function getTeams() {
 			// Parse Team Members
 			let teamMembers: Array<{ id: string; name: string }> = [];
 			const membersCol = findColumnById("multiple_person_mkvrqa7z");
-			if (membersCol?.value) {
+			if (membersCol?.text && membersCol?.value) {
+				// Names are in the text field, IDs are in the value field
+				const names = membersCol.text.split(", ");
 				const parsedValue = JSON.parse(membersCol.value);
-				teamMembers = (parsedValue?.personsAndTeams || []).map((person: any) => ({
+				const persons = parsedValue?.personsAndTeams || [];
+				
+				teamMembers = persons.map((person: any, index: number) => ({
 					id: String(person.id),
-					name: person.name
+					name: names[index] || `Person ${person.id}`
 				}));
 			}
 

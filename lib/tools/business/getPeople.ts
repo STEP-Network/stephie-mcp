@@ -11,12 +11,10 @@ interface Person {
 	email?: string;
 	phone?: string;
 	role?: string;
-	department?: string;
 	team?: Array<{ id: string; name: string }>;
 	manager?: string;
 	status?: string;
 	startDate?: string;
-	location?: string;
 	[key: string]: any; // For dynamic columns
 }
 
@@ -71,7 +69,6 @@ export async function getPeople() {
 		const people: Person[] = [];
 		const roleCounts = new Map<string, number>();
 		const departmentCounts = new Map<string, number>();
-		const locationCounts = new Map<string, number>();
 		const statusCounts = new Map<string, number>();
 
 		for (const item of items as MondayItemResponse[]) {
@@ -106,8 +103,6 @@ export async function getPeople() {
 			
 			// Try to find role/department by title
 			const roleCol = findColumnByTitle(["role", "position", "title"]);
-			const departmentCol = findColumnByTitle(["department", "dept", "team"]);
-			const locationCol = findColumnByTitle(["location", "office", "city"]);
 
 			// Parse values - for email__1, use text directly
 			const email = emailCol?.id === "email__1" ? emailCol.text : 
@@ -119,8 +114,6 @@ export async function getPeople() {
 			// Extract role and department from various sources
 			const name = String(item.name);
 			let role = roleCol?.text || "Employee";
-			let department = departmentCol?.text || "General";
-			let location = locationCol?.text || "HQ";
 
 			// Try to extract from name if it follows patterns
 			if (name.includes(" - ")) {
@@ -145,11 +138,9 @@ export async function getPeople() {
 				email,
 				phone,
 				role,
-				department,
 				team,
 				status,
 				startDate,
-				location
 			};
 
 			// Add remaining dynamic columns
@@ -166,45 +157,8 @@ export async function getPeople() {
 
 			// Count statistics
 			roleCounts.set(role, (roleCounts.get(role) || 0) + 1);
-			departmentCounts.set(department, (departmentCounts.get(department) || 0) + 1);
-			locationCounts.set(location, (locationCounts.get(location) || 0) + 1);
 			statusCounts.set(status, (statusCounts.get(status) || 0) + 1);
 		}
-
-		// Sort people by department then name
-		people.sort((a, b) => {
-			if (a.department !== b.department) {
-				return (a.department || '').localeCompare(b.department || '');
-			}
-			return a.name.localeCompare(b.name);
-		});
-
-		// Group people by department
-		const peopleByDepartment = new Map<string, Person[]>();
-		for (const person of people) {
-			const dept = person.department || "General";
-			if (!peopleByDepartment.has(dept)) {
-				peopleByDepartment.set(dept, []);
-			}
-			peopleByDepartment.get(dept)?.push(person);
-		}
-
-		// Convert to hierarchical structure
-		const departmentGroups = Array.from(peopleByDepartment.entries())
-			.sort(([a], [b]) => a.localeCompare(b))
-			.map(([department, deptPeople]) => {
-				// Count roles in this department
-				const deptRoles = new Set(deptPeople.map(p => p.role));
-				const deptLocations = new Set(deptPeople.map(p => p.location));
-
-				return {
-					department,
-					peopleCount: deptPeople.length,
-					uniqueRoles: deptRoles.size,
-					locations: Array.from(deptLocations),
-					people: deptPeople
-				};
-			});
 
 		// Calculate statistics
 		const totalPeople = people.length;
@@ -224,9 +178,7 @@ export async function getPeople() {
 			boardId: BOARD_ID,
 			boardName: board.name,
 			totalPeople,
-			totalDepartments: peopleByDepartment.size,
 			totalRoles: roleCounts.size,
-			totalLocations: locationCounts.size,
 			statusBreakdown: {
 				active: activeCount,
 				inactive: totalPeople - activeCount
@@ -236,13 +188,11 @@ export async function getPeople() {
 				withPhone,
 				withTeam
 			},
-			departmentCounts: Object.fromEntries(departmentCounts),
-			locationCounts: Object.fromEntries(locationCounts),
 			topRoles,
 			dynamicColumnsCount: dynamicColumns.length
 		};
 
-		const summary = `Found ${totalPeople} ${totalPeople === 1 ? 'person' : 'people'} across ${peopleByDepartment.size} department${peopleByDepartment.size !== 1 ? 's' : ''} (${activeCount} active, ${roleCounts.size} unique role${roleCounts.size !== 1 ? 's' : ''})`;
+		const summary = `Found ${totalPeople} ${totalPeople === 1 ? 'person' : 'people'} (${activeCount} active, ${roleCounts.size} unique role${roleCounts.size !== 1 ? 's' : ''})`;
 
 		return JSON.stringify(
 			{
