@@ -65,12 +65,12 @@ export async function getAllFormats() {
 				tool: "getAllFormats",
 				timestamp: new Date().toISOString(),
 				status: "success",
-				data: [],
 				metadata: {
 					boardId: BOARD_IDS.FORMATS,
 					boardName: board.name,
 					totalFormats: 0
 				},
+				data: [],
 				options: {
 					summary: "No formats found"
 				}
@@ -195,7 +195,6 @@ export async function getAllFormats() {
 		// Build metadata
 		const totalFormats = formats.length;
 		const totalSizes = formats.reduce((sum, f) => sum + f.sizeNames.length, 0);
-		const totalProducts = formats.reduce((sum, f) => sum + f.productNames.length, 0);
 		const uniqueProducts = new Set(formats.flatMap(f => f.productNames)).size;
 		const uniqueSizes = new Set(formats.flatMap(f => f.sizeNames)).size;
 
@@ -204,30 +203,20 @@ export async function getAllFormats() {
 			boardName: board.name,
 			totalFormats,
 			totalDeviceTypes: formatsByDevice.size,
-			totalSizes,
-			totalProducts,
-			uniqueProducts,
-			uniqueSizes,
+			totalSizes: uniqueSizes,
+			totalProducts: uniqueProducts,
 			deviceTypeCounts: Object.fromEntries(deviceTypeCounts),
-			topProducts: Array.from(productCounts.entries())
-				.sort(([, a], [, b]) => b - a)
-				.slice(0, 5)
-				.map(([product, count]) => ({ product, count })),
-			topSizes: Array.from(sizeCounts.entries())
-				.sort(([, a], [, b]) => b - a)
-				.slice(0, 5)
-				.map(([size, count]) => ({ size, count }))
 		};
 
-		const summary = `Found ${totalFormats} ad format${totalFormats !== 1 ? 's' : ''} across ${formatsByDevice.size} device type${formatsByDevice.size !== 1 ? 's' : ''} (${uniqueProducts} unique product${uniqueProducts !== 1 ? 's' : ''}, ${totalSizes} size${totalSizes !== 1 ? 's' : ''})`;
+		const summary = `Found ${totalFormats} ad format${totalFormats !== 1 ? 's' : ''} across ${formatsByDevice.size} device type${formatsByDevice.size !== 1 ? 's' : ''} (${uniqueProducts} unique product${uniqueProducts !== 1 ? 's' : ''}, ${uniqueSizes} size${uniqueSizes !== 1 ? 's' : ''})`;
 
 		return JSON.stringify(
 			{
 				tool: "getAllFormats",
 				timestamp: new Date().toISOString(),
 				status: "success",
-				data: deviceGroups,
 				metadata,
+				data: deviceGroups,
 				options: { summary }
 			},
 			null,

@@ -187,8 +187,8 @@ export async function getAllAdPrices() {
 				tool: "getAllAdPrices",
 				timestamp: new Date().toISOString(),
 				status: "success",
-				data: deviceGroups,
 				metadata,
+				data: deviceGroups,
 				options: { summary }
 			},
 			null,

@@ -205,8 +205,8 @@ export async function getAllPlacements() {
 				tool: "getAllPlacements",
 				timestamp: new Date().toISOString(),
 				status: "success",
-				data: typeGroups,
 				metadata,
+				data: typeGroups,
 				options: { summary }
 			},
 			null,

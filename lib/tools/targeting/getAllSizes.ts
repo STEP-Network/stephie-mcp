@@ -229,8 +229,8 @@ export async function getAllSizes() {
 				tool: "getAllSizes",
 				timestamp: new Date().toISOString(),
 				status: "success",
-				data: deviceGroups,
 				metadata,
+				data: deviceGroups,
 				options: { summary }
 			},
 			null,
