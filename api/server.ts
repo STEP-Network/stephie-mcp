@@ -893,7 +893,7 @@ const handler = createMcpHandler((server) => {
 					contents: [{
 						uri: resource.uri,
 						mimeType: resource.mimeType as "application/json",
-						text: content
+						text: typeof content === 'string' ? content : JSON.stringify(content)
 					}]
 				};
 			}
@@ -955,154 +955,116 @@ const mcpCompliantHandler = async (request: Request): Promise<Response> => {
 				}
 			}
 			
-			// Handle resources/list - return our available resources
-			// Note: MCP spec only supports 'cursor' parameter, not 'query'
-			if (body.method === 'resources/list') {
-				// Return all resources - filtering should be done via ResourceTemplate URIs
-				const filteredResources = RESOURCE_DEFINITIONS.map(r => ({
-					uri: r.uri,
-					name: r.name,
-					description: r.description,
-					mimeType: r.mimeType
-				}));
-				
-				const response = {
-					jsonrpc: '2.0',
-					id: body.id,
-					result: { resources: filteredResources }
-				};
-				
-				if (isSSE) {
-					// Format as SSE
-					return new Response(
-						`data: ${JSON.stringify(response)}\n\n`,
-						{
-							status: 200,
-							headers: {
-								'Content-Type': 'text/event-stream',
-								'Cache-Control': 'no-cache',
-								'Connection': 'keep-alive'
-							}
-						}
-					);
-				} else {
-					return new Response(
-						JSON.stringify(response),
-						{
-							status: 200,
-							headers: { 'Content-Type': 'application/json' }
-						}
-					);
-				}
-			}
+			// REMOVED: resources/list handling - now handled by mcp-handler via server.resource()
+			// The resources are properly registered above, so mcp-handler will handle these requests
 			
-			// Handle resources/read - fetch and return resource content
-			if (body.method === 'resources/read') {
-				const uri = body.params?.uri;
-				const resource = RESOURCE_DEFINITIONS.find(r => r.uri === uri);
-				
-				if (resource) {
-					try {
-						const content = await resource.fetcher();
-						const response = {
-							jsonrpc: '2.0',
-							id: body.id,
-							result: {
-								contents: [{
-									uri: resource.uri,
-									mimeType: resource.mimeType,
-									text: content
-								}]
-							}
-						};
-						
-						if (isSSE) {
-							// Format as SSE
-							return new Response(
-								`data: ${JSON.stringify(response)}\n\n`,
-								{
-									status: 200,
-									headers: {
-										'Content-Type': 'text/event-stream',
-										'Cache-Control': 'no-cache',
-										'Connection': 'keep-alive'
-									}
-								}
-							);
-						} else {
-							return new Response(
-								JSON.stringify(response),
-								{
-									status: 200,
-									headers: { 'Content-Type': 'application/json' }
-								}
-							);
-						}
-					} catch (error) {
-						const errorResponse = {
-							jsonrpc: '2.0',
-							id: body.id,
-							error: {
-								code: -32603,
-								message: `Failed to fetch resource: ${error}`
-							}
-						};
-						
-						if (isSSE) {
-							return new Response(
-								`data: ${JSON.stringify(errorResponse)}\n\n`,
-								{
-									status: 200,
-									headers: {
-										'Content-Type': 'text/event-stream',
-										'Cache-Control': 'no-cache',
-										'Connection': 'keep-alive'
-									}
-								}
-							);
-						} else {
-							return new Response(
-								JSON.stringify(errorResponse),
-								{
-									status: 200,
-									headers: { 'Content-Type': 'application/json' }
-								}
-							);
-						}
-					}
-				} else {
-					const errorResponse = {
-						jsonrpc: '2.0',
-						id: body.id,
-						error: {
-							code: -32602,
-							message: `Resource not found: ${uri}`
-						}
-					};
-					
-					if (isSSE) {
-						return new Response(
-							`data: ${JSON.stringify(errorResponse)}\n\n`,
-							{
-								status: 200,
-								headers: {
-									'Content-Type': 'text/event-stream',
-									'Cache-Control': 'no-cache',
-									'Connection': 'keep-alive'
-								}
-							}
-						);
-					} else {
-						return new Response(
-							JSON.stringify(errorResponse),
-							{
-								status: 200,
-								headers: { 'Content-Type': 'application/json' }
-							}
-						);
-					}
-				}
-			}
+// 			// Handle resources/read - fetch and return resource content
+// 			if (body.method === 'resources/read') {
+// 				const uri = body.params?.uri;
+// 				const resource = RESOURCE_DEFINITIONS.find(r => r.uri === uri);
+// 				
+// 				if (resource) {
+// 					try {
+// 						const content = await resource.fetcher();
+// 						const response = {
+// 							jsonrpc: '2.0',
+// 							id: body.id,
+// 							result: {
+// 								contents: [{
+// 									uri: resource.uri,
+// 									mimeType: resource.mimeType,
+// 									text: content
+// 								}]
+// 							}
+// 						};
+// 						
+// 						if (isSSE) {
+// 							// Format as SSE
+// 							return new Response(
+// 								`data: ${JSON.stringify(response)}\n\n`,
+// 								{
+// 									status: 200,
+// 									headers: {
+// 										'Content-Type': 'text/event-stream',
+// 										'Cache-Control': 'no-cache',
+// 										'Connection': 'keep-alive'
+// 									}
+// 								}
+// 							);
+// 						} else {
+// 							return new Response(
+// 								JSON.stringify(response),
+// 								{
+// 									status: 200,
+// 									headers: { 'Content-Type': 'application/json' }
+// 								}
+// 							);
+// 						}
+// 					} catch (error) {
+// 						const errorResponse = {
+// 							jsonrpc: '2.0',
+// 							id: body.id,
+// 							error: {
+// 								code: -32603,
+// 								message: `Failed to fetch resource: ${error}`
+// 							}
+// 						};
+// 						
+// 						if (isSSE) {
+// 							return new Response(
+// 								`data: ${JSON.stringify(errorResponse)}\n\n`,
+// 								{
+// 									status: 200,
+// 									headers: {
+// 										'Content-Type': 'text/event-stream',
+// 										'Cache-Control': 'no-cache',
+// 										'Connection': 'keep-alive'
+// 									}
+// 								}
+// 							);
+// 						} else {
+// 							return new Response(
+// 								JSON.stringify(errorResponse),
+// 								{
+// 									status: 200,
+// 									headers: { 'Content-Type': 'application/json' }
+// 								}
+// 							);
+// 						}
+// 					}
+// 				} else {
+// 					const errorResponse = {
+// 						jsonrpc: '2.0',
+// 						id: body.id,
+// 						error: {
+// 							code: -32602,
+// 							message: `Resource not found: ${uri}`
+// 						}
+// 					};
+// 					
+// 					if (isSSE) {
+// 						return new Response(
+// 							`data: ${JSON.stringify(errorResponse)}\n\n`,
+// 							{
+// 								status: 200,
+// 								headers: {
+// 									'Content-Type': 'text/event-stream',
+// 									'Cache-Control': 'no-cache',
+// 									'Connection': 'keep-alive'
+// 								}
+// 							}
+// 						);
+// 					} else {
+// 						return new Response(
+// 							JSON.stringify(errorResponse),
+// 							{
+// 								status: 200,
+// 								headers: { 'Content-Type': 'application/json' }
+// 							}
+// 						);
+// 					}
+// 				}
+// 			}
 		} catch {
 			// If JSON parsing fails, let the base handler deal with it
 		}

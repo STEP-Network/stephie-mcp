@@ -16,6 +16,10 @@
 			"destination": "/api/server"
 		},
 		{
+			"source": "/mcp",
+			"destination": "/api/server"
+		},
+		{
 			"source": "/message",
 			"destination": "/api/server"
 		}
