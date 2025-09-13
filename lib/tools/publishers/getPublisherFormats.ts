@@ -53,8 +53,9 @@ function parseDevices(value: string | undefined): string[] | null {
 }
 
 interface CompactPublisher {
-	id: string; // mondayItemId
-	publisher: string; // name
+	mondayItemId: string; // Monday.com item ID
+	adUnitId: string; // GAM Ad Unit ID
+	publisher: string; // Publisher name
 	statusFormats?: string[]; // statusFormats (omit if empty)
 	deviceFormats?: Array<[string, string[]]>; // deviceFormats as tuples [format, devices[]] (omit if empty)
 }
@@ -176,6 +177,10 @@ export async function getPublisherFormats(args: {
 			const linkedItems = publisherGroupCol?.linked_items as Array<{id: string; name: string}> | undefined;
 			const publisherGroup = linkedItems?.[0]?.name || "No Group";
 
+			// Get GAM Ad Unit ID
+			const gamAdUnitIdCol = columnValues.text_mktdhmar as Record<string, unknown>;
+			const gamAdUnitId = gamAdUnitIdCol?.value as string || "";
+
 			// Determine available formats and devices
 			const formats = {
 				// Status-based formats
@@ -244,7 +249,8 @@ export async function getPublisherFormats(args: {
 			if (names && names.length > 0) {
 				// Create compact publisher object
 				const compactPublisher: CompactPublisher = {
-					id: String(item.id),
+					mondayItemId: String(item.id),
+					adUnitId: gamAdUnitId,
 					publisher: String(item.name),
 				};
 
