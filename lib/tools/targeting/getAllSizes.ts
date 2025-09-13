@@ -9,16 +9,12 @@ const AD_SIZES_BOARD_ID = "1558597958";
 interface AdSize {
 	mondayItemId: string;
 	name: string;
-	width: string;
-	height: string;
-	dimensions: string;
-	device: string;
 	deviceType: string;
 	adProducts: string[];
 	adFormats: string[];
 	standardCPM: number | null;
 	averageEAPM: number | null;
-	gamNames: string | null;
+	adUnitNames: string | null;
 	averageCTR: string | null;
 	averageViewability: string | null;
 	description: string | null;
@@ -81,7 +77,6 @@ export async function getAllSizes() {
 		const deviceTypeCounts = new Map<string, number>();
 		const productCounts = new Map<string, number>();
 		const formatCounts = new Map<string, number>();
-		const dimensionCounts = new Map<string, number>();
 
 		for (const item of items as MondayItemResponse[]) {
 			const columnValues = item.column_values || [];
@@ -92,9 +87,6 @@ export async function getAllSizes() {
 			};
 
 			// Extract fields
-			const widthCol = getColumnValue("text_mkqsh5w7");
-			const heightCol = getColumnValue("text_mkqrxz0z");
-			const deviceCol = getColumnValue("dropdown_mks0xdmd");
 			const standardCPMCol = getColumnValue("numeric_mkrhdmee");
 			const averageEAPMCol = getColumnValue("numeric_mkqsqecq");
 			const gamNamesCol = getColumnValue("text_mksgcrz8");
@@ -106,10 +98,7 @@ export async function getAllSizes() {
 			const averageViewabilityCol = getColumnValue("text_mkqse9p4");
 			const descriptionCol = getColumnValue("text_mknyx7mj");
 
-			// Parse dimensions
-			const width = widthCol?.text || "0";
-			const height = heightCol?.text || "0";
-			const dimensions = `${width}x${height}`;
+			// Check if it's a video size
 			const isVideo = String(item.name).endsWith("v");
 
 			// Parse board relations
@@ -125,16 +114,12 @@ export async function getAllSizes() {
 			const size: AdSize = {
 				mondayItemId: String(item.id),
 				name: String(item.name),
-				width,
-				height,
-				dimensions,
-				device: deviceCol?.text || "Unknown",
 				deviceType: deviceTypeCol?.text || "Unknown",
 				adProducts: products,
 				adFormats: formats,
 				standardCPM: parseNumber(standardCPMCol),
 				averageEAPM: parseNumber(averageEAPMCol),
-				gamNames: gamNamesCol?.text || null,
+				adUnitNames: gamNamesCol?.text || null,
 				averageCTR: averageCTRCol?.text || null,
 				averageViewability: averageViewabilityCol?.text || null,
 				description: descriptionCol?.text || null,
@@ -146,10 +131,6 @@ export async function getAllSizes() {
 
 			// Count device types
 			deviceTypeCounts.set(size.deviceType, (deviceTypeCounts.get(size.deviceType) || 0) + 1);
-
-			// Count dimensions
-			const dimensionKey = isVideo ? `${dimensions} (video)` : dimensions;
-			dimensionCounts.set(dimensionKey, (dimensionCounts.get(dimensionKey) || 0) + 1);
 
 			// Count products and formats
 			for (const product of products) {
@@ -164,14 +145,9 @@ export async function getAllSizes() {
 		sizes.sort((a, b) => {
 			// Video sizes last
 			if (a.isVideo !== b.isVideo) return a.isVideo ? 1 : -1;
-
-			// Parse dimensions for numeric sort
-			const [aWidth, aHeight] = a.dimensions.split("x").map(Number);
-			const [bWidth, bHeight] = b.dimensions.split("x").map(Number);
-
-			// Sort by width descending, then height descending
-			if (aWidth !== bWidth) return bWidth - aWidth;
-			return bHeight - aHeight;
+			
+			// Then sort by name
+			return a.name.localeCompare(b.name);
 		});
 
 		// Group sizes by device type
@@ -200,8 +176,6 @@ export async function getAllSizes() {
 				return a.localeCompare(b);
 			})
 			.map(([deviceType, deviceSizes]) => {
-				// Count unique dimensions in this device type
-				const dimensions = new Set(deviceSizes.map(s => s.dimensions));
 				const videoCount = deviceSizes.filter(s => s.isVideo).length;
 				const displayCount = deviceSizes.filter(s => !s.isVideo).length;
 
@@ -212,7 +186,6 @@ export async function getAllSizes() {
 				return {
 					deviceType,
 					sizeCount: deviceSizes.length,
-					uniqueDimensions: dimensions.size,
 					videoCount,
 					displayCount,
 					commonProducts: Array.from(deviceProducts).slice(0, 5),
@@ -226,7 +199,7 @@ export async function getAllSizes() {
 		const videoSizes = sizes.filter(s => s.isVideo).length;
 		const displaySizes = totalSizes - videoSizes;
 		const sizesWithCPM = sizes.filter(s => s.standardCPM).length;
-		const sizesWithGAM = sizes.filter(s => s.gamNames).length;
+		const sizesWithAdUnits = sizes.filter(s => s.adUnitNames).length;
 
 		// Get top products and formats
 		const topProducts = Array.from(productCounts.entries())
@@ -245,14 +218,13 @@ export async function getAllSizes() {
 			boardName: board.name,
 			totalSizes,
 			totalDeviceTypes: sizesByDevice.size,
-			uniqueDimensions: dimensionCounts.size,
 			sizeTypes: {
 				display: displaySizes,
 				video: videoSizes
 			},
 			dataAvailability: {
 				withCPM: sizesWithCPM,
-				withGAM: sizesWithGAM
+				withAdUnits: sizesWithAdUnits
 			},
 			deviceTypeCounts: Object.fromEntries(deviceTypeCounts),
 			topProducts,
