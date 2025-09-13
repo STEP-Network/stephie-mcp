@@ -166,19 +166,17 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 	{
 		name: "getPublisherFormats",
 		description:
-			"Get detailed matrix of publishers/sites and their available ad formats grouped by device type. Shows ONLY ACTIVE formats per publisher/site - if a format is not listed, the publisher/site does NOT support it. Device abbreviations: M=Mobile, D=Desktop, A=App. Useful for finding which publishers/sites support specific format combinations.",
+			"Get detailed matrix of publishers/sites and their available ad formats grouped by device type. Shows ONLY ACTIVE formats per publisher/site - if a format is not listed, the publisher/site does NOT support it. Returns metadata only by default, full data when filtering by names.",
 		inputSchema: {
 			type: "object",
 			properties: {
-				publisherName: {
-					type: "string",
+				names: {
+					type: "array",
+					items: {
+						type: "string"
+					},
 					description:
-						"Filter by publisher/site name (partial match, case-insensitive)",
-				},
-				publisherGroupName: {
-					type: "string",
-					description:
-						'Filter by publisher/site group name (e.g., "JFM", "HeyMate")',
+						"Array of names to search for in both publisher/site names and publisher group names (partial match, case-insensitive). Searches with OR logic across all names and both columns.",
 				},
 				limit: {
 					type: "number",
