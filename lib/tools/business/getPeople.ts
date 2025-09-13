@@ -6,10 +6,9 @@ import {
 
 interface Person {
 	mondayItemId: string;
+	peopleId: string; // ID from person column
 	name: string;
 	jobTitle?: string; // text__1
-	person?: string; // person column
-	leader?: string; // people__1
 	startDate?: string; // date__1
 	email?: string; // email__1
 	taskBoardId?: string; // lookup_mkqn1bdr
@@ -53,6 +52,9 @@ export async function getPeople() {
 							value
 							... on BoardRelationValue {
 								linked_items { id name }
+							}
+							... on MirrorValue {
+								display_value
 							}
 							column {
 								id
@@ -100,17 +102,36 @@ export async function getPeople() {
 			const leaderCol = findColumnById("people__1");
 			const startDateCol = findColumnById("date__1");
 			const emailCol = findColumnById("email__1");
-			const taskBoardIdCol = findColumnById("lookup_mkqn1bdr");
+			const taskBoardIdCol = findColumnById("lookup_mkqn1bdr") as MondayColumnValueResponse & { display_value?: string };
 			const teamsCol = findColumnById("link_to_teams__1");
 			const objectivesCol = findColumnById("link_to_objectives__1");
 
 			// Parse values
 			const jobTitle = jobTitleCol?.text || null;
-			const personValue = personCol?.text || null;
+			
+			// Extract peopleId from person column
+			let peopleId = "";
+			if (personCol?.value) {
+				try {
+					const parsedValue = JSON.parse(personCol.value);
+					if (parsedValue?.personsAndTeams?.[0]) {
+						peopleId = String(parsedValue.personsAndTeams[0].id);
+					}
+				} catch (e) {
+					// If parsing fails, use item ID as fallback
+					peopleId = String(item.id);
+				}
+			} else {
+				peopleId = String(item.id);
+			}
+			
+			// Extract leader for grouping (but don't include in person object)
 			const leader = leaderCol?.text || null;
 			const startDate = startDateCol?.text || null;
 			const email = emailCol?.text || null;
-			const taskBoardId = taskBoardIdCol?.text || null;
+			
+			// Extract taskBoardId from mirror column
+			const taskBoardId = taskBoardIdCol?.display_value || taskBoardIdCol?.text || null;
 
 			// Parse team relations
 			let teams: Array<{ id: string; name: string }> = [];
@@ -132,10 +153,9 @@ export async function getPeople() {
 
 			const person: Person = {
 				mondayItemId: String(item.id),
+				peopleId,
 				name: String(item.name),
 				jobTitle,
-				person: personValue,
-				leader,
 				startDate,
 				email,
 				taskBoardId,

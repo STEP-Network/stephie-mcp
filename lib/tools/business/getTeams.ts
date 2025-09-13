@@ -7,8 +7,8 @@ import {
 interface Team {
 	mondayItemId: string;
 	name: string;
-	lead?: { id: string; name: string };
-	teamMembers?: Array<{ id: string; name: string }>;
+	lead?: { personId: string; name: string };
+	teamMembers?: Array<{ personId: string; name: string }>;
 	boardId?: string;
 	objectives?: Array<{ id: string; name: string }>;
 }
@@ -81,21 +81,21 @@ export async function getTeams() {
 			};
 
 			// Parse Lead (person column with type "people")
-			let lead: { id: string; name: string } | undefined;
+			let lead: { personId: string; name: string } | undefined;
 			const leadCol = findColumnById("person");
 			if (leadCol?.text && leadCol?.value) {
 				// Name is in the text field, ID is in the value field
 				const parsedValue = JSON.parse(leadCol.value);
 				if (parsedValue?.personsAndTeams?.[0]) {
 					lead = {
-						id: String(parsedValue.personsAndTeams[0].id),
+						personId: String(parsedValue.personsAndTeams[0].id),
 						name: leadCol.text
 					};
 				}
 			}
 
 			// Parse Team Members
-			let teamMembers: Array<{ id: string; name: string }> = [];
+			let teamMembers: Array<{ personId: string; name: string }> = [];
 			const membersCol = findColumnById("multiple_person_mkvrqa7z");
 			if (membersCol?.text && membersCol?.value) {
 				// Names are in the text field, IDs are in the value field
@@ -104,7 +104,7 @@ export async function getTeams() {
 				const persons = parsedValue?.personsAndTeams || [];
 				
 				teamMembers = persons.map((person: any, index: number) => ({
-					id: String(person.id),
+					personId: String(person.id),
 					name: names[index] || `Person ${person.id}`
 				}));
 			}
