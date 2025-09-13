@@ -181,33 +181,10 @@ const mcpHandler = createMcpHandler(
 			`ChatGPT MCP server initialized with ${TOOL_DEFINITIONS.length} tools and ${RESOURCE_DEFINITIONS.length} resources (no auth)`,
 		);
 	},
+	undefined,
 	{
-		basePath: "/chatgpt",
-		streamableHttpEndpoint: "/chatgpt",
-		sseEndpoint: "/chatgpt/sse",
-		sseMessageEndpoint: "/chatgpt/message",
-		verboseLogs: process.env.NODE_ENV === "development",
+		verboseLogs: true,
 	},
 );
 
-export default async function chatgptHandler(
-	req: VercelRequest,
-	res: VercelResponse,
-) {
-	// Handle CORS for ChatGPT
-	res.setHeader("Access-Control-Allow-Origin", "*");
-	res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-	res.setHeader(
-		"Access-Control-Allow-Headers",
-		"Content-Type, Authorization, Accept, X-Requested-With",
-	);
-
-	if (req.method === "OPTIONS") {
-		return res.status(200).end();
-	}
-
-	// No authentication check - open endpoint for ChatGPT
-	console.log(`ChatGPT MCP request: ${req.method} ${req.url}`);
-	
-	return mcpHandler(req, res);
-}
+export default mcpHandler;
