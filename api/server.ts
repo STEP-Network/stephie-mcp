@@ -2,7 +2,18 @@ import { createMcpHandler } from "mcp-handler";
 import { z } from "zod";
 import { TOOL_DEFINITIONS } from "../lib/mcp/toolDefinitions.js";
 import { RESOURCE_DEFINITIONS } from "../lib/mcp/resources.js";
-import { toolImplementations } from "../lib/mcp/tool-implementations.js";
+
+// Dynamic import to handle potential module resolution issues
+let toolImplementations: Record<string, any> = {};
+try {
+	const module = await import("../lib/mcp/tool-implementations.js");
+	toolImplementations = module.toolImplementations || {};
+	console.log(`Loaded ${Object.keys(toolImplementations).length} tool implementations`);
+} catch (error) {
+	console.error("Failed to load tool implementations:", error);
+	// Fallback: try to load individual tools if centralized import fails
+	toolImplementations = {};
+}
 
 // Helper to get tool description
 const getToolDescription = (name: string): string => {
