@@ -150,15 +150,15 @@ export async function getTargetingKeys() {
 		const keysByPublisher = new Map<string, TargetingKey[]>();
 		
 		for (const key of targetingKeys) {
-			const publisherGroup = key.publishers || "No Publisher Assignment";
-			if (!keysByPublisher.has(publisherGroup)) {
-				keysByPublisher.set(publisherGroup, []);
+			const publisher = key.publishers || "No Publisher Assignment";
+			if (!keysByPublisher.has(publisher)) {
+				keysByPublisher.set(publisher, []);
 			}
-			keysByPublisher.get(publisherGroup)?.push(key);
+			keysByPublisher.get(publisher)?.push(key);
 		}
 
 		// Sort groups: RON first, then alphabetically, "No Publisher Assignment" last
-		const sortedGroups = Array.from(keysByPublisher.entries())
+		const sortedPublishers = Array.from(keysByPublisher.entries())
 			.sort(([a], [b]) => {
 				if (a === "RON") return -1;
 				if (b === "RON") return 1;
@@ -168,8 +168,8 @@ export async function getTargetingKeys() {
 			});
 
 		// Convert to hierarchical structure
-		const publisherGroups = sortedGroups.map(([publisherGroup, keys]) => ({
-			publisherGroup,
+		const publishers = sortedPublishers.map(([publisher, keys]) => ({
+			publisher,
 			keyCount: keys.length,
 			keys: keys.sort((a, b) => a.name.localeCompare(b.name))
 		}));
@@ -179,8 +179,8 @@ export async function getTargetingKeys() {
 			boardId: CUSTOM_TARGETING_BOARD_ID,
 			boardName: "Custom Targeting",
 			totalKeys: targetingKeys.length,
-			totalPublisherGroups: keysByPublisher.size,
-			publisherGroups: sortedGroups.map(([group]) => group)
+			totalPublishers: keysByPublisher.size,
+			publishers: sortedPublishers.map(([publisher]) => publisher)
 		};
 
 		// Return formatted response
@@ -189,7 +189,7 @@ export async function getTargetingKeys() {
 				tool: "getTargetingKeys",
 				timestamp: new Date().toISOString(),
 				status: "success",
-				data: publisherGroups,
+				data: publishers,
 				metadata,
 				options: {
 					summary: `Found ${targetingKeys.length} targeting ${targetingKeys.length === 1 ? 'key' : 'keys'} across ${keysByPublisher.size} publisher ${keysByPublisher.size === 1 ? 'group' : 'groups'}`

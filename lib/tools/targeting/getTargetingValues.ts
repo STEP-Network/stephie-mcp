@@ -17,6 +17,7 @@ export interface TargetingValue {
 	valueGamId: string;
 	keyMondayId: string;
 	keyName: string;
+	keyGamId: string;
 }
 
 export async function getTargetingValues(args: {
@@ -155,16 +156,20 @@ export async function getTargetingValues(args: {
 			const keyId = linkedKey?.id || "";
 			const keyNameFromRelation = linkedKey?.name || "";
 			
-			// Get key name from lookup (might have more details)
+			// Get key GAM ID from the lookup column
 			const keyNameLookup = columnMap.get(COLUMNS.KEY_NAME_LOOKUP) as any;
-			const keyName = keyNameLookup?.display_value || keyNameLookup?.text || keyNameFromRelation;
+			const keyGamId = keyNameLookup?.display_value || keyNameLookup?.text || "";
+			
+			// Use the name from the linked relation for the key name
+			const keyName = keyNameFromRelation;
 
 			targetingValues.push({
 				mondayItemId: String(mondayItem.id),
 				name: String(mondayItem.name),
 				valueGamId: valueGamId,
 				keyMondayId: String(keyId),
-				keyName: keyName
+				keyName: keyName,
+				keyGamId: keyGamId
 			});
 		}
 
