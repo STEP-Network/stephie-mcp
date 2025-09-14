@@ -8,6 +8,7 @@ const COLUMNS = {
 	GAM_ID: "text_mkszrqah", // GAM ID
 	KEY_RELATION: "board_relation_mksz4q6f", // Link to parent key
 	KEY_NAME_LOOKUP: "lookup_mktfm91a", // Lookup for key name
+	GROUP_ID: "group_mkszxeqs", // Group to filter by
 };
 
 export interface TargetingValue {
@@ -67,32 +68,37 @@ export async function getTargetingValues(args: {
 		// Support cursor for pagination
 		const cursorParam = cursor ? `, cursor: "${cursor}"` : '';
 
+		// Query for values in the specific group with filters
 		const query = `
 			query {
 				boards(ids: [${CUSTOM_TARGETING_BOARD_ID}]) {
 					id
 					name
-					items_page(
-						limit: ${limit}
-						${queryParams}
-						${cursorParam}
-					) {
-						cursor
-						items {
-							id
-							name
-							column_values {
+					groups(ids: ["${COLUMNS.GROUP_ID}"]) {
+						id
+						title
+						items_page(
+							limit: ${limit}
+							${queryParams}
+							${cursorParam}
+						) {
+							cursor
+							items {
 								id
-								text
-								value
-								... on BoardRelationValue {
-									linked_items {
-										id
-										name
+								name
+								column_values {
+									id
+									text
+									value
+									... on BoardRelationValue {
+										linked_items {
+											id
+											name
+										}
 									}
-								}
-								... on MirrorValue {
-									display_value
+									... on MirrorValue {
+										display_value
+									}
 								}
 							}
 						}
@@ -103,7 +109,8 @@ export async function getTargetingValues(args: {
 
 		const response = await mondayApi(query);
 
-		if (!response.data?.boards || response.data.boards.length === 0) {
+		if (!response.data?.boards || response.data.boards.length === 0 ||
+			!response.data.boards[0].groups || response.data.boards[0].groups.length === 0) {
 			return JSON.stringify(
 				{
 					tool: "getTargetingValues",
@@ -127,11 +134,12 @@ export async function getTargetingValues(args: {
 		}
 
 		const board = response.data.boards[0];
-		const items = board.items_page?.items || [];
-		const nextCursor = board.items_page?.cursor;
+		const group = board.groups[0];
+		const items = group.items_page?.items || [];
+		const nextCursor = group.items_page?.cursor;
 		const targetingValues: TargetingValue[] = [];
 
-		// Process values
+		// Process values (already filtered by GraphQL query)
 		for (const item of items) {
 			const mondayItem = item as MondayItemResponse;
 			const columnValues = mondayItem.column_values || [];

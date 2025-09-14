@@ -32,48 +32,44 @@ export async function getTargetingKeys() {
 				boards(ids: [${CUSTOM_TARGETING_BOARD_ID}]) {
 					id
 					name
-					items_page(
-						limit: 250
-						query_params: {
-							rules: [
-								{
-									column_id: "group_id",
-									compare_value: ["${COLUMNS.GROUP_ID}"],
-									operator: any_of
-								},
-								{
-									column_id: "${COLUMNS.KEY_RELATION}",
-									compare_value: [],
-									operator: is_empty
-								},
-								{
-									column_id: "${COLUMNS.PUBLISHER_RELATION}",
-									compare_value: [],
-									operator: is_not_empty
-								},
-								{
-									column_id: "${COLUMNS.GAM_ID}",
-									compare_value: [],
-									operator: is_not_empty
-								}
-							]
-							operator: and
-						}
-					) {
-						items {
-							id
-							name
-							group {
-								id
+					groups(ids: ["${COLUMNS.GROUP_ID}"]) {
+						id
+						title
+						items_page(
+							limit: 250
+							query_params: {
+								rules: [
+									{
+										column_id: "${COLUMNS.KEY_RELATION}",
+										compare_value: [],
+										operator: is_empty
+									},
+									{
+										column_id: "${COLUMNS.PUBLISHER_RELATION}",
+										compare_value: [],
+										operator: is_not_empty
+									},
+									{
+										column_id: "${COLUMNS.GAM_ID}",
+										compare_value: [],
+										operator: is_not_empty
+									}
+								]
+								operator: and
 							}
-							column_values {
+						) {
+							items {
 								id
-								text
-								value
-								... on BoardRelationValue {
-									linked_items {
-										id
-										name
+								name
+								column_values {
+									id
+									text
+									value
+									... on BoardRelationValue {
+										linked_items {
+											id
+											name
+										}
 									}
 								}
 							}
@@ -85,7 +81,8 @@ export async function getTargetingKeys() {
 
 		const response = await mondayApi(query);
 
-		if (!response.data?.boards || response.data.boards.length === 0) {
+		if (!response.data?.boards || response.data.boards.length === 0 || 
+			!response.data.boards[0].groups || response.data.boards[0].groups.length === 0) {
 			return JSON.stringify(
 				createListResponse(
 					"getTargetingKeys",
@@ -98,10 +95,10 @@ export async function getTargetingKeys() {
 			);
 		}
 
-		const items = response.data.boards[0].items_page.items || [];
+		const items = response.data.boards[0].groups[0].items_page?.items || [];
 		const targetingKeys: TargetingKey[] = [];
 
-		// Process keys
+		// Process keys (already filtered by GraphQL query)
 		for (const item of items) {
 			const mondayItem = item as MondayItemResponse & { group?: { id: string } };
 			
