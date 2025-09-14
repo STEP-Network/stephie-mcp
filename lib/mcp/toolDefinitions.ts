@@ -343,17 +343,21 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 			type: "object",
 			properties: {
 				search: {
+					type: "array",
+					items: { type: "string" },
+					description: "Optional array of search terms for location (city, postal code, region). Tip: Include variations for better results, e.g., ['København', 'Copenhagen', 'CPH']",
+				},
+				type: {
 					type: "string",
-					description: "Required: Search term for location (city, postal code, region)",
-					required: true,
+					enum: ["region", "country", "postal_code", "city", "municipality"],
+					description: "Optional filter by location type",
 				},
 				limit: {
 					type: "number",
-					description: "Maximum results to return (default: 50)",
-					default: 50,
+					description: "Maximum results to return (default: 100)",
+					default: 100,
 				},
 			},
-			required: ["search"],
 		},
 	},
 

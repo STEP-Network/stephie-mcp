@@ -6,7 +6,7 @@ export async function getGeoLocations(args: {
 	type?: "region" | "country" | "postal_code" | "city" | "municipality";
 	limit?: number;
 }) {
-	const { search, type, limit = 20 } = args;
+	const { search, type, limit = 100 } = args;
 
 	try {
 		console.error("[getGeoLocations] Starting search:", {
