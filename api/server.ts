@@ -199,9 +199,17 @@ const handler = createMcpHandler((server) => {
 			resource.name,
 			resource.uri,
 			async () => {
-				const response = await resource.handler();
+				const response = await resource.fetcher();
 				// Resources should already return proper MCP format
-				return response;
+				return {
+					contents: [
+						{
+							uri: resource.uri,
+							mimeType: resource.mimeType || 'application/json',
+							text: response
+						}
+					]
+				};
 			}
 		);
 	});
@@ -218,7 +226,7 @@ export default async function POST(request: Request) {
 	
 	try {
 		// Parse request body
-		const body = await request.json();
+		const body = await request.json() as any;
 		console.log(`[${requestId}] Method: ${body.method}, ID: ${body.id}`);
 		
 		// Track if this is a tool call
@@ -235,18 +243,18 @@ export default async function POST(request: Request) {
 			
 			if (resource) {
 				try {
-					// Call the resource handler
-					const result = await resource.handler();
+					// Call the resource fetcher
+					const result = await resource.fetcher();
 					
 					// Format response - for resources/read, we need the contents array
 					const response = {
 						jsonrpc: '2.0',
 						id: body.id,
 						result: {
-							contents: result.contents || [
+							contents: [
 								{
 									uri: resource.uri,
-									mimeType: result.mimeType || 'application/json',
+									mimeType: resource.mimeType || 'application/json',
 									text: typeof result === 'string' ? result : JSON.stringify(result)
 								}
 							]
