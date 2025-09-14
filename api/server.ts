@@ -60,12 +60,11 @@ import { fetch } from "../lib/tools/chatgpt/fetch.js";
 import { findPublisherAdUnits } from "../lib/tools/targeting/findPublisherAdUnits.js";
 import { getAllPlacements } from "../lib/tools/targeting/getAllPlacements.js";
 import { getAllSizes } from "../lib/tools/targeting/getAllSizes.js";
+import { getTargetingKeys } from "../lib/tools/targeting/getTargetingKeys.js";
+import { getTargetingValues } from "../lib/tools/targeting/getTargetingValues.js";
 import { getAudienceSegments } from "../lib/tools/targeting/getAudienceSegments.js";
 import { getContextualTargeting } from "../lib/tools/targeting/getContextualTargeting.js";
 import { getGeoLocations } from "../lib/tools/targeting/getGeoLocations.js";
-import { getKeyValues } from "../lib/tools/targeting/getKeyValues.js";
-import { getTargetingKeys } from "../lib/tools/targeting/getTargetingKeys.js";
-import { getTargetingValues } from "../lib/tools/targeting/getTargetingValues.js";
 import { createTaskAdOps } from "../lib/tools/tasks/createTaskAdOps.js";
 import { createTaskAdTech } from "../lib/tools/tasks/createTaskAdTech.js";
 import { createTaskMarketing } from "../lib/tools/tasks/createTaskMarketing.js";
@@ -332,23 +331,13 @@ const handler = createMcpHandler((server) => {
 	);
 
 	server.tool(
-		"getKeyValues",
-		getToolDescription("getKeyValues"),
-		buildZodSchema("getKeyValues"),
-		async (input) => {
-			const result = await getKeyValues(input);
-			return { content: [{ type: "text", text: result }] };
-		},
-	);
-
-	server.tool(
 		"getTargetingKeys",
 		getToolDescription("getTargetingKeys"),
 		buildZodSchema("getTargetingKeys"),
 		async () => {
 			const result = await getTargetingKeys();
 			return { content: [{ type: "text", text: result }] };
-		},
+		}
 	);
 
 	server.tool(
@@ -356,9 +345,9 @@ const handler = createMcpHandler((server) => {
 		getToolDescription("getTargetingValues"),
 		buildZodSchema("getTargetingValues"),
 		async (input) => {
-			const result = await getTargetingValues(input);
+			const result = await getTargetingValues(input as Parameters<typeof getTargetingValues>[0]);
 			return { content: [{ type: "text", text: result }] };
-		},
+		}
 	);
 
 	server.tool(
@@ -1289,7 +1278,6 @@ const mcpCompliantHandler = async (request: Request): Promise<Response> => {
 	return handler(request);
 };
 
-// Export for Vercel Edge Runtime
-export default async function POST(request: Request) {
-	return mcpCompliantHandler(request);
-}
+// Export the MCP-compliant handler for Vercel Edge Runtime
+// This follows the same export pattern as vercel-labs/mcp-on-vercel
+export { mcpCompliantHandler as GET, mcpCompliantHandler as POST };
