@@ -2,18 +2,7 @@ import { createMcpHandler } from "mcp-handler";
 import { z } from "zod";
 import { TOOL_DEFINITIONS } from "../lib/mcp/toolDefinitions.js";
 import { RESOURCE_DEFINITIONS } from "../lib/mcp/resources.js";
-
-// Dynamic import to handle potential module resolution issues
-let toolImplementations: Record<string, any> = {};
-try {
-	const module = await import("../lib/mcp/tool-implementations.js");
-	toolImplementations = module.toolImplementations || {};
-	console.log(`Loaded ${Object.keys(toolImplementations).length} tool implementations`);
-} catch (error) {
-	console.error("Failed to load tool implementations:", error);
-	// Fallback: try to load individual tools if centralized import fails
-	toolImplementations = {};
-}
+import { toolImplementations } from "../lib/mcp/tool-implementations.js";
 
 // Helper to get tool description
 const getToolDescription = (name: string): string => {
@@ -182,14 +171,16 @@ const buildZodSchema = (name: string): Record<string, any> => {
 const activeRequests = new Map<string, { tool: string; startTime: number }>();
 
 // Create the MCP handler with all tools
-const handler = createMcpHandler((server) => {
-	// Register all tools from TOOL_DEFINITIONS
-	for (const toolDef of TOOL_DEFINITIONS) {
-		const implementation = toolImplementations[toolDef.name];
-		if (!implementation) {
-			console.warn(`No implementation found for tool: ${toolDef.name}`);
-			continue;
-		}
+let handler: any;
+try {
+	handler = createMcpHandler((server) => {
+		// Register all tools from TOOL_DEFINITIONS
+		for (const toolDef of TOOL_DEFINITIONS) {
+			const implementation = toolImplementations[toolDef.name];
+			if (!implementation) {
+				console.warn(`No implementation found for tool: ${toolDef.name}`);
+				continue;
+			}
 
 		server.tool(
 			toolDef.name,
@@ -225,6 +216,10 @@ const handler = createMcpHandler((server) => {
 		);
 	});
 });
+} catch (error) {
+	console.error("Failed to create MCP handler:", error);
+	throw error;
+}
 
 // Export for Vercel
 export default async function POST(request: Request) {
@@ -234,6 +229,7 @@ export default async function POST(request: Request) {
 	// Log incoming request
 	const requestId = `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 	console.log(`[${requestId}] Incoming ${isSSE ? 'SSE' : 'JSON-RPC'} request`);
+	console.log(`[${requestId}] Tool implementations loaded: ${Object.keys(toolImplementations).length}`);
 	
 	try {
 		// Parse request body
