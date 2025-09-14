@@ -19,13 +19,13 @@ export interface TargetingValue {
 
 export async function getTargetingValues(args: {
 	keyName: string;
-	names?: string;
+	names?: string[];
 	cursor?: string;
 	limit?: number;
 }) {
 	const { keyName, names, cursor, limit = 100 } = args;
 
-	console.error(`[getTargetingValues] Fetching values for key: ${keyName}, names: ${names}`);
+	console.error(`[getTargetingValues] Fetching values for key: ${keyName}, names: ${names?.join(', ')}`);
 
 	try {
 		// Build filters - search by key name in board relation column
@@ -37,16 +37,13 @@ export async function getTargetingValues(args: {
 			}
 		];
 
-		// Add name search if provided
-		if (names) {
-			const nameTerms = names.split(',').map(n => n.trim());
-			for (const term of nameTerms) {
-				filters.push({
-					column_id: "name",
-					compare_value: term,
-					operator: "contains_text"
-				});
-			}
+		// Add name search if provided - use any_of for array of names
+		if (names && names.length > 0) {
+			filters.push({
+				column_id: "name",
+				compare_value: names,
+				operator: "any_of"
+			});
 		}
 
 		// Build query with filters
@@ -55,11 +52,11 @@ export async function getTargetingValues(args: {
 				rules: [${filters.map(f => `
 					{
 						column_id: "${f.column_id}",
-						compare_value: ${Array.isArray(f.compare_value) ? `[${f.compare_value}]` : typeof f.compare_value === "string" ? `"${f.compare_value}"` : f.compare_value},
+						compare_value: ${Array.isArray(f.compare_value) ? `[${f.compare_value.map(v => `"${v.replace(/"/g, '\\"')}"`).join(',')}]` : `"${f.compare_value.replace(/"/g, '\\"')}"`},
 						operator: ${f.operator}
 					}
 				`).join(',')}]
-				${filters.length > 1 ? ', operator: and' : ''}
+				operator: and
 			}
 		`;
 

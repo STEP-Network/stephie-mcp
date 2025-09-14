@@ -289,8 +289,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					description: "Name of the targeting key (from getTargetingKeys)",
 				},
 				names: {
-					type: "string",
-					description: "Optional comma-separated value names to search for",
+					type: "array",
+					items: { type: "string" },
+					description: "Optional array of value names to search for (uses any_of operator). Tip: Include variations for better results, e.g., ['København', 'Copenhagen', 'CPH', 'Kbh'] or ['bil', 'car', 'auto']",
 				},
 				cursor: {
 					type: "string",
