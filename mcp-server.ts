@@ -34,7 +34,7 @@ const buildZodSchema = (name: string): Record<string, any> => {
 			zodType = zodType.describe(prop.description);
 		}
 		
-		// Add default if available
+		// Handle default values
 		if (prop.default !== undefined) {
 			zodType = zodType.default(prop.default);
 		}

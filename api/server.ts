@@ -171,16 +171,16 @@ const buildZodSchema = (name: string): Record<string, any> => {
 const activeRequests = new Map<string, { tool: string; startTime: number }>();
 
 // Create the MCP handler with all tools
-let handler: any;
-try {
-	handler = createMcpHandler((server) => {
-		// Register all tools from TOOL_DEFINITIONS
-		for (const toolDef of TOOL_DEFINITIONS) {
-			const implementation = toolImplementations[toolDef.name];
-			if (!implementation) {
-				console.warn(`No implementation found for tool: ${toolDef.name}`);
-				continue;
-			}
+const handler = createMcpHandler((server) => {
+	console.log(`Registering ${TOOL_DEFINITIONS.length} tools...`);
+	
+	// Register all tools from TOOL_DEFINITIONS
+	for (const toolDef of TOOL_DEFINITIONS) {
+		const implementation = toolImplementations[toolDef.name];
+		if (!implementation) {
+			console.warn(`No implementation found for tool: ${toolDef.name}`);
+			continue;
+		}
 
 		server.tool(
 			toolDef.name,
@@ -215,11 +215,9 @@ try {
 			}
 		);
 	});
+	
+	console.log(`Successfully registered ${Object.keys(toolImplementations).length} tool implementations`);
 });
-} catch (error) {
-	console.error("Failed to create MCP handler:", error);
-	throw error;
-}
 
 // Export for Vercel
 export default async function POST(request: Request) {
