@@ -68,16 +68,15 @@ export async function getPublisherFormats(args: {
 	// Build filter string for GraphQL - search in both name and group if provided
 	let filterString = "";
 	if (names && names.length > 0) {
-		// Build rules array for all names searching in both columns
-		const rules: string[] = [];
-		for (const searchName of names) {
-			rules.push(`{column_id: "name", compare_value: "${searchName}", operator: contains_text}`);
-			rules.push(`{column_id: "board_relation_mkp69z9s", compare_value: "${searchName}", operator: contains_text}`);
-		}
+		// Use any_of operator for searching multiple names in both columns
+		const nameValues = names.map(n => `"${n.replace(/"/g, '\\"')}"`).join(", ");
 		
-		// Search with OR across all name/group combinations
+		// Search with OR between name and group columns, using any_of for multiple values
 		filterString = `query_params: { 
-			rules: [${rules.join(", ")}], 
+			rules: [
+				{column_id: "name", compare_value: [${nameValues}], operator: any_of},
+				{column_id: "board_relation_mkp69z9s", compare_value: [${nameValues}], operator: any_of}
+			], 
 			operator: or
 		}`;
 	}

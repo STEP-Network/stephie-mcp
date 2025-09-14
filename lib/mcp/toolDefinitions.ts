@@ -129,7 +129,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 						type: "string"
 					},
 					description:
-						"Array of names to search for in both publisher/site names and publisher group names (partial match, case-insensitive). Searches with OR logic across all names and both columns.",
+						"Array of names to search for in both publisher/site names and publisher group names (uses any_of operator). Tip: Include variations for better results, e.g., ['Gul & Gratis', 'Gul og Gratis', 'guloggratis']",
 				},
 			},
 		},
