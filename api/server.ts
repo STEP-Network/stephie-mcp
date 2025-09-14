@@ -1127,16 +1127,102 @@ const mcpCompliantHandler = async (request: Request): Promise<Response> => {
 		try {
 			const body = await clonedRequest.json();
 			
-			// Handle prompts/list (no prompts in our server)
+			// Handle prompts/list
 			if (body.method === 'prompts/list') {
+				const { prompts } = await import('../lib/mcp/prompts.js');
 				const response = {
 					jsonrpc: '2.0',
 					id: body.id,
-					result: { prompts: [] }
+					result: { 
+						prompts: prompts.map(p => ({
+							name: p.name,
+							description: p.description,
+							arguments: p.arguments,
+							// Include metadata if available
+							...(p._meta && { _meta: p._meta })
+						}))
+					}
 				};
 				
 				if (isSSE) {
 					// Format as SSE
+					return new Response(
+						`data: ${JSON.stringify(response)}\n\n`,
+						{
+							status: 200,
+							headers: {
+								'Content-Type': 'text/event-stream',
+								'Cache-Control': 'no-cache',
+								'Connection': 'keep-alive'
+							}
+						}
+					);
+				} else {
+					return new Response(
+						JSON.stringify(response),
+						{
+							status: 200,
+							headers: { 'Content-Type': 'application/json' }
+						}
+					);
+				}
+			}
+			
+			// Handle prompts/get
+			if (body.method === 'prompts/get') {
+				const { getPrompt } = await import('../lib/mcp/prompts.js');
+				const prompt = getPrompt(body.params?.name);
+				
+				if (!prompt) {
+					const errorResponse = {
+						jsonrpc: '2.0',
+						id: body.id,
+						error: {
+							code: -32602,
+							message: `Prompt not found: ${body.params?.name}`
+						}
+					};
+					
+					if (isSSE) {
+						return new Response(
+							`data: ${JSON.stringify(errorResponse)}\n\n`,
+							{
+								status: 200,
+								headers: {
+									'Content-Type': 'text/event-stream',
+									'Cache-Control': 'no-cache',
+									'Connection': 'keep-alive'
+								}
+							}
+						);
+					} else {
+						return new Response(
+							JSON.stringify(errorResponse),
+							{
+								status: 200,
+								headers: { 'Content-Type': 'application/json' }
+							}
+						);
+					}
+				}
+				
+				const response = {
+					jsonrpc: '2.0',
+					id: body.id,
+					result: {
+						name: prompt.name,
+						description: prompt.description,
+						arguments: prompt.arguments,
+						// Include both the prompt's metadata and derived info
+						_meta: {
+							...(prompt._meta || {}),
+							complexity: prompt.name.includes('complete') || prompt.name.includes('audit') ? 'high' : 
+							           prompt.name.includes('basic') || prompt.name.includes('quick') ? 'low' : 'medium'
+						}
+					}
+				};
+				
+				if (isSSE) {
 					return new Response(
 						`data: ${JSON.stringify(response)}\n\n`,
 						{
