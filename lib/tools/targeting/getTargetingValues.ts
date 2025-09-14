@@ -19,29 +19,29 @@ export interface TargetingValue {
 
 export async function getTargetingValues(args: {
 	keyName: string;
-	names?: string[];
+	search?: string[];
 	cursor?: string;
 	limit?: number;
 }) {
-	const { keyName, names, cursor, limit = 100 } = args;
+	const { keyName, search, cursor, limit = 100 } = args;
 
-	console.error(`[getTargetingValues] Fetching values for key: ${keyName}, names: ${names?.join(', ')}`);
+	console.error(`[getTargetingValues] Fetching values for key: ${keyName}, search: ${search?.join(', ')}`);
 
 	try {
 		// Build filters - prioritize name search for better performance
 		const filters: string[] = [];
 		
-		if (names && names.length > 0) {
-			// Filter by names first (better performance)
-			names.forEach(name => {
+		if (search && search.length > 0) {
+			// Filter by search terms first (better performance)
+			search.forEach(term => {
 				filters.push(`{
 					column_id: "name",
-					compare_value: "${name.replace(/"/g, '\\"')}",
+					compare_value: "${term.replace(/"/g, '\\"')}",
 					operator: contains_text
 				}`);
 			});
 		} else {
-			// No names provided, just filter by key
+			// No search terms provided, just filter by key
 			filters.push(`{
 				column_id: "${COLUMNS.KEY_RELATION}",
 				compare_value: "${keyName.replace(/"/g, '\\"')}",
@@ -115,7 +115,7 @@ export async function getTargetingValues(args: {
 						keyGamId: "",
 						totalValues: 0,
 						searchKeyName: keyName,
-						names: names || undefined
+						search: search || undefined
 					},
 					{
 						summary: `No targeting values found for key "${keyName}"`
@@ -163,8 +163,8 @@ export async function getTargetingValues(args: {
 				columnValues.map((col: Record<string, unknown>) => [col.id, col])
 			);
 			
-			// When names are provided, we need to post-process to check key relationship
-			if (names && names.length > 0) {
+			// When search terms are provided, we need to post-process to check key relationship
+			if (search && search.length > 0) {
 				// Check if item belongs to the specified key
 				const itemKeyRelation = columnMap.get(COLUMNS.KEY_RELATION) as any;
 				const linkedKey = itemKeyRelation?.linked_items?.[0];
@@ -176,13 +176,13 @@ export async function getTargetingValues(args: {
 					continue;
 				}
 				
-				// Also check if item name matches any of the search names
+				// Also check if item name matches any of the search terms
 				const itemName = String(mondayItem.name).toLowerCase();
-				const matchesAnyName = names.some(name => 
-					itemName.includes(name.toLowerCase())
+				const matchesAnyTerm = search.some(term => 
+					itemName.includes(term.toLowerCase())
 				);
-				if (!matchesAnyName) {
-					continue; // Skip items that don't match any name
+				if (!matchesAnyTerm) {
+					continue; // Skip items that don't match any search term
 				}
 			}
 
@@ -207,7 +207,7 @@ export async function getTargetingValues(args: {
 			keyGamId: keyGamId,
 			totalValues: targetingValues.length,
 			searchKeyName: keyName,
-			names: names || undefined,
+			search: search || undefined,
 			cursor: cursor || undefined,
 			nextCursor: nextCursor || undefined,
 			hasMore: !!nextCursor
@@ -220,7 +220,7 @@ export async function getTargetingValues(args: {
 				targetingValues,
 				metadata,
 				{
-					summary: `Found ${targetingValues.length} targeting ${targetingValues.length === 1 ? 'value' : 'values'} for key "${actualKeyName || keyName}"${names && names.length > 0 ? ` matching ${names.length === 1 ? `"${names[0]}"` : `${names.length} search terms`}` : ''}${nextCursor ? ' (more available)' : ''}`
+					summary: `Found ${targetingValues.length} targeting ${targetingValues.length === 1 ? 'value' : 'values'} for key "${actualKeyName || keyName}"${search && search.length > 0 ? ` matching ${search.length === 1 ? `"${search[0]}"` : `${search.length} search terms`}` : ''}${nextCursor ? ' (more available)' : ''}`
 				}
 			),
 			null,

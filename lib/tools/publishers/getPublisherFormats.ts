@@ -61,19 +61,19 @@ interface CompactPublisher {
 }
 
 export async function getPublisherFormats(args: {
-	names?: string[]; // Array of names to search in both publisher name and group name
+	search?: string[]; // Array of search terms to search in both publisher name and group name
 }) {
-	const { names } = args;
+	const { search } = args;
 
 	// Build filter string for GraphQL - search in both name and group if provided
 	let filterString = "";
-	if (names && names.length > 0) {
-		// Use contains_text for partial matching - build separate rules for each name
+	if (search && search.length > 0) {
+		// Use contains_text for partial matching - build separate rules for each search term
 		const rules: string[] = [];
-		for (const searchName of names) {
+		for (const searchTerm of search) {
 			// Add rules for both publisher name and group name
-			rules.push(`{column_id: "name", compare_value: "${searchName.replace(/"/g, '\\"')}", operator: contains_text}`);
-			rules.push(`{column_id: "board_relation_mkp69z9s", compare_value: "${searchName.replace(/"/g, '\\"')}", operator: contains_text}`);
+			rules.push(`{column_id: "name", compare_value: "${searchTerm.replace(/"/g, '\\"')}", operator: contains_text}`);
+			rules.push(`{column_id: "board_relation_mkp69z9s", compare_value: "${searchTerm.replace(/"/g, '\\"')}", operator: contains_text}`);
 		}
 		
 		// Search with OR across all rules (any name in either column)
@@ -254,8 +254,8 @@ export async function getPublisherFormats(args: {
 					return [format, devices];
 				});
 
-			// Only add to results if we have names filter
-			if (names && names.length > 0) {
+			// Only add to results if we have search filter
+			if (search && search.length > 0) {
 				// Create compact publisher object
 				const compactPublisher: CompactPublisher = {
 					mondayItemId: String(item.id),
@@ -290,9 +290,9 @@ export async function getPublisherFormats(args: {
 			);
 		}
 
-		// Build data only if we have names filter
+		// Build data only if we have search filter
 		let data = undefined;
-		if (names && names.length > 0) {
+		if (search && search.length > 0) {
 			// Convert to hierarchical structure
 			data = Array.from(publishersByGroup.entries())
 				.sort(([a], [b]) => a.toLowerCase().localeCompare(b.toLowerCase()))
@@ -355,15 +355,15 @@ export async function getPublisherFormats(args: {
 			totalGroups,
 			availableFormats: Array.from(allUniqueFormats).sort(),
 			availableDevices: Array.from(allUniqueDevices).sort(),
-			...(names && names.length > 0 && { 
-				filters: names,
+			...(search && search.length > 0 && { 
+				filters: search,
 				matchedPublishers: data ? data.reduce((sum, g) => sum + g.publishers.length, 0) : 0,
 				matchedUniqueFormats: matchedUniqueFormats.size
 			})
 		};
 
-		const summary = names && names.length > 0
-			? `Found ${data ? data.reduce((sum, g) => sum + g.publishers.length, 0) : 0} publishers matching ${names.length === 1 ? `"${names[0]}"` : `${names.length} search terms`}`
+		const summary = search && search.length > 0
+			? `Found ${data ? data.reduce((sum, g) => sum + g.publishers.length, 0) : 0} publishers matching ${search.length === 1 ? `"${search[0]}"` : `${search.length} search terms`}`
 			: `${totalPublishers} total publishers across ${totalGroups} groups`;
 
 		return JSON.stringify(

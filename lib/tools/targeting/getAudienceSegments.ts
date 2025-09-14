@@ -33,24 +33,24 @@ export interface AudienceSegmentResult {
 }
 
 export async function getAudienceSegments(args: {
-	names?: string[];
+	search?: string[];
 	type?: "1st Party" | "3rd Party" | "Omniseg" | "ALL";
 	limit?: number;
 }) {
-	const { names, type = "ALL", limit = 100 } = args;
+	const { search, type = "ALL", limit = 100 } = args;
 
 	console.error("[getAudienceSegments] called with:", {
-		names,
+		search,
 		type,
 		limit,
 	});
 
 	try {
-		// Build filters based on type and names
+		// Build filters based on type and search terms
 		const filters: string[] = [];
 		
-		// Handle type filters at query level when names are not provided
-		if (type !== "ALL" && (!names || names.length === 0)) {
+		// Handle type filters at query level when search terms are not provided
+		if (type !== "ALL" && (!search || search.length === 0)) {
 			if (type === "1st Party") {
 				filters.push(`{
 					column_id: "${COLUMNS.TYPE}",
@@ -73,24 +73,24 @@ export async function getAudienceSegments(args: {
 			}
 		}
 		
-		// Handle name search - search in both name and description
-		if (names && names.length > 0) {
-			const nameFilters = names.flatMap(name => [
+		// Handle search - search in both name and description
+		if (search && search.length > 0) {
+			const searchFilters = search.flatMap(term => [
 				`{
 					column_id: "name",
-					compare_value: "${name.replace(/"/g, '\\"')}",
+					compare_value: "${term.replace(/"/g, '\\"')}",
 					operator: contains_text
 				}`,
 				`{
 					column_id: "${COLUMNS.DESCRIPTION}",
-					compare_value: "${name.replace(/"/g, '\\"')}",
+					compare_value: "${term.replace(/"/g, '\\"')}",
 					operator: contains_text
 				}`
 			]);
 			
 			// Wrap all name/description filters in OR
-			if (nameFilters.length > 0) {
-				filters.push(...nameFilters);
+			if (searchFilters.length > 0) {
+				filters.push(...searchFilters);
 			}
 		}
 
@@ -104,7 +104,7 @@ export async function getAudienceSegments(args: {
 		if (filters.length > 0) {
 			query += `, query_params: {
 				rules: [${filters.join(",")}]
-				operator: ${names && names.length > 0 ? "or" : "and"}
+				operator: ${search && search.length > 0 ? "or" : "and"}
 			}`;
 		}
 
@@ -132,7 +132,7 @@ export async function getAudienceSegments(args: {
 					[],
 					{ 
 						limit, 
-						names: names || undefined, 
+						search: search || undefined, 
 						type: type !== "ALL" ? type : undefined,
 						total: 0 
 					},
@@ -175,11 +175,11 @@ export async function getAudienceSegments(args: {
 				parseFloat((columnMap.get(COLUMNS.SEGMENT_SIZE) as any)?.text || "0") ||
 				null;
 
-			// Post-process filtering when names are provided
+			// Post-process filtering when search terms are provided
 			let includeItem = true;
 			
-			// If names are provided and type is specified, do post-processing
-			if (names && names.length > 0 && type !== "ALL") {
+			// If search terms are provided and type is specified, do post-processing
+			if (search && search.length > 0 && type !== "ALL") {
 				if (type === "Omniseg") {
 					// Only include items starting with "Omniseg -"
 					includeItem = item.name.startsWith("Omniseg -");
@@ -227,7 +227,7 @@ export async function getAudienceSegments(args: {
 					boardId: AUDIENCE_SEGMENTS_BOARD_ID,
 					boardName: "Audience Segments",
 					limit,
-					names: names || undefined,
+					search: search || undefined,
 					type: type !== "ALL" ? type : undefined,
 					total: limitedResults.length,
 					totalBeforeLimit: segments.length

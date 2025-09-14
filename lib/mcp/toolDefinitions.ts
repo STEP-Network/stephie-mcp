@@ -123,13 +123,13 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 		inputSchema: {
 			type: "object",
 			properties: {
-				names: {
+				search: {
 					type: "array",
 					items: {
 						type: "string"
 					},
 					description:
-						"Array of names to search for in both publisher/site names and publisher group names (partial match with contains_text). Tip: Include variations for better results, e.g., ['Gul & Gratis', 'Gul og Gratis', 'guloggratis']",
+						"Array of search terms to filter publishers/sites and publisher groups (partial match with contains_text). Tip: Include variations for better results, e.g., ['Gul & Gratis', 'Gul og Gratis', 'guloggratis']",
 				},
 			},
 		},
@@ -288,10 +288,10 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					type: "string",
 					description: "Name of the targeting key (from getTargetingKeys)",
 				},
-				names: {
+				search: {
 					type: "array",
 					items: { type: "string" },
-					description: "Optional array of value names to search for (partial match with contains_text). Tip: Include variations for better results, e.g., ['København', 'Copenhagen', 'CPH', 'Kbh'] or ['bil', 'car', 'auto']",
+					description: "Optional array of search terms to filter values (partial match with contains_text). Tip: Include variations for better results, e.g., ['København', 'Copenhagen', 'CPH', 'Kbh'] or ['bil', 'car', 'auto']",
 				},
 				cursor: {
 					type: "string",
@@ -314,7 +314,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 		inputSchema: {
 			type: "object",
 			properties: {
-				names: {
+				search: {
 					type: "array",
 					items: { type: "string" },
 					description: "Optional array of search terms to find in segment names or descriptions (searches with OR operator). Tip: Include variations of words for better results, e.g., ['fodbold', 'football', 'soccer'] or ['bil', 'car', 'auto']",
