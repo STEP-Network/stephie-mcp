@@ -1290,5 +1290,6 @@ const mcpCompliantHandler = async (request: Request): Promise<Response> => {
 };
 
 // Export for Vercel Edge Runtime
-export default mcpCompliantHandler;
-export { mcpCompliantHandler as GET, mcpCompliantHandler as POST };
+export default async function POST(request: Request) {
+	return mcpCompliantHandler(request);
+}
