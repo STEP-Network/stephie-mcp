@@ -1289,6 +1289,6 @@ const mcpCompliantHandler = async (request: Request): Promise<Response> => {
 	return handler(request);
 };
 
-// Export the MCP-compliant handler for Vercel Edge Runtime
-// This follows the same export pattern as vercel-labs/mcp-on-vercel
+// Export for Vercel Edge Runtime
+export default mcpCompliantHandler;
 export { mcpCompliantHandler as GET, mcpCompliantHandler as POST };
