@@ -15,14 +15,18 @@ app.use(express.json());
 // Convert Express req/res to Vercel format
 const wrapHandler = (handler: any) => {
 	return async (req: express.Request, res: express.Response) => {
-		// Create Vercel-like request/response objects
+		// Create Vercel-like request/response objects with Web API Request interface
 		const vercelReq: any = {
 			...req,
 			query: req.query,
 			cookies: req.cookies,
 			body: req.body,
-			headers: req.headers,
+			headers: {
+				...req.headers,
+				get: (name: string) => req.headers[name.toLowerCase()]
+			},
 			method: req.method,
+			url: `http://localhost:${PORT}${req.url}`,
 		};
 
 		const vercelRes: any = {

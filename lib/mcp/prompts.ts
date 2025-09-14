@@ -22,378 +22,12 @@ export interface MCPPrompt {
 }
 
 export const prompts: MCPPrompt[] = [
-	// Basic Forecast Prompts
-	{
-		name: "forecast_basic",
-		description: "Basic availability forecast for a standard display campaign. Guides through essential parameters only.",
-		arguments: [
-			{
-				name: "campaign_name",
-				description: "Name or description of the campaign (e.g., 'Q1 Brand Awareness')",
-				required: true
-			},
-			{
-				name: "duration_days",
-				description: "Campaign duration in days (e.g., 30)",
-				required: true
-			},
-			{
-				name: "target_impressions",
-				description: "Target number of impressions (leave empty for maximum available)",
-				required: false
-			}
-		]
-	},
+	// ============================================
+	// CAMPAIGN EXPERT WORKFLOWS
+	// Comprehensive multi-tool orchestrations for advanced campaign planning
+	// ============================================
 
-	{
-		name: "forecast_publisher_specific",
-		description: "Forecast for specific publishers/sites. Helps target inventory on particular websites.",
-		arguments: [
-			{
-				name: "publisher_names",
-				description: "Comma-separated publisher names (e.g., 'jv.dk, berlingske.dk')",
-				required: true
-			},
-			{
-				name: "start_date",
-				description: "Campaign start date (YYYY-MM-DD or 'now')",
-				required: true
-			},
-			{
-				name: "end_date",
-				description: "Campaign end date (YYYY-MM-DD)",
-				required: true
-			},
-			{
-				name: "exclude_premium",
-				description: "Exclude premium placements like interstitials? (yes/no)",
-				required: false
-			}
-		],
-		_meta: {
-			toolsRequired: ['findPublisherAdUnits', 'availabilityForecast'],
-			workflow: [
-				'Call findPublisherAdUnits with publisher_names to get ad unit IDs',
-				'Extract publisher and child ad unit IDs from response',
-				'If exclude_premium, identify premium child units to exclude',
-				'Call availabilityForecast with targetedAdUnitIds and excludedAdUnitIds'
-			],
-			outputFormat: 'Forecast results with publisher-specific inventory availability'
-		}
-	},
-
-	{
-		name: "forecast_contextual",
-		description: "Forecast using contextual targeting for relevant content categories.",
-		arguments: [
-			{
-				name: "categories",
-				description: "Target categories (e.g., 'sports, news, automotive')",
-				required: true
-			},
-			{
-				name: "exclude_sensitive",
-				description: "Exclude sensitive categories? (yes/no, default: yes)",
-				required: false
-			},
-			{
-				name: "date_range",
-				description: "Date range (e.g., 'next 30 days', '2024-02-01 to 2024-02-29')",
-				required: true
-			}
-		],
-		_meta: {
-			toolsRequired: ['getContextualTargeting', 'availabilityForecast'],
-			workflow: [
-				'Call getContextualTargeting with search terms from categories',
-				'Extract category IDs for targeting',
-				'If exclude_sensitive, get sensitive category IDs',
-				'Call availabilityForecast with customTargeting using keyId: 14509472'
-			],
-			outputFormat: 'Forecast with contextual category breakdown'
-		}
-	},
-
-	{
-		name: "forecast_audience",
-		description: "Forecast targeting specific audience segments with demographics.",
-		arguments: [
-			{
-				name: "audience_type",
-				description: "Type of audience (e.g., '1st Party', '3rd Party', 'Omniseg')",
-				required: true
-			},
-			{
-				name: "segment_names",
-				description: "Specific segments to target (optional, searches by name)",
-				required: false
-			},
-			{
-				name: "min_segment_size",
-				description: "Minimum segment size required",
-				required: false
-			},
-			{
-				name: "campaign_dates",
-				description: "Campaign period (e.g., 'February 2024')",
-				required: true
-			}
-		]
-	},
-
-	{
-		name: "forecast_geo",
-		description: "Geographic targeting forecast for location-based campaigns.",
-		arguments: [
-			{
-				name: "locations",
-				description: "Target locations (e.g., 'Copenhagen, Aarhus' or 'Denmark')",
-				required: true
-			},
-			{
-				name: "exclude_locations",
-				description: "Locations to exclude (optional)",
-				required: false
-			},
-			{
-				name: "campaign_period",
-				description: "Campaign period",
-				required: true
-			}
-		]
-	},
-
-	// Advanced Forecast Prompts
-	{
-		name: "forecast_vertical",
-		description: "Forecast for specific content verticals (News, Sport, Auto, etc.)",
-		arguments: [
-			{
-				name: "verticals",
-				description: "Target verticals (News/Sport/Auto/Pets/Food & Lifestyle/Home & Garden/Gaming & Tech)",
-				required: true
-			},
-			{
-				name: "dates",
-				description: "Campaign dates",
-				required: true
-			},
-			{
-				name: "frequency_cap",
-				description: "Max impressions per user per week (optional)",
-				required: false
-			}
-		]
-	},
-
-	{
-		name: "forecast_custom_targeting",
-		description: "Advanced forecast with custom key-value targeting.",
-		arguments: [
-			{
-				name: "targeting_keys",
-				description: "Custom targeting keys to use (will list available)",
-				required: true
-			},
-			{
-				name: "values_search",
-				description: "Search terms for values",
-				required: true
-			},
-			{
-				name: "dates",
-				description: "Campaign dates",
-				required: true
-			}
-		]
-	},
-
-	{
-		name: "forecast_competitive_analysis",
-		description: "Analyze inventory availability across multiple scenarios for competitive insights.",
-		arguments: [
-			{
-				name: "scenarios",
-				description: "Number of different targeting scenarios to test (e.g., 3)",
-				required: true
-			},
-			{
-				name: "base_targeting",
-				description: "Base targeting criteria to vary (e.g., 'publishers', 'geo', 'audience')",
-				required: true
-			},
-			{
-				name: "comparison_period",
-				description: "Period to analyze",
-				required: true
-			}
-		]
-	},
-
-	{
-		name: "forecast_seasonal_campaign",
-		description: "Forecast for seasonal campaigns with specific timing requirements.",
-		arguments: [
-			{
-				name: "season_event",
-				description: "Seasonal event (e.g., 'Christmas', 'Black Friday', 'Summer Sale')",
-				required: true
-			},
-			{
-				name: "lead_time_days",
-				description: "Days before event to start campaign",
-				required: true
-			},
-			{
-				name: "targeting_strategy",
-				description: "Broad, focused, or premium targeting?",
-				required: true
-			}
-		]
-	},
-
-	{
-		name: "forecast_roi_optimization",
-		description: "Multi-scenario forecast to find optimal ROI configuration.",
-		arguments: [
-			{
-				name: "budget_constraint",
-				description: "Budget consideration (high/medium/low/flexible)",
-				required: true
-			},
-			{
-				name: "performance_goal",
-				description: "Primary goal (reach/frequency/efficiency)",
-				required: true
-			},
-			{
-				name: "test_variations",
-				description: "Number of variations to test",
-				required: true
-			}
-		]
-	},
-
-	// Workflow Prompts
-	{
-		name: "forecast_complete_proposal",
-		description: "Generate a complete campaign proposal with multiple forecast scenarios.",
-		arguments: [
-			{
-				name: "client_name",
-				description: "Client or campaign name",
-				required: true
-			},
-			{
-				name: "campaign_objective",
-				description: "Campaign objective (awareness/conversion/traffic)",
-				required: true
-			},
-			{
-				name: "budget_range",
-				description: "Budget range or impression goals",
-				required: false
-			},
-			{
-				name: "constraints",
-				description: "Any specific requirements or restrictions",
-				required: false
-			}
-		],
-		_meta: {
-			toolsRequired: [
-				'getAllProducts',
-				'getAllFormats', 
-				'getAllSizes',
-				'getAllPublishers',
-				'getAllPlacements',
-				'getAudienceSegments',
-				'availabilityForecast'
-			],
-			workflow: [
-				'Gather available inventory: getAllProducts, getAllFormats, getAllSizes',
-				'Identify publisher options: getAllPublishers, getAllPlacements',
-				'Get audience segments if objective is conversion/traffic',
-				'Run baseline RON forecast',
-				'Run targeted forecast with top publishers',
-				'Run premium format forecast if awareness objective',
-				'Compare scenarios and compile proposal'
-			],
-			outputFormat: 'Multi-scenario proposal with recommendations'
-		}
-	},
-
-	{
-		name: "forecast_inventory_audit",
-		description: "Comprehensive inventory availability audit across all targeting options.",
-		arguments: [
-			{
-				name: "audit_period",
-				description: "Period to audit (e.g., 'Next Quarter', 'March 2024')",
-				required: true
-			},
-			{
-				name: "granularity",
-				description: "Level of detail (high/medium/summary)",
-				required: true
-			}
-		]
-	},
-
-	// Publisher Analysis Prompts
-	{
-		name: "analyze_publisher_inventory",
-		description: "Deep analysis of specific publisher's available inventory.",
-		arguments: [
-			{
-				name: "publisher",
-				description: "Publisher name or group",
-				required: true
-			},
-			{
-				name: "time_period",
-				description: "Analysis period",
-				required: true
-			},
-			{
-				name: "compare_formats",
-				description: "Compare different ad formats? (yes/no)",
-				required: false
-			}
-		]
-	},
-
-	// Quick Actions
-	{
-		name: "quick_ron_forecast",
-		description: "Quick Run of Network (RON) forecast for maximum reach.",
-		arguments: [
-			{
-				name: "days",
-				description: "Number of days for campaign",
-				required: true
-			}
-		]
-	},
-
-	{
-		name: "quick_premium_inventory",
-		description: "Check availability of premium inventory (video, high-impact formats).",
-		arguments: [
-			{
-				name: "format_type",
-				description: "Premium format type (video/high-impact/native)",
-				required: true
-			},
-			{
-				name: "dates",
-				description: "Target dates",
-				required: true
-			}
-		]
-	},
-
-	// Expert Campaign Workflows - Advanced multi-tool orchestrations
+	// Discovery & Analysis Workflows
 	{
 		name: "campaign_discovery_complete",
 		description: "Complete inventory and targeting discovery for campaign planning. Comprehensively maps available inventory, targeting options, and constraints.",
@@ -515,46 +149,6 @@ export const prompts: MCPPrompt[] = [
 	},
 
 	{
-		name: "campaign_competitive_intelligence",
-		description: "Competitive campaign intelligence gathering. Analyzes market positioning and identifies opportunities.",
-		arguments: [
-			{
-				name: "industry",
-				description: "Industry to analyze",
-				required: true
-			},
-			{
-				name: "competitor_focus",
-				description: "Specific competitors to track (optional)",
-				required: false
-			},
-			{
-				name: "time_period",
-				description: "Analysis period",
-				required: true
-			}
-		],
-		_meta: {
-			toolsRequired: [
-				'getTargetingKeys',
-				'getTargetingValues',
-				'getContextualTargeting',
-				'findPublisherAdUnits',
-				'availabilityForecast'
-			],
-			workflow: [
-				'Identify industry-specific targeting keys',
-				'Map competitor targeting patterns',
-				'Analyze publisher preferences',
-				'Assess inventory pressure points',
-				'Identify underutilized opportunities',
-				'Compile competitive insights report'
-			],
-			outputFormat: 'Competitive landscape analysis with strategic opportunities'
-		}
-	},
-
-	{
 		name: "campaign_execution_planner",
 		description: "Detailed execution plan with trafficking instructions. Creates implementation-ready campaign blueprint.",
 		arguments: [
@@ -596,45 +190,6 @@ export const prompts: MCPPrompt[] = [
 				'Create implementation checklist'
 			],
 			outputFormat: 'Execution-ready campaign specifications'
-		}
-	},
-
-	{
-		name: "campaign_premium_maximizer",
-		description: "Premium inventory optimization for high-impact campaigns. Focuses on viewability and engagement.",
-		arguments: [
-			{
-				name: "brand_name",
-				description: "Brand requiring premium placement",
-				required: true
-			},
-			{
-				name: "premium_criteria",
-				description: "Premium requirements (viewability/position/format)",
-				required: true
-			},
-			{
-				name: "budget_allocation",
-				description: "Percentage for premium vs standard",
-				required: true
-			}
-		],
-		_meta: {
-			toolsRequired: [
-				'getAllFormats',
-				'getAllPlacements',
-				'findPublisherAdUnits',
-				'availabilityForecast'
-			],
-			workflow: [
-				'Identify premium format options',
-				'Map top-tier publisher inventory',
-				'Evaluate placement opportunities',
-				'Forecast premium availability',
-				'Calculate premium vs standard mix',
-				'Optimize for maximum impact'
-			],
-			outputFormat: 'Premium inventory strategy with budget allocation'
 		}
 	},
 
@@ -716,44 +271,6 @@ export const prompts: MCPPrompt[] = [
 	},
 
 	{
-		name: "campaign_performance_optimizer",
-		description: "Performance optimization workflow for ongoing campaigns. Identifies optimization opportunities.",
-		arguments: [
-			{
-				name: "campaign_id",
-				description: "Current campaign identifier",
-				required: true
-			},
-			{
-				name: "performance_issue",
-				description: "Issue to address (delivery/pacing/targeting)",
-				required: true
-			},
-			{
-				name: "optimization_goal",
-				description: "What to optimize for",
-				required: true
-			}
-		],
-		_meta: {
-			toolsRequired: [
-				'availabilityForecast',
-				'findPublisherAdUnits',
-				'getTargetingValues'
-			],
-			workflow: [
-				'Analyze current targeting setup',
-				'Identify performance bottlenecks',
-				'Test alternative configurations',
-				'Forecast impact of changes',
-				'Recommend optimizations',
-				'Project performance improvements'
-			],
-			outputFormat: 'Optimization recommendations with projected impact'
-		}
-	},
-
-	{
 		name: "campaign_proposal_master",
 		description: "Master proposal generator with full campaign blueprint. Creates comprehensive, client-ready proposals.",
 		arguments: [
@@ -788,9 +305,13 @@ export const prompts: MCPPrompt[] = [
 				'getAllPublishers',
 				'getAllProducts',
 				'getAllFormats',
+				'getAllSizes',
+				'getAllPlacements',
+				'getAllVerticals',
+				'getAllAdPrices',
 				'getAudienceSegments',
-				'getContextualTargeting',
 				'getTargetingKeys',
+				'getTargetingValues',
 				'findPublisherAdUnits',
 				'availabilityForecast'
 			],
@@ -822,91 +343,18 @@ export function formatPromptForExecution(promptName: string, args: Record<string
 	const prompt = getPrompt(promptName);
 	if (!prompt) throw new Error(`Prompt ${promptName} not found`);
 
-	// Map prompt arguments to actual tool parameters based on prompt type
-	switch (promptName) {
-		case 'forecast_basic':
-			return {
-				startDate: 'now',
-				endDate: calculateEndDate(parseInt(args.duration_days || '30')),
-				sizes: [[300, 250], [728, 90], [320, 50]], // Common sizes
-				goalQuantity: args.target_impressions ? parseInt(args.target_impressions) : null
-			};
-
-		case 'forecast_publisher_specific':
-			return {
-				startDate: args.start_date,
-				endDate: args.end_date,
-				sizes: [[300, 250], [728, 90], [320, 50]],
-				// Note: Would need to call findPublisherAdUnits first to get IDs
-				_publishers: args.publisher_names.split(',').map(s => s.trim()),
-				_excludePremium: args.exclude_premium === 'yes'
-			};
-
-		case 'forecast_contextual':
-			return {
-				startDate: parseDateRange(args.date_range).start,
-				endDate: parseDateRange(args.date_range).end,
-				sizes: [[300, 250], [728, 90]],
-				// Note: Would need to call getContextualTargeting first
-				_categories: args.categories.split(',').map(s => s.trim()),
-				_excludeSensitive: args.exclude_sensitive !== 'no'
-			};
-
-		// Campaign Expert Workflows - These require orchestration
-		case 'campaign_discovery_complete':
-		case 'campaign_strategy_builder':
-		case 'campaign_scenario_planner':
-		case 'campaign_competitive_intelligence':
-		case 'campaign_execution_planner':
-		case 'campaign_premium_maximizer':
-		case 'campaign_audience_orchestrator':
-		case 'campaign_seasonal_optimizer':
-		case 'campaign_performance_optimizer':
-		case 'campaign_proposal_master':
-			// These prompts require workflow orchestration
-			// They don't map directly to single tool parameters
-			return {
-				_workflowType: promptName,
-				_workflowArgs: args,
-				_meta: prompt._meta
-			};
-
-		// Add more mappings as needed...
-
-		default:
-			return args;
-	}
-}
-
-/**
- * Helper to calculate end date from duration
- */
-function calculateEndDate(daysFromNow: number): string {
-	const date = new Date();
-	date.setDate(date.getDate() + daysFromNow);
-	return date.toISOString().split('T')[0];
-}
-
-/**
- * Helper to parse flexible date ranges
- */
-function parseDateRange(range: string): { start: string; end: string } {
-	// Handle various formats like "next 30 days", "February 2024", etc.
-	const lower = range.toLowerCase();
-	
-	if (lower.includes('next') && lower.includes('days')) {
-		const days = parseInt(lower.match(/\d+/)?.[0] || '30');
+	// All campaign expert workflows require orchestration
+	// They don't map directly to single tool parameters
+	if (promptName.startsWith('campaign_')) {
 		return {
-			start: 'now',
-			end: calculateEndDate(days)
+			_workflowType: promptName,
+			_workflowArgs: args,
+			_meta: prompt._meta
 		};
 	}
-	
-	// Add more parsing logic as needed
-	
-	// Default fallback
-	return {
-		start: 'now',
-		end: calculateEndDate(30)
-	};
+
+	// Default fallback for any non-workflow prompts
+	return args;
 }
+
+// Helper functions removed - campaign expert workflows handle dates contextually

@@ -15,117 +15,8 @@ export function generatePromptMessage(
 	promptName: string,
 	args: Record<string, string>
 ): { role: string; content: string } {
-	// Different prompts generate different message patterns
+	// Campaign Expert Workflows
 	switch (promptName) {
-		case 'forecast_publisher_specific':
-			return {
-				role: 'assistant',
-				content: `I'll help you forecast availability for the specified publishers. Let me:
-
-1. First find the ad unit IDs for: ${args.publisher_names}
-2. Then run an availability forecast from ${args.start_date} to ${args.end_date}
-${args.exclude_premium === 'yes' ? '3. I\'ll exclude premium placements like interstitials' : ''}
-
-Let me start by finding the publisher ad units...
-
-[Tool: findPublisherAdUnits with names: [${args.publisher_names.split(',').map(s => `"${s.trim()}"`).join(', ')}]]
-
-Now I'll run the availability forecast with the found ad unit IDs...
-
-[Tool: availabilityForecast with:
-- startDate: "${args.start_date}"
-- endDate: "${args.end_date}"
-- targetedAdUnitIds: [from previous response]
-${args.exclude_premium === 'yes' ? '- excludedAdUnitIds: [premium units from previous response]' : ''}
-- sizes: [[300,250], [728,90], [320,50]]
-]`
-			};
-
-		case 'forecast_contextual':
-			return {
-				role: 'assistant',
-				content: `I'll forecast availability using contextual targeting for ${args.categories}. Here's my approach:
-
-1. Search for contextual categories matching: ${args.categories}
-2. ${args.exclude_sensitive !== 'no' ? 'Identify and exclude sensitive categories' : 'Include all matching categories'}
-3. Run forecast for the period: ${args.date_range}
-
-Starting with contextual category lookup...
-
-[Tool: getContextualTargeting with search: [${args.categories.split(',').map(s => `"${s.trim()}"`).join(', ')}]]
-
-Now running the availability forecast with contextual targeting...
-
-[Tool: availabilityForecast with:
-- startDate: "${parseFlexibleDate(args.date_range).start}"
-- endDate: "${parseFlexibleDate(args.date_range).end}"
-- customTargeting: [{
-    keyId: "14509472",
-    valueIds: [category IDs from previous response],
-    operator: "IS"
-  }]
-${args.exclude_sensitive !== 'no' ? '- Additional exclusion for sensitive categories' : ''}
-- sizes: [[300,250], [728,90]]
-]`
-			};
-
-		case 'forecast_complete_proposal':
-			return {
-				role: 'assistant',
-				content: `I'll create a comprehensive campaign proposal for ${args.client_name}. Given the ${args.campaign_objective} objective, I'll:
-
-1. **Inventory Discovery Phase**
-   - Gather available products and formats
-   - Identify publisher inventory
-   - Review placement options
-
-2. **Scenario Planning Phase**
-   - Baseline: Run of Network (RON) forecast
-   - Targeted: Top-tier publishers
-   ${args.campaign_objective === 'awareness' ? '- Premium: High-impact formats' : ''}
-   ${args.campaign_objective === 'conversion' ? '- Audience: Demographic segments' : ''}
-
-3. **Analysis & Recommendations**
-   ${args.budget_range ? `- Optimize for budget: ${args.budget_range}` : '- Maximize available inventory'}
-   ${args.constraints ? `- Apply constraints: ${args.constraints}` : ''}
-
-Let me begin gathering the inventory data...
-
-[Tool sequence:
-1. getAllProducts - Understand product offerings
-2. getAllFormats - Available ad formats
-3. getAllSizes - Supported dimensions
-4. getAllPublishers - Publisher inventory
-5. getAllPlacements - Placement options
-${args.campaign_objective === 'conversion' ? '6. getAudienceSegments - Targeting options' : ''}
-]
-
-Now I'll run multiple forecast scenarios...
-
-[Tool: availabilityForecast - Scenario 1: RON baseline]
-[Tool: availabilityForecast - Scenario 2: Premium publishers]
-${args.campaign_objective === 'awareness' ? '[Tool: availabilityForecast - Scenario 3: High-impact formats]' : ''}
-${args.campaign_objective === 'conversion' ? '[Tool: availabilityForecast - Scenario 3: Audience targeted]' : ''}
-
-Compiling the proposal with recommendations based on the scenarios...`
-			};
-
-		case 'quick_ron_forecast':
-			return {
-				role: 'assistant',
-				content: `I'll run a quick Run of Network forecast for ${args.days} days starting immediately.
-
-[Tool: availabilityForecast with:
-- startDate: "now"
-- endDate: "${calculateEndDate(parseInt(args.days))}"
-- targetedAdUnitIds: null (defaults to RON)
-- sizes: [[300,250], [728,90], [320,50], [970,250]]
-]
-
-This will show maximum available inventory across the entire network.`
-			};
-
-		// Campaign Expert Workflows
 		case 'campaign_discovery_complete':
 			return {
 				role: 'assistant',
@@ -224,51 +115,126 @@ Phase 4: Proposal Compilation
 Generating executive summary and recommendations...`
 			};
 
+		case 'campaign_scenario_planner':
+			return {
+				role: 'assistant',
+				content: `I'll create ${args.num_scenarios} scenarios for testing, optimizing for ${args.optimization_metric}.
+
+Base Scenario: ${args.base_scenario}
+Variables to Test: ${args.variables_to_test}
+
+[Tool: availabilityForecast - Baseline configuration]
+${Array(parseInt(args.num_scenarios) - 1).fill(0).map((_, i) => 
+	`[Tool: availabilityForecast - Scenario ${i + 2}: Varying ${args.variables_to_test}]`
+).join('\n')}
+
+Analyzing scenarios for ${args.optimization_metric} optimization...`
+			};
+
+		case 'campaign_competitive_intelligence':
+			return {
+				role: 'assistant',
+				content: `I'll analyze the competitive landscape for ${args.industry} during ${args.time_period}.
+
+[Tool: getTargetingKeys - Industry targeting patterns]
+[Tool: getTargetingValues - Competitive targeting analysis]
+[Tool: getContextualTargeting - Content alignment]
+[Tool: findPublisherAdUnits - Publisher preferences]
+[Tool: availabilityForecast - Inventory pressure analysis]
+
+Compiling competitive intelligence report...`
+			};
+
+		case 'campaign_execution_planner':
+			return {
+				role: 'assistant',
+				content: `I'll create a detailed execution plan for ${args.campaign_name}.
+
+Strategy: ${args.approved_strategy}
+Start Date: ${args.start_date}
+Flighting: ${args.flight_schedule}
+
+[Tool: availabilityForecast - Confirm inventory]
+[Tool: getAllFormats - Creative requirements]
+[Tool: getAllPlacements - Placement strategies]
+
+Generating trafficking specifications...`
+			};
+
+		case 'campaign_premium_maximizer':
+			return {
+				role: 'assistant',
+				content: `I'll optimize premium inventory for ${args.brand_name}.
+
+Premium Criteria: ${args.premium_criteria}
+Budget Split: ${args.budget_allocation}
+
+[Tool: getAllFormats - Premium format options]
+[Tool: getAllPlacements - Premium placements]
+[Tool: findPublisherAdUnits - Top-tier publishers]
+[Tool: availabilityForecast - Premium availability]
+
+Optimizing premium/standard mix...`
+			};
+
+		case 'campaign_audience_orchestrator':
+			return {
+				role: 'assistant',
+				content: `I'll orchestrate an audience-first campaign.
+
+Target Segments: ${args.target_segments}
+Priority: ${args.segment_priority}
+Overlap Strategy: ${args.overlap_strategy}
+
+[Tool: getAudienceSegments - Map segments]
+[Tool: getContextualTargeting - Content alignment]
+[Tool: findPublisherAdUnits - Publisher affinity]
+[Tool: availabilityForecast - Segment reach]
+
+Optimizing segment mix...`
+			};
+
+		case 'campaign_seasonal_optimizer':
+			return {
+				role: 'assistant',
+				content: `I'll optimize for ${args.season_event} with ${args.ramp_strategy} strategy.
+
+Competition Level: ${args.competitive_factor}
+
+[Tool: availabilityForecast - Seasonal patterns]
+[Tool: getContextualTargeting - Seasonal content]
+[Tool: findPublisherAdUnits - Publisher timing]
+
+Creating seasonal calendar...`
+			};
+
+		case 'campaign_performance_optimizer':
+			return {
+				role: 'assistant',
+				content: `I'll optimize ${args.campaign_id} for ${args.optimization_goal}.
+
+Issue: ${args.performance_issue}
+
+[Tool: getTargetingValues - Current setup]
+[Tool: findPublisherAdUnits - Publisher performance]
+[Tool: availabilityForecast - Alternative configs]
+
+Generating optimization recommendations...`
+			};
+
 		default:
 			return {
 				role: 'assistant',
-				content: `I'll help you with the ${promptName} workflow using the provided parameters: ${JSON.stringify(args, null, 2)}`
+				content: `I'll execute the ${promptName} workflow with the provided parameters.
+
+${JSON.stringify(args, null, 2)}
+
+This campaign expert workflow will orchestrate multiple tools to deliver comprehensive results.`
 			};
 	}
 }
 
-/**
- * Helper functions
- */
-function calculateEndDate(daysFromNow: number): string {
-	const date = new Date();
-	date.setDate(date.getDate() + daysFromNow);
-	return date.toISOString().split('T')[0];
-}
-
-function parseFlexibleDate(dateStr: string): { start: string; end: string } {
-	const lower = dateStr.toLowerCase();
-	
-	// Handle "next X days"
-	if (lower.includes('next') && lower.includes('days')) {
-		const match = lower.match(/(\d+)/);
-		const days = match ? parseInt(match[1]) : 30;
-		return {
-			start: 'now',
-			end: calculateEndDate(days)
-		};
-	}
-	
-	// Handle date range with " to "
-	if (dateStr.includes(' to ')) {
-		const [start, end] = dateStr.split(' to ');
-		return {
-			start: start.trim(),
-			end: end.trim()
-		};
-	}
-	
-	// Default
-	return {
-		start: 'now',
-		end: calculateEndDate(30)
-	};
-}
+// Helper functions are no longer needed since we removed basic forecast prompts
 
 /**
  * Extract tool calls from a prompt message
