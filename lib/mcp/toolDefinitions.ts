@@ -316,7 +316,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 				names: {
 					type: "array",
 					items: { type: "string" },
-					description: "Optional array of search terms to find in segment names or descriptions (searches with OR operator)",
+					description: "Optional array of search terms to find in segment names or descriptions (searches with OR operator). Tip: Include variations of words for better results, e.g., ['fodbold', 'football', 'soccer'] or ['bil', 'car', 'auto']",
 				},
 				type: {
 					type: "string",
