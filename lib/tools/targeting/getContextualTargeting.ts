@@ -60,7 +60,50 @@ export async function getContextualTargeting(args: {
 		// Analyze category patterns
 		const categorized = analyzeCategoryPatterns(limitedValues);
 
-		// Format for JSON response
+		// Build hierarchical structure for better LLM understanding
+		const hierarchy: Record<string, any> = {};
+		const customCategories: Record<string, string[]> = {};
+		const topicMappings: Record<string, string[]> = {};
+		
+		// Process categories into hierarchy
+		limitedValues.forEach(value => {
+			const displayName = value.displayName;
+			
+			// Handle custom categories (step_, neg_, gs_, oersted)
+			if (displayName.startsWith('step_') || displayName.startsWith('neg_') || 
+				displayName.startsWith('gs_') || displayName === 'oersted') {
+				const prefix = displayName.split('_')[0];
+				if (!customCategories[prefix]) customCategories[prefix] = [];
+				customCategories[prefix].push(displayName.replace(`${prefix}_custom_`, ''));
+				
+				// Add to topic mappings
+				if (displayName.includes('bil') || displayName.includes('car')) {
+					if (!topicMappings.automotive) topicMappings.automotive = [];
+					topicMappings.automotive.push(value.id);
+				}
+				if (displayName.includes('fodbold') || displayName.includes('soccer')) {
+					if (!topicMappings.sports) topicMappings.sports = [];
+					topicMappings.sports.push(value.id);
+				}
+			} 
+			// Handle standard categories
+			else if (displayName.includes('_')) {
+				const [parent, ...rest] = displayName.split('_');
+				if (!hierarchy[parent]) {
+					hierarchy[parent] = { subcategories: {} };
+				}
+				hierarchy[parent].subcategories[rest.join('_')] = value.id;
+			} else {
+				// Main category
+				if (!hierarchy[displayName]) {
+					hierarchy[displayName] = { id: value.id, subcategories: {} };
+				} else {
+					hierarchy[displayName].id = value.id;
+				}
+			}
+		});
+
+		// Format for JSON response - keep backward compatibility
 		const formattedCategories = limitedValues.map(value => ({
 			id: value.id,
 			name: value.name,
@@ -77,33 +120,52 @@ export async function getContextualTargeting(args: {
 			categoryGroups.set(prefix, (categoryGroups.get(prefix) || 0) + 1);
 		});
 
-		// Build metadata
+		// Identify sensitive categories to exclude
+		const sensitiveCategories = limitedValues.filter(v => 
+			v.displayName.includes('Sensitive') || 
+			v.displayName.includes('Weapons') || 
+			v.displayName.includes('War') ||
+			v.displayName.includes('Crime') ||
+			v.displayName.includes('Disasters') ||
+			v.displayName.includes('neg_')
+		).map(v => v.id);
+
+		// Build metadata with optimized structure
 		const metadata: Record<string, any> = {
-			networkId: NETWORK_ID,
-			contextualKeyId: NEUWO_CONTEXTUAL_KEY_ID,
-			totalCategories: limitedValues.length,
-			mainCategories: categorized.mainCategories.length,
-			subCategories: categorized.subCategories.length,
-			filters: {
-				limit
+			// Core identifiers
+			network: NETWORK_ID,
+			targetingKey: NEUWO_CONTEXTUAL_KEY_ID,
+			
+			// Results summary
+			results: {
+				total: allValues.length,
+				matched: filteredValues.length,
+				returned: limitedValues.length
 			},
-			categoryGroups: Array.from(categoryGroups.entries())
-				.sort((a, b) => b[1] - a[1])
-				.map(([group, count]) => ({ group, count })),
+			
+			// Hierarchical organization for better LLM understanding
+			hierarchy: hierarchy,
+			customCategories: customCategories,
+			
+			// Topic-based groupings for easy targeting
+			targeting: {
+				byTopic: topicMappings,
+				safelist: limitedValues
+					.filter(v => !sensitiveCategories.includes(v.id))
+					.map(v => v.id),
+				exclusions: sensitiveCategories,
+				all: limitedValues.map(v => v.id)
+			},
+			
+			// Simplified usage examples
 			usage: {
-				description: "Use these contextual categories for content-based targeting",
-				categories: {
-					"News & Media": "Target news-related content",
-					"Sports": "Target sports content and events",
-					"Business": "Target business and finance content",
-					"Entertainment": "Target entertainment content"
-				},
-				exampleUsage: {
+				example: {
+					targetSports: topicMappings.sports || [],
+					excludeSensitive: sensitiveCategories,
 					customTargeting: {
 						[NEUWO_CONTEXTUAL_KEY_ID]: limitedValues.slice(0, 3).map(v => v.id)
 					}
-				},
-				allCategoryIds: limitedValues.map(v => v.id)
+				}
 			}
 		};
 
