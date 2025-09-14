@@ -63,7 +63,6 @@ import { getAllSizes } from "../lib/tools/targeting/getAllSizes.js";
 import { getAudienceSegments } from "../lib/tools/targeting/getAudienceSegments.js";
 import { getContextualTargeting } from "../lib/tools/targeting/getContextualTargeting.js";
 import { getGeoLocations } from "../lib/tools/targeting/getGeoLocations.js";
-import { getKeyValues } from "../lib/tools/targeting/getKeyValues.js";
 import { createTaskAdOps } from "../lib/tools/tasks/createTaskAdOps.js";
 import { createTaskAdTech } from "../lib/tools/tasks/createTaskAdTech.js";
 import { createTaskMarketing } from "../lib/tools/tasks/createTaskMarketing.js";
@@ -327,16 +326,6 @@ const handler = createMcpHandler((server) => {
 			const result = await getAllPlacements();
 			return { content: [{ type: "text", text: result }] };
 		}
-	);
-
-	server.tool(
-		"getKeyValues",
-		getToolDescription("getKeyValues"),
-		buildZodSchema("getKeyValues"),
-		async (input) => {
-			const result = await getKeyValues(input);
-			return { content: [{ type: "text", text: result }] };
-		},
 	);
 
 	server.tool(

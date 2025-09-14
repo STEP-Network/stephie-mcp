@@ -5,7 +5,8 @@
 
 import { getItems } from '../debug/getItems.js';
 import { getPublisherFormats } from '../publishers/getPublisherFormats.js';
-import { getKeyValues } from '../targeting/getKeyValues.js';
+import { getTargetingKeys } from '../targeting/getTargetingKeys.js';
+import { getTargetingValues } from '../targeting/getTargetingValues.js';
 import { createListResponse } from '../json-output.js';
 
 export async function search(params: { query: string; limit?: number }): Promise<string> {
@@ -49,16 +50,28 @@ export async function search(params: { query: string; limit?: number }): Promise
 	// Search key values
 	if (lowerQuery.includes('key') || lowerQuery.includes('value') || lowerQuery.includes('target')) {
 		try {
-			const keyData = await getKeyValues({
-				search: query,
-				limit: Math.min(limit, 10)
-			});
-			const parsed = JSON.parse(keyData);
-			if (parsed.data && parsed.data.length > 0) {
+			// Search for keys
+			const keysData = await getTargetingKeys();
+			const keysParsed = JSON.parse(keysData);
+			
+			// Filter keys matching the query
+			const matchingKeys = [];
+			if (keysParsed.data) {
+				for (const group of keysParsed.data) {
+					for (const key of group.keys) {
+						if (key.name.toLowerCase().includes(lowerQuery) || 
+							key.keyCode?.toLowerCase().includes(lowerQuery)) {
+							matchingKeys.push(key);
+						}
+					}
+				}
+			}
+			
+			if (matchingKeys.length > 0) {
 				results.push({
-					type: 'keyValues',
-					matches: parsed.data.length,
-					data: parsed.data
+					type: 'targetingKeys',
+					matches: matchingKeys.length,
+					data: matchingKeys.slice(0, limit)
 				});
 			}
 		} catch (e) {

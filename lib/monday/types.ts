@@ -96,6 +96,7 @@ export interface MondayBoardResponse {
 	name?: string;
 	items_page?: {
 		items: MondayItemResponse[];
+		cursor?: string;
 	};
 	groups?: Array<{
 		id: string;

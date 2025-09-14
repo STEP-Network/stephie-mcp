@@ -73,7 +73,8 @@ import { updateTasksTechIntelligence } from "../tools/tasks/updateTasksTechIntel
 import { availabilityForecast } from "../tools/availabilityForecast.js";
 import { getAllSizes } from "../tools/targeting/getAllSizes.js";
 import { getAllPlacements } from "../tools/targeting/getAllPlacements.js";
-import { getKeyValues } from "../tools/targeting/getKeyValues.js";
+import { getTargetingKeys } from "../tools/targeting/getTargetingKeys.js";
+import { getTargetingValues } from "../tools/targeting/getTargetingValues.js";
 import { getAudienceSegments } from "../tools/targeting/getAudienceSegments.js";
 import { getGeoLocations } from "../tools/targeting/getGeoLocations.js";
 import { getContextualTargeting } from "../tools/targeting/getContextualTargeting.js";
@@ -159,7 +160,8 @@ const BOARD_TOOL_IMPLEMENTATIONS: Record<string, Function> = {
 	// Targeting tools
 	getAllSizes,
 	getAllPlacements,
-	getKeyValues,
+	getTargetingKeys,
+	getTargetingValues,
 	getAudienceSegments,
 	getGeoLocations,
 	getContextualTargeting,
