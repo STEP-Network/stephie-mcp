@@ -252,7 +252,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 
 		name: "findPublisherAdUnits",
 		description:
-			"Find ad units for publishers/sites with 3 hierarchies: Publisher Groups → Publishers/Sites → Child Ad Units. Returns all Google Ad Manager (GAM) ad unit IDs needed for forecasting. Essential for availabilityForecast tool.",
+			"Find Google Ad Manager ad unit IDs for publishers/sites. Returns hierarchical structure: Publisher Groups → Publishers → Child Ad Units. Each level has its own ad unit ID that can be used in availabilityForecast. The tool automatically fetches parent groups and child ad units when you search for publishers, giving you all hierarchy levels for precise targeting control.",
 		inputSchema: {
 			type: "object",
 			properties: {
@@ -260,10 +260,30 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					type: "array",
 					items: { type: "string" },
 					description:
-						'Publisher/site names to search for (e.g., ["jv.dk", "berlingske.dk"])',
+						'Publisher/site names to search for (e.g., ["jv.dk", "berlingske.dk"]). Searches both publisher names and publisher group names. Returns the full hierarchy: parent groups, matching publishers, and their child ad units.',
+				},
+				verticals: {
+					type: "array",
+					items: { type: "string" },
+					enum: ["News", "Sport", "Auto", "Pets", "Food & Lifestyle", "Home & Garden", "Gaming & Tech"],
+					description:
+						"Filter by content verticals. Returns all publishers and their hierarchies within the selected verticals.",
+				},
+				countOnly: {
+					type: "boolean",
+					description:
+						"If true, returns only counts without detailed data. Useful for quick inventory checks.",
+					default: false,
+				},
+				source: {
+					type: "string",
+					enum: ["Google Ad Manager", "Adform"],
+					description:
+						"Ad server source. Defaults to Google Ad Manager.",
+					default: "Google Ad Manager",
 				},
 			},
-			required: ["names"],
+			required: [],
 		},
 	},
 
@@ -365,7 +385,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 
 		name: "getContextualTargeting",
 		description:
-			"Get Neuwo contextual targeting categories from Google Ad Manager REST API. Returns content categories like news, sports, entertainment with their GAM IDs. Requires GAM authentication.",
+			"Get Neuwo contextual targeting categories from Google Ad Manager. These work as custom key-value pairs with key ID 14509472 (step_contextual). Returns content categories (news, sports, automotive, etc.) and custom segments (step_custom_*, neg_custom_*, etc.) with their value IDs for contextual ad targeting. Use these IDs in availabilityForecast's customTargeting parameter with keyId: '14509472'.",
 		inputSchema: {
 			type: "object",
 			properties: {
@@ -386,14 +406,14 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 
 		name: "availabilityForecast",
 		description:
-			"Get availability forecast from Google Ad Manager. Returns impression availability for specified targeting and date range.",
+			"Execute an availability forecast in Google Ad Manager. Use this tool to forecast available impressions for an ad campaign. Returns impression availability for specified targeting and date range. If given full autonomy, experiment first with broad reach since every targeting criterion narrows the forecast.",
 		inputSchema: {
 			type: "object",
 			properties: {
 				startDate: {
 					type: "string",
 					description:
-						'Start date in YYYY-MM-DD format or "now" for immediate start',
+						'Start date in YYYY-MM-DD format OR set value to "now" for immediate start.',
 					required: true,
 				},
 				endDate: {
@@ -408,7 +428,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 						items: { type: "number" },
 					},
 					description:
-						"Array of ad sizes as [width, height] pairs, e.g. [[300,250], [1,2]]. Use getAllSizes tool to confirm the available sizes.",
+						"Array of ad unit sizes as [width, height] pairs, e.g. [[300,250], [1,2]]. Use getAllSizes tool to confirm the available sizes.",
 					required: true,
 				},
 				goalQuantity: {
@@ -420,13 +440,13 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 					type: "array",
 					items: { type: "number" },
 					description:
-						"Array of ad unit IDs to target. Not necessary if using targetedPlacementIds. Use findPublisherAdUnits tool to get valid IDs. Include only same-level ad units (e.g. level 2 'jv.dk' OR level 3 'billboard_1').",
+						"Array of ad unit IDs to target. Google Ad Manager uses a 3-level hierarchy: Publisher Groups → Publishers → Child Ad Units. When you target a higher level (e.g., Publisher Group), all children are automatically included. Use findPublisherAdUnits to get IDs. If null/empty, defaults to RON (Run of Network) with ID 21808880960. Best practices: (1) Target the highest appropriate level, (2) Never include child with its associated parent, (3) Use excludedAdUnitIds to remove specific children from parent targeting.",
 				},
 				excludedAdUnitIds: {
 					type: "array",
 					items: { type: "number" },
 					description:
-						"Array of ad unit IDs to exclude from forecast. Use findPublisherAdUnits tool to get valid IDs. Can include any level ad units regardless of targetedAdUnitIds.",
+						"Array of ad unit IDs to exclude from forecast. Works with the hierarchy: can exclude specific Publishers from a targeted Publisher Group, or specific Child Ad Units from a targeted Publisher. Use findPublisherAdUnits to get IDs. Common patterns: (1) Target Publisher Group, exclude specific Publishers, (2) Target Publisher, exclude specific Child Ad Units, (3) Exclude sensitive/premium inventory from broad targeting such as interstitials.",
 				},
 				audienceSegmentIds: {
 					type: "array",
@@ -458,7 +478,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 						},
 					},
 					description:
-						"Array of custom targeting key-value pairs. Use getTargetingKeys and getTargetingValues tools to get valid keys and values.",
+						"Array of custom targeting key-value pairs. Use getTargetingKeys and getTargetingValues for standard custom targeting. For contextual targeting, use getContextualTargeting and set keyId: '14509472' (step_contextual) with the returned category IDs as valueIds.",
 				},
 				frequencyCapMaxImpressions: {
 					type: "number",

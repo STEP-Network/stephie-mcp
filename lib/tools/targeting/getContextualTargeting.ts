@@ -1,7 +1,8 @@
 import { getGAMAccessToken } from "../../gam/auth.js";
 import { createListResponse } from "../json-output.js";
 
-const NEUWO_CONTEXTUAL_KEY_ID = "14509472";
+const NEUWO_CONTEXTUAL_KEY_ID = "14509472"; // Also known as "step_contextual" key
+const NEUWO_CONTEXTUAL_KEY_NAME = "step_contextual";
 const NETWORK_ID = process.env.GOOGLE_AD_MANAGER_NETWORK_CODE || "21809957681";
 
 export interface ContextualValue {
@@ -134,7 +135,11 @@ export async function getContextualTargeting(args: {
 		const metadata: Record<string, any> = {
 			// Core identifiers
 			network: NETWORK_ID,
-			targetingKey: NEUWO_CONTEXTUAL_KEY_ID,
+			contextualKey: {
+				id: NEUWO_CONTEXTUAL_KEY_ID,
+				name: NEUWO_CONTEXTUAL_KEY_NAME,
+				description: "Use this key ID with category value IDs for contextual targeting"
+			},
 			
 			// Results summary
 			results: {
@@ -157,14 +162,35 @@ export async function getContextualTargeting(args: {
 				all: limitedValues.map(v => v.id)
 			},
 			
-			// Simplified usage examples
+			// Clear usage instructions
 			usage: {
+				description: "Contextual targeting uses custom key-value pairs with key ID 14509472",
+				howToUse: {
+					step1: "Get category IDs from this tool",
+					step2: "Use in availabilityForecast's customTargeting parameter",
+					step3: "Set keyId: '14509472' and valueIds: [array of category IDs]"
+				},
 				example: {
-					targetSports: topicMappings.sports || [],
-					excludeSensitive: sensitiveCategories,
-					customTargeting: {
-						[NEUWO_CONTEXTUAL_KEY_ID]: limitedValues.slice(0, 3).map(v => v.id)
-					}
+					// Example for targeting sports content
+					targetSports: {
+						keyId: NEUWO_CONTEXTUAL_KEY_ID,
+						valueIds: topicMappings.sports || [],
+						operator: "IS"
+					},
+					// Example for excluding sensitive content
+					excludeSensitive: {
+						keyId: NEUWO_CONTEXTUAL_KEY_ID,
+						valueIds: sensitiveCategories,
+						operator: "IS_NOT"
+					},
+					// Generic example structure
+					customTargeting: [
+						{
+							keyId: NEUWO_CONTEXTUAL_KEY_ID,
+							valueIds: limitedValues.slice(0, 3).map(v => v.id),
+							operator: "IS"
+						}
+					]
 				}
 			}
 		};

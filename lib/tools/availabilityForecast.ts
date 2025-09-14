@@ -77,6 +77,7 @@ export const availabilityForecast = async (params: {
 		} = params;
 
 		// Add default ad unit ID if none provided
+		// 21808880960 is the RON (Run of Network) ad unit - targets all inventory
 		const effectiveTargetedAdUnitIds = (!targetedAdUnitIds || targetedAdUnitIds.length === 0) 
 			? [21808880960] 
 			: targetedAdUnitIds;

@@ -563,14 +563,21 @@ export async function findPublisherAdUnits(args: {
 			},
 			forecastUsage: {
 				hierarchy: "Publisher Group → Publisher → Child Ad Units",
+				hierarchyExplanation: "Each level inherits all children below it automatically",
 				guidelines: [
-					"Never include more than one hierarchy level when forecasting with targetedAdUnitIds",
-					"Can include publisher group in targetedAdUnits and exclude specific publisher(s) in excludedAdUnitIds",
-					"Can target publisher and exclude specific ad unit(s)",
-					"Only use IDs for forecasting, not names",
-					"If you target a publisher group, all publishers and their ad units will automatically get targeted",
-					"Always strive to target highest hierarchy level and exclude ad units, unless only specific child ad units are requested by user"
-				]
+					"Target the highest appropriate level in the hierarchy",
+					"Never include a child's associated parent in targetedAdUnitIds",
+					"ExcludedAdUnitIds can also be used to remove specific children from parent targeting",
+					"Example: Target Publisher Group ID, exclude specific Publisher IDs",
+					"Example: Target Publisher ID, exclude specific Child Ad Unit IDs",
+					"If no targetedAdUnitIds provided, defaults to RON (Run of Network) with all inventory"
+				],
+				bestPractices: {
+					broad: "Target Publisher Group, exclude unwanted Publishers",
+					medium: "Target specific Publishers, exclude unwanted Child Ad Units", 
+					narrow: "Target specific Child Ad Units only when precision is critical",
+					ron: "Leave targetedAdUnitIds empty for Run of Network (all inventory)"
+				}
 			}
 		};
 
