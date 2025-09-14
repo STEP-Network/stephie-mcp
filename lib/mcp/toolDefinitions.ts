@@ -129,7 +129,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 						type: "string"
 					},
 					description:
-						"Array of names to search for in both publisher/site names and publisher group names (uses any_of operator). Tip: Include variations for better results, e.g., ['Gul & Gratis', 'Gul og Gratis', 'guloggratis']",
+						"Array of names to search for in both publisher/site names and publisher group names (partial match with contains_text). Tip: Include variations for better results, e.g., ['Gul & Gratis', 'Gul og Gratis', 'guloggratis']",
 				},
 			},
 		},
@@ -291,7 +291,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 				names: {
 					type: "array",
 					items: { type: "string" },
-					description: "Optional array of value names to search for (uses any_of operator). Tip: Include variations for better results, e.g., ['København', 'Copenhagen', 'CPH', 'Kbh'] or ['bil', 'car', 'auto']",
+					description: "Optional array of value names to search for (partial match with contains_text). Tip: Include variations for better results, e.g., ['København', 'Copenhagen', 'CPH', 'Kbh'] or ['bil', 'car', 'auto']",
 				},
 				cursor: {
 					type: "string",

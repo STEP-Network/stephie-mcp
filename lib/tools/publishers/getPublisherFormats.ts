@@ -68,15 +68,17 @@ export async function getPublisherFormats(args: {
 	// Build filter string for GraphQL - search in both name and group if provided
 	let filterString = "";
 	if (names && names.length > 0) {
-		// Use any_of operator for searching multiple names in both columns
-		const nameValues = names.map(n => `"${n.replace(/"/g, '\\"')}"`).join(", ");
+		// Use contains_text for partial matching - build separate rules for each name
+		const rules: string[] = [];
+		for (const searchName of names) {
+			// Add rules for both publisher name and group name
+			rules.push(`{column_id: "name", compare_value: "${searchName.replace(/"/g, '\\"')}", operator: contains_text}`);
+			rules.push(`{column_id: "board_relation_mkp69z9s", compare_value: "${searchName.replace(/"/g, '\\"')}", operator: contains_text}`);
+		}
 		
-		// Search with OR between name and group columns, using any_of for multiple values
+		// Search with OR across all rules (any name in either column)
 		filterString = `query_params: { 
-			rules: [
-				{column_id: "name", compare_value: [${nameValues}], operator: any_of},
-				{column_id: "board_relation_mkp69z9s", compare_value: [${nameValues}], operator: any_of}
-			], 
+			rules: [${rules.join(", ")}], 
 			operator: or
 		}`;
 	}
@@ -333,10 +335,14 @@ export async function getPublisherFormats(args: {
 			data.forEach(group => {
 				group.publishers.forEach((pub: CompactPublisher) => {
 					if (pub.statusFormats) {
-						pub.statusFormats.forEach(format => matchedUniqueFormats.add(format));
+						pub.statusFormats.forEach((format) => {
+							matchedUniqueFormats.add(format);
+						});
 					}
 					if (pub.deviceFormats) {
-						pub.deviceFormats.forEach(([format]) => matchedUniqueFormats.add(format));
+						pub.deviceFormats.forEach(([format]) => {
+							matchedUniqueFormats.add(format);
+						});
 					}
 				});
 			});
