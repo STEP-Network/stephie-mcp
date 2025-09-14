@@ -406,7 +406,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 
 		name: "availabilityForecast",
 		description:
-			"Execute an availability forecast in Google Ad Manager. Use this tool to forecast available impressions for an ad campaign. Returns impression availability for specified targeting and date range. If given full autonomy, experiment first with broad reach since every targeting criterion narrows the forecast.",
+			"Execute an availability forecast in Google Ad Manager. Use this tool to forecast available impressions for an ad campaign. Returns impression availability for specified targeting and date range. If given full autonomy or asked for complete proposals, test multiple scenarios: baseline→add targeting→measure impact. Prep: getAllProducts/Formats/Sizes/Prices/Placements/Publishers first, target keys/values/segments/contextual/geo situationally.",
 		inputSchema: {
 			type: "object",
 			properties: {
