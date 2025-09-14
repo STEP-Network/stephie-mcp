@@ -1,5 +1,4 @@
 import { type MondayItemResponse, mondayApi } from "../../monday/client.js";
-import { createListResponse } from "../json-output.js";
 
 const CUSTOM_TARGETING_BOARD_ID = "2056578615";
 
@@ -84,12 +83,22 @@ export async function getTargetingKeys() {
 		if (!response.data?.boards || response.data.boards.length === 0 || 
 			!response.data.boards[0].groups || response.data.boards[0].groups.length === 0) {
 			return JSON.stringify(
-				createListResponse(
-					"getTargetingKeys",
-					[],
-					{ total: 0 },
-					{ summary: "No targeting keys found" }
-				),
+				{
+					tool: "getTargetingKeys",
+					timestamp: new Date().toISOString(),
+					status: "success",
+					metadata: {
+						boardId: CUSTOM_TARGETING_BOARD_ID,
+						boardName: "Custom Targeting",
+						totalKeys: 0,
+						totalPublishers: 0,
+						publishers: []
+					},
+					data: [],
+					options: {
+						summary: "No targeting keys found"
+					}
+				},
 				null,
 				2
 			);
@@ -183,14 +192,14 @@ export async function getTargetingKeys() {
 			publishers: sortedPublishers.map(([publisher]) => publisher)
 		};
 
-		// Return formatted response
+		// Return formatted response with metadata at the top
 		return JSON.stringify(
 			{
 				tool: "getTargetingKeys",
 				timestamp: new Date().toISOString(),
 				status: "success",
-				data: publishers,
 				metadata,
+				data: publishers,
 				options: {
 					summary: `Found ${targetingKeys.length} targeting ${targetingKeys.length === 1 ? 'key' : 'keys'} across ${keysByPublisher.size} publisher ${keysByPublisher.size === 1 ? 'group' : 'groups'}`
 				}

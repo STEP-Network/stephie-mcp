@@ -1,5 +1,4 @@
 import { type MondayItemResponse, mondayApi } from "../../monday/client.js";
-import { createListResponse } from "../json-output.js";
 
 const CUSTOM_TARGETING_BOARD_ID = "2056578615";
 
@@ -15,9 +14,6 @@ export interface TargetingValue {
 	mondayItemId: string;
 	name: string;
 	valueGamId: string;
-	keyMondayId: string;
-	keyName: string;
-	keyGamId: string;
 }
 
 export async function getTargetingValues(args: {
@@ -117,14 +113,17 @@ export async function getTargetingValues(args: {
 					tool: "getTargetingValues",
 					timestamp: new Date().toISOString(),
 					status: "success",
-					data: [],
 					metadata: {
 						boardId: CUSTOM_TARGETING_BOARD_ID,
 						boardName: "Custom Targeting",
+						keyMondayId: "",
+						keyName: keyName,
+						keyGamId: "",
 						totalValues: 0,
-						keyName,
+						searchKeyName: keyName,
 						names: names || undefined
 					},
+					data: [],
 					options: {
 						summary: `No targeting values found for key "${keyName}"`
 					}
@@ -139,6 +138,29 @@ export async function getTargetingValues(args: {
 		const items = group.items_page?.items || [];
 		const nextCursor = group.items_page?.cursor;
 		const targetingValues: TargetingValue[] = [];
+		
+		// Extract key info from first item (all items should have same key)
+		let keyMondayId = "";
+		let actualKeyName = "";
+		let keyGamId = "";
+		
+		if (items.length > 0) {
+			const firstItem = items[0] as MondayItemResponse;
+			const firstColumnValues = firstItem.column_values || [];
+			const firstColumnMap = new Map(
+				firstColumnValues.map((col: Record<string, unknown>) => [col.id, col])
+			);
+			
+			// Get parent key info from first item
+			const keyRelation = firstColumnMap.get(COLUMNS.KEY_RELATION) as any;
+			const linkedKey = keyRelation?.linked_items?.[0];
+			keyMondayId = String(linkedKey?.id || "");
+			actualKeyName = linkedKey?.name || "";
+			
+			// Get key GAM ID from the lookup column
+			const keyNameLookup = firstColumnMap.get(COLUMNS.KEY_NAME_LOOKUP) as any;
+			keyGamId = keyNameLookup?.display_value || keyNameLookup?.text || "";
+		}
 
 		// Process values (already filtered by GraphQL query)
 		for (const item of items) {
@@ -149,55 +171,42 @@ export async function getTargetingValues(args: {
 			);
 
 			const valueGamId = (columnMap.get(COLUMNS.GAM_ID) as any)?.text || "";
-			
-			// Get parent key info
-			const keyRelation = columnMap.get(COLUMNS.KEY_RELATION) as any;
-			const linkedKey = keyRelation?.linked_items?.[0];
-			const keyId = linkedKey?.id || "";
-			const keyNameFromRelation = linkedKey?.name || "";
-			
-			// Get key GAM ID from the lookup column
-			const keyNameLookup = columnMap.get(COLUMNS.KEY_NAME_LOOKUP) as any;
-			const keyGamId = keyNameLookup?.display_value || keyNameLookup?.text || "";
-			
-			// Use the name from the linked relation for the key name
-			const keyName = keyNameFromRelation;
 
 			targetingValues.push({
 				mondayItemId: String(mondayItem.id),
 				name: String(mondayItem.name),
-				valueGamId: valueGamId,
-				keyMondayId: String(keyId),
-				keyName: keyName,
-				keyGamId: keyGamId
+				valueGamId: valueGamId
 			});
 		}
 
 		// Sort by name
 		targetingValues.sort((a, b) => a.name.localeCompare(b.name));
 
-		// Build metadata
+		// Build metadata with key info at the top
 		const metadata = {
 			boardId: CUSTOM_TARGETING_BOARD_ID,
 			boardName: "Custom Targeting",
+			keyMondayId: keyMondayId,
+			keyName: actualKeyName || keyName,
+			keyGamId: keyGamId,
 			totalValues: targetingValues.length,
-			keyName,
+			searchKeyName: keyName,
 			names: names || undefined,
 			cursor: cursor || undefined,
 			nextCursor: nextCursor || undefined,
 			hasMore: !!nextCursor
 		};
 
-		// Return formatted response
+		// Return formatted response with metadata at the top
 		return JSON.stringify(
 			{
 				tool: "getTargetingValues",
 				timestamp: new Date().toISOString(),
 				status: "success",
-				data: targetingValues,
 				metadata,
+				data: targetingValues,
 				options: {
-					summary: `Found ${targetingValues.length} targeting ${targetingValues.length === 1 ? 'value' : 'values'} for key "${keyName}"${names ? ` matching "${names}"` : ''}${nextCursor ? ' (more available)' : ''}`
+					summary: `Found ${targetingValues.length} targeting ${targetingValues.length === 1 ? 'value' : 'values'} for key "${actualKeyName || keyName}"${names ? ` matching "${names}"` : ''}${nextCursor ? ' (more available)' : ''}`
 				}
 			},
 			null,
