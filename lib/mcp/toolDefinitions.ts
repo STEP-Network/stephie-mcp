@@ -313,9 +313,16 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 		inputSchema: {
 			type: "object",
 			properties: {
-				search: {
+				names: {
+					type: "array",
+					items: { type: "string" },
+					description: "Optional array of search terms to find in segment names or descriptions (searches with OR operator)",
+				},
+				type: {
 					type: "string",
-					description: "Optional text search in segment names or descriptions",
+					enum: ["1st Party", "3rd Party", "Omniseg", "ALL"],
+					description: "Filter by segment type (default: ALL)",
+					default: "ALL",
 				},
 				limit: {
 					type: "number",

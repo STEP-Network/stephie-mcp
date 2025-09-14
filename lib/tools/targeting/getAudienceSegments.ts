@@ -28,76 +28,100 @@ export interface AudienceSegmentResult {
 	gamId: string;
 	name: string;
 	type: string;
-	dataProvider: string;
 	size: number | null;
 	description: string | null;
-	recencyDays: number | null;
-	membershipDays: number | null;
 }
 
 export async function getAudienceSegments(args: {
-	search?: string | string[];
-	type?: "1st Party" | "3rd Party" | "Contextual" | "Omniseg" | "ALL";
-	minSize?: number;
+	names?: string[];
+	type?: "1st Party" | "3rd Party" | "Omniseg" | "ALL";
 	limit?: number;
 }) {
-	const { search, type = "ALL", minSize, limit = 20 } = args;
+	const { names, type = "ALL", limit = 100 } = args;
 
 	console.error("[getAudienceSegments] called with:", {
-		search,
+		names,
 		type,
-		minSize,
 		limit,
 	});
 
 	try {
-		// Normalize search to array
-		const searchTerms = search
-			? Array.isArray(search)
-				? search
-				: [search]
-			: [];
+		// Build filters based on type and names
+		const filters: string[] = [];
+		
+		// Handle type filters at query level when names are not provided
+		if (type !== "ALL" && (!names || names.length === 0)) {
+			if (type === "1st Party") {
+				filters.push(`{
+					column_id: "${COLUMNS.TYPE}",
+					compare_value: [1],
+					operator: any_of
+				}`);
+			} else if (type === "3rd Party") {
+				filters.push(`{
+					column_id: "${COLUMNS.TYPE}",
+					compare_value: [107],
+					operator: any_of
+				}`);
+			} else if (type === "Omniseg") {
+				// For Omniseg, search for "Omniseg -" in name
+				filters.push(`{
+					column_id: "name",
+					compare_value: "Omniseg -",
+					operator: contains_text
+				}`);
+			}
+		}
+		
+		// Handle name search - search in both name and description
+		if (names && names.length > 0) {
+			const nameFilters = names.flatMap(name => [
+				`{
+					column_id: "name",
+					compare_value: "${name.replace(/"/g, '\\"')}",
+					operator: contains_text
+				}`,
+				`{
+					column_id: "${COLUMNS.DESCRIPTION}",
+					compare_value: "${name.replace(/"/g, '\\"')}",
+					operator: contains_text
+				}`
+			]);
+			
+			// Wrap all name/description filters in OR
+			if (nameFilters.length > 0) {
+				filters.push(...nameFilters);
+			}
+		}
 
-		// Build query
+		// Build query with specific columns only
 		let query = `
-      query {
-        boards(ids: ${AUDIENCE_SEGMENTS_BOARD_ID}) {
-          items_page(limit: 500`;
+			query {
+				boards(ids: ${AUDIENCE_SEGMENTS_BOARD_ID}) {
+					items_page(limit: 500`;
 
-		// Add search filter if provided
-		if (searchTerms.length > 0) {
-			const searchRules = searchTerms
-				.map(
-					(term) => `
-        {
-          column_id: "name",
-          compare_value: "${term.replace(/"/g, '\\"')}",
-          operator: contains_text
-        }
-      `,
-				)
-				.join(",");
-
+		// Add filters if any
+		if (filters.length > 0) {
 			query += `, query_params: {
-        rules: [${searchRules}]
-        operator: or
-      }`;
+				rules: [${filters.join(",")}]
+				operator: ${names && names.length > 0 ? "or" : "and"}
+			}`;
 		}
 
 		query += `) {
-            items {
-              id
-              name
-              column_values {
-                id
-                text
-                value
-              }
-            }
-          }
-        }
-      }
-    `;
+						items {
+							id
+							name
+							column_values(ids: ["${COLUMNS.DESCRIPTION}", "${COLUMNS.TYPE}", "${COLUMNS.GAM_ID}", "${COLUMNS.SEGMENT_SIZE}"]) {
+								id
+								text
+								value
+							}
+						}
+					}
+				}
+			}
+		`;
 
 		const response = await mondayApi(query);
 
@@ -106,7 +130,12 @@ export async function getAudienceSegments(args: {
 				createListResponse(
 					"getAudienceSegments",
 					[],
-					{ limit, search: search || undefined, total: 0 },
+					{ 
+						limit, 
+						names: names || undefined, 
+						type: type !== "ALL" ? type : undefined,
+						total: 0 
+					},
 					{ summary: "No audience segments found" }
 				),
 				null,
@@ -126,8 +155,6 @@ export async function getAudienceSegments(args: {
 			);
 
 			const gamId = (columnMap.get(COLUMNS.GAM_ID) as any)?.text || "";
-			const dataProvider =
-				(columnMap.get(COLUMNS.DATA_PROVIDER) as any)?.text || "";
 			const description =
 				(columnMap.get(COLUMNS.DESCRIPTION) as any)?.text || null;
 
@@ -143,34 +170,38 @@ export async function getAudienceSegments(args: {
 				}
 			}
 
-			// Parse numeric values
+			// Parse size
 			const size =
 				parseFloat((columnMap.get(COLUMNS.SEGMENT_SIZE) as any)?.text || "0") ||
 				null;
-			const recencyDays =
-				parseFloat((columnMap.get(COLUMNS.RECENCY_DAYS) as any)?.text || "0") ||
-				null;
-			const membershipDays =
-				parseFloat(
-					(columnMap.get(COLUMNS.MEMBERSHIP_EXPIRATION) as any)?.text || "0",
-				) || null;
 
-			// Apply type filter
-			if (type === "ALL" || type === segmentType) {
-				// Apply size filter
-				if (!minSize || (size && size >= minSize)) {
-					segments.push({
-						itemId: item.id,
-						gamId,
-						name: item.name,
-						type: segmentType,
-						dataProvider,
-						size,
-						description,
-						recencyDays,
-						membershipDays,
-					});
+			// Post-process filtering when names are provided
+			let includeItem = true;
+			
+			// If names are provided and type is specified, do post-processing
+			if (names && names.length > 0 && type !== "ALL") {
+				if (type === "Omniseg") {
+					// Only include items starting with "Omniseg -"
+					includeItem = item.name.startsWith("Omniseg -");
+				} else if (type === "1st Party") {
+					// Only include items with type index 1
+					includeItem = segmentType === "1st Party";
+				} else if (type === "3rd Party") {
+					// Only include items with type index 107
+					includeItem = segmentType === "3rd Party";
 				}
+			}
+
+			// Add segment if it passed the filters
+			if (includeItem) {
+				segments.push({
+					itemId: item.id,
+					gamId,
+					name: item.name,
+					type: segmentType,
+					size,
+					description,
+				});
 			}
 		}
 
@@ -193,12 +224,16 @@ export async function getAudienceSegments(args: {
 				"getAudienceSegments",
 				limitedResults,
 				{
+					boardId: AUDIENCE_SEGMENTS_BOARD_ID,
+					boardName: "Audience Segments",
 					limit,
-					search: search || undefined,
-					total: limitedResults.length
+					names: names || undefined,
+					type: type !== "ALL" ? type : undefined,
+					total: limitedResults.length,
+					totalBeforeLimit: segments.length
 				},
 				{
-					summary: `Found ${limitedResults.length} audience segment${limitedResults.length !== 1 ? 's' : ''}`
+					summary: `Found ${limitedResults.length} audience segment${limitedResults.length !== 1 ? 's' : ''}${segments.length > limitedResults.length ? ` (${segments.length} total, limited to ${limit})` : ''}`
 				}
 			),
 			null,
