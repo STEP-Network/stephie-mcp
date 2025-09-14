@@ -18,7 +18,8 @@ import { availabilityForecast } from "../tools/availabilityForecast.js";
 import { getPublisherFormats } from "../tools/publishers/getPublisherFormats.js";
 import { getPublishersByFormats } from "../tools/publishers/getPublishersByFormats.js";
 import { findPublisherAdUnits } from "../tools/targeting/findPublisherAdUnits.js";
-import { getKeyValues } from "../tools/targeting/getKeyValues.js";
+import { getTargetingKeys } from "../tools/targeting/getTargetingKeys.js";
+import { getTargetingValues } from "../tools/targeting/getTargetingValues.js";
 import { getAudienceSegments } from "../tools/targeting/getAudienceSegments.js";
 import { getGeoLocations } from "../tools/targeting/getGeoLocations.js";
 import { getContextualTargeting } from "../tools/targeting/getContextualTargeting.js";
@@ -104,7 +105,8 @@ export const toolImplementations: Record<string, (args: any) => Promise<string |
 	getPublisherFormats: (args) => getPublisherFormats(args),
 	getPublishersByFormats: (args) => getPublishersByFormats(args),
 	findPublisherAdUnits: (args) => findPublisherAdUnits(args),
-	getKeyValues: (args) => getKeyValues(args),
+	getTargetingKeys: () => getTargetingKeys(),
+	getTargetingValues: (args) => getTargetingValues(args),
 	getAudienceSegments: (args) => getAudienceSegments(args),
 	getGeoLocations: (args) => getGeoLocations(args),
 	getContextualTargeting: (args) => getContextualTargeting(args),

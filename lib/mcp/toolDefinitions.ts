@@ -268,35 +268,38 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 	},
 
 	{
-
-		name: "getKeyValues",
+		name: "getTargetingKeys",
 		description:
-			"Get custom targeting key-values from Monday.com Key Values board (1802371471). Contains 22,000+ targeting options for content, demographics, and behavior. Returns keys with their associated values for GAM custom targeting.",
+			"Get all custom targeting keys from Monday.com Key Values (KV) board (2056578615). Returns keys with name (which is required for getTargetingValues), GAM Key ID, key code, type, and associated publishers. Keys are grouped by publisher for easy navigation.",
 		inputSchema: {
 			type: "object",
+			properties: {},
+		},
+	},
+	{
+		name: "getTargetingValues",
+		description:
+			"Get targeting values for a specific key from Monday.com Key Values (KV) board (2056578615). Use key name from getTargetingKeys to fetch values. Supports pagination with cursor for large result sets.",
+		inputSchema: {
+			type: "object",
+			required: ["keyName"],
 			properties: {
-				keySearch: {
+				keyName: {
 					type: "string",
-					description: 'Search term for key names (e.g., "sport", "age")',
+					description: "Name of the targeting key (from getTargetingKeys)",
 				},
-				valueSearch: {
+				names: {
 					type: "string",
-					description: "Search term for values within keys",
+					description: "Optional comma-separated value names to search for",
+				},
+				cursor: {
+					type: "string",
+					description: "Pagination cursor from previous response",
 				},
 				limit: {
 					type: "number",
-					description: "Maximum keys to return (default: 50)",
-					default: 50,
-				},
-				valueLimit: {
-					type: "number",
-					description: "Maximum values per key (default: 50)",
-					default: 50,
-				},
-				totalValueLimit: {
-					type: "number",
-					description: "Maximum total values across all keys (default: 500)",
-					default: 500,
+					description: "Maximum values to return (default: 100)",
+					default: 100,
 				},
 			},
 		},
@@ -427,13 +430,13 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 							keyId: {
 								type: "string",
 								description:
-									"Custom targeting key ID. Use getKeyValues tool to get valid key IDs.",
+									"Custom targeting key ID. Use getTargetingKeys tool to get valid key IDs.",
 							},
 							valueIds: {
 								type: "array",
 								items: { type: "string" },
 								description:
-									"Array of value IDs for the key. Use getKeyValues tool to get valid value IDs.",
+									"Array of value IDs for the key. Use getTargetingValues tool to get valid value IDs.",
 							},
 							operator: {
 								type: "string",
@@ -443,7 +446,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
 						},
 					},
 					description:
-						"Array of custom targeting key-value pairs. Use getKeyValues tool to get valid keys and values.",
+						"Array of custom targeting key-value pairs. Use getTargetingKeys and getTargetingValues tools to get valid keys and values.",
 				},
 				frequencyCapMaxImpressions: {
 					type: "number",
