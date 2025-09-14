@@ -1,4 +1,5 @@
 import { type MondayItemResponse, mondayApi } from "../../monday/client.js";
+import { createListResponse } from "../json-output.js";
 
 const CUSTOM_TARGETING_BOARD_ID = "2056578615";
 
@@ -109,11 +110,10 @@ export async function getTargetingValues(args: {
 		if (!response.data?.boards || response.data.boards.length === 0 ||
 			!response.data.boards[0].groups || response.data.boards[0].groups.length === 0) {
 			return JSON.stringify(
-				{
-					tool: "getTargetingValues",
-					timestamp: new Date().toISOString(),
-					status: "success",
-					metadata: {
+				createListResponse(
+					"getTargetingValues",
+					[],
+					{
 						boardId: CUSTOM_TARGETING_BOARD_ID,
 						boardName: "Custom Targeting",
 						keyMondayId: "",
@@ -123,11 +123,10 @@ export async function getTargetingValues(args: {
 						searchKeyName: keyName,
 						names: names || undefined
 					},
-					data: [],
-					options: {
+					{
 						summary: `No targeting values found for key "${keyName}"`
 					}
-				},
+				),
 				null,
 				2
 			);
@@ -197,18 +196,16 @@ export async function getTargetingValues(args: {
 			hasMore: !!nextCursor
 		};
 
-		// Return formatted response with metadata at the top
+		// Return formatted response
 		return JSON.stringify(
-			{
-				tool: "getTargetingValues",
-				timestamp: new Date().toISOString(),
-				status: "success",
+			createListResponse(
+				"getTargetingValues",
+				targetingValues,
 				metadata,
-				data: targetingValues,
-				options: {
+				{
 					summary: `Found ${targetingValues.length} targeting ${targetingValues.length === 1 ? 'value' : 'values'} for key "${actualKeyName || keyName}"${names ? ` matching "${names}"` : ''}${nextCursor ? ' (more available)' : ''}`
 				}
-			},
+			),
 			null,
 			2
 		);
