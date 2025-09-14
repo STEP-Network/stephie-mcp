@@ -66,16 +66,17 @@ export async function getContextualTargeting(args: {
 		const customCategories: Record<string, string[]> = {};
 		const topicMappings: Record<string, string[]> = {};
 		
-		// Process categories into hierarchy
+		// Process categories into flat list for better accuracy
+		// Don't try to build hierarchy from underscores as they may be part of the name
 		limitedValues.forEach(value => {
 			const displayName = value.displayName;
 			
 			// Handle custom categories (step_, neg_, gs_, oersted)
-			if (displayName.startsWith('step_') || displayName.startsWith('neg_') || 
+			if (displayName.startsWith('step_custom_') || displayName.startsWith('neg_custom_') || 
 				displayName.startsWith('gs_') || displayName === 'oersted') {
 				const prefix = displayName.split('_')[0];
 				if (!customCategories[prefix]) customCategories[prefix] = [];
-				customCategories[prefix].push(displayName.replace(`${prefix}_custom_`, ''));
+				customCategories[prefix].push(displayName);
 				
 				// Add to topic mappings
 				if (displayName.includes('bil') || displayName.includes('car')) {
@@ -86,22 +87,10 @@ export async function getContextualTargeting(args: {
 					if (!topicMappings.sports) topicMappings.sports = [];
 					topicMappings.sports.push(value.id);
 				}
-			} 
-			// Handle standard categories
-			else if (displayName.includes('_')) {
-				const [parent, ...rest] = displayName.split('_');
-				if (!hierarchy[parent]) {
-					hierarchy[parent] = { subcategories: {} };
-				}
-				hierarchy[parent].subcategories[rest.join('_')] = value.id;
-			} else {
-				// Main category
-				if (!hierarchy[displayName]) {
-					hierarchy[displayName] = { id: value.id, subcategories: {} };
-				} else {
-					hierarchy[displayName].id = value.id;
-				}
 			}
+			
+			// Add all categories to flat hierarchy with their IDs
+			hierarchy[displayName] = value.id;
 		});
 
 		// Format for JSON response - keep backward compatibility
@@ -110,8 +99,7 @@ export async function getContextualTargeting(args: {
 			name: value.name,
 			displayName: value.displayName,
 			matchType: value.matchType || "EXACT",
-			categoryType: categorized.mainCategories.includes(value) ? "main" : "subcategory",
-			parentCategory: value.displayName.includes("_") ? value.displayName.split("_")[0] : null
+			categoryType: categorized.customCategories.includes(value) ? "custom" : "standard"
 		}));
 
 		// Build category groups summary
@@ -196,7 +184,7 @@ export async function getContextualTargeting(args: {
 		};
 
 		if (searchTerms.length > 0) {
-			metadata.filters.searchTerms = searchTerms;
+			metadata.searchTerms = searchTerms;
 		}
 
 		if (filteredValues.length > limitedValues.length) {
@@ -211,7 +199,7 @@ export async function getContextualTargeting(args: {
 				{
 					summary: limitedValues.length === 0 
 						? "No contextual categories found matching the criteria"
-						: `Found ${limitedValues.length} contextual targeting categor${limitedValues.length !== 1 ? 'ies' : 'y'}: ${categorized.mainCategories.length} main, ${categorized.subCategories.length} subcategor${categorized.subCategories.length !== 1 ? 'ies' : 'y'}`
+						: `Found ${limitedValues.length} contextual targeting categor${limitedValues.length !== 1 ? 'ies' : 'y'}: ${categorized.standardCategories.length} standard, ${categorized.customCategories.length} custom`
 				}
 			),
 			null,
@@ -283,20 +271,22 @@ async function fetchContextualValues(
 
 // Helper to analyze category patterns
 function analyzeCategoryPatterns(values: ContextualValue[]) {
-	const mainCategories: ContextualValue[] = [];
-	const subCategories: ContextualValue[] = [];
+	const customCategories: ContextualValue[] = [];
+	const standardCategories: ContextualValue[] = [];
 
 	values.forEach((value) => {
-		// Main categories typically don't have underscores or are shorter
+		// Separate custom categories (step_, neg_, gs_) from standard IAB categories
 		if (
-			!value.displayName.includes("_") ||
-			value.displayName.split("_").length === 1
+			value.displayName.startsWith("step_") ||
+			value.displayName.startsWith("neg_") ||
+			value.displayName.startsWith("gs_") ||
+			value.displayName === "oersted"
 		) {
-			mainCategories.push(value);
+			customCategories.push(value);
 		} else {
-			subCategories.push(value);
+			standardCategories.push(value);
 		}
 	});
 
-	return { mainCategories, subCategories };
+	return { customCategories, standardCategories };
 }
